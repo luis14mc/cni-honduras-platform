@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   CNI Honduras — Sovereign Design System (Manrope + Inter)
+   Palette extracted from temp-design tokens.
+   --------------------------------------------------------------------------- */
+
+:root {
+  --background: #f8f9fa;
+  --foreground: #191c1d;
+
+  --cni-primary: #000a1e;
+  --cni-primary-container: #002147;
+  --cni-secondary: #3a5f94;
+  --cni-secondary-container: #9fc2fe;
+  --cni-tertiary-gold: #e9c176;
+  --cni-tertiary-container: #2e1f00;
+  --cni-on-tertiary-container: #a68440;
+
+  --cni-surface: #f8f9fa;
+  --cni-surface-lowest: #ffffff;
+  --cni-surface-low: #f3f4f5;
+  --cni-surface: #edeeef;
+  --cni-surface-high: #e7e8e9;
+  --cni-surface-highest: #e1e3e4;
+
+  --cni-on-surface: #191c1d;
+  --cni-on-surface-variant: #44474e;
+  --cni-outline: #74777f;
+  --cni-outline-variant: #c4c6cf;
+}
+
+@theme {
+  --font-display: var(--font-manrope), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --color-cni-primary: var(--cni-primary);
+  --color-cni-primary-container: var(--cni-primary-container);
+  --color-cni-secondary: var(--cni-secondary);
+  --color-cni-gold: var(--cni-tertiary-gold);
+  --color-cni-gold-dark: var(--cni-on-tertiary-container);
+  --color-cni-surface-low: var(--cni-surface-low);
+  --color-cni-surface-high: var(--cni-surface-high);
+  --color-cni-on-surface-variant: var(--cni-on-surface-variant);
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: var(--font-body);
+    color: var(--foreground);
+    background: var(--background);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight font-extrabold;
+  }
+}
+
+@layer utilities {
+  .font-headline { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-body); }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .glass-dark {
+    background: rgba(0, 33, 71, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .tonal-depth-layering {
+    box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
+  }
+  .hero-gradient {
+    background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+  }
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #a68440 0%, #2e1f00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Hide scrollbar for tab strip */
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}

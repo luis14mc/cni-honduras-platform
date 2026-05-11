@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agronegocios: Cultivando el Futuro | InvestSovereign</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "tertiary-container": "#2e1f00",
+                "on-primary-container": "#708ab5",
+                "surface-dim": "#d9dadb",
+                "on-surface-variant": "#44474e",
+                "on-error": "#ffffff",
+                "primary-fixed-dim": "#aec7f6",
+                "on-primary-fixed-variant": "#2d476f",
+                "error": "#ba1a1a",
+                "primary": "#000a1e",
+                "on-error-container": "#93000a",
+                "tertiary-fixed": "#ffdea5",
+                "on-tertiary-fixed": "#261900",
+                "tertiary-fixed-dim": "#e9c176",
+                "secondary": "#3a5f94",
+                "on-secondary": "#ffffff",
+                "secondary-fixed": "#d5e3ff",
+                "on-secondary-fixed-variant": "#1f477b",
+                "outline": "#74777f",
+                "primary-fixed": "#d6e3ff",
+                "tertiary": "#110a00",
+                "surface-container-lowest": "#ffffff",
+                "surface-bright": "#f8f9fa",
+                "on-primary-fixed": "#001b3d",
+                "surface-container-high": "#e7e8e9",
+                "secondary-container": "#9fc2fe",
+                "surface-container-low": "#f3f4f5",
+                "inverse-surface": "#2e3132",
+                "inverse-on-surface": "#f0f1f2",
+                "on-secondary-container": "#294f83",
+                "inverse-primary": "#aec7f6",
+                "on-secondary-fixed": "#001b3c",
+                "surface-container-highest": "#e1e3e4",
+                "background": "#f8f9fa",
+                "surface-tint": "#465f88",
+                "surface-variant": "#e1e3e4",
+                "outline-variant": "#c4c6cf",
+                "on-tertiary-fixed-variant": "#5d4201",
+                "on-background": "#191c1d",
+                "on-primary": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-surface": "#191c1d",
+                "secondary-fixed-dim": "#a7c8ff",
+                "surface": "#f8f9fa",
+                "primary-container": "#002147",
+                "surface-container": "#edeeef",
+                "on-tertiary-container": "#a68440",
+                "on-tertiary": "#ffffff"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-depth-layering {
+            background: linear-gradient(180deg, rgba(0,10,30,0.9) 0%, rgba(0,10,30,0.8) 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased">
+<!-- TopNavBar Execution -->
+<nav class="fixed top-0 w-full z-50 bg-primary-950/80 backdrop-blur-xl dark:bg-slate-950/80 flex justify-between items-center px-8 h-20 w-full shadow-2xl shadow-primary-950/20">
+<div class="flex items-center gap-8">
+<span class="text-xl font-extrabold tracking-tighter text-slate-50 font-headline">InvestSovereign</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-headline font-bold tracking-tight" href="#">Panel</a>
+<a class="text-slate-50 border-b-2 border-amber-500 pb-1 font-headline font-bold tracking-tight" href="#">Sectores</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-headline font-bold tracking-tight" href="#">Oportunidades</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-headline font-bold tracking-tight" href="#">Reportes</a>
+<a class="text-slate-400 hover:text-slate-200 transition-colors font-headline font-bold tracking-tight" href="#">Contacto</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="text-slate-400 text-sm font-label tracking-widest uppercase">ES/EN</span>
+<button class="bg-primary-container text-slate-50 px-6 py-2.5 rounded-lg font-headline font-bold tracking-tight scale-95 active:scale-90 transition-transform hover:bg-primary-900/50">Portal del Inversor</button>
+</div>
+</nav>
+<!-- Section 1: Hero -->
+<header class="relative h-screen flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover scale-105" data-alt="Expansive aerial view of lush, geometric fertile farmland rows at sunrise with soft golden light hitting the green crops and rolling hills." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt53nZwCSZLm8h8xxBUNh_uGo8ut5uUCVGp9kTBBCcX25NY8HCP43IfYeDlZZiuPTGmnDqdK-6Vb-efRfe6u6yWKlHebWXujw4J_rM8HnME0qphBB24Xo-te7q_EOMk8FlcZkKL6Nx-EVm5B0q5OXJTzHSlpulIg94XfcffYcefYpA4cwm3gUY25UdS_dPGyCnlbkQj0k0-ZTrxi-pKIbfN5BB89obMTwKkjzZ1IsguYskp-q176BGhQXarPowqlnWqknjP7n9POkv"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/60 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<span class="inline-block px-4 py-1 mb-6 bg-tertiary-container text-tertiary-fixed-dim text-xs font-label tracking-[0.2em] uppercase rounded-full">Sector Económico Estratégico</span>
+<h1 class="text-slate-50 font-headline text-6xl md:text-7xl font-extrabold tracking-tighter leading-none mb-8">
+                    Análisis Profundo de Agronegocios:<br/><span class="text-tertiary-fixed-dim">Cultivando el Futuro</span>
+</h1>
+<p class="text-on-primary-container text-xl max-w-xl leading-relaxed mb-12">
+                    Aprovechando la diversidad ecológica y las rutas comerciales estratégicas para diseñar la próxima generación de inversión agrícola global de alto rendimiento.
+                </p>
+<div class="flex flex-wrap gap-12 border-l-2 border-tertiary-fixed-dim pl-8">
+<div>
+<div class="text-4xl font-headline font-extrabold text-slate-50">$1.2B</div>
+<div class="text-sm font-label text-slate-400 tracking-wider uppercase">IED del Sector 2023</div>
+</div>
+<div>
+<div class="text-4xl font-headline font-extrabold text-slate-50">2.5M</div>
+<div class="text-sm font-label text-slate-400 tracking-wider uppercase">Hectáreas de Tierra Arable</div>
+</div>
+<div>
+<div class="text-4xl font-headline font-extrabold text-slate-50">12</div>
+<div class="text-sm font-label text-slate-400 tracking-wider uppercase">Microclimas Únicos</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Section 2: Value Proposition -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex flex-col md:flex-row gap-16 items-start">
+<div class="md:w-1/3">
+<h2 class="text-4xl font-headline font-extrabold text-primary tracking-tight mb-6">La Ventaja Soberana</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed">Nuestro panorama de agronegocios se define por la eficiencia, la accesibilidad y un marco regulatorio diseñado para la longevidad institucional.</p>
+</div>
+<div class="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Proposition 1 -->
+<div class="bg-surface-container-low p-10 rounded-xl hover:bg-surface-container-lowest transition-all duration-500 shadow-sm border-l-4 border-primary">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">sailing</span>
+<h3 class="text-xl font-headline font-bold text-primary mb-4">Ventaja Estratégica de Exportación</h3>
+<p class="text-on-surface-variant leading-relaxed">Red logística inigualable con acceso directo a puertos de aguas profundas hacia mercados de EE. UU. y la UE, reduciendo el tiempo de tránsito hasta en un 40% en comparación con pares regionales.</p>
+</div>
+<!-- Proposition 2 -->
+<div class="bg-surface-container-low p-10 rounded-xl hover:bg-surface-container-lowest transition-all duration-500 shadow-sm border-l-4 border-tertiary-fixed-dim">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-4xl mb-6">thermostat</span>
+<h3 class="text-xl font-headline font-bold text-primary mb-4">Resiliencia Climática</h3>
+<p class="text-on-surface-variant leading-relaxed">Utilización de 12 microclimas distintos que permiten la producción durante todo el año de diversos cultivos de alto valor, mitigando las fluctuaciones estacionales del mercado.</p>
+</div>
+<!-- Proposition 3 -->
+<div class="bg-surface-container-low p-10 rounded-xl hover:bg-surface-container-lowest transition-all duration-500 shadow-sm border-l-4 border-secondary col-span-1 md:col-span-2">
+<div class="flex flex-col md:flex-row md:items-center gap-8">
+<span class="material-symbols-outlined text-secondary text-4xl">gavel</span>
+<div>
+<h3 class="text-xl font-headline font-bold text-primary mb-2">Marco de Incentivos</h3>
+<p class="text-on-surface-variant leading-relaxed">Exenciones fiscales integrales para agroexportaciones, importación de equipos con arancel cero y apoyo institucional especializado para concesiones a gran escala.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Major Crop Performance (Bento Grid Style) -->
+<section class="py-32 bg-surface-container-high">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="text-4xl font-headline font-extrabold text-primary tracking-tight mb-2">Dominio del Mercado</h2>
+<p class="text-on-surface-variant font-medium">Rendimiento de Exportación y Trayectorias Regionales</p>
+</div>
+<div class="flex gap-4">
+<button class="p-2 rounded-full bg-surface-container-lowest text-primary shadow-sm"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-2 rounded-full bg-surface-container-lowest text-primary shadow-sm"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Coffee -->
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-[400px]">
+<div>
+<div class="flex justify-between items-start mb-6">
+<span class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-bold uppercase tracking-widest rounded">Café</span>
+<span class="text-tertiary-container font-bold">+12.4% anual</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-primary mb-2">Grado de Especialidad Arábica</h3>
+<p class="text-sm text-on-surface-variant mb-6">Principales Mercados: Alemania, EE. UU., Japón</p>
+</div>
+<div class="flex-grow flex items-end gap-2 px-2">
+<div class="w-full bg-secondary h-24 rounded-t-sm opacity-20"></div>
+<div class="w-full bg-secondary h-32 rounded-t-sm opacity-40"></div>
+<div class="w-full bg-secondary h-44 rounded-t-sm opacity-60"></div>
+<div class="w-full bg-secondary h-40 rounded-t-sm opacity-80"></div>
+<div class="w-full bg-secondary h-56 rounded-t-sm"></div>
+</div>
+</div>
+<!-- Bananas -->
+<div class="bg-primary text-white p-8 rounded-xl flex flex-col justify-between h-[400px]">
+<div>
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl mb-6">eco</span>
+<h3 class="text-xl font-headline font-bold mb-2">Bananos</h3>
+<p class="text-on-primary-container text-sm">Integración a escala industrial con centros logísticos.</p>
+</div>
+<div class="mt-auto">
+<div class="text-3xl font-headline font-bold mb-1">$480M</div>
+<div class="text-xs text-on-primary-container uppercase tracking-widest">Valor de Exportación Anual</div>
+</div>
+</div>
+<!-- Melons -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col h-[400px] border border-outline-variant/10">
+<div class="mb-auto">
+<h3 class="text-xl font-headline font-bold text-primary mb-4">Melones y Tropicales</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Cuota de Mercado UE</span>
+<span class="font-bold">22%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[22%]"></div>
+</div>
+<div class="flex justify-between items-center text-sm pt-2">
+<span class="text-on-surface-variant">Rendimiento por Hectárea</span>
+<span class="font-bold">Alto</span>
+</div>
+</div>
+</div>
+<div class="mt-8 rounded-lg overflow-hidden h-32">
+<img class="w-full h-full object-cover" data-alt="Macro shot of vibrant sliced cantaloupe melons on a clean dark surface, highlighting fresh agricultural excellence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgDzVYuXLohIkz7OjSQxF0KVVPeKiQozGkgvUfjcB-X6i_T0XdTc2Q-aYn0F5xGN8XwBQpRjDuA0sa69cTdKZiTXNN170FXygJGVJgr4C70KurkEGRvwAuORyOJwMppOS09RUfFilAlArSrmwAs0oAQUhxWDoNvIkXmeYF6gk-Pl7GP-MKg7TxEKGrvbQVJs3YN63iWe7jb9hEM5e4MRXAZf8_u3OVeoXPLJQGAZyCi2z6pAou7hqlzwLyh4YuzeydaLqfmE77jqN1"/>
+</div>
+</div>
+<!-- Palm Oil -->
+<div class="md:col-span-4 bg-tertiary-container text-tertiary-fixed p-10 rounded-xl flex flex-col md:flex-row justify-between items-center overflow-hidden relative">
+<div class="relative z-10 md:w-1/2">
+<h3 class="text-3xl font-headline font-bold mb-4">Industrialización del Aceite de Palma</h3>
+<p class="text-on-tertiary-container mb-8 max-w-md">Producción certificada sostenible para los sectores globales de biocombustibles y procesamiento de alimentos. Honduras sigue siendo un líder regional en certificaciones RSPO.</p>
+<button class="bg-tertiary-fixed text-tertiary px-8 py-3 rounded font-headline font-bold text-sm tracking-wide hover:bg-white transition-colors">Descargar Reporte del Sector</button>
+</div>
+<div class="md:w-1/3 flex justify-end relative z-10 mt-8 md:mt-0">
+<div class="text-right">
+<div class="text-5xl font-headline font-extrabold mb-1">85%</div>
+<div class="text-xs font-label uppercase tracking-widest opacity-60">Sostenible Certificado</div>
+</div>
+</div>
+<!-- Decorative element -->
+<div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-black/20 to-transparent pointer-events-none"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Investment Opportunities (Asymmetric Grid) -->
+<section class="py-32 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<div class="mb-16">
+<h2 class="text-4xl font-headline font-extrabold text-primary tracking-tight mb-4">Prospectos de Oportunidades Activas</h2>
+<div class="h-1 w-24 bg-tertiary-fixed-dim"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Opportunity 1 -->
+<div class="md:col-span-7 group cursor-pointer">
+<div class="relative overflow-hidden rounded-xl h-[500px] mb-6">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Interior of a large, high-tech refrigerated warehouse with blue industrial lighting and neatly organized pallets of fresh produce." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIa7Q0bvbjkOaSDpNPGbGsYu3MMsUfLrNg_MQOw3PYntoJADOk8kLbhrCiZd0hj3H-ON0K94sn-9KwxSIXazzHF-RBhcjnTUJeaF4TIw8yU-gWRuqtpM56vIOtVLsk34dgQ5dbRAj7f4ZQEGX3fLVvoAeXVWCCg5W9TBnG3cV_nX7UvdyWPeA2UDh6LfkwAbmWUvdGiUv_xr_Q167gzpdGXEdm-qs1Q5tqyc6AFYrWWD_pG9qXXv4vj1EFtpNbAGzK6jAOK07wDvFe"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent"></div>
+<div class="absolute bottom-10 left-10">
+<span class="inline-block px-3 py-1 bg-secondary text-white text-[10px] font-bold uppercase tracking-widest rounded-sm mb-4">Infraestructura</span>
+<h3 class="text-3xl font-headline font-bold text-white mb-2">Infraestructura Moderna de Cadena de Frío</h3>
+<div class="flex items-center text-slate-300 gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-label">Región de Cortés, Honduras</span>
+</div>
+</div>
+</div>
+<p class="text-on-surface-variant leading-relaxed max-w-2xl">Un proyecto emblemático para desarrollar 50,000m² de almacenamiento de vanguardia con control de temperatura adyacente a Puerto Cortés, mejorando la longevidad de exportación de frutas tropicales.</p>
+</div>
+<!-- Opportunity 2 -->
+<div class="md:col-span-5 flex flex-col gap-8">
+<div class="bg-surface-container p-8 rounded-xl hover:shadow-xl transition-all duration-300">
+<span class="inline-block px-3 py-1 bg-tertiary-container text-tertiary-fixed-dim text-[10px] font-bold uppercase tracking-widest rounded-sm mb-6">Manufactura</span>
+<h3 class="text-xl font-headline font-bold text-primary mb-4">Planta de Producción de Biocombustibles</h3>
+<div class="flex items-center text-on-surface-variant gap-2 mb-6">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-label">Choluteca</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-8 leading-relaxed">Asociación público-privada para una instalación de extracción de etanol y biodiesel a gran escala utilizando residuos de caña y palma.</p>
+<a class="text-primary font-bold text-sm flex items-center gap-2 group" href="#">
+                            Explorar Detalles
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<div class="bg-surface-container p-8 rounded-xl hover:shadow-xl transition-all duration-300">
+<span class="inline-block px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-widest rounded-sm mb-6">Agro-Tecnología</span>
+<h3 class="text-xl font-headline font-bold text-primary mb-4">Red de Riego de Precisión</h3>
+<div class="flex items-center text-on-surface-variant gap-2 mb-6">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-label">Valle de Comayagua</span>
+</div>
+<p class="text-sm text-on-surface-variant mb-8 leading-relaxed">Introducción de sistemas inteligentes de gestión del agua en 10,000 hectáreas para optimizar el rendimiento de hortalizas durante todo el año.</p>
+<a class="text-primary font-bold text-sm flex items-center gap-2 group" href="#">
+                            Explorar Detalles
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Download Center & Expert Access -->
+<section class="py-24 bg-primary text-slate-50 relative overflow-hidden">
+<div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent skew-x-12 transform translate-x-1/2"></div>
+<div class="max-w-7xl mx-auto px-8 relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="text-5xl font-headline font-extrabold tracking-tight mb-8">¿Listo para Diseñar su Inversión?</h2>
+<p class="text-on-primary-container text-lg mb-12 max-w-lg">Nuestra oficina dedicada brinda un servicio de guante blanco para inversores institucionales, desde la debida diligencia hasta la navegación regulatoria.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<button class="bg-tertiary-fixed text-tertiary px-10 py-4 rounded font-headline font-extrabold text-sm tracking-widest uppercase hover:bg-white transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">download</span>
+                            Guía de Agroinversión
+                        </button>
+<button class="border border-slate-700 bg-primary/40 backdrop-blur-md text-white px-10 py-4 rounded font-headline font-extrabold text-sm tracking-widest uppercase hover:bg-slate-800 transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">person</span>
+                            Consultar Especialista
+                        </button>
+</div>
+</div>
+<div class="bg-white/5 backdrop-blur-xl p-12 rounded-2xl border border-white/10 shadow-2xl">
+<h3 class="text-2xl font-headline font-bold mb-6">Oficina de Apoyo Institucional</h3>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">verified</span>
+<div>
+<h4 class="font-bold">Seguridad de la Tenencia de la Tierra</h4>
+<p class="text-sm text-slate-400">Verificación de títulos garantizada y marcos de concesión seguros.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">insights</span>
+<div>
+<h4 class="font-bold">Análisis de Mercado Personalizado</h4>
+<p class="text-sm text-slate-400">Estudios de factibilidad a medida basados en los requisitos de su cartera.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">engineering</span>
+<div>
+<h4 class="font-bold">Integración Logística</h4>
+<p class="text-sm text-slate-400">Apoyo integral para la configuración de centros de procesamiento y exportación.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Execution -->
+<footer class="bg-primary-950 dark:bg-slate-950">
+<div class="max-w-7xl mx-auto py-12 px-8 flex flex-col md:flex-row justify-between items-center border-t border-slate-800/50">
+<div class="mb-8 md:mb-0">
+<span class="text-lg font-bold text-slate-50 font-headline">InvestSovereign</span>
+<p class="text-slate-500 font-inter text-sm tracking-wide mt-2">© 2024 Autoridad de Inversión Sovereign Architect. Todos los derechos reservados.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-slate-500 hover:text-slate-200 transition-colors font-inter text-sm tracking-wide" href="#">Política de Privacidad</a>
+<a class="text-slate-500 hover:text-slate-200 transition-colors font-inter text-sm tracking-wide" href="#">Términos de Servicio</a>
+<a class="text-amber-500 font-semibold font-inter text-sm tracking-wide" href="#">Gobernanza Institucional</a>
+<a class="text-slate-500 hover:text-slate-200 transition-colors font-inter text-sm tracking-wide" href="#">Soporte de Contacto</a>
+<a class="text-slate-500 hover:text-slate-200 transition-colors font-inter text-sm tracking-wide" href="#">Oficinas Globales</a>
+</div>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-depth-shift {
+            background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(248,249,250,1) 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-dim": "#d9dadb",
+                "primary-fixed": "#d6e3ff",
+                "on-secondary-fixed": "#001b3c",
+                "tertiary": "#110a00",
+                "outline": "#74777f",
+                "tertiary-fixed-dim": "#e9c176",
+                "surface": "#f8f9fa",
+                "on-background": "#191c1d",
+                "on-primary-container": "#708ab5",
+                "tertiary-fixed": "#ffdea5",
+                "on-error": "#ffffff",
+                "secondary": "#3a5f94",
+                "primary": "#000a1e",
+                "on-tertiary-container": "#a68440",
+                "on-tertiary-fixed": "#261900",
+                "on-tertiary": "#ffffff",
+                "on-error-container": "#93000a",
+                "surface-variant": "#e1e3e4",
+                "outline-variant": "#c4c6cf",
+                "background": "#f8f9fa",
+                "inverse-on-surface": "#f0f1f2",
+                "error": "#ba1a1a",
+                "on-surface": "#191c1d",
+                "on-primary-fixed-variant": "#2d476f",
+                "primary-container": "#002147",
+                "error-container": "#ffdad6",
+                "primary-fixed-dim": "#aec7f6",
+                "tertiary-container": "#2e1f00",
+                "surface-container-high": "#e7e8e9",
+                "on-secondary": "#ffffff",
+                "on-primary": "#ffffff",
+                "surface-container-highest": "#e1e3e4",
+                "secondary-fixed-dim": "#a7c8ff",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-fixed-variant": "#5d4201",
+                "on-surface-variant": "#44474e",
+                "surface-container-low": "#f3f4f5",
+                "secondary-fixed": "#d5e3ff",
+                "secondary-container": "#9fc2fe",
+                "surface-bright": "#f8f9fa",
+                "on-secondary-fixed-variant": "#1f477b",
+                "on-secondary-container": "#294f83",
+                "inverse-surface": "#2e3132",
+                "surface-container": "#edeeef",
+                "inverse-primary": "#aec7f6",
+                "surface-tint": "#465f88",
+                "on-primary-fixed": "#001b3d"
+              },
+              fontFamily: {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopNavBar from Shared Components -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl shadow-none">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-xl font-black text-blue-900 dark:text-blue-50 font-headline tracking-tight">InvestSovereign</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors font-headline font-bold" href="#">Infraestructura</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors font-headline font-bold" href="#">Manufactura</a>
+<a class="text-blue-900 dark:text-blue-50 border-b-2 border-amber-500 pb-1 font-headline font-bold" href="#">Energía</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors font-headline font-bold" href="#">Agroindustria</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors font-headline font-bold" href="#">Turismo</a>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-sm font-bold text-blue-900 px-3 py-1 hover:bg-slate-200/50 rounded-lg">EN/ES</button>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="Perfil de usuario" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCe4m6taVSJ1UwyV4XhnKqLEqtQclf-zzoLSEvHN6PFkEhGaooy0EitqcwdzzhRoDiUGBcIf8v-evivWecfzMjZQHBuVAIaOShksJncjsCqHd4XHiBvy1BLtMGHVVRGXjdy83F5PJFfR7IhL9SNMETs00mFr7cePFKpQPocYtjDdhQR9fIMk4W2aD693V3B5pDgJ9xtcqEaHNDFiNdLk2_9q50NPV0mvSYxk-q7wgswpRyPSPKyWcoZ2Eo1i_UD3YFnwK7jZiYMUyfE"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative h-[870px] flex items-center overflow-hidden bg-primary pt-16">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-60" data-alt="Majestic wind turbines on lush green rolling hills under a soft golden sunset sky with cinematic lighting and deep contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV64BrOuCWLhdYLbLInodB5Rp2qXJ8Rbc9fgJWQbl4_0INUE_i7PZOCNBUubyrfVlfkpofQKoDIO43dN-CqPzOJTeD2Cyh5I1q46QiKBzsDeqnOuPCeVVszBocF1bNAbM0_iGf1rq6XkrnYBypLuaCocaOpumetxutAFPIlK-UdPOrQv0-jkGAVhXrDXH7Xwmkzj9v19rwM502E3z0vJ9wCvloSupVBNL5lusoEjfKHZI1UUxovkbp-nes9JV81nrZI2nrdS88ivN7"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<span class="label-md uppercase tracking-[0.2em] text-tertiary-fixed-dim font-semibold mb-4 block">Análisis Profundo de Energía</span>
+<h1 class="text-6xl md:text-8xl font-headline font-extrabold text-on-primary tracking-tighter leading-tight mb-8">
+                El Poder de la <br/> <span class="text-tertiary-fixed">Riqueza Soberana.</span>
+</h1>
+<p class="text-xl text-on-primary-container font-medium max-w-xl leading-relaxed mb-10">
+                Arquitectando un futuro sostenible a través de despliegues masivos a escala de servicios públicos y marcos legales sólidos.
+            </p>
+<div class="flex space-x-6">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-4 rounded-md font-bold tracking-wide shadow-xl hover:scale-95 transition-transform">
+                    Explorar Oportunidades
+                </button>
+<button class="bg-surface-container-lowest/10 backdrop-blur-md border border-white/20 text-on-primary px-8 py-4 rounded-md font-bold hover:bg-white/20 transition-all">
+                    Descargar Prospecto
+                </button>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-screen-2xl mx-auto px-8 -mt-24 relative z-20 pb-20">
+<!-- Metrics Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-24">
+<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-xl shadow-sm flex flex-col justify-between min-h-[320px]">
+<div>
+<h3 class="text-label-md font-bold tracking-widest text-outline uppercase mb-2">Capacidad Total</h3>
+<p class="text-5xl font-headline font-extrabold text-primary">14.2 GW</p>
+</div>
+<div class="mt-8 pt-8 border-t border-surface-container">
+<div class="flex justify-between items-end">
+<div class="space-y-1">
+<span class="text-sm text-outline">Crecimiento vs 2023</span>
+<div class="flex items-center text-tertiary-container font-bold">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>
+                            +22.4%
+                        </div>
+</div>
+<div class="h-16 w-32 flex items-end space-x-1">
+<div class="bg-secondary-container w-full h-[30%]"></div>
+<div class="bg-secondary-container w-full h-[45%]"></div>
+<div class="bg-secondary-container w-full h-[40%]"></div>
+<div class="bg-secondary-container w-full h-[65%]"></div>
+<div class="bg-tertiary-fixed-dim w-full h-[85%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm flex flex-col justify-center text-center">
+<h3 class="text-label-md font-bold tracking-widest text-outline uppercase mb-4">Meta 2030</h3>
+<p class="text-6xl font-headline font-extrabold text-primary">85%</p>
+<p class="text-sm text-outline mt-2">Mix de Renovables</p>
+<div class="w-full bg-surface-container-high h-2 rounded-full mt-8 overflow-hidden">
+<div class="bg-tertiary-fixed-dim h-full w-[62%]"></div>
+</div>
+</div>
+<div class="bg-primary text-on-primary p-10 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="text-label-md font-bold tracking-widest text-on-primary-container uppercase mb-2">Inversión Extranjera Directa</h3>
+<p class="text-4xl font-headline font-extrabold">$4.8B</p>
+</div>
+<div class="mt-4">
+<button class="text-tertiary-fixed-dim font-bold flex items-center group">
+                    Ver Inversores <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- The Clean Energy Mandate -->
+<section class="mb-32">
+<div class="flex flex-col md:flex-row gap-16 items-center">
+<div class="w-full md:w-1/2">
+<span class="text-tertiary-container font-bold tracking-[0.15em] uppercase text-sm mb-4 block">Estabilidad y Política</span>
+<h2 class="text-5xl font-headline font-extrabold text-primary leading-tight mb-8">El Mandato de Energía Limpia</h2>
+<div class="space-y-8">
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary" data-weight="fill">gavel</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Marco Legal</h4>
+<p class="text-on-surface-variant leading-relaxed">Protección integral para contratos de compra de energía (PPA) a largo plazo con garantías soberanas e incentivos fiscales para la transferencia tecnológica.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary" data-weight="fill">grid_view</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Estabilidad de la Red</h4>
+<p class="text-on-surface-variant leading-relaxed">Modernización de la infraestructura enfocada en redes inteligentes y líneas de transmisión HVDC para minimizar pérdidas a través de fronteras regionales.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary" data-weight="fill">diamond</span>
+</div>
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Riqueza de Recursos</h4>
+<p class="text-on-surface-variant leading-relaxed">Aprovechando ventajas geográficas privilegiadas: desde llanuras solares de alta irradiación hasta corredores eólicos costeros constantes.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/2 relative">
+<div class="aspect-square rounded-2xl overflow-hidden shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="High-tech solar farm with rows of blue panels reflecting a clear blue sky, emphasizing modern engineering and precision" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpRGx85-3FgeRtwEKsgDjuDJyBF6N8_7H9qyNq1xN2kyI8xlE-7VJCnUG_IvpRNKkOSxzwPcgwP6Je8aUyYhtYtmkBusSiepxXNS8kSLuANYio3iK-W5kJkKeniGd5nEvOFZ6AjkGOdootTEeWxX4ELKiA-VF1G5GWwFrdWuQe2xNvLeQejreWnSZfAiuLpMGaGvKUwJFefGxdKNjtOvXDSLCWNF032bhripG6wtUR25NgegFxZ_n2e699cON1Mi3owPtmJMkR089q"/>
+</div>
+<div class="absolute -bottom-8 -left-8 bg-tertiary text-on-tertiary p-8 rounded-xl max-w-xs shadow-xl">
+<p class="text-sm font-label uppercase tracking-widest mb-2 opacity-70">Ventaja Estratégica</p>
+<p class="text-lg font-headline font-bold">Acceso a la red garantizado para todos los proyectos de nivel 1 bajo la Ley 2024.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Diversified Portfolio -->
+<section class="mb-32">
+<h2 class="text-4xl font-headline font-extrabold text-primary mb-12 text-center">Portafolio de Energía Diversificado</h2>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="group relative h-[450px] overflow-hidden rounded-xl">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Massive hydroelectric dam with cascading water and misty surroundings, showcasing heavy industrial power generation" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdqLPrLee03fd9UID72n6TVs9DL9l3-bJZE8Ne5IG8q1M1GVxpFb5fo4fh_I274MU7U9jG5V2u5CMuhVzNoW0LXBgJw_p6LwiGP54bh2OLGaSMVWVgtofURfOKaXS02Da8MBI9JYH07VgCGMBv5bB9sCt7TO-QBjHkIgTkiEAiRXmIFY8kvPnkSM6uS8XDtMKGr-81FGYp6c-7VKM5TorFi2ZIVEPjsWoWoBnSGUg456mciZu8LpJqN-4K5PlxOd-O1gItNFO0bbBJ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<h4 class="text-2xl font-headline font-bold text-on-primary mb-2">Hidroeléctrica</h4>
+<p class="text-on-primary-container text-sm opacity-0 group-hover:opacity-100 transition-opacity">Estabilidad de carga base con 6.2 GW de capacidad activa en 4 cuencas fluviales.</p>
+</div>
+</div>
+<div class="group relative h-[450px] overflow-hidden rounded-xl">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Offshore wind farm in calm blue waters with elegant turbines stretching into the horizon under soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC7FWQGGpKjCzB1chl683rdWTlPo9GyAlB8WY-8szTnBLer500SSzIpDRDws9AuZ8MUo3Mfb1Jca48jFpHuSIKy9tOTA6AYTMcMbDne3U3Sz9rhkfPCdYPfEG532kR62cXuJ6_pI7HJy9hHRM03hkxauwexIIcVI123v9fXcOAhYBOnLpDwmtB2enpQjzhm6Cc5Nk7VqjHko0Yu1PIrv-iu0XNGiMKbscnY0_P3rtBPJw6CfC5UqY9cMNTadPjdS-QAA1Nkv3lhb2Y"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<h4 class="text-2xl font-headline font-bold text-on-primary mb-2">Eólica</h4>
+<p class="text-on-primary-container text-sm opacity-0 group-hover:opacity-100 transition-opacity">Rápida expansión en zonas costeras con velocidades medias de 9.2m/s.</p>
+</div>
+</div>
+<div class="group relative h-[450px] overflow-hidden rounded-xl">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Array of solar panels in a desert landscape at midday with vibrant sun flares and clean perspective lines" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnyh1xhKi-fGMmbYqaXRPdVxlPSIqmLPWDexjUk7dZuUg4RvdCcIZlLhlfuuBq6W8fQRDFt4FbDvANsFtnvFq6SsJmOgAeCqAlXHUONUOdPA2ji2bjrPx6kEw-ilzQlDt0q-Tf9jdk5YJX6pTDfsISvSkwa0DiKuvvRupVh1GeEwGNLu9YbH6u-7QFrwchlKccQ74RLrQEjlAvIhHxOWEdFytQvbZSlzSa09B48RDONdFOfE3fDS-bDsvtN-EL-jtRPzdvV3GzVIOP"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<h4 class="text-2xl font-headline font-bold text-on-primary mb-2">Solar</h4>
+<p class="text-on-primary-container text-sm opacity-0 group-hover:opacity-100 transition-opacity">Clústeres fotovoltaicos a escala industrial en las llanuras áridas del sur.</p>
+</div>
+</div>
+<div class="group relative h-[450px] overflow-hidden rounded-xl">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Biomass energy plant processing wood chips with steam rising against a twilight sky, professional industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa4vzfM0dcfqTqrz-xuNxuCiW1ePIs7hDr-wfVqbfGx-Yy828dMBHswh94_mGlrOsWxr6UGJxfP_jEqivv2bbtEKQzGYVp3gM5BAHo2y_zW39WivxkcPRAaDIeycRhs7tpzOPyalPt6AzpPJOX2XWqoIdzw-uax6v3pWnXVvKG41a9tZ0jevHccz6ELvxHcBjyysIgcM8Rw3hdgPQBsfpNfFDG1rtFYLcxsMK14Ry4FzSzY1IpF9mxKf41Q4d3G0RAxF_71CQpB1Vc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 p-8">
+<h4 class="text-2xl font-headline font-bold text-on-primary mb-2">Biomasa</h4>
+<p class="text-on-primary-container text-sm opacity-0 group-hover:opacity-100 transition-opacity">Conversión de residuos agrícolas en carga térmica y eléctrica.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Active Opportunities -->
+<section class="bg-surface-container-high rounded-3xl p-12 md:p-20 relative overflow-hidden">
+<div class="relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-headline font-extrabold text-primary mb-4">Oportunidades Activas</h2>
+<p class="text-on-surface-variant text-lg">Canal directo para capital institucional y desarrolladores de energía.</p>
+</div>
+<button class="bg-primary text-on-primary px-10 py-4 rounded-md font-bold flex items-center">
+                    Contactar Secretaría <span class="material-symbols-outlined ml-2">mail</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Project Card -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant/20 hover:shadow-xl transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">Emisión de Bonos</span>
+<span class="text-secondary font-bold text-sm">Serie G</span>
+</div>
+<h5 class="text-xl font-headline font-bold text-primary mb-4">Bono Verde Soberano 2024</h5>
+<p class="text-on-surface-variant text-sm mb-8">Destinado a la expansión del almacenamiento en la red nacional. Meta: $850M. Rendimiento: 5.4%.</p>
+<div class="pt-6 border-t border-surface-container flex justify-between items-center">
+<span class="text-xs font-bold text-outline uppercase tracking-wider">Vencimiento 2034</span>
+<span class="material-symbols-outlined text-primary">arrow_outward</span>
+</div>
+</div>
+<!-- Project Card -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant/20 hover:shadow-xl transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-secondary-fixed text-on-secondary-fixed-variant px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">Licitación</span>
+<span class="text-secondary font-bold text-sm">Abierta</span>
+</div>
+<h5 class="text-xl font-headline font-bold text-primary mb-4">Eólica Marina Azure Peaks</h5>
+<p class="text-on-surface-variant text-sm mb-8">Licencias para 1.2 GW de capacidad frente a la costa norte. Datos del sitio disponibles.</p>
+<div class="pt-6 border-t border-surface-container flex justify-between items-center">
+<span class="text-xs font-bold text-outline uppercase tracking-wider">Fecha límite: 15 Oct</span>
+<span class="material-symbols-outlined text-primary">arrow_outward</span>
+</div>
+</div>
+<!-- Project Card -->
+<div class="bg-surface-container-lowest p-8 rounded-2xl shadow-sm border border-outline-variant/20 hover:shadow-xl transition-shadow">
+<div class="flex justify-between items-start mb-6">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded text-xs font-bold uppercase tracking-widest">APP</span>
+<span class="text-secondary font-bold text-sm">Nuevo</span>
+</div>
+<h5 class="text-xl font-headline font-bold text-primary mb-4">Hub de Hidrógeno del Distrito</h5>
+<p class="text-on-surface-variant text-sm mb-8">Asociación Público-Privada para instalación de electrolizadores de hidrógeno verde.</p>
+<div class="pt-6 border-t border-surface-container flex justify-between items-center">
+<span class="text-xs font-bold text-outline uppercase tracking-wider">Inversión: $1.2B</span>
+<span class="material-symbols-outlined text-primary">arrow_outward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Abstract background shape -->
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl"></div>
+</section>
+</main>
+<!-- Footer from Shared Components -->
+<footer class="bg-blue-950 dark:bg-black w-full mt-20 tonal-depth via bg-blue-900">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-12 py-16 max-w-screen-2xl mx-auto border-t border-blue-900/30">
+<div>
+<div class="text-lg font-bold text-white mb-6">InvestSovereign</div>
+<p class="text-slate-300 font-inter text-sm tracking-wide max-w-sm">
+                © 2024 Portal de Gobierno de Arquitecto Soberano. Todos los derechos reservados.
+            </p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col space-y-4">
+<a class="text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4 font-inter text-sm tracking-wide" href="#">Política de Privacidad</a>
+<a class="text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4 font-inter text-sm tracking-wide" href="#">Términos de Servicio</a>
+<a class="text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4 font-inter text-sm tracking-wide" href="#">Mapa de Inversión</a>
+</div>
+<div class="flex flex-col space-y-4">
+<a class="text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4 font-inter text-sm tracking-wide" href="#">Contactar Secretaría</a>
+<a class="text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4 font-inter text-sm tracking-wide" href="#">Transparencia de Datos</a>
+</div>
+</div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-12 pb-8">
+<div class="text-amber-400 font-semibold text-sm">Estado: Operacional</div>
+</div>
+</footer>
+</body></html>

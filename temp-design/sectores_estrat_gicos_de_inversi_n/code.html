@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-surface": "#191c1d",
+                        "tertiary-container": "#2e1f00",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#aec7f6",
+                        "primary-container": "#002147",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary-fixed-dim": "#a7c8ff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#1f477b",
+                        "on-secondary-container": "#294f83",
+                        "inverse-surface": "#2e3132",
+                        "surface-bright": "#f8f9fa",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed": "#d5e3ff",
+                        "secondary-container": "#9fc2fe",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-surface-variant": "#44474e",
+                        "surface-container": "#edeeef",
+                        "surface-tint": "#465f88",
+                        "inverse-primary": "#aec7f6",
+                        "on-primary-fixed": "#001b3d",
+                        "primary-fixed": "#d6e3ff",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-fixed": "#001b3c",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "outline": "#74777f",
+                        "tertiary": "#110a00",
+                        "on-background": "#191c1d",
+                        "surface": "#f8f9fa",
+                        "tertiary-fixed": "#ffdea5",
+                        "on-primary-container": "#708ab5",
+                        "secondary": "#3a5f94",
+                        "primary": "#000a1e",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#261900",
+                        "on-tertiary-container": "#a68440",
+                        "inverse-on-surface": "#f0f1f2",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e1e3e4",
+                        "outline-variant": "#c4c6cf",
+                        "background": "#f8f9fa",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+        .glass-dark {
+            background: rgba(0, 33, 71, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-primary-container/80 dark:bg-slate-950/80 backdrop-blur-xl flex justify-between items-center px-8 py-4 max-w-full shadow-2xl shadow-primary/10">
+<div class="flex items-center gap-8">
+<span class="text-xl font-extrabold tracking-tighter text-white dark:text-blue-100 font-headline">Sovereign Portal</span>
+<div class="hidden md:flex gap-6">
+<a class="text-on-primary-container/70 hover:text-white transition-colors font-body font-medium" href="#">Dashboard</a>
+<a class="text-tertiary-fixed-dim font-bold border-b-2 border-tertiary-fixed-dim pb-1 font-body" href="#">Sectores</a>
+<a class="text-on-primary-container/70 hover:text-white transition-colors font-body font-medium" href="#">Inversiones</a>
+<a class="text-on-primary-container/70 hover:text-white transition-colors font-body font-medium" href="#">Análisis</a>
+<a class="text-on-primary-container/70 hover:text-white transition-colors font-body font-medium" href="#">Recursos</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-5 py-2 rounded-md bg-surface-container-highest text-on-surface hover:bg-white/10 transition-all font-label text-xs uppercase tracking-widest font-bold">Contacto</button>
+<button class="px-5 py-2 rounded-md bg-gradient-to-br from-primary to-primary-container text-white hover:scale-105 active:scale-95 transition-all font-label text-xs uppercase tracking-widest font-bold shadow-lg shadow-primary/20">Consultar</button>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Strategic Sectors Hero -->
+<section class="relative h-[716px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="" class="w-full h-full object-cover" data-alt="Cinematic wide shot of modern industrial infrastructure and lush agricultural landscape in Honduras under a clear blue sky" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkhGbKl8Lz7IlbOD3CCQNNw7PIii4skuAOK5RQs4CG9eZvct26UCGdfj9t-CZKKM4XilJWv1G2ipBQw0jHUn8F-fIL5gFwWYKjBlTHSnq1ZEec8HstOuCoSRg6FVR0HhcJ9D7AzmVFMbjFZi1-Z69Kg7NoqC3crywxEHSTOKQeY0GfWp7bnzJ5iPwCCHUo3FIjbUG3WD1ImAc6ZOJJ9luz1VlnxAYQe5HbpdJ6MrzjoV3b0zpjCRNFqKlhlP7K5em02xaA3ntMzPPj"/>
+<div class="absolute inset-0 hero-gradient opacity-80"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-8">
+<span class="inline-block mb-4 px-3 py-1 bg-tertiary-container text-tertiary-fixed-dim font-label text-xs tracking-widest uppercase font-bold rounded-sm">Marco Nacional de Inversión</span>
+<h1 class="text-white font-headline text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6">
+                        Sectores <span class="text-tertiary-fixed-dim">Estratégicos</span> de Inversión
+                    </h1>
+<p class="text-on-primary-container text-xl md:text-2xl max-w-2xl font-medium leading-relaxed opacity-90">
+                        Aprovechando la ventaja geográfica única de Honduras y un marco económico estable para ofrecer oportunidades de alto rendimiento en diversas industrias globales.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Sector Navigation Tabs -->
+<section class="sticky top-[72px] z-40 glass-panel border-b border-outline-variant/10">
+<div class="container mx-auto px-8">
+<div class="flex overflow-x-auto no-scrollbar py-6 gap-12">
+<button class="flex items-center gap-3 text-primary font-headline font-bold whitespace-nowrap group">
+<span class="w-8 h-[2px] bg-tertiary-fixed-dim group-hover:w-12 transition-all"></span>
+                        Agronegocios
+                    </button>
+<button class="flex items-center gap-3 text-on-surface-variant/60 hover:text-primary transition-colors font-headline font-bold whitespace-nowrap">Turismo</button>
+<button class="flex items-center gap-3 text-on-surface-variant/60 hover:text-primary transition-colors font-headline font-bold whitespace-nowrap">Energía</button>
+<button class="flex items-center gap-3 text-on-surface-variant/60 hover:text-primary transition-colors font-headline font-bold whitespace-nowrap">Manufactura</button>
+<button class="flex items-center gap-3 text-on-surface-variant/60 hover:text-primary transition-colors font-headline font-bold whitespace-nowrap">Logística</button>
+</div>
+</div>
+</section>
+<!-- Detailed Sector Breakdown: Agribusiness -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+<!-- Text Content -->
+<div class="lg:col-span-7 space-y-12">
+<div>
+<h2 class="font-headline text-4xl font-extrabold text-primary mb-6">Excelencia en Agronegocios</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-3xl">
+                                Con 2.5 millones de hectáreas de tierra cultivable y 12 microclimas distintos, Honduras es el destino principal para exportaciones agrícolas de alto valor en Centroamérica.
+                            </p>
+</div>
+<!-- Core Assets -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="p-8 bg-surface-container-low rounded-xl group hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-primary mb-4 text-3xl" data-icon="landscape" data-weight="fill" style="font-variation-settings: 'FILL' 1;">landscape</span>
+<h3 class="font-headline font-bold text-xl mb-2">Suelos Volcánicos Fértiles</h3>
+<p class="text-on-surface-variant text-sm">Alta densidad de nutrientes que proporciona condiciones óptimas para la producción de café y frutas premium.</p>
+</div>
+<div class="p-8 bg-surface-container-low rounded-xl group hover:bg-surface transition-all">
+<span class="material-symbols-outlined text-primary mb-4 text-3xl" data-icon="thermometer" data-weight="fill" style="font-variation-settings: 'FILL' 1;">thermometer</span>
+<h3 class="font-headline font-bold text-xl mb-2">Ciclos de Cosecha Perennes</h3>
+<p class="text-on-surface-variant text-sm">Climas tropicales que permiten múltiples ventanas de cosecha durante todo el año calendario.</p>
+</div>
+</div>
+<!-- Investment Opportunities -->
+<div>
+<h4 class="font-label text-xs tracking-widest uppercase font-extrabold text-on-primary-container mb-6">Oportunidades de Alto Potencial</h4>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-6 border-l-4 border-tertiary-fixed-dim bg-surface rounded-r-xl">
+<div>
+<p class="font-headline font-bold text-lg text-primary">Sistemas de Agritecnología de Precisión</p>
+<p class="text-sm text-on-surface-variant">Riego sostenible y monitoreo con drones para plantaciones de café a gran escala.</p>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="arrow_forward">arrow_forward</span>
+</div>
+<div class="flex items-center justify-between p-6 border-l-4 border-primary bg-surface rounded-r-xl">
+<div>
+<p class="font-headline font-bold text-lg text-primary">Centros de Exportación Especializados</p>
+<p class="text-sm text-on-surface-variant">Logística directa al mercado para pitahaya, aguacate y cacao orgánico.</p>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Side Stats and Visuals -->
+<div class="lg:col-span-5 space-y-8">
+<!-- Sector Performance Card -->
+<div class="bg-primary p-10 rounded-xl text-white shadow-2xl shadow-primary/20 relative overflow-hidden">
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-[200px]" data-icon="trending_up">trending_up</span>
+</div>
+<h4 class="font-label text-xs tracking-widest uppercase font-bold text-tertiary-fixed-dim mb-8">Métricas de Rendimiento</h4>
+<div class="space-y-8 relative z-10">
+<div class="flex justify-between items-end border-b border-white/10 pb-4">
+<span class="font-body opacity-70">Crecimiento Anual</span>
+<span class="font-headline text-3xl font-extrabold text-tertiary-fixed-dim">+12.4%</span>
+</div>
+<div class="flex justify-between items-end border-b border-white/10 pb-4">
+<span class="font-body opacity-70">IED Total del Sector</span>
+<span class="font-headline text-3xl font-extrabold">$1.2B</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="font-body opacity-70">Proyectos Mayores Activos</span>
+<span class="font-headline text-3xl font-extrabold">42</span>
+</div>
+</div>
+</div>
+<!-- Image Collage -->
+<div class="grid grid-cols-2 gap-4">
+<img alt="" class="rounded-xl h-48 w-full object-cover" data-alt="Close-up of premium green coffee beans being sorted by hand in a high-tech Honduran processing facility" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBFBm5GPK4TfgNX_plNkbwiXpu0MBYo9q15oMkEg5e7NKi6QStxPiefF3vr2pWg972wHNFnBiBC1PDPoA2pyd6VrfXiD2z97bnEeIdavgOTBzgcO3u3c2mwwDVYYExcQXoNdCxCDMMOx1WjBi6dNkrSGQBSeOgGiowCHVMorWsXYqcVLC_ywzKaqmOnwAItkTfDxMDwBLDe2zERPT00Cm-KHnmO0pi7ozjkhcTtzf4C4s9NVXye5SW-E2igkd_yOEYeOp-CPgpfJs8"/>
+<img alt="" class="rounded-xl h-48 w-full object-cover" data-alt="Vibrant tropical plantation with rows of banana and pineapple plants under golden tropical sunlight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBElqzwWMpSPxa9YJxsc7hbjcy_CP6NnEPxhPXYCFwE7pnbJCoq4WG_1UZro_PUiZH_T_DlLh-apcriZVVVmLjjBAYGnfkwGjKTE1TctLbWCyKQT0vnC_3j8VBeO-sadQcwHf2mmdbmt5a_Qz2aZOwdH2VJaeh9NnLQA2H1dbXkGDExA9rw9ZUpWgu6KUlw7ZpkH6z_CPUxh7ecsWnsExXsjvLQjTzWKTcHNk6H5Qtrx7yd1zxozrVzYV654AFYmOFDcfSPnjlIuS70"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Comparative Sector Growth -->
+<section class="py-24 bg-surface">
+<div class="container mx-auto px-8">
+<div class="text-center mb-16">
+<h2 class="font-headline text-3xl font-extrabold text-primary mb-4">Crecimiento Sectorial Proyectado (2024-2029)</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Pronóstico de expansión sostenida en todos los pilares de inversión primaria basado en los cambios geopolíticos actuales y la renovación de acuerdos comerciales.</p>
+</div>
+<!-- Modern Chart Visualization (CSS based) -->
+<div class="max-w-5xl mx-auto bg-surface-container-lowest p-12 rounded-2xl">
+<div class="flex flex-col gap-10">
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-label font-bold uppercase text-on-surface-variant">
+<span>Energía y Renovables</span>
+<span>18.5% CAGR</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 85%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-label font-bold uppercase text-on-surface-variant">
+<span>Agronegocios</span>
+<span>12.4% CAGR</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 65%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-label font-bold uppercase text-on-surface-variant">
+<span>Logística y Nearshoring</span>
+<span>15.2% CAGR</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-tertiary-container" style="width: 75%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-sm font-label font-bold uppercase text-on-surface-variant">
+<span>Turismo Premium</span>
+<span>14.1% CAGR</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-outline-variant" style="width: 70%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sector-Specific CTA -->
+<section class="py-24">
+<div class="container mx-auto px-8">
+<div class="relative rounded-3xl overflow-hidden min-h-[400px] flex items-center">
+<img alt="" class="absolute inset-0 w-full h-full object-cover" data-alt="Modern high-end board room with people discussing investment strategies, soft morning light through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvoNJUCEuG19jqoBORoybCA1lu-bMLDDz1nzZixVfO60YYAuGq5AvD2vdDef9sdsbnDiRHXYsSTCH99ztUPTFhn-5mtgwH6sul1ABO49OyjSEzhMr7iEWrtEcFM0jH8LFyLvApylo6rBwc2CrYaub74piN0lcmkw7njN4u5ZGie7fmGL6aV3nmeSErieJTH3bwgEnKYmoVnVXrQ0w8uEa32pGXQwAxw6Odl3BPnV_1-Qx8cY0HsH55WAWupTEEpVWFU4IeXEmQZYGt"/>
+<div class="absolute inset-0 bg-primary/80 backdrop-blur-sm"></div>
+<div class="relative z-10 p-12 md:p-20 text-center mx-auto max-w-4xl">
+<h2 class="text-white font-headline text-4xl font-extrabold mb-6">Asesoría Especializada para Capital Institucional</h2>
+<p class="text-on-primary-container text-xl mb-10 leading-relaxed">
+                            Nuestros especialistas sectoriales brindan inteligencia de mercado profunda y apoyo logístico para optimizar su entrada o expansión en el mercado hondureño.
+                        </p>
+<div class="flex flex-col md:flex-row gap-4 justify-center">
+<button class="bg-tertiary-fixed-dim text-on-tertiary-fixed font-headline font-bold px-10 py-4 rounded-md hover:scale-105 transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                                Descargar Prospecto del Sector
+                            </button>
+<button class="bg-white/10 text-white font-headline font-bold px-10 py-4 rounded-md backdrop-blur-md border border-white/20 hover:bg-white/20 transition-all">
+                                Conectar con un Experto
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-slate-950 flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full border-t border-white/5 font-body">
+<div class="flex flex-col gap-4 mb-8 md:mb-0">
+<span class="text-lg font-bold text-white font-headline">Sovereign Portal</span>
+<p class="text-slate-400 text-sm max-w-xs">© 2024 Gobierno de Sovereign Architect. Todos los derechos reservados.</p>
+</div>
+<div class="flex flex-wrap gap-8 justify-center md:justify-end">
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-label tight uppercase tracking-tighter" href="#">Política de Privacidad</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-label tight uppercase tracking-tighter" href="#">Términos de Servicio</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-label tight uppercase tracking-tighter" href="#">Cumplimiento</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-label tight uppercase tracking-tighter" href="#">Oficinas Globales</a>
+</div>
+<div class="mt-8 md:mt-0">
+<span class="text-tertiary dark:text-yellow-500 font-bold">Sede: Tegucigalpa, Honduras</span>
+</div>
+</footer>
+</body></html>

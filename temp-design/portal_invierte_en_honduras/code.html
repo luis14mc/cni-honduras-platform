@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d9dadb",
+              "primary": "#000a1e",
+              "outline": "#74777f",
+              "on-tertiary": "#ffffff",
+              "tertiary": "#110a00",
+              "inverse-surface": "#2e3132",
+              "on-background": "#191c1d",
+              "surface-container": "#edeeef",
+              "inverse-primary": "#aec7f6",
+              "on-tertiary-container": "#a68440",
+              "primary-container": "#002147",
+              "surface-container-high": "#e7e8e9",
+              "outline-variant": "#c4c6cf",
+              "on-tertiary-fixed": "#261900",
+              "primary-fixed": "#d6e3ff",
+              "primary-fixed-dim": "#aec7f6",
+              "surface-tint": "#465f88",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "background": "#f8f9fa",
+              "tertiary-fixed": "#ffdea5",
+              "on-surface": "#191c1d",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#294f83",
+              "surface-container-highest": "#e1e3e4",
+              "secondary-fixed-dim": "#a7c8ff",
+              "secondary": "#3a5f94",
+              "surface-container-low": "#f3f4f5",
+              "error": "#ba1a1a",
+              "on-primary-container": "#708ab5",
+              "surface-bright": "#f8f9fa",
+              "tertiary-container": "#2e1f00",
+              "on-primary-fixed": "#001b3d",
+              "on-primary": "#ffffff",
+              "on-surface-variant": "#44474e",
+              "inverse-on-surface": "#f0f1f2",
+              "tertiary-fixed-dim": "#e9c176",
+              "surface": "#f8f9fa",
+              "secondary-fixed": "#d5e3ff",
+              "on-error": "#ffffff",
+              "on-secondary-fixed-variant": "#1f477b",
+              "on-secondary-fixed": "#001b3c",
+              "error-container": "#ffdad6",
+              "on-primary-fixed-variant": "#2d476f",
+              "on-tertiary-fixed-variant": "#5d4201",
+              "surface-variant": "#e1e3e4",
+              "secondary-container": "#9fc2fe"
+            },
+            fontFamily: {
+              "headline": ["Manrope", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopNavBar Component -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-sm">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-xl font-extrabold tracking-tighter text-blue-950">INVIERTE EN HONDURAS</div>
+<div class="hidden lg:flex items-center space-x-10">
+<a class="text-slate-600 hover:text-blue-900 transition-colors font-medium text-sm tracking-widest uppercase" href="#">Sectores</a>
+<a class="text-slate-600 hover:text-blue-900 transition-colors font-medium text-sm tracking-widest uppercase" href="#">Regiones</a>
+<a class="text-slate-600 hover:text-blue-900 transition-colors font-medium text-sm tracking-widest uppercase" href="#">Marco Legal</a>
+<a class="text-slate-600 hover:text-blue-900 transition-colors font-medium text-sm tracking-widest uppercase" href="#">Incentivos</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-slate-600 hover:text-blue-900 transition-colors text-sm font-bold tracking-widest">ES/EN</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-md text-xs font-bold tracking-widest uppercase hover:scale-95 duration-200 transition-all">Conecta con nosotros</button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[870px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Infraestructura portuaria moderna en Honduras" class="w-full h-full object-cover" data-alt="Puerto de aguas profundas moderno con grúas grandes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAy0HbvfAf9OxyMn68_bFxPJ0MrcJx5ecQ7F35BHr9aNRhtKS23c58onO_EIRnOU1rKpIJVswALfpQ7HdP_jocQGcLg8Y7-CRCNvwGpN93grhR4bPtXCYGqP8kw02THur4DrQtzeAev3ACEbZnRnmr0lBpwoKJkoGVUgDdLfOj7FY9Omwr7Ei-Glbxo7iUaLL1XS5RrZJWZBolcIpkkIyXv2kA0esd2cqbRRnErB4lot2ZfjfMVLK8vsNRArJcRlnmgJMDGVzI9823"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<span class="inline-block px-4 py-1.5 bg-tertiary-container/30 backdrop-blur-md text-tertiary-fixed-dim text-[0.7rem] font-bold tracking-[0.2em] uppercase rounded-full mb-6 border border-tertiary-fixed-dim/20">Centro Estratégico de las Américas</span>
+<h1 class="text-7xl font-extrabold text-white leading-none tracking-tighter mb-8">Invierta en <br/><span class="text-tertiary-fixed-dim">Honduras</span></h1>
+<p class="text-lg text-white/80 font-body mb-10 max-w-xl leading-relaxed">La puerta de entrada a los mercados globales. Explore un panorama de crecimiento sin precedentes, estabilidad legal y proyectos de infraestructura estratégicos diseñados para los principales inversores del mundo.</p>
+<div class="flex gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-4 rounded-md font-bold tracking-wide hover:opacity-90 transition-all flex items-center gap-3 group">
+                            Explorar Oportunidades
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 py-4 rounded-md font-bold tracking-wide hover:bg-white/20 transition-all">
+                            Guía de Inversión
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Regional Map Section -->
+<section class="py-32 bg-surface">
+<div class="max-w-screen-2xl mx-auto px-8 grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-7 relative">
+<div class="aspect-square bg-surface-container-low rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] opacity-40 blur-3xl"></div>
+<div class="relative">
+<!-- Simplified Vector Map Placeholder -->
+<img alt="Mapa de Centroamérica" class="w-full h-auto rounded-xl grayscale opacity-90 shadow-2xl" data-alt="Mapa topográfico estilizado de las regiones de Honduras" data-location="Honduras" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6LIaXLMXPHukDPkTbCzX0iiHa_VA776AMwjIpVN04OuCYcV3TSd6X3rT_j8FX6wKuUfS5oM71gPVxzs4ZE9sGy7RaV6XaOEGkRsFnZ722L7GXPOIqy0oh2FX6ZYcY7B9LhGJKKsAYD4-hUN3tjC9pLccB1d5zSP2ws21tX2wj9N5fnbqAtgdg6yHKjUcuFKByXOiPXDjSeG0X75BARXOmPm65O2H5g-hVQRbdjB9n8K5ZBz0nm3cdB4xrDgaWWCzZ32K2eDudjfs8"/>
+<!-- Pulse markers -->
+<div class="absolute top-1/3 left-1/2 w-4 h-4 bg-tertiary-fixed-dim rounded-full animate-ping"></div>
+<div class="absolute bottom-1/4 right-1/3 w-4 h-4 bg-tertiary-fixed-dim rounded-full animate-pulse"></div>
+</div>
+</div>
+<div class="lg:col-span-5 space-y-8">
+<div class="space-y-4">
+<h2 class="text-4xl font-extrabold text-primary tracking-tight leading-tight">Riqueza Territorial <br/>&amp; Estrategia</h2>
+<p class="text-on-surface-variant leading-relaxed">Honduras está dividida en zonas estratégicas adaptadas a industrias específicas. Desde los parques industriales de alta tecnología de San Pedro Sula hasta el centro logístico de Comayagua.</p>
+</div>
+<!-- Regional Glassmorphism Card -->
+<div class="bg-surface-container-lowest/70 backdrop-blur-2xl p-8 rounded-xl border border-white/50 shadow-2xl shadow-primary/5">
+<div class="flex items-center gap-4 mb-6">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">distance</span>
+</div>
+<div>
+<h3 class="font-bold text-primary">Región de Cortés</h3>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest">Potencia Industrial</p>
+</div>
+</div>
+<div class="space-y-6">
+<div class="flex justify-between items-end border-b border-outline-variant/30 pb-4">
+<span class="text-sm font-medium text-on-surface-variant">Proyectos Activos</span>
+<span class="text-2xl font-extrabold text-primary">142</span>
+</div>
+<div class="flex justify-between items-end border-b border-outline-variant/30 pb-4">
+<span class="text-sm font-medium text-on-surface-variant">Flujo IED (2023)</span>
+<span class="text-2xl font-extrabold text-primary">$1.2B</span>
+</div>
+<div class="flex justify-between items-end">
+<span class="text-sm font-medium text-on-surface-variant">Índice de Crecimiento</span>
+<span class="text-lg font-bold text-tertiary-fixed-dim flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                    +8.4%
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Investment Sectors Grid -->
+<section class="py-32 bg-surface-container-low">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="max-w-xl">
+<h2 class="text-4xl font-extrabold text-primary tracking-tight mb-4">Sectores Estratégicos de Inversión</h2>
+<p class="text-on-surface-variant">Desbloquee el potencial en una de las economías más diversas y resilientes de América Latina.</p>
+</div>
+<button class="text-primary font-bold border-b-2 border-tertiary-fixed-dim pb-1 hover:text-tertiary-fixed-dim transition-colors">Ver Todas las Oportunidades</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Agribusiness -->
+<div class="group bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-surface-container-low rounded-bl-full opacity-50 -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-8" data-icon="agriculture">agriculture</span>
+<h3 class="text-2xl font-bold text-primary mb-4">Agroindustria</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-8">Aprovechando climas tropicales y tierras fértiles para cultivos de exportación de alto valor y tecnologías agrícolas sostenibles.</p>
+<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all" href="#">
+                            Saber más <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Tourism -->
+<div class="group bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-surface-container-low rounded-bl-full opacity-50 -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-8" data-icon="beach_access">beach_access</span>
+<h3 class="text-2xl font-bold text-primary mb-4">Turismo</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-8">Desde los arrecifes de coral de las Islas de la Bahía hasta las ruinas mayas, ofrecemos oportunidades premium en eco-lujo y hospitalidad.</p>
+<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all" href="#">
+                            Saber más <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<!-- Energy -->
+<div class="group bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-surface-container-low rounded-bl-full opacity-50 -mr-8 -mt-8 group-hover:scale-110 transition-transform"></div>
+<span class="material-symbols-outlined text-4xl text-primary mb-8" data-icon="bolt">bolt</span>
+<h3 class="text-2xl font-bold text-primary mb-4">Energía</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed mb-8">La transición hacia energías 100% renovables crea importantes aperturas en producción solar, eólica e hidrógeno verde.</p>
+<a class="text-primary font-bold text-xs uppercase tracking-widest flex items-center gap-2 group-hover:gap-4 transition-all" href="#">
+                            Saber más <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / CTA section -->
+<section class="py-24 bg-primary text-white overflow-hidden relative">
+<div class="absolute right-0 top-0 w-1/2 h-full bg-primary-container opacity-40 -skew-x-12 translate-x-20"></div>
+<div class="max-w-screen-2xl mx-auto px-8 relative z-10">
+<div class="max-w-2xl">
+<h2 class="text-4xl font-extrabold mb-6">Manténgase a la vanguardia</h2>
+<p class="text-primary-fixed mb-10 text-lg">Suscríbase a nuestras perspectivas de inversión trimestrales y actualizaciones de políticas.</p>
+<div class="flex flex-col sm:flex-row gap-4">
+<input class="bg-white/10 border border-white/20 px-6 py-4 rounded-md flex-grow focus:ring-2 focus:ring-tertiary-fixed-dim focus:outline-none placeholder:text-white/40" placeholder="Dirección de correo profesional" type="email"/>
+<button class="bg-tertiary-fixed-dim text-tertiary-container font-bold px-10 py-4 rounded-md hover:bg-tertiary-fixed transition-all uppercase tracking-widest text-xs">Unirse a la Red</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Component -->
+<footer class="bg-blue-950 text-white w-full">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-between items-start px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<div class="mb-12 lg:mb-0 space-y-6">
+<div class="text-lg font-bold">INVIERTE EN HONDURAS</div>
+<p class="text-slate-300 text-sm max-w-xs leading-relaxed">Agencia Oficial de Promoción de Inversiones de la República de Honduras. Construyendo una economía resiliente y abierta.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">public</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">share</span>
+</a>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-12 lg:gap-24">
+<div>
+<span class="block text-amber-400 text-xs font-bold tracking-widest uppercase mb-6">Explorar</span>
+<ul class="space-y-4">
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Sectores</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Datos Regionales</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Marco Legal</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Sala de Prensa</a></li>
+</ul>
+</div>
+<div>
+<span class="block text-amber-400 text-xs font-bold tracking-widest uppercase mb-6">Transparencia</span>
+<ul class="space-y-4">
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Términos de Servicio</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Política de Privacidad</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Transparencia Institucional</a></li>
+<li><a class="text-slate-300 hover:text-white transition-colors text-sm" href="#">Contáctenos</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="border-t border-white/10 py-8 px-12">
+<div class="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-400 text-[0.7rem] uppercase tracking-widest">© 2024 Gobierno de Honduras - Agencia de Promoción de Inversiones. Todos los derechos reservados.</p>
+<div class="flex gap-8">
+<span class="text-amber-400 text-[0.7rem] font-bold tracking-widest flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                        SISTEMAS ACTIVOS
+                    </span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

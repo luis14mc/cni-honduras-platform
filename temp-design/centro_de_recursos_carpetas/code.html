@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Repositorio Institucional | Sovereign Capital</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed": "#261900",
+              "on-tertiary-container": "#a68440",
+              "inverse-on-surface": "#f0f1f2",
+              "error": "#ba1a1a",
+              "surface-variant": "#e1e3e4",
+              "outline-variant": "#c4c6cf",
+              "background": "#f8f9fa",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "tertiary-fixed": "#ffdea5",
+              "on-primary-container": "#708ab5",
+              "secondary": "#3a5f94",
+              "primary": "#000a1e",
+              "on-error": "#ffffff",
+              "tertiary-fixed-dim": "#e9c176",
+              "outline": "#74777f",
+              "tertiary": "#110a00",
+              "on-background": "#191c1d",
+              "surface": "#f8f9fa",
+              "primary-fixed": "#d6e3ff",
+              "surface-dim": "#d9dadb",
+              "on-secondary-fixed": "#001b3c",
+              "on-primary-fixed": "#001b3d",
+              "surface-container": "#edeeef",
+              "surface-tint": "#465f88",
+              "inverse-primary": "#aec7f6",
+              "surface-container-highest": "#e1e3e4",
+              "secondary-fixed-dim": "#a7c8ff",
+              "on-primary": "#ffffff",
+              "on-secondary-fixed-variant": "#1f477b",
+              "on-secondary-container": "#294f83",
+              "inverse-surface": "#2e3132",
+              "surface-bright": "#f8f9fa",
+              "surface-container-low": "#f3f4f5",
+              "secondary-fixed": "#d5e3ff",
+              "secondary-container": "#9fc2fe",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#5d4201",
+              "on-surface-variant": "#44474e",
+              "on-primary-fixed-variant": "#2d476f",
+              "on-surface": "#191c1d",
+              "tertiary-container": "#2e1f00",
+              "surface-container-high": "#e7e8e9",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#aec7f6",
+              "primary-container": "#002147",
+              "error-container": "#ffdad6"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      .tonal-depth-layering {
+        box-shadow: 0 4px 30px rgba(0, 10, 30, 0.04);
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex flex-col min-h-screen">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-[#000a1e]/80 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-xl font-bold tracking-tighter text-[#002147] dark:text-white font-headline">
+                Sovereign Capital
+            </div>
+<div class="hidden md:flex items-center space-x-8 font-headline font-semibold tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002147] dark:hover:text-white transition-colors" href="#">Marco</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002147] dark:hover:text-white transition-colors" href="#">Portafolios</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002147] dark:hover:text-white transition-colors" href="#">Prospectos</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-[#002147] dark:hover:text-white transition-colors" href="#">Análisis</a>
+</div>
+<div class="flex items-center space-x-6">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">search</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-md font-headline font-bold text-sm hover:opacity-90 transition-all scale-95 active:opacity-80">
+                    Acceso Seguro
+                </button>
+</div>
+</div>
+</nav>
+<main class="flex-grow pt-20">
+<!-- Hero Section: Centro de Recursos - Vista de Carpetas -->
+<section class="relative h-[450px] flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Arquitectura corporativa" class="w-full h-full object-cover" data-alt="Fachada de cristal arquitectónica moderna de un edificio corporativo de alta gama que refleja un cielo azul claro con ángulos agudos dramáticos" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdeI-WkdY5QFtNnd2a8ZrroFonITqMJnilc4gRMvgabyuUcopeUlv_pL-yv-4hMCgEqjkRVdFIMZcpYADaBnS88_LFD_xK_PChdcFPClk5pIAosEGBBEDdl51dsIpwiiFS2SdOq35GM2yJyvksNL43-_NEUL_uWBAWIh2RKClpecDSMQdYWaMa5BiqK81uZgU_-CAh2jhSj8ujXJ4PLu6Oo6ea2r1oO1Ww4FbjJFmKnrTkgA7iSaq2vY1RBOuBbn-swfzeE9ljdNEG"/>
+<div class="absolute inset-0 bg-gradient-to-tr from-primary via-primary/80 to-transparent"></div>
+</div>
+<div class="relative z-10 w-full max-w-4xl px-6 text-center">
+<h1 class="font-headline text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
+                    Centro de Recursos - Vista de Carpetas
+                </h1>
+<p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+                    Acceda a la documentación de inversión autorizada de Sovereign Capital, marcos legales y portafolios estratégicos a través de nuestro portal seguro.
+                </p>
+<div class="relative max-w-2xl mx-auto group">
+<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-on-primary-container">search</span>
+</div>
+<input class="w-full bg-white/10 backdrop-blur-md border-none text-white placeholder-slate-400 pl-16 pr-6 py-5 rounded-xl focus:ring-2 focus:ring-tertiary-fixed-dim focus:bg-white/20 transition-all outline-none text-lg" placeholder="Buscar marcos, archivos u oportunidades..." type="text"/>
+</div>
+</div>
+</section>
+<!-- Folder Grid Section -->
+<section class="max-w-screen-2xl mx-auto px-8 py-20">
+<div class="flex justify-between items-end mb-12">
+<div>
+<span class="font-label text-xs font-bold uppercase tracking-widest text-secondary mb-2 block">Explorador de Recursos</span>
+<h2 class="font-headline text-3xl font-bold text-primary">Bibliotecas de Documentos</h2>
+</div>
+<div class="flex space-x-2">
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-primary">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">view_list</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Folder Card: Marco Legal -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering hover:translate-y-[-4px] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="text-xs font-bold text-slate-400 font-label">124 ARCHIVOS</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-primary mb-2">Marco Legal</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Instrumentos legales fundamentales y documentación de cumplimiento regulatorio para la supervisión institucional.</p>
+<div class="flex items-center text-secondary font-semibold text-sm">
+<span>Recursos Legales</span>
+<span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Folder Card: Guías de Inversión -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering hover:translate-y-[-4px] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="text-xs font-bold text-slate-400 font-label">86 ARCHIVOS</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-primary mb-2">Guías de Inversión</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Mandatos estratégicos y límites operativos para la asignación de capital en mercados internacionales.</p>
+<div class="flex items-center text-secondary font-semibold text-sm">
+<span>Recursos de Inversión</span>
+<span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Folder Card: Oportunidades Activas -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering border-b-4 border-tertiary-container hover:translate-y-[-4px] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="w-14 h-14 rounded-lg bg-tertiary-container/5 flex items-center justify-center text-tertiary-container group-hover:bg-tertiary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">folder_special</span>
+</div>
+<span class="text-xs font-bold text-on-tertiary-container font-label">NUEVAS ENTRADAS</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-primary mb-2">Oportunidades Activas</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Pipeline curado de oportunidades de inversión en vivo dentro de sectores emergentes de alto crecimiento.</p>
+<div class="flex items-center text-on-tertiary-container font-semibold text-sm">
+<span>Oportunidades de Inversión</span>
+<span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Folder Card: Documentación Institucional -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering hover:translate-y-[-4px] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="text-xs font-bold text-slate-400 font-label">215 ARCHIVOS</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-primary mb-2">Documentación Institucional</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Informes anuales, estructuras de gobernanza y métricas de desempeño organizacional histórico.</p>
+<div class="flex items-center text-secondary font-semibold text-sm">
+<span>Recursos Institucionales</span>
+<span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Folder Card: Portafolios Sectoriales -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering hover:translate-y-[-4px] transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-6">
+<div class="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">folder</span>
+</div>
+<span class="text-xs font-bold text-slate-400 font-label">52 ARCHIVOS</span>
+</div>
+<h3 class="font-headline text-xl font-bold text-primary mb-2">Portafolios Sectoriales</h3>
+<p class="text-slate-500 text-sm leading-relaxed mb-6">Análisis detallado y descripción de participaciones en los sectores de energía, tecnología e infraestructura.</p>
+<div class="flex items-center text-secondary font-semibold text-sm">
+<span>Portafolios de Inversión</span>
+<span class="material-symbols-outlined ml-2 text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Add Folder Placeholder -->
+<div class="group border-2 border-dashed border-outline-variant p-8 rounded-xl flex flex-col items-center justify-center text-center hover:bg-surface-container-low transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-outline mb-4">
+<span class="material-symbols-outlined">add</span>
+</div>
+<span class="font-headline font-bold text-on-surface-variant">Solicitar Acceso al Archivo</span>
+<p class="text-slate-400 text-xs mt-2 px-6">El acceso a carpetas departamentales restringidas requiere autenticación multifactor.</p>
+</div>
+</div>
+</section>
+<!-- Featured Resources List View -->
+<section class="bg-surface-container-low py-20">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-primary text-3xl">history</span>
+<h2 class="font-headline text-2xl font-bold text-primary">Recursos Institucionales Recientes</h2>
+</div>
+<div class="flex items-center bg-surface-container-lowest px-4 py-2 rounded-lg text-sm font-medium text-slate-600">
+<span class="mr-3">Filtrar por:</span>
+<select class="bg-transparent border-none focus:ring-0 text-primary font-bold pr-8 py-0">
+<option>Todas las Carpetas</option>
+<option>Marco Legal</option>
+<option>Guías de Inversión</option>
+</select>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-primary text-white font-label text-[10px] uppercase tracking-[0.15em]">
+<th class="px-8 py-4 font-semibold">Nombre del Recurso</th>
+<th class="px-6 py-4 font-semibold">Categoría</th>
+<th class="px-6 py-4 font-semibold">Clasificación</th>
+<th class="px-6 py-4 font-semibold text-right">Tamaño / Fecha</th>
+<th class="px-8 py-4 font-semibold text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Document Row 1 -->
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-error mr-4">picture_as_pdf</span>
+<div>
+<div class="font-headline font-bold text-primary">Revisión de Desempeño Sovereign 2024 Q3</div>
+<div class="text-xs text-slate-400 font-light mt-0.5">Gestión de Activos y Resumen de Crecimiento</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold">Portafolios</span>
+</td>
+<td class="px-6 py-6">
+<span class="flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1.5" style="font-variation-settings: 'FILL' 1;">lock</span>
+                                            Nivel II Seguro
+                                        </span>
+</td>
+<td class="px-6 py-6 text-right">
+<div class="text-sm font-bold text-primary">4.2 MB</div>
+<div class="text-[10px] text-slate-400 uppercase tracking-tighter">12 oct 2023</div>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="bg-surface-container-highest hover:bg-primary hover:text-white text-primary p-2 rounded transition-all" title="Descargar">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</td>
+</tr>
+<!-- Document Row 2 -->
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-blue-600 mr-4">description</span>
+<div>
+<div class="font-headline font-bold text-primary">Directiva de Cumplimiento Regulatorio Actualizada 14-B</div>
+<div class="text-xs text-slate-400 font-light mt-0.5">Marco de Supervisión Financiera</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold">Legal</span>
+</td>
+<td class="px-6 py-6">
+<span class="flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1.5">public</span>
+                                            Acceso Público
+                                        </span>
+</td>
+<td class="px-6 py-6 text-right">
+<div class="text-sm font-bold text-primary">1.8 MB</div>
+<div class="text-[10px] text-slate-400 uppercase tracking-tighter">09 oct 2023</div>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="bg-surface-container-highest hover:bg-primary hover:text-white text-primary p-2 rounded transition-all" title="Descargar">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</td>
+</tr>
+<!-- Document Row 3 -->
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-tertiary-container mr-4">stars</span>
+<div>
+<div class="font-headline font-bold text-primary">Bonos de Infraestructura: Prospecto Q4</div>
+<div class="text-xs text-slate-400 font-light mt-0.5">Oportunidad Estratégica de Alto Rendimiento</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="px-3 py-1 rounded-full bg-tertiary-container/10 text-tertiary-container text-xs font-bold">Oportunidad</span>
+</td>
+<td class="px-6 py-6">
+<span class="flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1.5" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+                                            Solo Socios
+                                        </span>
+</td>
+<td class="px-6 py-6 text-right">
+<div class="text-sm font-bold text-primary">12.5 MB</div>
+<div class="text-[10px] text-slate-400 uppercase tracking-tighter">28 sep 2023</div>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="bg-surface-container-highest hover:bg-primary hover:text-white text-primary p-2 rounded transition-all" title="Descargar">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</td>
+</tr>
+<!-- Document Row 4 -->
+<tr class="hover:bg-slate-50/50 transition-colors border-b-0">
+<td class="px-8 py-6">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-error mr-4">picture_as_pdf</span>
+<div>
+<div class="font-headline font-bold text-primary">Gobernanza Fiscal y Carta Ética</div>
+<div class="text-xs text-slate-400 font-light mt-0.5">Guías Institucionales v4.2</div>
+</div>
+</div>
+</td>
+<td class="px-6 py-6">
+<span class="px-3 py-1 rounded-full bg-primary/5 text-primary text-xs font-bold">Guías</span>
+</td>
+<td class="px-6 py-6">
+<span class="flex items-center text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-sm mr-1.5">public</span>
+                                            Acceso Público
+                                        </span>
+</td>
+<td class="px-6 py-6 text-right">
+<div class="text-sm font-bold text-primary">0.9 MB</div>
+<div class="text-[10px] text-slate-400 uppercase tracking-tighter">15 sep 2023</div>
+</td>
+<td class="px-8 py-6 text-right">
+<button class="bg-surface-container-highest hover:bg-primary hover:text-white text-primary p-2 rounded transition-all" title="Descargar">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-8 py-5 border-t border-surface-container flex items-center justify-between">
+<span class="text-xs text-slate-500 font-medium tracking-wide">Mostrando 4 de 642 recursos en todos los departamentos</span>
+<div class="flex space-x-2">
+<button class="px-4 py-2 text-xs font-bold text-primary hover:bg-surface-container rounded transition-all">Anterior</button>
+<button class="px-4 py-2 text-xs font-bold text-white bg-primary rounded transition-all">Siguiente Página</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Premium CTA Section -->
+<section class="max-w-screen-2xl mx-auto px-8 py-20">
+<div class="bg-primary-container rounded-3xl p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+<img alt="Patrón de gráfico financiero" class="w-full h-full object-cover" data-alt="Patrón arquitectónico minimalista abstracto con ventanas repetitivas y sombras marcadas en tonos azul marino profundo y azul" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8L1BpVqEM1T7RWTHhx6jcK7XJ75VbhZGP86ptw1bxEEES3VfLQ-T-w7yyXuNk-f_vVILVG1EV21xuIopjsSYWaAPs9bcLe2qAwMhHlMw4DKHP3zGeS5HC3dMMzAlplxG8TUj8AO64eXUHv9QQN2Ln6IXNh5A75n6I11-Sl8J46JLi-qFnjgcNx8dNQzn6Dstpo0hOF9VMkFp0rdFDSpaw4i52deBr9Oa1Ry5MB1EwhC1DY6q9Kyh-K1kRDYX6OpdXedyX7xkJeNxm"/>
+</div>
+<div class="relative z-10 md:w-3/5 text-center md:text-left">
+<h3 class="font-headline text-3xl font-extrabold text-white mb-4">¿Requiere un archivo específico?</h3>
+<p class="text-on-primary-container text-lg mb-0 font-light max-w-xl">
+                        Nuestro repositorio institucional abarca más de 40 años de registros financieros. Si no puede encontrar una presentación regulatoria específica, envíe una solicitud formal de recursos.
+                    </p>
+</div>
+<div class="relative z-10 mt-10 md:mt-0 flex flex-col sm:flex-row gap-4">
+<button class="bg-tertiary-container text-on-tertiary-fixed px-8 py-4 rounded-lg font-headline font-bold hover:scale-105 transition-all text-sm uppercase tracking-widest bg-amber-400">
+                        Solicitar Archivo
+                    </button>
+<button class="border border-white/20 text-white px-8 py-4 rounded-lg font-headline font-bold hover:bg-white/10 transition-all text-sm uppercase tracking-widest">
+                        Centro de Soporte
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#000a1e] dark:bg-[#00050f] w-full mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<div class="col-span-1 md:col-span-1">
+<div class="text-lg font-black text-white uppercase tracking-widest mb-6">
+                    Sovereign Architect
+                </div>
+<p class="text-slate-400 text-xs leading-relaxed font-['Inter']">
+                    La principal puerta de enlace para la gobernanza de inversiones institucionales y marcos financieros nacionales.
+                </p>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm mb-6 font-headline tracking-widest uppercase">Recursos</h4>
+<ul class="space-y-4 text-slate-300 font-['Inter'] text-sm tracking-wide">
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Relaciones Institucionales</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Marco de Gobernanza</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Archivos Regulatorios</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm mb-6 font-headline tracking-widest uppercase">Legal</h4>
+<ul class="space-y-4 text-slate-300 font-['Inter'] text-sm tracking-wide">
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Política de Privacidad</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Términos de Servicio</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors" href="#">Accesibilidad</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm mb-6 font-headline tracking-widest uppercase">Acceso Seguro</h4>
+<button class="w-full bg-white/5 border border-white/10 text-white py-3 rounded-md hover:bg-white hover:text-primary transition-all font-bold text-xs uppercase tracking-widest">
+                    Acceso Seguro para Socios
+                </button>
+<div class="mt-6 flex space-x-4">
+<span class="material-symbols-outlined text-slate-500 hover:text-white cursor-pointer transition-colors">lock_open</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-white cursor-pointer transition-colors">verified_user</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-white cursor-pointer transition-colors">policy</span>
+</div>
+</div>
+</div>
+<div class="border-t border-white/5 px-12 py-8 max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-500 font-['Inter'] text-xs tracking-wide">
+                © 2024 Portal de Inversión Gubernamental Sovereign Architect. Todos los derechos reservados. Confidencialidad garantizada.
+            </p>
+<div class="flex items-center space-x-6">
+<span class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Estándares Globales: Certificación ISO 27001</span>
+</div>
+</div>
+</footer>
+</body></html>

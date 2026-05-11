@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Análisis Profundo de Infraestructura | InvestSovereign</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#d9dadb",
+              "primary-fixed": "#d6e3ff",
+              "on-secondary-fixed": "#001b3c",
+              "tertiary": "#110a00",
+              "outline": "#74777f",
+              "tertiary-fixed-dim": "#e9c176",
+              "surface": "#f8f9fa",
+              "on-background": "#191c1d",
+              "on-primary-container": "#708ab5",
+              "tertiary-fixed": "#ffdea5",
+              "on-error": "#ffffff",
+              "secondary": "#3a5f94",
+              "primary": "#000a1e",
+              "on-tertiary-container": "#a68440",
+              "on-tertiary-fixed": "#261900",
+              "on-tertiary": "#ffffff",
+              "on-error-container": "#93000a",
+              "surface-variant": "#e1e3e4",
+              "outline-variant": "#c4c6cf",
+              "background": "#f8f9fa",
+              "inverse-on-surface": "#f0f1f2",
+              "error": "#ba1a1a",
+              "on-surface": "#191c1d",
+              "on-primary-fixed-variant": "#2d476f",
+              "primary-container": "#002147",
+              "error-container": "#ffdad6",
+              "primary-fixed-dim": "#aec7f6",
+              "tertiary-container": "#2e1f00",
+              "surface-container-high": "#e7e8e9",
+              "on-secondary": "#ffffff",
+              "on-primary": "#ffffff",
+              "surface-container-highest": "#e1e3e4",
+              "secondary-fixed-dim": "#a7c8ff",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#5d4201",
+              "on-surface-variant": "#44474e",
+              "surface-container-low": "#f3f4f5",
+              "secondary-fixed": "#d5e3ff",
+              "secondary-container": "#9fc2fe",
+              "surface-bright": "#f8f9fa",
+              "on-secondary-fixed-variant": "#1f477b",
+              "on-secondary-container": "#294f83",
+              "inverse-surface": "#2e3132",
+              "surface-container": "#edeeef",
+              "inverse-primary": "#aec7f6",
+              "surface-tint": "#465f88",
+              "on-primary-fixed": "#001b3d"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .tonal-depth-shift {
+        background: linear-gradient(180deg, rgba(255,255,255,0.8) 0%, rgba(248,249,250,0.95) 100%);
+      }
+      .glass-card {
+        backdrop-filter: blur(24px);
+        background: rgba(255, 255, 255, 0.7);
+      }
+      .asymmetric-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+      }
+      @media (max-width: 768px) {
+        .asymmetric-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-xl font-black text-blue-900 dark:text-blue-50 font-headline tracking-tight">InvestSovereign</div>
+<nav class="hidden md:flex gap-8 items-center">
+<!-- Navigation Items with Active State Logic for Infrastructure -->
+<a class="font-headline font-bold tracking-tight text-blue-900 dark:text-blue-50 border-b-2 border-amber-500 pb-1" href="#">Infraestructura</a>
+<a class="font-headline font-bold tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Manufactura</a>
+<a class="font-headline font-bold tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Energía</a>
+<a class="font-headline font-bold tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Agroindustria</a>
+<a class="font-headline font-bold tracking-tight text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Turismo</a>
+</nav>
+<div class="flex items-center gap-4">
+<span class="text-xs font-bold tracking-widest text-primary">ES/EN</span>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="Perfil de usuario" data-alt="professional headshot of a financial executive in a neutral studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgej_EoAUqEKVIA4hCZmlTneayLjbLPOcG_kjLZDUEWgWTJMG9Bv5-NzPNRMUwbBeO2cUa3EPBNaFvEy05eUJCiZHTQNj4C1FmZYmeBXfdr8uYrjt0EupEg0tti1hdsPtqJgxhTZ4fBTpGlMY55ZnDXImHS0svjiB8ZepJgScrZGk6QYtOQXrxahc4wEYfAcpnRY9MDkA4uYC8WL7OctT_objvPuAtsVAHt1lrxxbBUfC1RQr10D0Mg2qlXJ4NbCsOBBQTyhNuK3RP"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[819px] flex items-end overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="vista aérea panorámica de un enorme puente colgante moderno al atardecer sobre aguas de color azul profundo con luces de la ciudad a lo lejos" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdzw7JK_1CfKHQsZKTIbht3fjAbS9YSIlkWYTXxOCtw_Khz3TzaFCpfoopV1irUuqiSLGvC-GQhZAOgojv6x-Tu8rhT_zB5aJ8DG6pc-I1fQDPsvs49DZVzS-0kvLSJOGuvzBAxNcJloMTlBexVoM-0IKa0wOgJGeoKyCkf-WoumAQ6verTAApoyOxOxLEBGYDmlLyIvILSZpzn5l8_odOt1rQOoc-W9iNDvL2PgM0THDAmgwXnNZfhm7rxzR90tn7DmogS_OTADaJ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-screen-2xl mx-auto px-12 pb-24 w-full">
+<div class="max-w-4xl">
+<span class="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-bold tracking-[0.2em] uppercase mb-6">Clase de Activo Estratégico</span>
+<h1 class="text-6xl md:text-8xl font-headline font-extrabold text-white tracking-tighter leading-none mb-8">
+                        Las Arterias del <br/><span class="text-tertiary-fixed-dim">Comercio Global.</span>
+</h1>
+<p class="text-xl text-white/80 max-w-2xl font-light leading-relaxed">
+                        Sovereign Architect gestiona la red de infraestructura multimodal más grande de la región. Estamos uniendo continentes y digitalizando la columna vertebral de la industria.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Strategic Logistics Metrics (Bento Grid) -->
+<section class="py-24 px-12 max-w-screen-2xl mx-auto">
+<div class="flex items-end justify-between mb-16">
+<div>
+<h2 class="text-4xl font-headline font-bold text-primary tracking-tight">Resiliencia Logística</h2>
+<p class="text-on-surface-variant mt-2 font-body">Métricas de rendimiento en tiempo real de los centros de tránsito nacionales.</p>
+</div>
+<div class="h-px bg-outline-variant flex-grow mx-12 hidden md:block"></div>
+<div class="text-right">
+<span class="text-3xl font-headline font-bold text-primary">T3 2024</span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-64 group hover:bg-primary transition-colors duration-500">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-on-primary-container group-hover:text-tertiary-fixed-dim" data-icon="container"></span>
+<span class="text-[10px] font-bold tracking-widest text-on-surface-variant group-hover:text-white/50">CAPACIDAD TEU</span>
+</div>
+<div>
+<div class="text-5xl font-headline font-bold text-primary group-hover:text-white">12.4M</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="text-xs font-medium group-hover:text-white/80">+14% Crecimiento Interanual</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high p-8 rounded-xl flex flex-col justify-between h-64">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" data-icon="leaderboard"></span>
+<span class="text-[10px] font-bold tracking-widest text-on-surface-variant">RANGO REGIONAL</span>
+</div>
+<div>
+<div class="text-5xl font-headline font-bold text-primary">#1</div>
+<p class="text-sm text-on-surface-variant mt-2">Índice de conectividad de primer nivel en el corredor marítimo.</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between h-64 border-l-4 border-tertiary-fixed-dim">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary" data-icon="schedule"></span>
+<span class="text-[10px] font-bold tracking-widest text-on-surface-variant">TIEMPO DE TRÁNSITO</span>
+</div>
+<div>
+<div class="text-5xl font-headline font-bold text-primary">48h</div>
+<p class="text-sm text-on-surface-variant mt-2">Tiempo promedio de despacho para carga multimodal de Nivel 1.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- The Sovereign Backbone (Asymmetric Section) -->
+<section class="bg-primary text-white py-32 overflow-hidden">
+<div class="max-w-screen-2xl mx-auto px-12 asymmetric-grid gap-20">
+<div class="relative">
+<h2 class="text-5xl font-headline font-extrabold mb-12 leading-[1.1]">Ingeniería de la Futura <br/>Columna Vertebral Nacional.</h2>
+<div class="space-y-12">
+<div class="flex gap-6 group">
+<div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-tertiary-fixed-dim group-hover:text-primary" data-icon="router"></span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2">Infraestructura Digital</h4>
+<p class="text-white/60 leading-relaxed">Integración nacional de 5G y fibra óptica conectando el 100% de las zonas industriales para 2026.</p>
+</div>
+</div>
+<div class="flex gap-6 group">
+<div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-tertiary-fixed-dim group-hover:text-primary" data-icon="bolt"></span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2">Modernización de la Red Eléctrica</h4>
+<p class="text-white/60 leading-relaxed">Integración estratégica de 15GW de nodos renovables en la red de transmisión de industria pesada.</p>
+</div>
+</div>
+<div class="flex gap-6 group">
+<div class="w-12 h-12 flex-shrink-0 bg-white/5 rounded-lg flex items-center justify-center group-hover:bg-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-tertiary-fixed-dim group-hover:text-primary" data-icon="hub"></span>
+</div>
+<div>
+<h4 class="text-xl font-bold mb-2">Conectividad Sin Fisuras</h4>
+<p class="text-white/60 leading-relaxed">Transiciones automatizadas de puerto a ferrocarril utilizando IA soberana para la optimización logística.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<div class="aspect-[4/5] rounded-2xl overflow-hidden relative">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" data-alt="primer plano de cables de fibra óptica brillando con luz azul y blanca que representa la transmisión de datos digitales de alta velocidad" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBstj8GI-ezljJMEFy_9yvyXjKUDp0cPGZi_awIgpzVpTnc-D69uYHDA5Bs4jmK--jLtDfCpg83mRkRaroLMqxoycK2o-0LQ0H90B2Zj1FwdAdY5tGPjkyBMXlVMcKkoxp_FZERkURJiAzdSN5EKLgV4j_UJCW_WJwESU7hq_pQMqxCzska5Q-OwgHvjfq6MA3ZvSn5tRNplg0ryA54f1KdcW29aNrh-CxrzHJjr2onAw5TCMZCLl8L2P40Xveu8lnPbN3WUrj9h3w_"/>
+<div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
+</div>
+<!-- Data Floating Card -->
+<div class="absolute -bottom-10 -left-10 glass-card p-8 rounded-xl shadow-2xl text-primary max-w-xs border border-white/20">
+<div class="text-xs font-bold tracking-widest mb-4 opacity-50 uppercase">Estabilidad de la Red</div>
+<div class="text-4xl font-headline font-bold">99.99%</div>
+<p class="text-sm mt-2 opacity-70">Tiempo de actividad garantizado para todos los activos de infraestructura de Nivel 1.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Investment Opportunities (Editorial Cards) -->
+<section class="py-32 px-12 max-w-screen-2xl mx-auto">
+<div class="mb-20 max-w-2xl">
+<h2 class="text-5xl font-headline font-extrabold text-primary mb-6">Prioridades de Despliegue de Capital</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed">Proporcionamos a los inversores institucionales acceso con riesgo mitigado a proyectos de infraestructura de alto rendimiento a través de asociaciones público-privadas (APP).</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<!-- Opportunity 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container overflow-hidden rounded-lg mb-8">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="puerto de embarque masivo con filas de contenedores coloridos y grúas gigantes bajo un cielo azul brillante" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6gqfF5pyiMl3pEUW6wTksjArdPVjHTgYK3ohGi2G6Oysejk-AWRCYatvdkK6HYhzzMYdtIXnvInW1qMY7CIBzR7b8ge3gk2p7d9xgK-eLGwNsrtp_maY1NtHLrCKNzATjQX1sJova_LNsNCoLAO57JOX36xy8W3KPgutA2hBtUTPrCCnAtqSxyFKCHsT2hUsurW7xoeffGIVn_5EJn-KdME4I95AOL_jWnWDaNCyUtuvHZCz0hYh-SvNofxwS4N7xGrDXgF5r6iew"/>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<span class="text-[10px] font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">MARÍTIMO</span>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-widest uppercase">Expansión Fase III</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-primary group-hover:underline decoration-amber-500 underline-offset-8">Expansión de Megapuerto de Aguas Profundas</h3>
+<p class="mt-4 text-on-surface-variant leading-relaxed">Incremento del calado a 18m para acomodar buques ULCS de próxima generación y operaciones de patio automatizadas.</p>
+</div>
+<!-- Opportunity 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container overflow-hidden rounded-lg mb-8">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="autopista moderna serpenteando a través de un paisaje verde con autos elegantes moviéndose suavemente" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4X0xki2WA3lH6yE3YwfyFBWKMjdM2JwfkInjzz1qsEM3EcZ8F1VdqUihbpheWTI8zx4qMl4aSW-w_1PaBsSpmmXSsqqey1wU72McX15Jx_3qNcu69oSckRTbpubO-w3w1ivU6Mlj3JGosz-_d1ZpbwP3ApubNqbkmP1XY3m40pTswBIG9UjVTdYo9BC92hNzvGjLY3_FXLRmqrcmM7j2dRWB7CthY3AjKQ-y3mTcevqgxL2JihbFnowygFTTaGY4F3KY2dWs--WvV"/>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<span class="text-[10px] font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">TERRESTRE</span>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-widest uppercase">Corredor Norte-Sur</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-primary group-hover:underline decoration-amber-500 underline-offset-8">Red de Autopistas Inteligentes</h3>
+<p class="mt-4 text-on-surface-variant leading-relaxed">Desarrollo de una autopista inteligente de 450 km que cuenta con carriles de carga para vehículos eléctricos y sistemas de peaje IoT.</p>
+</div>
+<!-- Opportunity 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[16/10] bg-surface-container overflow-hidden rounded-lg mb-8">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="parque industrial limpio con edificios arquitectónicos modernos y espacios verdes cuidados" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMEoOCUyIQDQ3epFMzm2gWCmUxsr_D6Lc7FXkdNq_EkUVJcUaj-ijR9qB-RevgSgT3nZZmcBabjhiriDajxSTs1lbfuL0YzKKD8udnlP7lk0FRVe4e6C4BU7oAOK8vLMw83fHIbjBegTzMwBXxIp_6IAEssyH4MMHbeU-CHfRI9KNvnbBmRxx5WRcIdWJp2A1K0243LpOYkp-NarEub_ioxor8Njadql-HaKoD4iiDzOrUbo_WqimGOCsvjWM8foGHRyvm0jdohHww"/>
+</div>
+<div class="flex items-center gap-2 mb-4">
+<span class="text-[10px] font-bold text-tertiary-container bg-tertiary-fixed px-2 py-0.5 rounded">COMERCIO</span>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-widest uppercase">Zonas Libres de Impuestos</span>
+</div>
+<h3 class="text-2xl font-headline font-bold text-primary group-hover:underline decoration-amber-500 underline-offset-8">Zona Económica Especial 4.0</h3>
+<p class="mt-4 text-on-surface-variant leading-relaxed">Clústeres de fabricación de alta tecnología con acceso inmediato al aeropuerto y generación de energía localizada.</p>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="mx-12 mb-32">
+<div class="bg-primary rounded-[2rem] p-16 md:p-24 flex flex-col md:flex-row items-center justify-between gap-12 overflow-hidden relative">
+<div class="absolute top-0 right-0 w-96 h-96 bg-tertiary-container rounded-full blur-[120px] opacity-20 -mr-48 -mt-48"></div>
+<div class="relative z-10 max-w-2xl">
+<h2 class="text-4xl md:text-6xl font-headline font-extrabold text-white mb-8">Asegure su Participación en el <br/><span class="text-tertiary-fixed-dim">Crecimiento Nacional.</span></h2>
+<p class="text-white/70 text-lg mb-12">Conéctese con la Secretaría para obtener acceso prioritario a los datos del prospecto y los marcos de garantía gubernamentales.</p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-tertiary-fixed-dim text-tertiary font-bold rounded-lg hover:scale-105 transition-transform duration-200">Solicitar Acceso al Data Room</button>
+<button class="px-8 py-4 bg-transparent border border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-colors">Descargar Mapa</button>
+</div>
+</div>
+<div class="relative z-10 hidden lg:block">
+<div class="w-72 h-72 border-[20px] border-tertiary-fixed-dim/10 rounded-full flex items-center justify-center">
+<div class="w-48 h-48 border-[1px] border-tertiary-fixed-dim/30 rounded-full animate-pulse"></div>
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-8xl absolute" data-icon="account_balance"></span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-blue-950 dark:bg-black w-full mt-20">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-12 py-16 max-w-screen-2xl mx-auto border-t border-blue-900/30">
+<div>
+<div class="text-lg font-bold text-white mb-6">InvestSovereign</div>
+<p class="text-slate-300 font-inter text-sm tracking-wide max-w-md">La puerta de entrada principal para el capital institucional hacia los activos estratégicos nacionales. Gestionado por la Secretaría de Sovereign Architect.</p>
+</div>
+<div class="flex flex-col md:items-end justify-between">
+<nav class="flex flex-wrap gap-6 md:gap-8 mb-8">
+<a class="font-inter text-sm tracking-wide text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Política de Privacidad</a>
+<a class="font-inter text-sm tracking-wide text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Términos de Servicio</a>
+<a class="font-inter text-sm tracking-wide text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Mapa de Inversión</a>
+<a class="font-inter text-sm tracking-wide text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Contactar a la Secretaría</a>
+<a class="font-inter text-sm tracking-wide text-slate-300 hover:text-white transition-all underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Transparencia de Datos</a>
+</nav>
+<div class="text-amber-400 font-inter text-xs tracking-widest uppercase opacity-80">© 2024 Portal Gubernamental de Sovereign Architect. Todos los derechos reservados.</div>
+</div>
+</div>
+</footer>
+</body></html>

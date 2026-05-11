@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Datos Regionales | Invest Honduras</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#2e1f00",
+              "on-error-container": "#93000a",
+              "inverse-on-surface": "#f0f1f2",
+              "secondary-container": "#9fc2fe",
+              "secondary": "#3a5f94",
+              "primary-fixed": "#d6e3ff",
+              "outline-variant": "#c4c6cf",
+              "surface": "#f8f9fa",
+              "inverse-surface": "#2e3132",
+              "surface-variant": "#e1e3e4",
+              "secondary-fixed": "#d5e3ff",
+              "inverse-primary": "#aec7f6",
+              "primary-fixed-dim": "#aec7f6",
+              "on-primary-fixed-variant": "#2d476f",
+              "tertiary-fixed": "#ffdea5",
+              "surface-container-lowest": "#ffffff",
+              "on-error": "#ffffff",
+              "on-secondary-container": "#294f83",
+              "on-tertiary-fixed": "#261900",
+              "surface-tint": "#465f88",
+              "primary-container": "#002147",
+              "on-primary-fixed": "#001b3d",
+              "primary": "#000a1e",
+              "tertiary-fixed-dim": "#e9c176",
+              "surface-bright": "#f8f9fa",
+              "on-secondary-fixed": "#001b3c",
+              "on-primary-container": "#708ab5",
+              "surface-container-low": "#f3f4f5",
+              "background": "#f8f9fa",
+              "on-primary": "#ffffff",
+              "on-background": "#191c1d",
+              "secondary-fixed-dim": "#a7c8ff",
+              "on-secondary": "#ffffff",
+              "surface-container": "#edeeef",
+              "on-tertiary-fixed-variant": "#5d4201",
+              "on-surface": "#191c1d",
+              "tertiary": "#110a00",
+              "surface-container-high": "#e7e8e9",
+              "outline": "#74777f",
+              "error-container": "#ffdad6",
+              "surface-container-highest": "#e1e3e4",
+              "on-tertiary-container": "#a68440",
+              "on-tertiary": "#ffffff",
+              "on-surface-variant": "#44474e",
+              "error": "#ba1a1a",
+              "surface-dim": "#d9dadb",
+              "on-secondary-fixed-variant": "#1f477b"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+      .tonal-depth-layering {
+        box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
+      }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#000a1e]/80 dark:bg-[#000a1e]/90 backdrop-blur-xl shadow-2xl shadow-blue-900/20">
+<div class="flex justify-between items-center px-8 py-4 max-w-full">
+<div class="text-xl font-bold tracking-tighter text-slate-50 font-headline">Invest Honduras</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-slate-400 hover:text-slate-100 transition-colors font-['Manrope'] font-semibold tracking-tight" href="#">Tablero</a>
+<a class="text-slate-100 border-b-2 border-tertiary-fixed-dim pb-1 font-['Manrope'] font-semibold tracking-tight" href="#">Datos Regionales</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors font-['Manrope'] font-semibold tracking-tight" href="#">Sectores</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors font-['Manrope'] font-semibold tracking-tight" href="#">Oportunidades</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors font-['Manrope'] font-semibold tracking-tight" href="#">Reportes</a>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex items-center space-x-4 text-slate-100">
+<span class="material-symbols-outlined cursor-pointer hover:bg-white/5 p-2 rounded-full transition-all">notifications</span>
+<span class="material-symbols-outlined cursor-pointer hover:bg-white/5 p-2 rounded-full transition-all">language</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-md font-semibold text-sm hover:scale-95 active:scale-90 transition-all">
+                    Contactar Asesor
+                </button>
+</div>
+</div>
+</nav>
+<main class="flex-grow pt-24">
+<!-- Hero Section -->
+<section class="relative h-[450px] flex items-center px-8 md:px-16 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Paisaje aéreo de Honduras" class="w-full h-full object-cover grayscale opacity-40" data-alt="Vista aérea de exuberantes montañas verdes y valles en Honduras" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDym3MZJfZSAvzPVPyWQzSkF8_eaIzMP-_CkshdaV-PiQt3VZ6u0jMeiqP3dqgHJ1WfNMhZziUQc2XBjQlDSITIcAZ3FOz9BoeyMwL-uBta1Ud3LbtrYYYMQN7B9cM0smTpRPjrFVaTqzEwcPdLz7qGdntiupn7kQVO7ICeKVaoA6HAiUjlEt1cbN_Co0vGgdChy6Wc0VaoECWvDPTnlv7kdBLnG-SZc68iU0dZiAsEYtDQGyR6a2_tYu1jToIJGsOvMZyE2icPuvx"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent"></div>
+</div>
+<div class="relative z-10 max-w-3xl">
+<span class="inline-block py-1 px-3 mb-6 bg-tertiary-container text-tertiary-fixed-dim text-xs font-bold tracking-[0.15em] uppercase rounded">Portal Soberano</span>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold text-on-primary tracking-tighter mb-6 leading-none">
+                    Panorama Económico <br/><span class="text-tertiary-fixed-dim">Regional</span>
+</h1>
+<p class="text-on-primary-container text-lg md:text-xl max-w-xl font-light leading-relaxed">
+                    Analizando la robusta trayectoria de crecimiento y estabilidad institucional en los 18 departamentos de la República. Una perspectiva integral para el inversionista institucional sofisticado.
+                </p>
+</div>
+</section>
+<!-- Data Overview Section -->
+<section class="px-8 md:px-16 -mt-16 relative z-20">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering border-l-4 border-tertiary-fixed-dim">
+<div class="flex flex-col gap-4">
+<span class="text-label-md uppercase tracking-widest text-on-surface-variant font-bold">IED Total 2024</span>
+<div class="flex items-end gap-2">
+<h2 class="text-4xl font-headline font-extrabold text-primary">$1.24B</h2>
+<span class="text-tertiary-fixed-dim font-bold text-sm mb-1">+8.4%</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Flujo proyectado anual de inversión extranjera directa.</p>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering border-l-4 border-secondary">
+<div class="flex flex-col gap-4">
+<span class="text-label-md uppercase tracking-widest text-on-surface-variant font-bold">Crecimiento PIB</span>
+<div class="flex items-end gap-2">
+<h2 class="text-4xl font-headline font-extrabold text-primary">3.8%</h2>
+<span class="text-secondary font-bold text-sm mb-1">ESTABLE</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Tasa promedio de expansión del producto regional bruto.</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering">
+<div class="flex flex-col gap-4">
+<span class="text-label-md uppercase tracking-widest text-on-surface-variant font-bold">Proyectos Activos</span>
+<div class="flex items-end gap-2">
+<h2 class="text-4xl font-headline font-extrabold text-primary">142</h2>
+<span class="text-on-surface-variant font-bold text-sm mb-1">TOTAL</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Desarrollos estratégicos industriales y de infraestructura.</p>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering">
+<div class="flex flex-col gap-4">
+<span class="text-label-md uppercase tracking-widest text-on-surface-variant font-bold">Infraestructura</span>
+<div class="flex items-end gap-2">
+<h2 class="text-4xl font-headline font-extrabold text-primary">$450M</h2>
+<span class="text-tertiary-fixed-dim font-bold text-sm mb-1">FONDEADO</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-tight">Compromisos de asociaciones público-privadas 2024-25.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Chart Section (Bento Grid Style) -->
+<section class="px-8 md:px-16 py-20 bg-surface">
+<div class="mb-12">
+<h3 class="font-headline text-3xl font-extrabold text-primary tracking-tight">Dinámica del Rendimiento de Inversiones</h3>
+<div class="h-1 w-20 bg-tertiary-fixed-dim mt-2"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+<!-- Large FDI Bar Chart -->
+<div class="md:col-span-8 glass-card p-10 rounded-xl tonal-depth-layering">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h4 class="font-headline font-bold text-xl text-primary">IED por Región (Millones de USD)</h4>
+<p class="text-sm text-on-surface-variant">Análisis comparativo de la asignación de capital por departamento</p>
+</div>
+<button class="text-xs font-bold uppercase tracking-tighter text-secondary hover:text-primary-container transition-colors">Exportar Datos</button>
+</div>
+<div class="h-[300px] flex items-end justify-between gap-4 px-4">
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[90%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$420M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">Cortés</span>
+</div>
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[75%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$310M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">F. Morazán</span>
+</div>
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[45%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$180M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">Choluteca</span>
+</div>
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[30%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$120M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">Atlántida</span>
+</div>
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[20%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$95M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">Yoro</span>
+</div>
+<div class="w-full flex flex-col items-center group">
+<div class="w-full bg-primary-container h-[15%] rounded-t-sm group-hover:bg-primary transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">$60M</div>
+</div>
+<span class="text-[10px] uppercase font-bold mt-4 tracking-tighter text-on-surface-variant">Copán</span>
+</div>
+</div>
+</div>
+<!-- Donut Chart Side Section -->
+<div class="md:col-span-4 flex flex-col gap-8">
+<div class="glass-card p-8 rounded-xl tonal-depth-layering flex-grow">
+<h4 class="font-headline font-bold text-lg text-primary mb-6">Distribución por Sector</h4>
+<div class="flex justify-center mb-6">
+<div class="relative w-40 h-40">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-width="20"></circle>
+<circle class="text-primary-container" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="110" stroke-width="20"></circle>
+<circle class="text-tertiary-fixed-dim" cx="80" cy="80" fill="transparent" r="70" stroke="currentColor" stroke-dasharray="440" stroke-dashoffset="330" stroke-width="20"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center flex-col">
+<span class="text-2xl font-extrabold text-primary">Top 3</span>
+<span class="text-[10px] uppercase font-bold text-on-surface-variant">Sectores</span>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary-container rounded-full"></div>
+<span>Agroindustria</span>
+</div>
+<span class="font-bold">45%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-tertiary-fixed-dim rounded-full"></div>
+<span>Manufactura</span>
+</div>
+<span class="font-bold">25%</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-surface-container-highest rounded-full"></div>
+<span>Energía</span>
+</div>
+<span class="font-bold">30%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Growth Trends Line Chart -->
+<div class="md:col-span-12 glass-card p-10 rounded-xl tonal-depth-layering">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h4 class="font-headline font-bold text-xl text-primary">Tendencias Históricas de Crecimiento (2018-2024)</h4>
+<p class="text-sm text-on-surface-variant">Indicadores de ROI anualizado y trayectoria del PIB</p>
+</div>
+</div>
+<div class="h-[250px] w-full relative">
+<!-- Simulated Chart Path -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 250">
+<path d="M0,200 Q150,180 300,120 T600,80 T1000,20" fill="none" stroke="#2e1f00" stroke-width="3"></path>
+<path d="M0,200 Q150,180 300,120 T600,80 T1000,20 L1000,250 L0,250 Z" fill="url(#gradient)" opacity="0.1"></path>
+<defs>
+<lineargradient id="gradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#2e1f00;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#2e1f00;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between mt-6 text-[10px] font-bold text-on-surface-variant tracking-widest uppercase px-2">
+<span>2018</span>
+<span>2019</span>
+<span>2020</span>
+<span>2021</span>
+<span>2022</span>
+<span>2023</span>
+<span>2024 (Proy)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Regional Breakdown Section -->
+<section class="px-8 md:px-16 pb-20">
+<div class="mb-10">
+<h3 class="font-headline text-3xl font-extrabold text-primary tracking-tight">Inteligencia Departamental</h3>
+<p class="text-on-surface-variant mt-2">Resumen granular de datos para los principales centros económicos.</p>
+</div>
+<div class="overflow-hidden rounded-xl tonal-depth-layering bg-surface-container-lowest">
+<table class="w-full text-left">
+<thead class="bg-primary text-on-primary font-headline text-xs uppercase tracking-[0.15em]">
+<tr>
+<th class="py-5 px-8">Departamento</th>
+<th class="py-5 px-8">Centro Económico</th>
+<th class="py-5 px-8">Sectores Clave</th>
+<th class="py-5 px-8">ROI Prom.</th>
+<th class="py-5 px-8 text-right">Flujo de IED</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-body text-sm">
+<tr class="hover:bg-surface-container-low transition-colors cursor-default">
+<td class="py-6 px-8 font-bold text-primary">Cortés</td>
+<td class="py-6 px-8">San Pedro Sula</td>
+<td class="py-6 px-8">Logística, Textil, Manufactura</td>
+<td class="py-6 px-8 text-secondary font-semibold">12.4%</td>
+<td class="py-6 px-8 text-right font-bold">$420M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-default">
+<td class="py-6 px-8 font-bold text-primary">Francisco Morazán</td>
+<td class="py-6 px-8">Tegucigalpa</td>
+<td class="py-6 px-8">Servicios, Finanzas, BPO</td>
+<td class="py-6 px-8 text-secondary font-semibold">10.8%</td>
+<td class="py-6 px-8 text-right font-bold">$310M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-default">
+<td class="py-6 px-8 font-bold text-primary">Choluteca</td>
+<td class="py-6 px-8">Ciudad de Choluteca</td>
+<td class="py-6 px-8">Agroexportación, Energía Solar</td>
+<td class="py-6 px-8 text-secondary font-semibold">14.2%</td>
+<td class="py-6 px-8 text-right font-bold">$180M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-default">
+<td class="py-6 px-8 font-bold text-primary">Atlántida</td>
+<td class="py-6 px-8">La Ceiba</td>
+<td class="py-6 px-8">Turismo, Procesamiento de Alimentos</td>
+<td class="py-6 px-8 text-secondary font-semibold">9.5%</td>
+<td class="py-6 px-8 text-right font-bold">$120M</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors cursor-default">
+<td class="py-6 px-8 font-bold text-primary">Yoro</td>
+<td class="py-6 px-8">El Progreso</td>
+<td class="py-6 px-8">Agricultura, Madera</td>
+<td class="py-6 px-8 text-secondary font-semibold">11.1%</td>
+<td class="py-6 px-8 text-right font-bold">$95M</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-8 md:px-16 py-24 mb-16">
+<div class="bg-primary-container rounded-2xl p-12 md:p-20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12">
+<div class="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
+<img alt="Edificio de oficinas moderno" class="w-full h-full object-cover" data-alt="Exterior de edificio de cristal arquitectónico moderno que representa el éxito corporativo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY6c4ngnPSg29hrbOc0HJ3tZOWdz0CoVdr5XFdgDObA4OSNXrY2zKMd3Gy1xiqWRUyVZ_HNcpP8lGDR7LGfa7rjQQ9fAi7v0gUwjJCyv13teXrjtw1GKixyJx39OBHG0LI5p61m4LMAKGrmmxMC0msw16byxNZg1x_PALZFoMYDXN6Kt8sT_pcHG5TE7afm6GvuOPrTrPuIVlWUGyZ-BDbbzTa9KvkezmhRMI0AL9K8GBjDNphHXraELAQPZIgxxEknbcVv7EHzqTC"/>
+</div>
+<div class="relative z-10 max-w-2xl">
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-6">Asegure su Posición en el Eje Emergente de Centroamérica.</h2>
+<p class="text-on-primary-container text-lg leading-relaxed mb-8">
+                        Nuestros expertos regionales ofrecen perspectivas personalizadas para su sector. Acceda al Reporte Económico Regional 2024 completo e inicie su debida diligencia hoy.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-tertiary-fixed-dim text-on-tertiary-fixed px-8 py-4 rounded-md font-bold tracking-wide hover:scale-105 active:scale-95 transition-all">
+                            Contactar Asesor de Inversión
+                        </button>
+<button class="flex items-center gap-2 border border-on-primary-container text-on-primary-container px-8 py-4 rounded-md font-bold tracking-wide hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined">download</span>
+                            Descargar Reporte Completo
+                        </button>
+</div>
+</div>
+<div class="hidden lg:block relative z-10">
+<div class="bg-surface-container-lowest p-8 rounded-xl tonal-depth-layering rotate-3">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<h5 class="font-bold text-primary">Análisis Personalizado</h5>
+<p class="text-xs text-on-surface-variant">Solicite un estudio profundo por sector.</p>
+</div>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="w-3/4 h-full bg-tertiary-fixed-dim"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-auto py-12 px-8 bg-[#000a1e] dark:bg-[#00050a] flex flex-col md:flex-row justify-between items-center border-t border-white/5">
+<div class="flex flex-col gap-2 mb-8 md:mb-0">
+<div class="text-lg font-black text-slate-200 font-headline">Invest Honduras</div>
+<p class="text-slate-400 dark:text-slate-500 font-['Inter'] text-xs tracking-wide uppercase">© 2024 Invest Honduras. Todos los derechos reservados. Portal de Inversión Soberano.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-slate-500 hover:text-white transition-colors font-['Inter'] text-xs tracking-wide uppercase" href="#">Política de Privacidad</a>
+<a class="text-slate-500 hover:text-white transition-colors font-['Inter'] text-xs tracking-wide uppercase" href="#">Términos de Servicio</a>
+<a class="text-slate-500 hover:text-white transition-colors font-['Inter'] text-xs tracking-wide uppercase" href="#">Metodología Regional</a>
+<a class="text-slate-500 hover:text-white transition-colors font-['Inter'] text-xs tracking-wide uppercase" href="#">Fuentes de Datos</a>
+<a class="text-slate-500 hover:text-white transition-colors font-['Inter'] text-xs tracking-wide uppercase" href="#">Marco Institucional</a>
+</div>
+</footer>
+</body></html>
