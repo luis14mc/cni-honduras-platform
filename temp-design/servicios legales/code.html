@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Servicios Legales - Invest Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#465f88",
+                      "on-surface": "#191c1d",
+                      "on-tertiary-fixed": "#261900",
+                      "surface-container-high": "#e7e8e9",
+                      "primary-fixed-dim": "#aec7f6",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#e1e3e4",
+                      "on-tertiary-container": "#a68440",
+                      "surface-variant": "#e1e3e4",
+                      "on-tertiary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#9fc2fe",
+                      "tertiary-fixed": "#ffdea5",
+                      "on-background": "#191c1d",
+                      "error": "#ba1a1a",
+                      "on-secondary-fixed-variant": "#1f477b",
+                      "background": "#f8f9fa",
+                      "outline": "#74777f",
+                      "tertiary-container": "#2e1f00",
+                      "surface": "#f8f9fa",
+                      "primary": "#000a1e",
+                      "inverse-on-surface": "#f0f1f2",
+                      "primary-fixed": "#d6e3ff",
+                      "on-secondary-fixed": "#001b3c",
+                      "secondary-fixed-dim": "#a7c8ff",
+                      "on-secondary-container": "#294f83",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#edeeef",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#d5e3ff",
+                      "on-secondary": "#ffffff",
+                      "surface-bright": "#f8f9fa",
+                      "tertiary-fixed-dim": "#e9c176",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "inverse-primary": "#aec7f6",
+                      "primary-container": "#002147",
+                      "surface-container-low": "#f3f4f5",
+                      "inverse-surface": "#2e3132",
+                      "tertiary": "#110a00",
+                      "on-tertiary-fixed-variant": "#5d4201",
+                      "surface-dim": "#d9dadb",
+                      "secondary": "#3a5f94",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#c4c6cf",
+                      "on-surface-variant": "#44474e",
+                      "on-primary-container": "#708ab5",
+                      "on-primary-fixed": "#001b3d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "display": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(0, 33, 71, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .sovereign-gradient {
+            background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+        }
+        .gold-border-focus:focus-within {
+            outline: 1px solid rgba(233, 193, 118, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-tertiary-fixed-dim selection:text-tertiary-container">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-primary-container/80 backdrop-blur-xl dark:bg-primary-container/80 shadow-[0_20px_40px_rgba(0,10,30,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-headline text-2xl font-bold tracking-tighter text-on-primary-container dark:text-primary-fixed">Invest Honduras</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-headline text-title-md tracking-tight text-on-primary-container/70 hover:text-on-primary-container transition-colors" href="#">Sectors</a>
+<a class="font-headline text-title-md tracking-tight text-on-primary-container/70 hover:text-on-primary-container transition-colors" href="#">Regions</a>
+<a class="font-headline text-title-md tracking-tight text-on-primary-container/70 hover:text-on-primary-container transition-colors" href="#">Resources</a>
+<a class="font-headline text-title-md tracking-tight text-tertiary-fixed-dim border-b-2 border-tertiary-fixed-dim pb-1" href="#">Investor Portal</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-primary-container/70 cursor-pointer hover:bg-white/5 p-2 rounded-full transition-all">language</span>
+<span class="material-symbols-outlined text-on-primary-container/70 cursor-pointer hover:bg-white/5 p-2 rounded-full transition-all">notifications</span>
+<button class="bg-primary hover:bg-white/5 text-on-primary px-6 py-2 rounded-md transition-all duration-300 font-medium">Login</button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[819px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A grand architectural detail of a modern legal institution or corporate headquarters in Honduras. The image features clean lines, expansive glass windows reflecting a clear blue sky, and high-end marble textures. The lighting is bright and natural, reinforcing an atmosphere of transparency, authority, and sovereign progress. The overall aesthetic is professional, sophisticated, and minimalist." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjuZ8Y95rahrrvoepiKu55VCXg8cgG8qdV1FN22g1N0vsC27topT6eY1rG09FS0Kfsn6KmbBrbpqBaKdeHBq8qkGXqRR75TXK6maWOVvjkhZIX4cl8olTBu98IY5te94nDnE3L36jjl-aRzADKT-YUyrjtkJ-YnoKGW6QShz8qAtWQz0zkMBPKoI2FIriD0cXjWx1UOuNMywIORH7_A-meuUSJoegn8u09XgceXcAlJz026SL2_2ckXJwEMdd-MYTs8cqEfgQ8ZkRY"/>
+<div class="absolute inset-0 sovereign-gradient opacity-80"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10">
+<div class="max-w-4xl">
+<span class="text-tertiary-fixed-dim font-label tracking-widest uppercase text-sm mb-4 block">Asesoría Estratégica</span>
+<h1 class="font-headline text-6xl md:text-8xl font-extrabold text-white tracking-tighter mb-6 leading-tight">Servicios Legales</h1>
+<p class="text-on-primary-container text-xl md:text-2xl font-light leading-relaxed max-w-2xl">
+                        Acompañamos a los inversionistas a través de la Ruta de Inversión con un marco legal sólido y transparente para el desarrollo de proyectos en Honduras.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Introduction Section -->
+<section class="py-24 bg-surface">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-7">
+<h2 class="font-headline text-4xl font-bold text-primary mb-8 tracking-tight">Orientación Continua para la Seguridad Jurídica</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed mb-6">
+                            El Consejo Nacional de Inversiones (CNI) proporciona una gama completa de servicios legales diseñados para apoyar a los inversionistas en cada fase de su establecimiento. Nuestro objetivo es ofrecer asesoría continua y orientada para facilitar el desarrollo exitoso de proyectos de inversión.
+                        </p>
+<p class="text-on-surface-variant text-lg leading-relaxed">
+                            Brindamos apoyo legal integral y asistencia técnica en trámites administrativos para garantizar que su capital opere bajo los más altos estándares de protección institucional.
+                        </p>
+</div>
+<div class="md:col-span-5 flex justify-end">
+<div class="w-full h-80 bg-surface-container-high rounded-xl relative overflow-hidden shadow-2xl group">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" data-alt="A close-up of a professional handshake between two executives in a modern boardroom in Tegucigalpa. The background shows blurred high-end office furniture and a glimpse of the city skyline through large windows. The mood is confident and collaborative, representing the successful closing of an investment deal. The lighting is crisp, professional, and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBeiS9IX9B-6PHIRIGl8jMjIVZ_0M4Tgt5F50Kom5vRIclhT30hKRW13g7jQu8wS-rXWCkXcREqgAOwXI4lXtGyS5nZ-4wBJf1N44aI6Cd8Obzm5_Y3UhsKcmb5Phe88eMXgyThXgNpB_Owh1eGPYKxPp8xPiNkjGUxxZq2G3LCU9YGrDwHQRVrIdhxp6zMmQNNYXP6W87-yfky1wEOpfizMWhC69Zi_kA6OBhdUicpxwFN4YFUe0GYcy3uJTz8uf18DtwAj82dlHk"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Core Services Grid (Asymmetric Bento) -->
+<section class="py-24 bg-surface-container-low">
+<div class="container mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<h2 class="font-headline text-4xl font-bold text-primary tracking-tight">Portafolio de Servicios Legales</h2>
+<span class="text-primary font-bold text-7xl opacity-5 select-none">CNI PORTFOLIO</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Service Card 1 -->
+<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-xl flex flex-col justify-between transition-all hover:translate-y-[-4px]">
+<div>
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim mb-6" style="font-variation-settings: 'FILL' 1;">business_center</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Constitución de Empresas</h3>
+<p class="text-on-surface-variant leading-relaxed text-lg max-w-xl">
+                                Instruimos el proceso completo para la formación legal de sociedades en Honduras, asegurando que su estructura corporativa sea óptima para el inicio de operaciones.
+                            </p>
+</div>
+<div class="mt-8 flex items-center gap-2 text-secondary font-semibold cursor-pointer group">
+<span>Saber más</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="bg-primary p-10 rounded-xl text-white flex flex-col justify-between transition-all hover:translate-y-[-4px]">
+<div>
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim mb-6">gavel</span>
+<h3 class="font-headline text-2xl font-bold mb-4">Marco Legal Vigente</h3>
+<p class="text-on-primary-container leading-relaxed">
+                                Esclarecimiento de dudas sobre la normativa nacional y beneficios fiscales específicos según su rubro industrial.
+                            </p>
+</div>
+<div class="mt-8 border-t border-white/10 pt-6 flex justify-between items-center">
+<span class="text-sm opacity-60">Asesoría Especializada</span>
+<span class="material-symbols-outlined opacity-60">verified</span>
+</div>
+</div>
+<!-- Service Card 3 -->
+<div class="bg-surface-container-highest p-10 rounded-xl flex flex-col justify-between transition-all hover:translate-y-[-4px]">
+<div>
+<span class="material-symbols-outlined text-4xl text-secondary mb-6">timeline</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Instalación y Desarrollo</h3>
+<p class="text-on-surface-variant leading-relaxed">
+                                Acompañamiento en las etapas de pre-inversión, inversión y post-inversión para asegurar el cumplimiento de metas operativas.
+                            </p>
+</div>
+</div>
+<!-- Service Card 4 -->
+<div class="md:col-span-2 bg-tertiary-container p-10 rounded-xl text-on-tertiary-fixed-variant flex flex-col md:flex-row gap-8 items-center transition-all hover:translate-y-[-4px]">
+<div class="flex-1">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim mb-6">troubleshoot</span>
+<h3 class="font-headline text-2xl font-bold text-tertiary-fixed-dim mb-4">Solución de Obstáculos</h3>
+<p class="opacity-80 leading-relaxed text-lg text-white">
+                                Identificamos y resolvemos barreras en la tramitología administrativa mediante colaboración legal e institucional directa.
+                            </p>
+</div>
+<div class="w-full md:w-1/3 aspect-video bg-black/20 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-5xl opacity-40">support_agent</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Benefits of LPPI Section -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="container mx-auto px-8">
+<div class="max-w-3xl mb-20">
+<h2 class="font-headline text-4xl font-bold text-primary mb-6 tracking-tight">Beneficios de la Ley LPPI</h2>
+<p class="text-on-surface-variant text-xl">Ley para la Promoción y Protección de Inversiones (Decreto 51-2011). Mecanismos diseñados para la facilitación y seguridad jurídica.</p>
+</div>
+<div class="space-y-12">
+<!-- Mechanism 1 -->
+<div class="flex flex-col md:flex-row gap-12 items-start py-12 border-b border-surface-container-high last:border-none">
+<div class="flex-shrink-0">
+<span class="text-6xl font-headline font-extrabold text-tertiary-fixed-dim opacity-40">01</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Gestión de Beneficios Fiscales</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-4xl mb-6">
+                                Régimen de gastos preoperativos y depreciación acelerada para nuevos proyectos en regiones de interés prioritario. Optimización de la carga tributaria para acelerar el retorno de inversión.
+                            </p>
+<button class="flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all">
+<span class="material-symbols-outlined">qr_code_2</span>
+<span>Descargar Formulario de Solicitud</span>
+</button>
+</div>
+</div>
+<!-- Mechanism 2 -->
+<div class="flex flex-col md:flex-row gap-12 items-start py-12 border-b border-surface-container-high last:border-none">
+<div class="flex-shrink-0">
+<span class="text-6xl font-headline font-extrabold text-tertiary-fixed-dim opacity-40">02</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Proyectos de Interés Nacional (Fast Track)</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-4xl">
+                                Declaratoria mediante Consejo de Ministros que habilita un Certificado de Incorporación y Viabilidad. Este mecanismo consolida todos los permisos requeridos, permitiendo el inicio inmediato de operaciones sin trámites adicionales.
+                            </p>
+</div>
+</div>
+<!-- Mechanism 3 -->
+<div class="flex flex-col md:flex-row gap-12 items-start py-12 border-b border-surface-container-high last:border-none">
+<div class="flex-shrink-0">
+<span class="text-6xl font-headline font-extrabold text-tertiary-fixed-dim opacity-40">03</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Régimen Preventivo de Conflictos</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-4xl">
+                                Protección preventiva sobre bienes inmuebles destinados a la inversión, garantizando que los derechos de propiedad se mantengan íntegros frente a reclamaciones externas sin posesión.
+                            </p>
+</div>
+</div>
+<!-- Mechanism 4 -->
+<div class="flex flex-col md:flex-row gap-12 items-start py-12">
+<div class="flex-shrink-0">
+<span class="text-6xl font-headline font-extrabold text-tertiary-fixed-dim opacity-40">04</span>
+</div>
+<div class="flex-grow">
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Garantía para Bienes en Litigio</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-4xl">
+                                El Estado garantiza la conclusión de proyectos de inversión realizados sobre inmuebles en litigio, brindando continuidad operativa y seguridad al inversionista ante procesos reivindicatorios.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Downloadable Resources -->
+<section class="py-24 bg-primary text-white">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="font-headline text-4xl font-bold mb-8 leading-tight">Acceda a la Documentación Técnica y Legal</h2>
+<p class="text-on-primary-container text-xl font-light mb-10">
+                            Descargue nuestra guía oficial de beneficios legales o consulte el Compendio de Leyes 2024 actualizado para una visión completa del ecosistema hondureño.
+                        </p>
+<div class="flex flex-col sm:flex-row gap-6">
+<a class="inline-flex items-center justify-center gap-3 bg-tertiary-fixed-dim text-primary font-bold px-8 py-4 rounded-md hover:bg-white transition-all" href="#">
+<span class="material-symbols-outlined">download</span>
+                                Guía Oficial LPPI
+                            </a>
+<a class="inline-flex items-center justify-center gap-3 bg-white/10 text-white font-bold px-8 py-4 rounded-md hover:bg-white/20 transition-all" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                                Compendio de Leyes 2024
+                            </a>
+</div>
+</div>
+<div class="relative">
+<div class="absolute -inset-4 bg-tertiary-fixed-dim/10 blur-3xl rounded-full"></div>
+<img class="rounded-xl shadow-2xl relative z-10" data-alt="A professional composition of legal documents, a leather-bound journal, and a premium fountain pen on a dark wood table in an executive library. The scene is illuminated by warm, focused lighting that highlights the textures of the paper and leather. The mood is one of serious academic and professional rigor, aligning with the authoritative legal theme of the page." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmnqcCbL2uRhiHVlNF2F3yy9BtEUiuKo4vdo1s46HuMcJ7QSqQMRhRk0JuXejKsJz7WeJfJdhN_IUr1olZ2NMYc1MfJfS6lHMaZ1eBoLHcjaAszN8EosN9auCGcJF9bvHk-Hg5WGP5ECnZNBjLGJqJbKZoHTtZ9ZyT1lO_dhbf1ijfWDKtUhg0yDPTwVx77PgRddNIj8XrCoUCAvBrAuX0GKW-w5VfyLfGutph2rGMnfFfyX8n8m6FpaYPJcTQD4Lfwr2udt7dVgeB"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Special Regimes Section -->
+<section class="py-24 bg-surface">
+<div class="container mx-auto px-8">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="font-headline text-4xl font-bold text-primary mb-4">Regímenes de Zonas Especiales</h2>
+<p class="text-on-surface-variant">Incentivos estratégicos para fortalecer la competitividad exportadora y la generación de empleo.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- ZOLI -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="p-12">
+<div class="flex justify-between items-start mb-8">
+<span class="bg-primary text-white text-xs font-bold tracking-widest px-4 py-1 rounded-full uppercase">ZOLI</span>
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-4xl">factory</span>
+</div>
+<h3 class="font-headline text-3xl font-bold text-primary mb-6">Zonas Libres</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">
+                                Facilidades a la industria, comercio y servicios mediante exoneraciones fiscales totales de ISV, Impuesto sobre la Renta y tributos municipales.
+                            </p>
+<ul class="space-y-4 mb-10">
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Reexportación libre de impuestos</span>
+</li>
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Exoneración total de Impuesto sobre la Renta</span>
+</li>
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Crédito fiscal por costos de instalación</span>
+</li>
+</ul>
+<button class="w-full py-4 border border-outline-variant rounded-md font-bold text-primary hover:bg-primary hover:text-white transition-all">Ver Requisitos de Inscripción</button>
+</div>
+</div>
+<!-- RIT -->
+<div class="bg-surface-container-low rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-500">
+<div class="p-12">
+<div class="flex justify-between items-start mb-8">
+<span class="bg-secondary text-white text-xs font-bold tracking-widest px-4 py-1 rounded-full uppercase">RIT</span>
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-4xl">inventory_2</span>
+</div>
+<h3 class="font-headline text-3xl font-bold text-primary mb-6">Importación Temporal</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">
+                                Mecanismo diseñado para fomentar exportaciones permitiendo el ingreso de materias primas y maquinaria con suspensión de derechos aduaneros.
+                            </p>
+<ul class="space-y-4 mb-10">
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Suspensión de derechos aduaneros y consulares</span>
+</li>
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Exoneración ISR por 10 años en exportación</span>
+</li>
+<li class="flex gap-3 text-on-surface">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span>Aplicable a insumos y muestras de producción</span>
+</li>
+</ul>
+<button class="w-full py-4 border border-outline-variant rounded-md font-bold text-primary hover:bg-primary hover:text-white transition-all">Ver Requisitos de Inscripción</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Closing CTA -->
+<section class="py-32 relative overflow-hidden">
+<div class="absolute inset-0 sovereign-gradient"></div>
+<div class="container mx-auto px-8 relative z-10 text-center">
+<h2 class="font-headline text-5xl md:text-6xl font-extrabold text-white mb-8 tracking-tighter">Acelera tu proceso de inversión</h2>
+<p class="text-on-primary-container text-xl md:text-2xl mb-12 max-w-2xl mx-auto font-light">
+                    Nuestro equipo legal está listo para brindarle asistencia personalizada y gratuita para garantizar el éxito de su proyecto.
+                </p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<button class="bg-tertiary-fixed-dim text-primary font-bold px-10 py-5 rounded-md text-lg hover:scale-105 transition-transform duration-300">
+                        Contactar al CNI para asistencia gratuita
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary py-12">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 max-w-7xl mx-auto">
+<!-- Branding & Copyright -->
+<div>
+<span class="font-headline text-xl font-bold text-on-primary mb-6 block">Invest Honduras</span>
+<p class="font-body text-body-md text-on-primary/80 leading-relaxed">
+                    © 2024 Invest Honduras. All rights reserved. Sovereign Transparency &amp; Progress.
+                </p>
+</div>
+<!-- Quick Links -->
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-3">
+<a class="text-on-primary/60 hover:text-tertiary-fixed-dim hover:translate-x-1 transition-all" href="#">Institutional Profile</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed-dim hover:translate-x-1 transition-all" href="#">Transparency Portal</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed-dim hover:translate-x-1 transition-all" href="#">Strategic Sectors</a>
+</div>
+<div class="flex flex-col gap-3">
+<a class="text-on-primary/60 hover:text-tertiary-fixed-dim hover:translate-x-1 transition-all" href="#">Contact Support</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed-dim hover:translate-x-1 transition-all" href="#">Privacy Policy</a>
+</div>
+</div>
+<!-- Socials / Contact -->
+<div class="text-on-primary/80">
+<h4 class="font-bold text-white mb-4">Contacto</h4>
+<p class="mb-2">Tegucigalpa: seguimiento@cni.hn</p>
+<p>(504) 2242-8955</p>
+<div class="flex gap-4 mt-6">
+<span class="material-symbols-outlined cursor-pointer hover:text-tertiary-fixed-dim transition-colors">public</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-tertiary-fixed-dim transition-colors">mail</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-tertiary-fixed-dim transition-colors">hub</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

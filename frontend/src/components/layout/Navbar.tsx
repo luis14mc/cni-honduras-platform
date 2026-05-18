@@ -3,77 +3,239 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { layoutCopy } from "@/src/i18n/copy/layout";
 import type { Locale } from "@/src/i18n/config";
-import { getLocaleFromPathname, stripLocalePrefix, withLocale } from "@/src/i18n/path";
+import {
+  getLocaleFromPathname,
+  getNavHref,
+  getNavLabel,
+  getTopBarNavNodes,
+  homePaths,
+  pathIsActive,
+  siteNavigation,
+  type SiteNavNode,
+} from "@/src/config/siteNavigation";
 import { LanguageSwitch } from "@/src/components/layout/LanguageSwitch";
 
-type DropdownId = "invertir" | "crecer" | "cni" | null;
+function NavLinkItem({
+  node,
+  locale,
+  onNavigate,
+  className,
+}: {
+  node: SiteNavNode;
+  locale: Locale;
+  onNavigate: () => void;
+  className?: string;
+}) {
+  const href = getNavHref(node, locale);
+  const label = getNavLabel(node, locale);
+  const base =
+    className ??
+    "block px-4 py-2.5 text-sm font-medium leading-snug text-white/85 hover:bg-white/5 hover:text-[#e9c176]";
 
-type DropdownItem = {
-  label: string;
-  href: string;
-  external?: boolean;
-};
+  if (node.external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={base}
+        onClick={onNavigate}
+        aria-label={`${label} (abre en nueva pestaña)`}
+      >
+        {label}
+        <span aria-hidden> ↗</span>
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={base} onClick={onNavigate}>
+      {label}
+    </Link>
+  );
+}
 
-type DropdownDef = {
-  id: Exclude<DropdownId, null>;
-  label: string;
-  items: readonly DropdownItem[];
-};
+function DesktopDropdownPanel({
+  node,
+  locale,
+  flyoutOpenId,
+  setFlyoutOpenId,
+  onClose,
+}: {
+  node: SiteNavNode;
+  locale: Locale;
+  flyoutOpenId: string | null;
+  setFlyoutOpenId: (id: string | null) => void;
+  onClose: () => void;
+}) {
+  const href = getNavHref(node, locale);
+  const label = getNavLabel(node, locale);
+  const children = node.children ?? [];
+  const hasNestedFlyout = children.some((c) => c.children?.length);
+  const flyoutNode = children.find((c) => c.id === flyoutOpenId && c.children?.length);
+
+  return (
+    <div
+      role="menu"
+      className={cn(
+        "rounded-md border border-white/10 bg-[#000a1e] shadow-xl",
+        hasNestedFlyout ? "flex max-h-[min(70vh,520px)] max-w-[min(100vw-2rem,44rem)] overflow-hidden" : "min-w-[16rem] py-2",
+      )}
+      onMouseLeave={() => setFlyoutOpenId(null)}
+    >
+      <ul className={cn("shrink-0 overflow-y-auto py-2", hasNestedFlyout ? "min-w-[16rem]" : "w-full")}>
+        <li role="none">
+          <Link
+            role="menuitem"
+            href={href}
+            className="block border-b border-white/10 px-4 py-2.5 text-sm font-semibold text-[#e9c176] hover:bg-white/5"
+            onClick={onClose}
+          >
+            {label}
+          </Link>
+        </li>
+        {children.map((child) => {
+          const hasChildren = Boolean(child.children?.length);
+          const isFlyoutOpen = flyoutOpenId === child.id;
+
+          if (!hasChildren) {
+            return (
+              <li key={child.id} role="none">
+                <NavLinkItem node={child} locale={locale} onNavigate={onClose} />
+              </li>
+            );
+          }
+
+          return (
+            <li key={child.id} role="none">
+              <button
+                type="button"
+                aria-expanded={isFlyoutOpen}
+                className={cn(
+                  "flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-left text-sm font-medium leading-snug transition-colors select-none",
+                  isFlyoutOpen
+                    ? "bg-white/5 text-[#e9c176]"
+                    : "text-white/85 hover:bg-white/5 hover:text-[#e9c176]",
+                )}
+                onMouseEnter={() => setFlyoutOpenId(child.id)}
+                onFocus={() => setFlyoutOpenId(child.id)}
+              >
+                {getNavLabel(child, locale)}
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
+      {flyoutNode && (
+        <div className="min-w-[12rem] flex-1 overflow-y-auto border-l border-white/10 py-2 md:min-w-[14rem]">
+          <NavLinkItem
+            node={flyoutNode}
+            locale={locale}
+            onNavigate={onClose}
+            className="block px-4 py-2.5 text-sm font-semibold text-[#e9c176] hover:bg-white/5"
+          />
+          {flyoutNode.children!.map((grandchild) => (
+            <NavLinkItem key={grandchild.id} node={grandchild} locale={locale} onNavigate={onClose} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileNavBranch({
+  node,
+  locale,
+  onNavigate,
+}: {
+  node: SiteNavNode;
+  locale: Locale;
+  onNavigate: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const hasChildren = Boolean(node.children?.length);
+
+  if (!hasChildren) {
+    const href = getNavHref(node, locale);
+    const label = getNavLabel(node, locale);
+    if (node.external) {
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block py-2 text-sm text-white/85"
+          onClick={onNavigate}
+        >
+          {label}
+          <span aria-hidden> ↗</span>
+        </a>
+      );
+    }
+    return (
+      <Link href={href} className="block py-2 text-sm text-white/85" onClick={onNavigate}>
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        className="flex w-full items-center justify-between py-2 text-left text-sm font-medium text-white/85"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {getNavLabel(node, locale)}
+        <ChevronDown className={cn("h-4 w-4 shrink-0 transition", open && "rotate-180")} aria-hidden />
+      </button>
+      {open && (
+        <div className="ml-3 border-l border-[#e9c176]/35 pb-2 pl-3">
+          <Link
+            href={getNavHref(node, locale)}
+            className="block py-2 text-sm text-white/75"
+            onClick={onNavigate}
+          >
+            {getNavLabel(node, locale)}
+          </Link>
+          {node.children!.map((child) => (
+            <MobileNavBranch key={child.id} node={child} locale={locale} onNavigate={onNavigate} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname) as Locale;
-  const L = (path: string) => withLocale(locale, path);
   const t = layoutCopy[locale].nav;
+  const homeHref = homePaths[locale];
+  const topBarNodes = getTopBarNavNodes(locale);
 
-  const dropdowns: readonly DropdownDef[] = [
-    {
-      id: "invertir",
-      label: t.dropdowns.invertir.label,
-      items: [{ label: t.dropdowns.invertir.sectors, href: L("/invertir#sectores") }],
-    },
-    {
-      id: "crecer",
-      label: t.dropdowns.crecer.label,
-      items: [
-        { label: t.dropdowns.crecer.portfolio, href: L("/crecer#portafolio") },
-        { label: t.dropdowns.crecer.cases, href: L("/crecer#casos") },
-        { label: t.dropdowns.crecer.pdi, href: "https://pdihonduras.gob.hn", external: true },
-      ],
-    },
-    {
-      id: "cni",
-      label: t.dropdowns.cni.label,
-      items: [
-        { label: t.dropdowns.cni.legal, href: L("/cni#servicios-legales") },
-        { label: t.dropdowns.cni.technical, href: L("/cni#servicios-tecnicos") },
-        { label: t.dropdowns.cni.data, href: L("/cni#inteligencia-de-datos") },
-      ],
-    },
-  ] as const;
-
-  const topLinks: readonly { label: string; href: string }[] = [
-    { label: t.top.press, href: L("/prensa") },
-    { label: t.top.advisory, href: L("/asesoria") },
-    { label: t.top.procedures, href: L("/tramites") },
-  ];
-
-  const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [flyoutOpenId, setFlyoutOpenId] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
 
-  const closeDropdowns = useCallback(() => setOpenDropdown(null), []);
+  const closeMenus = useCallback(() => {
+    setOpenDropdownId(null);
+    setFlyoutOpenId(null);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeDropdowns();
+      if (e.key === "Escape") closeMenus();
     };
     const onPointer = (e: MouseEvent) => {
-      if (!navRef.current?.contains(e.target as Node)) closeDropdowns();
+      if (!navRef.current?.contains(e.target as Node)) closeMenus();
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onPointer);
@@ -81,38 +243,41 @@ export default function Navbar() {
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onPointer);
     };
-  }, [closeDropdowns]);
+  }, [closeMenus]);
 
   useEffect(() => {
     setMobileOpen(false);
-    closeDropdowns();
-  }, [pathname, closeDropdowns]);
+    closeMenus();
+  }, [pathname, closeMenus]);
 
-  const linkIsActive = (href: string) => {
-    const hrefPath = stripLocalePrefix(href.split("#")[0] ?? "");
-    const current = stripLocalePrefix(pathname).split("#")[0] ?? "";
-    if (hrefPath === "/" || hrefPath === "") return current === "/" || current === "";
-    return current === hrefPath || current.startsWith(`${hrefPath}/`);
-  };
+  useEffect(() => {
+    if (!openDropdownId) setFlyoutOpenId(null);
+  }, [openDropdownId]);
 
   return (
-    <header ref={navRef} className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-lg shadow-black/15">
-      <div className="flex h-10 items-center justify-end gap-4 border-b border-white/10 bg-[#002147] px-4 md:gap-6 md:px-10">
+    <header
+      ref={navRef}
+      className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-lg shadow-black/15"
+      role="banner"
+    >
+      <div className="flex h-9 items-center justify-end gap-5 border-b border-white/10 bg-[#000a1e] px-4 md:gap-7 md:px-10">
+        <nav aria-label={locale === "es" ? "Enlaces rápidos" : "Quick links"} className="flex items-center gap-5 md:gap-7">
+          {topBarNodes.map((n) => (
+            <Link
+              key={n.id}
+              href={getNavHref(n, locale)}
+              className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[#e9c176]"
+            >
+              {getNavLabel(n, locale)}
+            </Link>
+          ))}
+        </nav>
         <LanguageSwitch />
-        {topLinks.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            className="text-[0.7rem] font-semibold uppercase tracking-widest text-white/75 transition hover:text-[#e9c176] md:text-xs"
-          >
-            {l.label}
-          </Link>
-        ))}
       </div>
 
-      <nav className="border-b border-white/10 bg-[#000a1e]/95 backdrop-blur-xl">
+      <nav className="glass-nav border-b border-white/10" aria-label={locale === "es" ? "Menú principal" : "Main menu"}>
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 md:px-10">
-          <Link href={L("/")} className="flex shrink-0 items-center gap-2.5">
+          <Link href={homeHref} className="flex shrink-0 items-center gap-2.5" aria-label={t.brandSubtitle}>
             <span className="flex h-10 items-center justify-center rounded-sm bg-[#e9c176] px-2.5 text-sm font-extrabold text-[#191c1d]">
               CNI
             </span>
@@ -121,90 +286,90 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-1 lg:flex">
-            <Link
-              href={L("/")}
-              className={cn(
-                "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                linkIsActive(L("/")) ? "text-[#e9c176]" : "text-white/70 hover:text-white",
-              )}
-            >
-              {t.home}
-            </Link>
+          <ul className="hidden items-center gap-1 lg:flex" role="menubar">
+            <li role="none">
+              <Link
+                role="menuitem"
+                href={homeHref}
+                className={cn(
+                  "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
+                  pathIsActive(pathname, homeHref) ? "text-[#e9c176]" : "text-white/75 hover:text-white",
+                )}
+              >
+                {t.home}
+              </Link>
+            </li>
 
-            {dropdowns.map((d) => {
-              const isOpen = openDropdown === d.id;
-              return (
-                <div key={d.id} className="relative">
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-haspopup="true"
-                    className={cn(
-                      "flex items-center gap-1 rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                      isOpen ? "text-[#e9c176]" : "text-white/70 hover:text-white",
-                    )}
-                    onClick={() => setOpenDropdown((cur) => (cur === d.id ? null : d.id))}
-                  >
-                    {d.label}
-                    <ChevronDown className={cn("h-3.5 w-3.5 transition", isOpen && "rotate-180")} />
-                  </button>
-                  {isOpen && (
-                    <div
-                      role="menu"
-                      className="absolute left-0 top-full z-50 mt-1 min-w-[280px] max-w-sm rounded-md border border-white/10 bg-[#000a1e] py-2 shadow-xl"
-                    >
-                      {d.items.map((item) =>
-                        item.external ? (
-                          <a
-                            key={item.href}
-                            role="menuitem"
-                            href={item.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block px-4 py-2.5 text-sm font-medium leading-snug text-white/85 hover:bg-white/5 hover:text-[#e9c176]"
-                            onClick={closeDropdowns}
-                          >
-                            {item.label}
-                          </a>
-                        ) : (
-                          <Link
-                            key={item.href}
-                            role="menuitem"
-                            href={item.href}
-                            className="block px-4 py-2.5 text-sm font-medium leading-snug text-white/85 hover:bg-white/5 hover:text-[#e9c176]"
-                            onClick={closeDropdowns}
-                          >
-                            {item.label}
-                          </Link>
-                        ),
+            {siteNavigation.map((node) => {
+              const hasChildren = Boolean(node.children?.length);
+              const isOpen = openDropdownId === node.id;
+              const href = getNavHref(node, locale);
+              const label = getNavLabel(node, locale);
+
+              if (!hasChildren) {
+                return (
+                  <li key={node.id} role="none">
+                    <Link
+                      role="menuitem"
+                      href={href}
+                      className={cn(
+                        "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
+                        pathIsActive(pathname, href) ? "text-[#e9c176]" : "text-white/75 hover:text-white",
                       )}
-                    </div>
-                  )}
-                </div>
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                );
+              }
+
+              return (
+                <li key={node.id} role="none" className="relative">
+                  {/* Wrapper único: botón + panel comparten hover zone (sin gap muerto) */}
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setOpenDropdownId(node.id)}
+                    onMouseLeave={closeMenus}
+                  >
+                    <button
+                      type="button"
+                      role="menuitem"
+                      aria-expanded={isOpen}
+                      aria-haspopup="true"
+                      className={cn(
+                        "flex items-center gap-1 rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
+                        isOpen || pathIsActive(pathname, href)
+                          ? "text-[#e9c176]"
+                          : "text-white/75 hover:text-white",
+                      )}
+                      onClick={() => {
+                        setOpenDropdownId((cur) => (cur === node.id ? null : node.id));
+                        setFlyoutOpenId(null);
+                      }}
+                    >
+                      {label}
+                      <ChevronDown
+                        className={cn("h-3.5 w-3.5 transition", isOpen && "rotate-180")}
+                        aria-hidden
+                      />
+                    </button>
+
+                    {isOpen && (
+                      <div className="absolute left-0 top-full z-50 pt-1">
+                        <DesktopDropdownPanel
+                          node={node}
+                          locale={locale}
+                          flyoutOpenId={flyoutOpenId}
+                          setFlyoutOpenId={setFlyoutOpenId}
+                          onClose={closeMenus}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </li>
               );
             })}
-
-            <Link
-              href={L("/vivir")}
-              className={cn(
-                "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                linkIsActive(L("/vivir")) ? "text-[#e9c176]" : "text-white/70 hover:text-white",
-              )}
-            >
-              {t.vivir}
-            </Link>
-
-            <Link
-              href={L("/recursos")}
-              className={cn(
-                "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                linkIsActive(L("/recursos")) ? "text-[#e9c176]" : "text-white/70 hover:text-white",
-              )}
-            >
-              {t.recursos}
-            </Link>
-          </div>
+          </ul>
 
           <button
             type="button"
@@ -218,50 +383,67 @@ export default function Navbar() {
         </div>
 
         {mobileOpen && (
-          <div className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-white/10 bg-[#000a1e] px-4 py-4 lg:hidden">
+          <div
+            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-white/10 bg-[#000a1e] px-4 py-4 lg:hidden"
+            aria-label={locale === "es" ? "Menú móvil" : "Mobile menu"}
+          >
             <div className="mb-4 flex justify-end">
               <LanguageSwitch />
             </div>
-            <Link href={L("/")} className="block py-2 text-sm font-bold uppercase tracking-wide text-white" onClick={() => setMobileOpen(false)}>
+            <Link
+              href={homeHref}
+              className="block py-2 text-sm font-bold uppercase tracking-wide text-white"
+              onClick={() => setMobileOpen(false)}
+            >
               {t.home}
             </Link>
-            {dropdowns.map((d) => (
-              <div key={d.id} className="border-t border-white/10 py-3">
-                <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#e9c176]">{d.label}</p>
-                {d.items.map((item) =>
-                  item.external ? (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block py-2 text-sm text-white/85"
+            {siteNavigation.map((node) => (
+              <div key={node.id} className="border-t border-white/10 py-3">
+                {node.children?.length ? (
+                  <>
+                    <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#e9c176]">
+                      {getNavLabel(node, locale)}
+                    </p>
+                    <Link
+                      href={getNavHref(node, locale)}
+                      className="block py-2 text-sm text-white/75"
                       onClick={() => setMobileOpen(false)}
                     >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link key={item.href} href={item.href} className="block py-2 text-sm text-white/85" onClick={() => setMobileOpen(false)}>
-                      {item.label}
+                      {locale === "es" ? "Vista general" : "Overview"}
                     </Link>
-                  ),
+                    {node.children.map((child) => (
+                      <MobileNavBranch
+                        key={child.id}
+                        node={child}
+                        locale={locale}
+                        onNavigate={() => setMobileOpen(false)}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  <Link
+                    href={getNavHref(node, locale)}
+                    className="block py-2 text-sm text-white/85"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {getNavLabel(node, locale)}
+                  </Link>
                 )}
               </div>
             ))}
-            <Link
-              href={L("/vivir")}
-              className="block border-t border-white/10 py-3 text-sm font-bold uppercase tracking-wide text-white"
-              onClick={() => setMobileOpen(false)}
-            >
-              {t.vivir}
-            </Link>
-            <Link href={L("/recursos")} className="block py-3 text-sm font-bold uppercase tracking-wide text-white" onClick={() => setMobileOpen(false)}>
-              {t.recursos}
-            </Link>
-            <div className="border-t border-white/10 pt-3">
-              {topLinks.map((l) => (
-                <Link key={l.href} href={l.href} className="block py-2 text-xs font-semibold uppercase tracking-wider text-white/70" onClick={() => setMobileOpen(false)}>
-                  {l.label}
+
+            <div className="mt-2 border-t border-white/10 py-3">
+              <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#e9c176]">
+                {locale === "es" ? "Enlaces rápidos" : "Quick links"}
+              </p>
+              {topBarNodes.map((n) => (
+                <Link
+                  key={n.id}
+                  href={getNavHref(n, locale)}
+                  className="block py-2 text-sm text-white/85"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {getNavLabel(n, locale)}
                 </Link>
               ))}
             </div>

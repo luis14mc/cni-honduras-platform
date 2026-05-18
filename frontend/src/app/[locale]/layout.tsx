@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Navbar from "@/src/components/layout/Navbar";
@@ -6,6 +7,18 @@ import { HtmlLang } from "@/src/components/layout/HtmlLang";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ locale: string }> },
+  _parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { locale: raw } = await params;
+  if (!isLocale(raw)) return {};
+  const locale = raw as Locale;
+  return {
+    openGraph: { locale: locale === "es" ? "es_HN" : "en_US" },
+  };
+}
 
 export default async function LocaleLayout({
   children,
@@ -29,7 +42,7 @@ export default async function LocaleLayout({
         {skip}
       </a>
       <Navbar />
-      <main id="main-content" className="flex flex-1 flex-col pt-28">
+      <main id="main-content" className="flex flex-1 flex-col pt-[5.25rem]">
         {children}
       </main>
       <Footer />

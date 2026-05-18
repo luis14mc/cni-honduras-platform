@@ -8,9 +8,21 @@ export type HomeCopy = {
     titleLine2: string;
     subtitle: string;
     ctaExplore: string;
+    ctaGrow: string;
     ctaProject: string;
     imageAlt: string;
     imageCaption: string;
+  };
+  bento: {
+    port: { title: string; text: string };
+    talent: { title: string; text: string; rank: string };
+    export: { label: string; value: string; hint: string };
+    maquila: { label: string; value: string; hint: string };
+  };
+  testimonials: {
+    title: string;
+    cta: string;
+    items: ReadonlyArray<{ quote: string; name: string; role: string; initials: string }>;
   };
   postulacion: {
     eyebrow: string;
@@ -38,6 +50,7 @@ export type HomeCopy = {
     eyebrow: string;
     title: string;
     description: string;
+    stats: ReadonlyArray<{ value: string; label: string; hint: string }>;
     cards: ReadonlyArray<{ label: string; delta: string; hint: string }>;
     extra: ReadonlyArray<{ value: string; label: string }>;
   };
@@ -90,17 +103,58 @@ const CIFRAS_VALUES = [
 export const homeCopy: Record<Locale, HomeCopy> = {
   es: {
     hero: {
-      badge: "Centro estratégico de las Américas",
-      titleLine1: "Invierte,",
-      titleGrow: "Crece",
-      titleLine2: "y Vive en Honduras",
+      badge: "Destino Global de Inversión",
+      titleLine1: "HONDURAS: UN PAÍS PARA",
+      titleGrow: "INVERTIR, CRECER Y VIVIR",
+      titleLine2: "",
       subtitle:
-        "La puerta de entrada a los mercados globales. Explore un panorama de crecimiento sin precedentes, estabilidad legal e infraestructura estratégica al servicio del inversionista institucional.",
-      ctaExplore: "Explorar oportunidades",
+        "Facilitamos su entrada al mercado de mayor crecimiento en Centroamérica con transparencia, seguridad jurídica y talento excepcional.",
+      ctaExplore: "Invertir",
+      ctaGrow: "Crecer",
       ctaProject: "Postular proyecto",
-      imageAlt:
-        "Equipo directivo analizando estrategia de inversión y crecimiento empresarial en un entorno corporativo moderno.",
+      imageAlt: "Costa hondureña al atardecer — panorama de inversión y desarrollo.",
       imageCaption: "Perspectiva de inversión",
+    },
+    bento: {
+      port: {
+        title: "Eficiencia Portuaria Estratégica",
+        text: "Puerto Cortés se posiciona como el más eficiente del Mar Caribe, manejando el 78.6% del movimiento nacional con una carga de 12,548 TM en 2024.",
+      },
+      talent: {
+        title: "Capital Humano Bilingüe",
+        text: "Líderes en Centroamérica y 3º en LatAm en dominio del inglés (EF EPI 2024), con más de 824 centros de educación bilingüe.",
+        rank: "En Centroamérica",
+      },
+      export: {
+        label: "Exportación de Manufactura",
+        value: "USD 4,212.7 M",
+        hint: "Cifras destacadas a Noviembre 2024",
+      },
+      maquila: {
+        label: "Maquila y Bienes",
+        value: "USD 5,014.1 M",
+        hint: "Liderazgo regional indiscutible",
+      },
+    },
+    testimonials: {
+      title: "Casos de Éxito",
+      cta: "Ver todos los casos",
+      items: [
+        {
+          quote:
+            "Nuestro país tiene gente trabajadora, tierra fértil y una ubicación privilegiada. Invertir aquí es invertir en un modelo de crecimiento sostenible con rostro humano.",
+          name: "Naman Antonio Sánchez",
+          role: "Gerente General - Sinclair",
+          initials: "NS",
+        },
+        {
+          quote:
+            "Honduras tiene un potencial increíble para los inversionistas que buscan más que un retorno financiero; aquí se puede generar un impacto real y construir un futuro sostenible.",
+          name: "David Dachner",
+          role: "Gerente Propietario - Kimpton Grand Hotel",
+          initials: "DD",
+        },
+      ],
     },
     postulacion: {
       eyebrow: "Ventanilla de proyectos",
@@ -173,8 +227,14 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     },
     cifras: {
       eyebrow: "Indicadores",
-      title: "Honduras en cifras",
+      title: "Honduras en Cifras",
       description: "Una instantánea del entorno macro y logístico que respalda decisiones de inversión.",
+      stats: [
+        { value: "112,777 km²", label: "Extensión Territorial", hint: "Ubicación estratégica en el corazón de América." },
+        { value: "58.6%", label: "Energía Renovable", hint: "Matriz diversificada con 10 fuentes energéticas." },
+        { value: "9.89M", label: "Habitantes", hint: "Fuerza laboral joven con promedio de 31 años." },
+        { value: "11 TLCs", label: "Tratados Comerciales", hint: "Acceso preferencial a más de 45 naciones." },
+      ],
       cards: [
         {
           label: "IED proyectada (referencia)",
@@ -205,17 +265,16 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       ],
     },
     mapaTerritorial: {
-      titleLine1: "Riqueza Territorial",
-      titleLine2: "& Estrategia",
-      description:
-        "Honduras está dividida en zonas estratégicas adaptadas a industrias específicas. Desde los parques industriales de San Pedro Sula hasta el centro logístico de Comayagua.",
+      titleLine1: "Visualización de Departamentos",
+      titleLine2: "",
+      description: "Interactúe con los 18 departamentos para ver data específica.",
       cortesTitle: "Región de Cortés",
       cortesSubtitle: "Potencia Industrial",
       stats: { projects: "Proyectos Activos", fdi: "Flujo IED (2023)", growth: "Índice de Crecimiento" },
       mapAlt: "Mapa topográfico estilizado de las regiones de Honduras",
     },
     sectores: {
-      title: "Principales sectores de inversión",
+      title: "Sectores Estratégicos",
       description:
         "Cinco motores priorizados por el CNI para canalizar capital extranjero con respaldo legal LPPI y ZOLI.",
       cta: "Ficha sectorial completa →",
@@ -224,7 +283,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         { name: "Manufactura", tagline: "Nearshoring con beneficios Zero-Duty." },
         { name: "Turismo", tagline: "Islas de la Bahía y arqueología Maya." },
         { name: "Energía", tagline: "Solar, eólica e hidroeléctrica." },
-        { name: "BPO", tagline: "Talento joven y bilingüe." },
+        { name: "Infraestructura", tagline: "Puertos, carreteras y conectividad." },
       ],
       more: "Saber más",
     },
@@ -291,17 +350,58 @@ export const homeCopy: Record<Locale, HomeCopy> = {
   },
   en: {
     hero: {
-      badge: "Strategic hub of the Americas",
-      titleLine1: "Invest,",
-      titleGrow: "Grow",
-      titleLine2: "and Live in Honduras",
+      badge: "Global investment destination",
+      titleLine1: "HONDURAS: A COUNTRY TO",
+      titleGrow: "INVEST, GROW AND LIVE",
+      titleLine2: "",
       subtitle:
-        "Your gateway to global markets. Explore strong growth potential, legal stability, and strategic infrastructure built for institutional investors.",
-      ctaExplore: "Explore opportunities",
+        "We facilitate your entry into Central America's fastest-growing market with transparency, legal certainty, and exceptional talent.",
+      ctaExplore: "Invest",
+      ctaGrow: "Grow",
       ctaProject: "Submit a project",
-      imageAlt:
-        "Leadership team reviewing investment strategy and business growth in a modern corporate setting.",
+      imageAlt: "Honduran coastline at sunset — investment and development panorama.",
       imageCaption: "Investment outlook",
+    },
+    bento: {
+      port: {
+        title: "Strategic port efficiency",
+        text: "Puerto Cortés ranks as the Caribbean's most efficient port, handling 78.6% of national traffic with 12,548 TM in 2024.",
+      },
+      talent: {
+        title: "Bilingual human capital",
+        text: "Leaders in Central America and 3rd in Latin America in English proficiency (EF EPI 2024), with 824+ bilingual education centers.",
+        rank: "In Central America",
+      },
+      export: {
+        label: "Manufacturing exports",
+        value: "USD 4,212.7 M",
+        hint: "Figures through November 2024",
+      },
+      maquila: {
+        label: "Maquila & goods",
+        value: "USD 5,014.1 M",
+        hint: "Undisputed regional leadership",
+      },
+    },
+    testimonials: {
+      title: "Success stories",
+      cta: "View all cases",
+      items: [
+        {
+          quote:
+            "Our country has hardworking people, fertile land, and a privileged location. Investing here means investing in sustainable growth with a human face.",
+          name: "Naman Antonio Sánchez",
+          role: "General Manager - Sinclair",
+          initials: "NS",
+        },
+        {
+          quote:
+            "Honduras has incredible potential for investors seeking more than financial return; here you can generate real impact and build a sustainable future.",
+          name: "David Dachner",
+          role: "Owner Manager - Kimpton Grand Hotel",
+          initials: "DD",
+        },
+      ],
     },
     postulacion: {
       eyebrow: "Project desk",
@@ -325,7 +425,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         "Manufacturing & textiles",
         "Tourism",
         "Energy",
-        "BPO / services",
+        "Infrastructure",
         "Other",
       ],
       submit: "Send application",
@@ -376,6 +476,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       eyebrow: "Indicators",
       title: "Honduras in figures",
       description: "A snapshot of the macro and logistics environment that supports investment decisions.",
+      stats: [
+        { value: "112,777 km²", label: "Territorial extension", hint: "Strategic location at the heart of the Americas." },
+        { value: "58.6%", label: "Renewable energy", hint: "Diversified matrix with 10 energy sources." },
+        { value: "9.89M", label: "Population", hint: "Young workforce with an average age of 31." },
+        { value: "11 FTAs", label: "Trade treaties", hint: "Preferential access to 45+ nations." },
+      ],
       cards: [
         {
           label: "FDI projected (reference)",
@@ -416,7 +522,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       mapAlt: "Stylized topographic map of Honduras regions",
     },
     sectores: {
-      title: "Main investment sectors",
+      title: "Strategic sectors",
       description:
         "Five priority engines promoted by the CNI to channel foreign capital with LPPI and ZOLI legal backing.",
       cta: "Full sector brief →",

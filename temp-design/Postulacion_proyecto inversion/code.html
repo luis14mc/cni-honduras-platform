@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Postulación de Proyectos | Invest Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#708ab5",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "on-secondary-fixed-variant": "#1f477b",
+                        "tertiary": "#110a00",
+                        "inverse-primary": "#aec7f6",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#002147",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-variant": "#e1e3e4",
+                        "background": "#f8f9fa",
+                        "surface-dim": "#d9dadb",
+                        "on-secondary-container": "#294f83",
+                        "secondary-container": "#9fc2fe",
+                        "surface": "#f8f9fa",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#d5e3ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e7e8e9",
+                        "tertiary-container": "#2e1f00",
+                        "outline": "#74777f",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "error-container": "#ffdad6",
+                        "secondary": "#3a5f94",
+                        "primary-fixed-dim": "#aec7f6",
+                        "on-primary-fixed": "#001b3d",
+                        "on-tertiary-fixed": "#261900",
+                        "outline-variant": "#c4c6cf",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#465f88",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed-dim": "#a7c8ff",
+                        "on-secondary": "#ffffff",
+                        "primary": "#000a1e",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "tertiary-fixed": "#ffdea5",
+                        "primary-fixed": "#d6e3ff",
+                        "on-surface": "#191c1d",
+                        "on-surface-variant": "#44474e",
+                        "surface-container": "#edeeef",
+                        "surface-container-highest": "#e1e3e4",
+                        "on-secondary-fixed": "#001b3c",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#a68440",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2e3132"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(0, 10, 30, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+        }
+        .tonal-split {
+            background: linear-gradient(to right, #f8f9fa 50%, #ffffff 50%);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: rgba(0, 33, 71, 0.2) !important;
+            box-shadow: 0 0 0 2px rgba(0, 33, 71, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 glass-nav flex justify-between items-center px-8 h-20 w-full shadow-2xl shadow-[#000a1e]/20">
+<div class="text-xl font-black text-slate-50 tracking-tighter font-headline">
+            Invest Honduras
+        </div>
+<div class="hidden md:flex gap-8 items-center font-headline font-bold tracking-tight">
+<a class="text-slate-400 hover:text-slate-100 transition-colors" href="#">Sectors</a>
+<a class="text-slate-400 hover:text-slate-100 transition-colors" href="#">Regions</a>
+<a class="text-slate-50 border-b-2 border-[#2e1f00] pb-1" href="#">Resources</a>
+</div>
+<div class="flex items-center gap-6">
+<span class="text-slate-400 font-headline font-bold text-sm cursor-pointer hover:text-slate-100">Language</span>
+<button class="bg-primary-container text-on-primary px-6 py-2.5 rounded-md font-headline font-bold text-sm hover:bg-white/5 transition-all duration-300 scale-95 active:scale-90">
+                Contact Us
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative pt-20 overflow-hidden hero-gradient min-h-[70vh] flex items-center">
+<!-- Abstract Background Texture -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,#2e1f00_0%,transparent_50%)]"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10 py-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7">
+<span class="inline-block text-tertiary-fixed-dim font-label text-xs uppercase tracking-[0.2em] mb-6 font-bold">Portal de Inversión Soberana</span>
+<h1 class="text-white font-headline font-extrabold text-5xl md:text-7xl leading-tight tracking-tight mb-8">
+                        ¿TIENES UN PROYECTO DE INVERSIÓN?
+                    </h1>
+<p class="text-on-primary-container text-lg md:text-xl leading-relaxed max-w-2xl mb-10 font-body">
+                        Un <span class="text-white font-semibold">proyecto de inversión</span> es una iniciativa lista para desarrollarse, que ya cuenta con estudios técnicos, financieros y de mercado, y que permite conocer con claridad el retorno y los beneficios estratégicos.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<a class="bg-tertiary-fixed-dim text-tertiary px-8 py-4 rounded-md font-headline font-extrabold text-sm uppercase tracking-wider hover:translate-y-[-2px] transition-transform shadow-lg shadow-black/20" href="#formulario">
+                            Postula tu proyecto
+                        </a>
+<button class="flex items-center gap-3 text-white border-b border-white/20 pb-1 font-headline font-bold hover:border-tertiary-fixed-dim transition-colors">
+<span class="material-symbols-outlined">description</span>
+                            Descargar guía técnica
+                        </button>
+</div>
+</div>
+<div class="lg:col-span-5 flex justify-center lg:justify-end">
+<div class="relative group">
+<div class="absolute -inset-4 bg-tertiary-fixed-dim/20 blur-3xl rounded-full opacity-50 group-hover:opacity-80 transition-opacity"></div>
+<img alt="Guacamaya Invest Honduras" class="relative z-10 w-72 md:w-96 h-auto drop-shadow-2xl" data-alt="A majestic scarlet macaw, the national bird of Honduras, depicted in a highly artistic and clean commercial style against a dark, sophisticated navy blue background. The lighting is dramatic and focused, highlighting the vibrant red, yellow, and blue plumage with sharp clarity and depth. The image represents prestige, national identity, and sovereign authority, fitting for a high-end government investment portal. The composition is centered and modern." src="https://lh3.googleusercontent.com/aida/ADBb0uh69rGp8RwiVAIu9E4gNjc_uszYWMiov5TzlXydiljO3IeNRi9MgbWOHA1LQDGywKw6DOqwJHfewVOAuOjjyVKCcIk3vdQ7oawc0F-cOcRg_n_Ql9lWFmiP8mc0NcIPegkMtWekh3Kjp_Yr6OZla_0FDKlA09xIeQQKF6yTnp0rGbgulSK79MduGSUtzOMRqretIO74DbmCV4yBdav4793omrDJRqBslf1q8D6QuoAqiaAMXHRURZcuR_IU"/>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Propuesta de Valor: Bento Grid Layout -->
+<section class="py-24 bg-surface px-8">
+<div class="container mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+<div class="max-w-2xl">
+<h2 class="font-headline font-extrabold text-3xl md:text-4xl text-primary mb-4">¿Por qué postular tu proyecto en el CNI?</h2>
+<p class="text-on-surface-variant font-body leading-relaxed">
+                        El Consejo Nacional de Inversiones brinda acompañamiento gratuito y confidencial a inversionistas nacionales e internacionales para facilitar la promoción de proyectos estratégicos.
+                    </p>
+</div>
+<div class="h-1 w-24 bg-tertiary-container rounded-full mb-2"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">handshake</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-4 text-primary">Acompañamiento integral</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Asesoría técnica personalizada durante todo el proceso de estructuración y ejecución.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">enhanced_encryption</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-4 text-primary">Confidencialidad</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Protegemos la información de su proyecto con los más altos estándares institucionales.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">hub</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-4 text-primary">Conexión con aliados</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Facilitamos el acercamiento con potenciales aliados financieros y estratégicos.</p>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 group border-t-4 border-transparent hover:border-primary">
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">monitoring</span>
+</div>
+<h3 class="font-headline font-bold text-lg mb-4 text-primary">Seguimiento técnico</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Monitoreo continuo para asegurar el avance y resolución de cuellos de botella.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Postulation Form -->
+<section class="py-24 bg-surface-container-low px-8 border-y border-outline-variant/10" id="formulario">
+<div class="container mx-auto max-w-5xl">
+<div class="bg-white rounded-2xl shadow-2xl overflow-hidden border border-outline-variant/10">
+<div class="bg-primary-container p-8 md:p-12 text-white text-center">
+<h2 class="font-headline font-extrabold text-3xl mb-4">Postulación Técnica de Proyecto</h2>
+<p class="text-on-primary-container max-w-2xl mx-auto">Complete el siguiente formulario estructurado para que un ejecutivo senior del CNI pueda evaluar su iniciativa y contactarle.</p>
+</div>
+<form class="p-8 md:p-12 space-y-12">
+<!-- Section: Datos del Inversionista -->
+<div>
+<div class="flex items-center gap-4 mb-8">
+<span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">01</span>
+<h3 class="font-headline font-bold text-xl text-primary uppercase tracking-tight">Datos del Inversionista</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Nombre Completo *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Nombre de Empresa *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Corporación S.A." type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Cargo *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Director Ejecutivo / CEO" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Correo Electrónico *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="contacto@empresa.com" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Sitio Web</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="https://www.empresa.com" type="url"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">País de Origen *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Seleccione país" type="text"/>
+</div>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-outline-variant/20"></div>
+<!-- Section: Datos del Proyecto -->
+<div>
+<div class="flex items-center gap-4 mb-8">
+<span class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">02</span>
+<h3 class="font-headline font-bold text-xl text-primary uppercase tracking-tight">Detalles Técnicos del Proyecto</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2 space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Nombre del Proyecto *</label>
+<input class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Título formal de la iniciativa" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Sector Estratégico *</label>
+<select class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary font-body appearance-none">
+<option>Energía</option>
+<option>Infraestructura</option>
+<option>Agroindustria</option>
+<option>Manufactura</option>
+<option>Turismo y Hospitalidad</option>
+<option>Logística y Transporte</option>
+<option>Otros</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">¿Tiene presencia en Honduras? *</label>
+<div class="flex gap-4 mt-2">
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="presencia" type="radio"/>
+<span class="text-sm font-body">Sí</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="presencia" type="radio"/>
+<span class="text-sm font-body">No</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary" name="presencia" type="radio"/>
+<span class="text-sm font-body">En evaluación</span>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Tipo de Proyecto *</label>
+<select class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary font-body">
+<option>Nuevo proyecto (Greenfield)</option>
+<option>Expansión (Brownfield)</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Monto de Inversión (USD) *</label>
+<select class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary font-body">
+<option>Menos de 10 millones</option>
+<option>De 10 a 50 millones</option>
+<option>De 50 a 100 millones</option>
+<option>Mayor de 100 millones</option>
+</select>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Descripción Corta del Proyecto *</label>
+<textarea class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary placeholder:text-outline/50 font-body" placeholder="Resumen ejecutivo del alcance y objetivos..." rows="4"></textarea>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">¿Tiene estudios de factibilidad? *</label>
+<select class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary font-body">
+<option>Sí, completos</option>
+<option>En proceso</option>
+<option>No</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold font-label text-on-surface-variant uppercase tracking-wider">Etapa del Proyecto *</label>
+<select class="w-full bg-surface-container-low border-none rounded-md p-4 text-primary font-body">
+<option>Estructura de planificación</option>
+<option>Tramitología</option>
+<option>Ejecución y monitoreo</option>
+<option>Operación (Expansión)</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Privacy Consent -->
+<div class="bg-surface-container-low p-6 rounded-lg border-l-4 border-tertiary-container">
+<label class="flex gap-4 cursor-pointer">
+<input class="mt-1 rounded text-primary focus:ring-primary" type="checkbox"/>
+<p class="text-xs text-on-surface-variant leading-relaxed font-body">
+                                El CNI se compromete a proteger su privacidad. La información proporcionada será utilizada únicamente para administrar su solicitud y brindarle acompañamiento institucional. Autorizo el almacenamiento y procesamiento de mis datos personales para gestionar esta solicitud.
+                            </p>
+</label>
+</div>
+<div class="flex justify-center pt-6">
+<button class="bg-primary text-white px-12 py-5 rounded-md font-headline font-extrabold text-sm uppercase tracking-widest hover:bg-primary-container transition-all shadow-xl shadow-primary/20 hover:translate-y-[-2px]" type="submit">
+                            Enviar Postulación Técnica
+                        </button>
+</div>
+</form>
+</div>
+</div>
+</section>
+<!-- Closing CTA Section -->
+<section class="py-24 bg-white px-8">
+<div class="container mx-auto text-center max-w-4xl">
+<h2 class="font-headline font-extrabold text-4xl text-primary mb-6">Acelera tu proceso de inversión en Honduras</h2>
+<p class="text-on-surface-variant text-lg mb-10 font-body">
+                ¿Necesita orientación antes de postular? Nuestro equipo de especialistas está disponible para resolver sus dudas y guiarle en el marco legal y técnico del país.
+            </p>
+<a class="inline-flex items-center gap-4 bg-tertiary-container text-tertiary-fixed px-10 py-5 rounded-md font-headline font-bold text-lg hover:bg-tertiary transition-colors" href="#">
+                Contacta al CNI para asistencia gratuita
+                <span class="material-symbols-outlined">arrow_forward</span>
+</a>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary text-slate-400 py-20 px-8 border-t border-slate-800">
+<div class="container mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+<div class="col-span-1">
+<div class="text-2xl font-black text-white tracking-tighter mb-8">Invest Honduras</div>
+<p class="text-xs leading-relaxed uppercase tracking-widest font-label">© 2024 GOVERNMENT OF HONDURAS. SOVEREIGN INVESTMENT AUTHORITY.</p>
+<div class="flex gap-4 mt-8">
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-tertiary-container transition-colors" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-tertiary-container transition-colors" href="#"><span class="material-symbols-outlined text-sm">mail</span></a>
+<a class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-tertiary-container transition-colors" href="#"><span class="material-symbols-outlined text-sm">business_center</span></a>
+</div>
+</div>
+<div>
+<h4 class="text-white font-headline font-bold text-sm uppercase tracking-widest mb-8">Inversionistas</h4>
+<ul class="space-y-4 font-body text-sm">
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Recursos CNI</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Preguntas frecuentes</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Casos de éxito</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Portafolio de inversiones</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-headline font-bold text-sm uppercase tracking-widest mb-8">Sectores Priorizados</h4>
+<ul class="space-y-4 font-body text-sm">
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Agroindustria</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Manufactura Ligera</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Turismo &amp; Sostenibilidad</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Energía Renovable</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-headline font-bold text-sm uppercase tracking-widest mb-8">Dirección</h4>
+<p class="font-body text-sm leading-relaxed mb-6">
+                        Centro Cívico Gubernamental, Torre 1, Nivel 12, Tegucigalpa, Honduras.
+                    </p>
+<p class="font-body text-sm leading-relaxed">
+                        seguimiento@cni.hn<br/>
+                        (504) 2242-8955
+                    </p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-6">
+<div class="flex gap-8 font-label text-[10px] uppercase tracking-[0.2em]">
+<a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-white transition-colors" href="#">Institutional Transparency</a>
+</div>
+<div class="text-[10px] font-label uppercase tracking-widest">
+                    Sovereign Investment Portal
+                </div>
+</div>
+</div>
+</footer>
+</body></html>

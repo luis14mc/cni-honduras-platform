@@ -1,29 +1,26 @@
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------------
-   CNI Honduras — Sovereign Design System (Manrope + Inter)
-   Palette extracted from temp-design tokens.
-   --------------------------------------------------------------------------- */
+/* CNI Honduras — Sovereign Design System (temp-design) */
 
 :root {
   --background: #f8f9fa;
   --foreground: #191c1d;
-
   --cni-primary: #000a1e;
   --cni-primary-container: #002147;
   --cni-secondary: #3a5f94;
   --cni-secondary-container: #9fc2fe;
+  --cni-secondary-fixed-dim: #a7c8ff;
   --cni-tertiary-gold: #e9c176;
+  --cni-tertiary-fixed: #ffdea5;
   --cni-tertiary-container: #2e1f00;
   --cni-on-tertiary-container: #a68440;
-
-  --cni-surface: #f8f9fa;
+  --cni-on-primary-container: #708ab5;
+  --cni-on-primary-fixed-variant: #2d476f;
   --cni-surface-lowest: #ffffff;
   --cni-surface-low: #f3f4f5;
-  --cni-surface: #edeeef;
+  --cni-surface-container: #edeeef;
   --cni-surface-high: #e7e8e9;
   --cni-surface-highest: #e1e3e4;
-
   --cni-on-surface: #191c1d;
   --cni-on-surface-variant: #44474e;
   --cni-outline: #74777f;
@@ -34,7 +31,6 @@
   --font-display: var(--font-manrope), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-sans: var(--font-inter), system-ui, sans-serif;
-
   --color-cni-primary: var(--cni-primary);
   --color-cni-primary-container: var(--cni-primary-container);
   --color-cni-secondary: var(--cni-secondary);
@@ -62,27 +58,38 @@
   .font-headline { font-family: var(--font-display); }
   .font-body { font-family: var(--font-body); }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+  .glass-nav {
+    background: rgba(0, 33, 71, 0.8);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
+
+  .glass-card,
   .glass-panel {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(0, 33, 71, 0.75);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
+
   .glass-dark {
     background: rgba(0, 33, 71, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
+
   .tonal-depth-layering {
     box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
   }
-  .hero-gradient {
+
+  .hero-gradient,
+  .sovereign-gradient {
     background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
   }
+
+  .asymmetric-clip {
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+  }
+
   .text-gradient-gold {
     background: linear-gradient(135deg, #a68440 0%, #2e1f00 100%);
     -webkit-background-clip: text;
@@ -91,7 +98,38 @@
     color: transparent;
   }
 
-  /* Hide scrollbar for tab strip */
-  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .text-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .bento-card {
+    @apply transition-all duration-500;
+  }
+
+  .bento-card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 24px 48px rgba(0, 10, 30, 0.08);
+  }
+
+  .premium-gradient {
+    background: linear-gradient(180deg, #f8f9fa 0%, #edeeef 100%);
+  }
+
+  .gold-accent {
+    color: var(--cni-tertiary-gold);
+  }
+
+  .gold-border-focus:focus {
+    outline: none;
+    border-color: var(--cni-tertiary-gold);
+    box-shadow: 0 0 0 2px rgba(233, 193, 118, 0.35);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

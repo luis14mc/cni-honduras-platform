@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com", pathname: "/**" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/aida/**" },
       { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/aida-public/**" },
       { protocol: "https", hostname: "cdn.pixabay.com", pathname: "/**" },
     ],

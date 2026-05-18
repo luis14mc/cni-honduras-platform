@@ -1,0 +1,74 @@
+[
+  {
+    "id": "invertir",
+    "label": { "es": "Invertir en Honduras", "en": "Invest in Honduras" },
+    "path": { "es": "/invertir", "en": "/en/invest" },
+    "children": [
+      {
+        "id": "invertir-sectores",
+        "label": { "es": "Sectores de Inversión", "en": "Investment Sectors" },
+        "path": { "es": "/invertir/sectores", "en": "/en/invest/sectors" }
+      },
+      {
+        "id": "invertir-por-que-honduras",
+        "label": { "es": "¿Por qué Honduras?", "en": "Why Honduras?" },
+        "path": { "es": "/invertir/por-que-honduras", "en": "/en/invest/why-honduras" }
+      }
+    ]
+  },
+  {
+    "id": "crecer",
+    "label": { "es": "Crecer en Honduras", "en": "Grow in Honduras" },
+    "path": { "es": "/crecer", "en": "/en/grow" },
+    "children": [
+      {
+        "id": "crecer-portafolio",
+        "label": { "es": "Portafolio de Inversiones", "en": "Investment Portfolio" },
+        "path": { "es": "/portafolio", "en": "/en/portfolio" }
+      },
+      {
+        "id": "crecer-casos",
+        "label": { "es": "Casos de Éxito", "en": "Success Stories" },
+        "path": { "es": "/portafolio/casos", "en": "/en/portfolio/success-stories" }
+      },
+      {
+        "id": "crecer-pdi",
+        "label": { "es": "Portal Digital de Inversiones", "en": "Digital Investment Portal" },
+        "path": { "es": "https://pdihonduras.gob.hn", "en": "https://pdihonduras.gob.hn" },
+        "external": true
+      }
+    ]
+  },
+  {
+    "id": "vivir",
+    "label": { "es": "Vivir en Honduras", "en": "Live in Honduras" },
+    "path": { "es": "/vivir", "en": "/en/live" }
+  },
+  {
+    "id": "cni",
+    "label": { "es": "CNI", "en": "CNI" },
+    "path": { "es": "/cni", "en": "/en/cni" },
+    "children": [
+      {
+        "id": "cni-servicios-legales",
+        "label": { "es": "Servicios Legales", "en": "Legal Services" },
+        "path": { "es": "/cni/servicios-legales", "en": "/en/cni/legal-services" }
+      },
+      {
+        "id": "cni-servicios-tecnicos",
+        "label": { "es": "Servicios Técnicos", "en": "Technical Services" },
+        "path": { "es": "/cni/servicios-tecnicos", "en": "/en/cni/technical-services" }
+      },
+      {
+        "id": "cni-inteligencia-datos",
+        "label": { "es": "Inteligencia de Datos", "en": "Data Intelligence" },
+        "path": { "es": "/cni/inteligencia-de-datos", "en": "/en/cni/data-intelligence" }
+      }
+    ]
+  },
+  {
+    "id": "recursos",
+    "label": { "es": "Recursos", "en": "Resources" },
+    "path": { "es": "/recursos", "en": "/en/resources" }
+  }
+]

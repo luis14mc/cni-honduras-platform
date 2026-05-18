@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Centro de Recursos | INVEST HONDURAS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-low": "#f3f4f5",
+                      "surface-container-high": "#e7e8e9",
+                      "on-primary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed": "#d5e3ff",
+                      "background": "#f8f9fa",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "on-tertiary-fixed-variant": "#5d4201",
+                      "surface-dim": "#d9dadb",
+                      "surface-variant": "#e1e3e4",
+                      "surface": "#f8f9fa",
+                      "tertiary": "#110a00",
+                      "on-surface-variant": "#44474e",
+                      "on-secondary": "#ffffff",
+                      "on-background": "#191c1d",
+                      "inverse-surface": "#2e3132",
+                      "on-tertiary-container": "#a68440",
+                      "on-surface": "#191c1d",
+                      "on-secondary-fixed": "#001b3c",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-container": "#2e1f00",
+                      "surface-bright": "#f8f9fa",
+                      "surface-tint": "#465f88",
+                      "on-error-container": "#93000a",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "on-secondary-fixed-variant": "#1f477b",
+                      "inverse-on-surface": "#f0f1f2",
+                      "tertiary-fixed-dim": "#e9c176",
+                      "primary-fixed": "#d6e3ff",
+                      "inverse-primary": "#aec7f6",
+                      "secondary-container": "#9fc2fe",
+                      "surface-container": "#edeeef",
+                      "on-primary-fixed": "#001b3d",
+                      "error": "#ba1a1a",
+                      "secondary-fixed-dim": "#a7c8ff",
+                      "primary": "#000a1e",
+                      "tertiary-fixed": "#ffdea5",
+                      "secondary": "#3a5f94",
+                      "outline-variant": "#c4c6cf",
+                      "on-primary-container": "#708ab5",
+                      "on-tertiary-fixed": "#261900",
+                      "on-secondary-container": "#294f83",
+                      "surface-container-highest": "#e1e3e4",
+                      "primary-fixed-dim": "#aec7f6",
+                      "primary-container": "#002147",
+                      "outline": "#74777f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Manrope"],
+                      "display": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              },
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="text-on-background">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-primary-container/80 backdrop-blur-md dark:bg-primary/90 shadow-2xl shadow-primary/5">
+<nav class="flex justify-between items-center w-full px-8 h-20 max-w-screen-2xl mx-auto">
+<div class="text-xl font-headline font-extrabold text-on-primary-fixed tracking-tighter">
+                INVEST HONDURAS
+            </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="font-headline text-label-md uppercase tracking-wider text-on-primary-fixed-variant hover:text-on-primary-fixed transition-all duration-300" href="#">Sectors</a>
+<a class="font-headline text-label-md uppercase tracking-wider text-on-primary-fixed-variant hover:text-on-primary-fixed transition-all duration-300" href="#">Regions</a>
+<a class="font-headline text-label-md uppercase tracking-wider text-tertiary-fixed-dim font-bold border-b-2 border-tertiary-fixed-dim pb-1" href="#">Resources</a>
+<a class="font-headline text-label-md uppercase tracking-wider text-on-primary-fixed-variant hover:text-on-primary-fixed transition-all duration-300" href="#">Investor Portal</a>
+</div>
+<div class="flex items-center space-x-6 text-on-primary-fixed">
+<button class="hover:opacity-80 transition-opacity flex items-center space-x-2">
+<span class="material-symbols-outlined">language</span>
+<span class="font-headline text-label-md uppercase tracking-wider">Language</span>
+</button>
+<button class="hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+</nav>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[500px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A sprawling, high-end architectural shot of a modern financial district with glass skyscrapers reflecting a clear blue sky. The lighting is crisp and professional, emphasizing a bright light-mode aesthetic. The composition uses a sophisticated navy and white color palette to convey institutional stability and sovereign power. The mood is ambitious and orderly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDV0vIcfSTDl13uLgWwelp13Si0TC4764ftAxtnP9fJmV3PxCU5CPB34xMfkJLCFCm93t6r0-_qxtKhFbhUbkik6GJrGO6NyYhyw436jjYLx5SsGF2XaIas99vyvJ9lAhHm76zm6WQwYoPLLS_OOQixiLTrVbzMswgTX7aIQu794s6HTwexMzdDWjIWDD97W-9dchW5QY7XBB_2wJIz6Exmn9vRuu2p677pXvGM62SQHdJnk1dRTppzDcSliBPwnI9JagQEZCSeFKBm"/>
+<div class="absolute inset-0 hero-gradient opacity-80"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10">
+<div class="max-w-3xl">
+<h1 class="text-5xl md:text-6xl font-extrabold text-on-primary tracking-tight mb-6">
+                        Librería de Recursos
+                    </h1>
+<p class="text-lg text-primary-fixed mb-10 leading-relaxed font-light">
+                        Bienvenido al Centro de Recursos de Invest Honduras. Aquí encontrará una colección de herramientas, guías y documentos diseñados para apoyar a inversionistas y empresarios en el desarrollo económico nacional.
+                    </p>
+<div class="relative group max-w-2xl">
+<input class="w-full h-16 pl-14 pr-6 rounded-lg bg-surface-container-lowest text-primary border-none shadow-xl focus:ring-2 focus:ring-tertiary-fixed-dim transition-all" placeholder="Buscar documentos, leyes o guías..." type="text"/>
+<span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-primary/50 group-focus-within:text-tertiary-container">search</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Grid -->
+<section class="py-24 bg-surface px-8">
+<div class="max-w-7xl mx-auto">
+<div class="mb-16">
+<span class="font-label text-label-md uppercase tracking-[0.2em] text-on-primary-container font-semibold">Navegación</span>
+<h2 class="text-4xl font-extrabold text-primary mt-2">Categorías Especializadas</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Institutional -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">account_balance</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Recursos Institucionales</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Información fundamental sobre el Consejo Nacional de Inversiones y memorias anuales.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Explorar Recursos <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Portfolio -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">folder_managed</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Portafolio de Inversiones</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Catálogo detallado de proyectos estratégicos y sectores con alto potencial de crecimiento.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Ver Portafolio <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Opportunities -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">lightbulb</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Oportunidades de Inversión</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Análisis de mercado y ventanas de oportunidad para capitales nacionales y extranjeros.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Ver Oportunidades <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Investment Resources -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">construction</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Recursos para la Inversión</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Guías técnicas y manuales de procedimientos para facilitar el aterrizaje de capital.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Descargar Guías <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- Legal Resources -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">gavel</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Recursos Legales</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Compendio actualizado de leyes, decretos y marcos regulatorios del país.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Marco Legal <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+<!-- General Resources -->
+<div class="group bg-surface-container-lowest p-8 rounded-xl shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+<div class="w-14 h-14 rounded-lg bg-primary-container flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-3xl">article</span>
+</div>
+<h3 class="text-2xl font-bold text-primary mb-4">Otros Documentos</h3>
+<p class="text-on-surface-variant mb-8 flex-grow">Formularios diversos, plantillas y material de consulta general.</p>
+<a class="inline-flex items-center text-primary font-bold group-hover:text-secondary transition-colors" href="#">
+                            Ver Biblioteca <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Highlights Section -->
+<section class="py-24 bg-surface-container-low px-8">
+<div class="max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+<div>
+<span class="font-label text-label-md uppercase tracking-[0.2em] text-on-primary-container font-semibold">Actualizados</span>
+<h2 class="text-4xl font-extrabold text-primary mt-2">Documentos Destacados</h2>
+</div>
+<button class="px-8 py-3 bg-primary text-on-primary rounded-md font-bold hover:bg-primary-container transition-all flex items-center">
+                        Ver Todos los Documentos <span class="material-symbols-outlined ml-2">open_in_new</span>
+</button>
+</div>
+<div class="flex flex-col space-y-6">
+<!-- Highlight 1 -->
+<div class="flex flex-col md:flex-row items-center bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="w-full md:w-64 h-48 bg-primary-container flex flex-col items-center justify-center p-6 text-center shrink-0">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-5xl mb-2">policy</span>
+<span class="text-on-primary text-xs font-bold uppercase tracking-widest">Legal • 2024</span>
+</div>
+<div class="p-8 flex-grow flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Compendio de Leyes de Inversión 2024</h4>
+<p class="text-on-surface-variant max-w-xl">Incluye la Ley de Promoción y Protección de Inversiones y sus reglamentos actualizados al presente año fiscal.</p>
+</div>
+<div class="flex gap-4 shrink-0">
+<button class="px-5 py-2 border border-outline-variant text-primary rounded-md font-semibold hover:bg-surface-container-high transition-colors flex items-center">
+<span class="material-symbols-outlined mr-2 text-xl">visibility</span> Vista previa
+                                </button>
+<button class="px-5 py-2 bg-primary text-on-primary rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center shadow-lg">
+<span class="material-symbols-outlined mr-2 text-xl">download</span> Descargar
+                                </button>
+</div>
+</div>
+</div>
+<!-- Highlight 2 -->
+<div class="flex flex-col md:flex-row items-center bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="w-full md:w-64 h-48 bg-primary-container flex flex-col items-center justify-center p-6 text-center shrink-0">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-5xl mb-2">menu_book</span>
+<span class="text-on-primary text-xs font-bold uppercase tracking-widest">Guía • v3.0</span>
+</div>
+<div class="p-8 flex-grow flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Guía del Inversionista: Doing Business in Honduras</h4>
+<p class="text-on-surface-variant max-w-xl">Manual integral para establecer operaciones en el país, incluyendo procesos de registro y obligaciones patronales.</p>
+</div>
+<div class="flex gap-4 shrink-0">
+<button class="px-5 py-2 border border-outline-variant text-primary rounded-md font-semibold hover:bg-surface-container-high transition-colors flex items-center">
+<span class="material-symbols-outlined mr-2 text-xl">visibility</span> Vista previa
+                                </button>
+<button class="px-5 py-2 bg-primary text-on-primary rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center shadow-lg">
+<span class="material-symbols-outlined mr-2 text-xl">download</span> Descargar
+                                </button>
+</div>
+</div>
+</div>
+<!-- Highlight 3 -->
+<div class="flex flex-col md:flex-row items-center bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
+<div class="w-full md:w-64 h-48 bg-primary-container flex flex-col items-center justify-center p-6 text-center shrink-0">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-5xl mb-2">monitoring</span>
+<span class="text-on-primary text-xs font-bold uppercase tracking-widest">Datos • Q3</span>
+</div>
+<div class="p-8 flex-grow flex flex-col md:flex-row justify-between items-center gap-6">
+<div>
+<h4 class="text-xl font-bold text-primary mb-2">Reporte de Indicadores Macroeconómicos Q3</h4>
+<p class="text-on-surface-variant max-w-xl">Análisis detallado de la situación económica nacional para la toma de decisiones estratégicas.</p>
+</div>
+<div class="flex gap-4 shrink-0">
+<button class="px-5 py-2 border border-outline-variant text-primary rounded-md font-semibold hover:bg-surface-container-high transition-colors flex items-center">
+<span class="material-symbols-outlined mr-2 text-xl">visibility</span> Vista previa
+                                </button>
+<button class="px-5 py-2 bg-primary text-on-primary rounded-md font-semibold hover:opacity-90 transition-opacity flex items-center shadow-lg">
+<span class="material-symbols-outlined mr-2 text-xl">download</span> Descargar
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-24 px-8 overflow-hidden relative">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A professional consultation room with dark wooden tables and navy leather chairs. A group of diverse professionals are engaged in a serious but collaborative meeting. The lighting is warm and authoritative, with large windows overlooking a modern skyline. The image uses a premium corporate aesthetic with deep blues and soft gold accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvzJRAUHXxG9ercwcrQgkZpG35DhVcdo4rLYSXpSfYc-NF_oB1u9B7z8KdTR5oDblSXJi5LNj3nCkrTDriZgnV8TQ8MQTgXTR0vpWTVBJm-w3PrV0N2WxxPe8FGJXxuK3JDEHfswtLu3R3gN6_myceatvyKPotdX34ckDwseUXnlLLpsiY-N4XetlaskuvgccvH-YXGgdu79JZJyqYtj_7j1P1zjtOxDZAfD3lGZ8qxi0D5Y-ttYbs82cxbD5l_4Osqv36Zt3CIJZ7"/>
+<div class="absolute inset-0 bg-primary/90"></div>
+</div>
+<div class="max-w-5xl mx-auto relative z-10 text-center">
+<h2 class="text-4xl md:text-5xl font-extrabold text-on-primary mb-8 tracking-tight">
+                    ¿Necesita asesoría técnica personalizada?
+                </h2>
+<p class="text-xl text-primary-fixed mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                    Acelere su proceso de inversión en Honduras. El equipo del CNI está listo para brindarle asistencia técnica y legal de forma gratuita.
+                </p>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<a class="px-10 py-5 bg-tertiary-fixed-dim text-on-tertiary-fixed font-extrabold rounded-md shadow-2xl hover:scale-105 transition-transform duration-150 uppercase tracking-widest text-sm" href="#">
+                        Contactar Asesoría Gratuita
+                    </a>
+<a class="px-10 py-5 border-2 border-primary-fixed text-on-primary font-extrabold rounded-md hover:bg-primary-fixed hover:text-primary transition-all uppercase tracking-widest text-sm" href="#">
+                        Agendar Reunión Virtual
+                    </a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-tertiary-container w-full py-16">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-7xl mx-auto px-8">
+<div>
+<div class="text-lg font-headline font-bold text-on-primary mb-8">INVEST HONDURAS</div>
+<p class="font-body text-body-md text-surface-variant leading-relaxed">
+                    Puerta de entrada estratégica para la inversión nacional y extranjera. Comprometidos con el desarrollo económico y la transparencia institucional.
+                </p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col space-y-4">
+<span class="text-on-primary font-bold text-sm uppercase tracking-widest mb-2">Enlaces</span>
+<a class="text-surface-variant/70 hover:text-surface-variant transition-colors text-sm" href="#">Strategic Sectors</a>
+<a class="text-surface-variant/70 hover:text-surface-variant transition-colors text-sm" href="#">Regional Development</a>
+<a class="text-surface-variant/70 hover:text-surface-variant transition-colors text-sm" href="#">Institutional Transparency</a>
+</div>
+<div class="flex flex-col space-y-4 pt-10">
+<a class="text-surface-variant/70 hover:text-surface-variant transition-colors text-sm" href="#">Contact Secretary</a>
+<a class="text-surface-variant/70 hover:text-surface-variant transition-colors text-sm" href="#">Legal Framework</a>
+</div>
+</div>
+<div class="flex flex-col">
+<span class="text-on-primary font-bold text-sm uppercase tracking-widest mb-6">Contacto</span>
+<div class="text-surface-variant/70 text-sm space-y-4">
+<div class="flex items-center">
+<span class="material-symbols-outlined mr-3 text-tertiary-fixed-dim">location_on</span>
+<span>Centro Cívico Gubernamental, Tegucigalpa</span>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined mr-3 text-tertiary-fixed-dim">mail</span>
+<span>seguimiento@cni.hn</span>
+</div>
+<div class="flex items-center">
+<span class="material-symbols-outlined mr-3 text-tertiary-fixed-dim">call</span>
+<span>(504) 2242-8955</span>
+</div>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-surface-variant/10 text-center">
+<p class="font-body text-body-md text-surface-variant/50 text-xs">
+                © 2024 Government of the Republic of Honduras. Sovereign Investment Authority. Todos los derechos reservados.
+            </p>
+</div>
+</footer>
+</body></html>

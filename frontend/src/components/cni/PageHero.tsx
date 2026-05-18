@@ -39,7 +39,7 @@ export function PageHero({
           className="absolute inset-0 object-cover opacity-60"
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/60 to-[#000a1e]/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/80 to-transparent" />
       <div className="absolute inset-0 hero-gradient mix-blend-multiply opacity-40" />
       <div
         className={cn(

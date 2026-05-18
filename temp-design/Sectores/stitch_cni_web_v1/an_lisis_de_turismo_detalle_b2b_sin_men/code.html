@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;700;800&amp;family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#294f83",
+                    "on-primary-container": "#708ab5",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed": "#261900",
+                    "inverse-primary": "#aec7f6",
+                    "surface-dim": "#d9dadb",
+                    "on-surface-variant": "#44474e",
+                    "tertiary": "#110a00",
+                    "on-secondary-fixed-variant": "#1f477b",
+                    "primary-container": "#002147",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "background": "#f8f9fa",
+                    "on-error-container": "#93000a",
+                    "surface-container": "#edeeef",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "error-container": "#ffdad6",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-surface": "#2e3132",
+                    "outline-variant": "#c4c6cf",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-variant": "#e1e3e4",
+                    "outline": "#74777f",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "primary": "#000a1e",
+                    "secondary-fixed-dim": "#a7c8ff",
+                    "secondary-container": "#9fc2fe",
+                    "primary-fixed-dim": "#aec7f6",
+                    "secondary": "#3a5f94",
+                    "secondary-fixed": "#d5e3ff",
+                    "on-secondary-fixed": "#001b3c",
+                    "on-surface": "#191c1d",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "surface": "#f8f9fa",
+                    "on-background": "#191c1d",
+                    "tertiary-container": "#2e1f00",
+                    "surface-container-low": "#f3f4f5",
+                    "on-primary-fixed": "#001b3d",
+                    "on-tertiary-container": "#a68440",
+                    "surface-bright": "#f8f9fa",
+                    "tertiary-fixed": "#ffdea5",
+                    "surface-container-high": "#e7e8e9",
+                    "primary-fixed": "#d6e3ff",
+                    "surface-tint": "#465f88"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-depth-shift {
+            background: linear-gradient(to bottom, rgba(248, 249, 250, 0.9), rgba(248, 249, 250, 0.7));
+        }
+        .editorial-shadow {
+            box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-xl">
+<div class="flex justify-between items-center px-8 py-4 max-w-screen-2xl mx-auto">
+<div class="text-xl font-black text-blue-900 dark:text-blue-50 font-headline tracking-tight">InvestSovereign</div>
+<div class="hidden md:flex items-center gap-8 font-headline font-bold tracking-tight">
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Infrastructure</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Manufacturing</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Energy</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors" href="#">Agribusiness</a>
+<a class="text-blue-900 dark:text-blue-50 border-b-2 border-amber-500 pb-1" href="#">Tourism</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-blue-900 dark:text-blue-100 font-bold px-4 py-2 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-lg transition-all duration-200 active:scale-95">EN/ES</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG9vbDrDHHPXmsvjDd5SFaZdTrSM6wdnhyCpEHdIxWxgU3Lhdx2gjOOv4fA6jMjMhKsHmSyi4iNe9dRRF3ox7AAetrBTueD-7qFNHmUnbFRnksF02XtjM1eKq7yG2FZbwVhVM8P4iPahwC14ekSH5zycRQx1532O5aF3MKD7qbAvo60oBZcWaGvFJ347p6UPjxcCAM1jgX0Cm7C31HW4_saGVaPAklGr5qlRxWtdWxBurtBc8rTyOiECj3S2XYTvOWSqHSDCDsy4bV"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="pt-20">
+<!-- Section 1: Hero -->
+<section class="relative h-[870px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/40 z-10"></div>
+<img alt="Luxury Resort Roatan" class="w-full h-full object-cover" data-alt="A luxury tropical resort in Roatán, Honduras, featuring pristine white sand beaches and overwater bungalows extending into crystal clear turquoise waters. The scene is captured at golden hour with soft warm sunlight reflecting off the calm Caribbean Sea. The architectural style is modern-tropical with thatched roofs and expansive glass windows, set against a backdrop of lush green palm trees and a deep blue sky." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSF1v5GHT8LQ1C46HXfCr2OF9OaNUTLkYnXyDtzKhmeju4vAitBE6P7u1hm3J4VFFG9rdhf-GE5w4CekL-qUQZeCyQ6oDJJELpCKgLxqdPRCXAruh4Rtn19AJnDmIIA9Ozyzyg87tvoPi1kCmcX8HqQKUNGNW0zGl7LM5XbvSO0otoG7LJd7ZZZu9ICYUhAp-RRcHcUu-DLDbaSLZ1aSGI-pOmELznsRWf13MFu_i6I_Gg8U04eP2f2RsoIViyC0XEtG7VAzmGZb21"/>
+</div>
+<div class="relative z-20 max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 w-full">
+<div class="lg:col-span-8">
+<span class="inline-block px-4 py-1 bg-tertiary-fixed text-on-tertiary-fixed font-label text-xs tracking-widest uppercase mb-6 rounded-sm">Honduras Investment Hub</span>
+<h1 class="text-white font-headline font-extrabold text-5xl lg:text-7xl leading-tight tracking-tighter mb-6">
+                        Sector de Turismo:<br/><span class="text-tertiary-fixed-dim">Destino de Clase Mundial</span>
+</h1>
+<p class="text-blue-100 text-xl max-w-2xl mb-12 font-light leading-relaxed">
+                        Honduras se posiciona como el hub regional definitivo, combinando incentivos fiscales sin precedentes con una riqueza natural que redefine el lujo sostenible en Centroamérica.
+                    </p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/10">
+<div class="text-tertiary-fixed-dim font-headline font-black text-3xl mb-1">850k+</div>
+<div class="text-blue-200 font-label text-xs uppercase tracking-wider">Visitantes Anuales</div>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/10">
+<div class="text-tertiary-fixed-dim font-headline font-black text-3xl mb-1">$750M</div>
+<div class="text-blue-200 font-label text-xs uppercase tracking-wider">Ingresos Sectoriales</div>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-xl border border-white/10">
+<div class="text-tertiary-fixed-dim font-headline font-black text-3xl mb-1">15+</div>
+<div class="text-blue-200 font-label text-xs uppercase tracking-wider">Cadenas Hoteleras</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 2: Visión Estratégica -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="max-w-screen-2xl mx-auto px-8 flex flex-col lg:flex-row gap-20 items-center">
+<div class="lg:w-1/2">
+<h2 class="text-primary font-headline font-extrabold text-4xl mb-8 leading-tight">Visión Estratégica &amp;<br/>Propuesta de Valor</h2>
+<div class="space-y-6 text-on-surface-variant text-lg leading-relaxed font-light">
+<p>
+                            Nuestra propuesta de valor es única en el hemisferio occidental. Honduras ofrece una convergencia geográfica y cultural sin igual: el misticismo de la civilización Maya en Copán y la serenidad de los Cayos Cochinos.
+                        </p>
+<p>
+                            El Gobierno de Honduras ha implementado un marco regulatorio de última generación diseñado para la protección del capital extranjero, garantizando estabilidad jurídica y una infraestructura en constante expansión que conecta nuestras joyas naturales con los mercados más importantes del mundo.
+                        </p>
+</div>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Vision Estrategica" class="w-full h-full object-cover" data-alt="A professional top-down view of a sophisticated architectural model of a modern eco-tourism complex in Honduras. The model showcases minimalist glass structures integrated into a dense tropical rainforest with tiered infinity pools overlooking the Caribbean Sea. The lighting is bright and clean, emphasizing the high-end materials like dark wood and polished stone used in the development concept." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOstVD2d2mOgFi2LO7C00YKrnEfHnU7HDzkPrLxXQ8UmbSfsH29i0i9Fw7IoJBBEWZFKv3ujREdgdZTW2Lr2fztD6RfZ-XDaln9SxK00Aj3nplwI2jYShB1MhmTzw6VwFPUmUxIW8UDQrpJm236bt9hWyNa7Co5XPzU76KCZfl9LEg0dbgntnq7wFuXyt3CCRLMyvvr9RKTpZjgaSlKUyL_A0exd6VsvWwMHv-mhTE-bbpR2Atr5VfYRiG_oScZkyAal3lNytgEk28"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Video Institucional -->
+<section class="py-24 bg-surface">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="relative rounded-3xl overflow-hidden editorial-shadow group">
+<div class="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors z-10 flex items-center justify-center">
+<button class="w-24 h-24 bg-tertiary-fixed text-on-tertiary-fixed rounded-full flex items-center justify-center shadow-2xl transition-transform duration-300 group-hover:scale-110">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<img alt="Video Background" class="w-full h-64 md:h-[500px] object-cover" data-alt="A cinematic wide-angle aerial shot of Roatan's coastline in Honduras, featuring the barrier reef's vibrant colors and luxury yachts anchored in turquoise lagoons. The shot is high-resolution, capturing the serene and exclusive atmosphere of the island at sunset with a warm golden glow illuminating the entire horizon." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoRFXrBhCqsoJha9ZLsAcJUzEsZhb2A9A5Ylj9CeOteIFIQBc84uTPcdAwpn3CuZVpKllr_VH_elty2F2mxg9Zx0AnR4mtuGxJNVco7x__44Z-RnR0J75riurGuxOVwxnaFdGPPqkng84j1z8xRUxAFgjSkSFsGa-irfKU9ihTLzk6Qp0zokQhQzGPhhu9hU8e7B-mSqkTYNhyKRx0O8mxiLt4-X8L9oLmXZ63Rcygv9aLBtvfpuCHRIJULKbz-rLVeTrfmpXMr_l8"/>
+<div class="absolute bottom-10 left-10 z-20">
+<h3 class="text-white font-headline font-bold text-3xl">Perspectivas de Turismo 2024</h3>
+<p class="text-blue-100 font-light">Conozca la hoja de ruta estratégica para el crecimiento del sector.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Ventajas Competitivas -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="mb-16">
+<h2 class="text-primary font-headline font-extrabold text-4xl mb-4">Ventajas Competitivas</h2>
+<div class="w-24 h-1 bg-tertiary-fixed-dim"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow transition-transform hover:-translate-y-2">
+<div class="w-14 h-14 bg-primary-container rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-on-primary-fixed text-3xl">language</span>
+</div>
+<h4 class="text-primary font-headline font-bold text-xl mb-4">Acceso Global Sin Visas</h4>
+<p class="text-on-surface-variant leading-relaxed">Infraestructura migratoria ágil que facilita la llegada de inversionistas y turistas de mercados premium sin restricciones burocráticas.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow transition-transform hover:-translate-y-2 border-b-4 border-tertiary-fixed-dim">
+<div class="w-14 h-14 bg-primary-container rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-on-primary-fixed text-3xl">account_balance</span>
+</div>
+<h4 class="text-primary font-headline font-bold text-xl mb-4">Incentivos Fiscales</h4>
+<p class="text-on-surface-variant leading-relaxed">La Ley de Fomento al Turismo otorga exoneraciones totales de ISR y otros aranceles por hasta 15 años para proyectos de alto impacto.</p>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow transition-transform hover:-translate-y-2">
+<div class="w-14 h-14 bg-primary-container rounded-lg flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-on-primary-fixed text-3xl">nature_people</span>
+</div>
+<h4 class="text-primary font-headline font-bold text-xl mb-4">Recursos Pristinos</h4>
+<p class="text-on-surface-variant leading-relaxed">Control estricto de biodiversidad y zonas protegidas que aseguran el valor a largo plazo de los activos inmobiliarios y hoteleros.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Historias de Éxito -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="max-w-screen-2xl mx-auto px-8">
+<h2 class="text-primary font-headline font-extrabold text-4xl mb-16 text-center">Historias de Éxito &amp; Capitales Globales</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Success Story 1 -->
+<div class="group relative rounded-2xl overflow-hidden h-[500px]">
+<img alt="Roatan Success" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Interior view of a high-end luxury hotel lobby in Roatán, Honduras, featuring floor-to-ceiling windows with panoramic ocean views. The decor is an elegant mix of minimalist white marble floors and handcrafted mahogany wood accents. The lighting is sophisticated and multi-layered, highlighting fine art installations and high-tech amenities. The overall atmosphere is one of exclusivity and modern architectural perfection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDe4LBt2LN7iCVxyP-GEd_dzhlq79aqYcQhGVTLVH_Y7GLwfq8HtrAZJ8O4qErQlzrEobkPh35w6ZI39VURxvgHRk_0c9094PYGzhhVY0rxZhrr1QqSsbt8s4R8NbGGxVpVcwIA7TD9rN6uZ0e9vMDyTBkkbNfsnm3-oJefRClzjyVo8Alhqx8v_x0BmVqcLxlZj3zXDEEk4DLa41V0_Y73EtbD5SDhIwA5BIa05m53AkAk_FyBs_TUnTenmA0L2dCoWQpFXb7rVYer"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-10">
+<div class="text-tertiary-fixed-dim font-label text-xs tracking-widest uppercase mb-2">Luxury Resort Chain</div>
+<h3 class="text-white font-headline font-bold text-3xl mb-4">Expansión de Portafolio en Roatán</h3>
+<p class="text-blue-100 max-w-md font-light">Incremento del 40% en capacidad operativa y retorno de inversión récord en los primeros 36 meses de operación.</p>
+</div>
+</div>
+<!-- Success Story 2 -->
+<div class="group relative rounded-2xl overflow-hidden h-[500px]">
+<img alt="Eco-Lodge Success" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="An award-winning boutique eco-lodge nestled in the lush tropical rainforest of Pico Bonito, Honduras. The structure features sustainable wood architecture with expansive decks and private plunge pools overlooking a misty jungle valley. The style is 'luxury-meets-nature' with soft exterior lighting that blends into the environment, creating a serene and private sanctuary aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATGbT8G0mysff0RUfDsx55SCjRMI-YXj2DtgDB7dbwQcis4emI0-RZfTbMLllRhr6gyZu30AlWFze6_uW7A5kP9IqRvVc10Xof1X_F61bRv3kblc0RGK_KpXEfgTa1pZuVpnBpT4gwm8bKT_t9JQfKt2RpOStwoXOfrfQP9zej7Ied3o9eDcjqFv7gDXTpQYrl7IcXPDLGnfnx_K1tu5ka81ZccXiF8-RvPIIwjuTeHnNiSeEpC7kfQkWxid3ZDfpB_QgjxLjbyK3T"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
+<div class="absolute bottom-0 left-0 p-10">
+<div class="text-tertiary-fixed-dim font-label text-xs tracking-widest uppercase mb-2">Sustainable Ventures</div>
+<h3 class="text-white font-headline font-bold text-3xl mb-4">Eco-Lodge Boutique Success</h3>
+<p class="text-blue-100 max-w-md font-light">Reconocido como el mejor desarrollo sostenible de la región, atrayendo al segmento de mercado de ultra-alto valor.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: Proyectos en Cartera -->
+<section class="py-24 bg-surface">
+<div class="max-w-screen-2xl mx-auto px-8">
+<div class="mb-12">
+<h2 class="text-primary font-headline font-extrabold text-4xl mb-4">Proyectos Estratégicos en Cartera</h2>
+<p class="text-on-surface-variant text-lg font-light">Oportunidades de inversión inmediata con estudios de factibilidad completados.</p>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden editorial-shadow">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-primary-container text-white">
+<th class="px-8 py-6 text-left font-label uppercase text-xs tracking-widest">Proyecto</th>
+<th class="px-8 py-6 text-left font-label uppercase text-xs tracking-widest">Ubicación</th>
+<th class="px-8 py-6 text-left font-label uppercase text-xs tracking-widest">Modalidad</th>
+<th class="px-8 py-6 text-right font-label uppercase text-xs tracking-widest">Inversión Est.</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-8 py-6 font-headline font-bold text-primary">Roatán Luxury Resort &amp; Residences</td>
+<td class="px-8 py-6 text-on-surface-variant">Islas de la Bahía</td>
+<td class="px-8 py-6"><span class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Joint Venture</span></td>
+<td class="px-8 py-6 text-right font-headline font-bold text-primary">$120M</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-8 py-6 font-headline font-bold text-primary">Copán Eco-Village Wellness Center</td>
+<td class="px-8 py-6 text-on-surface-variant">Copán Ruinas</td>
+<td class="px-8 py-6"><span class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Direct Investment</span></td>
+<td class="px-8 py-6 text-right font-headline font-bold text-primary">$45M</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-8 py-6 font-headline font-bold text-primary">Trujillo Cruise Port Extension</td>
+<td class="px-8 py-6 text-on-surface-variant">Trujillo, Colón</td>
+<td class="px-8 py-6"><span class="px-3 py-1 bg-amber-100 text-amber-900 text-xs font-bold rounded-full">PPP (APP)</span></td>
+<td class="px-8 py-6 text-right font-headline font-bold text-primary">$210M</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-8 py-6 font-headline font-bold text-primary">Tela Marine Research Resort</td>
+<td class="px-8 py-6 text-on-surface-variant">Tela, Atlántida</td>
+<td class="px-8 py-6"><span class="px-3 py-1 bg-blue-100 text-blue-900 text-xs font-bold rounded-full">Concession</span></td>
+<td class="px-8 py-6 text-right font-headline font-bold text-primary">$85M</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Section 7: CTA Final -->
+<section class="py-24 bg-primary text-white text-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="absolute top-0 left-0 w-96 h-96 bg-tertiary-fixed rounded-full blur-[120px]"></div>
+<div class="absolute bottom-0 right-0 w-96 h-96 bg-secondary-fixed rounded-full blur-[120px]"></div>
+</div>
+<div class="max-w-4xl mx-auto px-8 relative z-10">
+<h2 class="font-headline font-extrabold text-4xl md:text-5xl mb-8">¿Listo para expandir su portafolio en Honduras?</h2>
+<p class="text-blue-100 text-xl mb-12 font-light">Nuestros asesores senior están listos para proporcionarle el análisis detallado y el acompañamiento estratégico que su inversión requiere.</p>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<button class="px-10 py-5 bg-tertiary-fixed text-on-tertiary-fixed font-headline font-bold rounded-md hover:brightness-110 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">download</span> Descargar Guía de Inversión
+                    </button>
+<button class="px-10 py-5 bg-white/10 backdrop-blur-md border border-white/20 text-white font-headline font-bold rounded-md hover:bg-white/20 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">calendar_today</span> Agendar Consultoría
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-blue-950 dark:bg-black w-full mt-0">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-12 py-16 max-w-screen-2xl mx-auto border-t border-blue-900/30">
+<div class="flex flex-col gap-6">
+<div class="text-lg font-bold text-white font-headline">InvestSovereign</div>
+<p class="text-slate-300 font-inter text-sm tracking-wide max-w-sm">
+                    El portal oficial del Gobierno para la atracción estratégica de capitales globales. Construyendo la Honduras del mañana.
+                </p>
+<div class="text-amber-400 font-inter text-sm tracking-wide">
+                    © 2024 Sovereign Architect Government Portal. All rights reserved.
+                </div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-4">
+<div class="text-white font-bold mb-2">Legal</div>
+<a class="text-slate-300 hover:text-white transition-all font-inter text-sm tracking-wide hover:underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Privacy Policy</a>
+<a class="text-slate-300 hover:text-white transition-all font-inter text-sm tracking-wide hover:underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col gap-4">
+<div class="text-white font-bold mb-2">Recursos</div>
+<a class="text-slate-300 hover:text-white transition-all font-inter text-sm tracking-wide hover:underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Investment Map</a>
+<a class="text-slate-300 hover:text-white transition-all font-inter text-sm tracking-wide hover:underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Contact Secretariat</a>
+<a class="text-slate-300 hover:text-white transition-all font-inter text-sm tracking-wide hover:underline decoration-amber-500 decoration-2 underline-offset-4" href="#">Data Transparency</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

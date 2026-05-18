@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vivir en Honduras - Invest Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed-variant": "#2d476f",
+                    "surface-container": "#edeeef",
+                    "on-background": "#191c1d",
+                    "surface-dim": "#d9dadb",
+                    "tertiary": "#110a00",
+                    "error": "#ba1a1a",
+                    "on-primary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "secondary-fixed-dim": "#a7c8ff",
+                    "secondary-container": "#9fc2fe",
+                    "secondary-fixed": "#d5e3ff",
+                    "primary": "#000a1e",
+                    "on-secondary-fixed": "#001b3c",
+                    "surface-container-highest": "#e1e3e4",
+                    "on-surface": "#191c1d",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#f8f9fa",
+                    "on-secondary-container": "#294f83",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface": "#f8f9fa",
+                    "primary-fixed-dim": "#aec7f6",
+                    "on-tertiary-fixed": "#261900",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "primary-container": "#002147",
+                    "on-primary-container": "#708ab5",
+                    "on-secondary-fixed-variant": "#1f477b",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "tertiary-fixed": "#ffdea5",
+                    "surface-tint": "#465f88",
+                    "on-surface-variant": "#44474e",
+                    "secondary": "#3a5f94",
+                    "inverse-surface": "#2e3132",
+                    "tertiary-container": "#2e1f00",
+                    "on-primary-fixed": "#001b3d",
+                    "primary-fixed": "#d6e3ff",
+                    "outline-variant": "#c4c6cf",
+                    "surface-variant": "#e1e3e4",
+                    "surface-container-low": "#f3f4f5",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-primary": "#aec7f6",
+                    "on-tertiary-container": "#a68440",
+                    "error-container": "#ffdad6",
+                    "outline": "#74777f",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e7e8e9",
+                    "background": "#f8f9fa"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(0, 10, 30, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(0,10,30,0.85) 0%, rgba(0,33,71,0.6) 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-primary/80 backdrop-blur-xl dark:bg-primary/90 flex justify-between items-center px-8 py-4 max-w-full mx-auto shadow-2xl shadow-primary/10">
+<div class="font-headline text-xl font-black text-tertiary-fixed tracking-tighter">Invest Honduras</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-primary/70 hover:text-on-primary pb-1 transition-all duration-300" href="#">Opportunities</a>
+<a class="text-on-primary/70 hover:text-on-primary pb-1 transition-all duration-300" href="#">Legal Framework</a>
+<a class="text-on-primary/70 hover:text-on-primary pb-1 transition-all duration-300" href="#">Incentives</a>
+<a class="text-on-primary/70 hover:text-on-primary pb-1 transition-all duration-300" href="#">Sector Analysis</a>
+<a class="text-tertiary-fixed border-b-2 border-tertiary-fixed pb-1 transition-all duration-300" href="#">Vivir en Honduras</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-4 text-on-primary/70">
+<span class="material-symbols-outlined cursor-pointer hover:text-on-primary transition-colors">language</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-on-primary transition-colors">notifications</span>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-md font-bold text-sm tracking-wide shadow-xl shadow-primary/20 scale-95 active:scale-90 transition-transform duration-200">
+                Partner With Us
+            </button>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative min-h-[870px] flex items-center justify-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A panoramic, breathtaking golden hour view of Tegucigalpa, Honduras from the Picacho monument. The warm, late afternoon sun bathes the sprawling urban valley in a soft amber glow, highlighting the lush green hills and diverse architecture. The scene captures an editorial, prestigious atmosphere with a high-end enterprise aesthetic, reflecting growth and prosperity in a sovereign nation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC2ZB8Lf2zCtywDWfoJ8fUUxVa-aXvr1V1YJMTfWjZotE0loDer5rgbupZrRF0yelpKVhPqr8_r9vxdGv-6wUYyz-uaOpDslj3SnKGr5xsbLOSD-Vou8NGPVWTJbd2OEXGswWrLIh0n1D-cEkatFMKagx60RvHwrhB_vMMD7oqdeTKij-CLZ8o27vzIuNrdfn8aCh8BPpnXsCdXfseAwEUDTxa9gVXByrhMTt9WSurrMOnEpu_PyuIdYGLk-_6XX9SANwNcszhU6Gs"/>
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 container mx-auto px-8 text-center md:text-left">
+<div class="max-w-4xl">
+<h1 class="font-headline text-display-lg md:text-6xl font-extrabold text-on-primary leading-tight tracking-tight mb-6">
+                    Vivir en Honduras: <span class="text-tertiary-fixed">Calidad de Vida y Oportunidad</span>
+</h1>
+<p class="font-body text-xl text-on-primary/90 max-w-2xl leading-relaxed mb-8">
+                    Descubra un país con un encanto único y gente acogedora. Cada inversión es una oportunidad de éxito en una nación que combina tradición milenaria con una visión arquitectónica moderna.
+                </p>
+<div class="flex flex-wrap gap-4 justify-center md:justify-start">
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-8 py-4 rounded-md font-bold flex items-center gap-2 hover:bg-tertiary-fixed-dim transition-colors">
+                        Explorar Estilo de Vida
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Section 2: Modern Lifestyle -->
+<section class="py-24 bg-surface">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<span class="font-label text-secondary font-bold tracking-widest text-sm uppercase mb-4 block">Hogar &amp; Infraestructura</span>
+<h2 class="font-headline text-4xl md:text-5xl font-black text-primary leading-tight mb-8">Honduras, tu nuevo hogar</h2>
+<div class="space-y-6 font-body text-on-surface-variant leading-relaxed text-lg">
+<p>Honduras le ofrece una experiencia única que combina lo mejor de la vida moderna con nuestra rica cultura. Desde vibrantes centros urbanos hasta exclusivas zonas residenciales, descubra un país que evoluciona mientras mantiene su esencia.</p>
+<div class="flex items-start gap-4 p-4 rounded-xl bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-secondary scale-125 pt-1">apartment</span>
+<div>
+<h4 class="font-bold text-primary mb-1">Desarrollos Residenciales</h4>
+<p class="text-base">Arquitectura contemporánea con amenidades exclusivas y amplios espacios verdes.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-4 rounded-xl bg-surface-container-low shadow-sm">
+<span class="material-symbols-outlined text-secondary scale-125 pt-1">account_balance</span>
+<div>
+<h4 class="font-bold text-primary mb-1">Banca de Primer Nivel</h4>
+<p class="text-base">Sistema financiero robusto con servicios digitales avanzados y presencia global.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 grid grid-cols-2 gap-4">
+<div class="space-y-4 pt-12">
+<div class="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Modern high-end luxury apartment buildings in Tegucigalpa, Honduras. The architectural design is contemporary with glass balconies and vertical gardens, reflecting a high standard of living. The lighting is crisp morning light, highlighting the clean lines and premium materials. The overall aesthetic is professional, modern, and serene." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4jrwEmh6H_f8j9UVi2B29lgvB9sDsqihbWgJG3xK6RB775DPjAF15At78AryFk-crCBxV4Z70V9J6aenR7AKIaeuswqNrJXDHrUQ5cOTQvOYoNqsY581Se_GXHX3RPdMCLxBmK3hsoai3gMcrp_StOG0bMxY2Q4bMV9bhNnDVlJWWG3WOwdVFwl9xbM_XIk6ObIInlfcgPbXFAZXJM63DsAzXSqXAqTHVD-gHZ6WDcIE0nFLvSA-xblEn_3UqERf_O6emD9GZf1AO"/>
+</div>
+</div>
+<div class="space-y-4">
+<div class="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Interior of a modern, world-class banking facility in San Pedro Sula. The space is expansive with marble flooring, glass partitions, and minimalist executive furniture. Soft blue lighting accents the professional environment. The atmosphere is one of absolute security and sovereign authority, captured with a wide-angle editorial lens." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTUDl8_2s_EQNkEz91dYyb36qmIKTgEem0eJ5br4MkqyRVt46SnWZQiNrVibvLcfGI7YiW4ptmqfbjW_JyZP8v92_s56p5SYT5qCdx9jdw8KB-W0Bt2ozYjnuw_hejnb-zezIKavs-HD6CN1ZpVNC1pTDz1c3s_BXFZCPy0oxlnNDl6-GOBacWTYNvieVXOgLhssU16cdj8nxpnjIDvlD0vvFJsR8myHH6u1DdmQboFUKUQT1tenq4GoykFsPLtfWOuMIP1s8BJ3o_"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Education Stats (Bento Grid) -->
+<section class="py-24 bg-surface-dim">
+<div class="container mx-auto px-8">
+<div class="text-center mb-16">
+<h2 class="font-headline text-4xl font-bold text-primary mb-4">Educación de clase mundial</h2>
+<p class="font-body text-lg text-on-surface-variant max-w-2xl mx-auto">Formación académica de excelencia para las futuras generaciones de líderes globales.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- IB Schools -->
+<div class="bg-surface-container-lowest p-10 rounded-2xl shadow-xl shadow-primary/5 flex flex-col h-full border border-outline-variant/10">
+<div class="text-6xl font-black text-secondary mb-4">18</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-6">Colegios IB</h3>
+<ul class="space-y-4 font-body text-on-surface-variant">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed-variant text-sm">check_circle</span> Currículum internacional reconocido</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed-variant text-sm">check_circle</span> Programas multilingües</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed-variant text-sm">check_circle</span> Alta tasa de admisión internacional</li>
+</ul>
+</div>
+<!-- State Universities -->
+<div class="bg-primary-container p-10 rounded-2xl shadow-xl shadow-primary/10 flex flex-col h-full text-on-primary">
+<div class="text-6xl font-black text-tertiary-fixed mb-4">06</div>
+<h3 class="font-headline text-2xl font-bold text-on-primary mb-6">Universidades Estatales</h3>
+<ul class="space-y-4 font-body opacity-90">
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed text-sm">check_circle</span> Acreditación nacional e internacional</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed text-sm">check_circle</span> Presencia en todo el territorio nacional</li>
+<li class="flex items-center gap-3"><span class="material-symbols-outlined text-tertiary-fixed text-sm">check_circle</span> Centros de investigación y desarrollo</li>
+</ul>
+</div>
+<!-- Private Institutions -->
+<div class="bg-surface-container-lowest p-10 rounded-2xl shadow-xl shadow-primary/5 flex flex-col h-full border border-outline-variant/10">
+<div class="text-6xl font-black text-secondary mb-4">17</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-6">Instituciones de Prestigio</h3>
+<div class="space-y-3 font-body text-sm text-on-surface-variant">
+<p class="font-bold text-primary text-base">Red de Excelencia:</p>
+<p>• UNITEC / CEUTEC</p>
+<p>• UTH (9 sedes estratégicas)</p>
+<p>• UNICAH (8 sedes regionales)</p>
+<p>• UCENM (10 sedes locales)</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 4: Healthcare Network -->
+<section class="py-24 bg-surface">
+<div class="container mx-auto px-8">
+<div class="bg-surface-container-high rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+<div class="lg:w-1/2">
+<img class="w-full h-full object-cover min-h-[400px]" data-alt="A modern, sleek hospital lobby in Tegucigalpa, featuring minimalist interior design with glass, steel, and warm wood accents. The space is brightly lit with clinical yet inviting lighting. Professional medical staff in clean white coats are seen in the background, conveying expertise and trust. The overall aesthetic is one of world-class healthcare excellence in a sovereign architect style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbgsJQbwJ29zDJyUWp2i5o3iEj61UwtCkgh9X-uiMlOotJslUCtw3Xxnt-y-fCGxE2Yfu5tObd-7L2pPmww24Z7Gz_CRU-shPZ67QhQQHHo2Yul5TIBbkBAHQSMkjY_09_nlR7hiu8FDjk3h-tC1lbMeIqwHIchpSIZVybT6q1D8lkaq61FlhoPjYrhUjb8MjrXqhCjepSL_6TFzblsMP2aL5N2Cf6ZplnDj8OBoPhkKBCadSXHaVIXk-dr7uuuFlBha7zQk6xFZek"/>
+</div>
+<div class="lg:w-1/2 p-12 lg:p-16 flex flex-col justify-center">
+<h2 class="font-headline text-4xl font-bold text-primary mb-6">Red completa de servicios médicos</h2>
+<p class="font-body text-lg text-on-surface-variant mb-8 leading-relaxed">
+                        Honduras destaca por una infraestructura de salud robusta, combinando la calidez humana con tecnología de vanguardia en hospitales como el Honduras Medical Center y CEMESA.
+                    </p>
+<div class="grid grid-cols-2 gap-8 mb-10">
+<div>
+<div class="text-3xl font-black text-secondary mb-1">1,867</div>
+<div class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Instalaciones Médicas</div>
+</div>
+<div>
+<div class="text-3xl font-black text-secondary mb-1">16</div>
+<div class="text-xs font-label uppercase tracking-widest text-on-surface-variant">Hospitales de Especialidad</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="p-4 bg-surface-container-lowest rounded-xl border-l-4 border-secondary">
+<p class="font-body italic">"Atención médica especializada que cumple con los más altos estándares internacionales."</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Tradition & Modernity (Editorial Layout) -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="container mx-auto px-8">
+<div class="flex flex-col lg:flex-row gap-16">
+<div class="lg:w-1/3">
+<h2 class="font-headline text-4xl font-black text-primary leading-tight mb-8">Balance perfecto entre modernidad y tradición</h2>
+<p class="font-body text-on-surface-variant text-lg mb-12">Desde escapadas naturales hasta centros culturales de vanguardia, Honduras ofrece un estilo de vida multifacético.</p>
+<div class="space-y-8">
+<div>
+<h4 class="font-bold text-secondary flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">forest</span> Atractivos Naturales
+                            </h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">La Tigra</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">El Picacho</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Valle de Ángeles</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-secondary flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">museum</span> Cultura e Historia
+                            </h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">MIN</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Basílica de Suyapa</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Plaza Morazán</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold text-secondary flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined">shopping_bag</span> Vida Moderna
+                            </h4>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Galerías de Arte</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Malls de Lujo</span>
+<span class="px-4 py-1.5 bg-surface-container text-primary rounded-full text-sm font-semibold">Distritos Gastronómicos</span>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="relative rounded-2xl overflow-hidden group">
+<img class="w-full h-full object-cover aspect-[4/5] group-hover:scale-105 transition-transform duration-700" data-alt="The Museum for National Identity (MIN) in Tegucigalpa, Honduras. A beautiful colonial-style building meticulously restored with modern gallery lighting and prestigious architectural details. The image captures the intersection of historical heritage and contemporary cultural preservation. High-contrast editing with deep blues and warm stone tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhDxuH48gKzW4fBNu8DpmwzJ0nZSH5DkIrKRA4HJednbRn0gHLA2erog8rq22x5QhOTLjvO-lX_5HFw1RQLNw889icme8yO2kieaTmE0Cg6M5gDdKLDVo4LJH0EFbBsSi5_zJHoesVdiN9I4ijzw04gq4v7vrAOtr7fwzgbxEDYTB91UXr8zDX9ByurLbAc8R9V0E9aW_zN5JzD62koawPdlnHh0R1J_PXh2ekA-cP-3jSttfgsMyrlNRheC2DkKdYG80Hvwz8oJwU"/>
+<div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-primary/90 to-transparent">
+<p class="text-tertiary-fixed font-label text-xs uppercase tracking-widest mb-1">Cultura</p>
+<h5 class="text-on-primary font-headline text-xl font-bold">Museo para la Identidad Nacional</h5>
+</div>
+</div>
+<div class="space-y-8">
+<div class="relative rounded-2xl overflow-hidden group">
+<img class="w-full h-full object-cover aspect-video group-hover:scale-105 transition-transform duration-700" data-alt="A lush, verdant view of La Tigra National Park near Tegucigalpa. The image showcases the incredible biodiversity and high-altitude cloud forest of Honduras. Soft morning mist clings to the pine trees, creating an ethereal, premium nature aesthetic. The color palette is dominated by deep forest greens and soft mountain grays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ_sxX-8KLb9WJ7sIwTT7fmGaQ5oHw9IkopD86y1TxMyWdqlEE60oX9mcXJKQGLoQPaDbDVDNF23VLuml1jGoIiMPmi0DcYzzoNT8Aq4TMFHpKcWMHpqLzgJyQt22Ap2zRxG4b5K5we3CCzkhYUxly2nYV7TPsHrGB6iyVc-tcadTBFJRtVFVPViAok-PdyRl-Ajpy6g5_N3SAlYpEBfqIatS-cE9PtOFLCWJZ2Hxn6j4cajEaPMo6WGmyKovvPhIc-PZnLJNQRE44"/>
+<div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-primary/90 to-transparent">
+<p class="text-tertiary-fixed font-label text-xs uppercase tracking-widest mb-1">Naturaleza</p>
+<h5 class="text-on-primary font-headline text-lg font-bold">Parque Nacional La Tigra</h5>
+</div>
+</div>
+<div class="relative rounded-2xl overflow-hidden group">
+<img class="w-full h-full object-cover aspect-video group-hover:scale-105 transition-transform duration-700" data-alt="A sophisticated upscale shopping mall in Honduras with modern glass ceilings, luxury brand storefronts, and elegant interior landscaping. The mood is high-end commerce and prosperity. The lighting is bright and airy, reflecting a first-world lifestyle in a developing sovereign economy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDP94any0hrG8wYlaUsUans1s0ua-sWIyUY_xyZUL36DUdHA6mLRh_iT9wyaOiApwFlkCyuu_i49fbvrGSLBTEf7hNUuACHdk1kfyEEmI9HNH_oUyFzIND9s83i9GLA5QIfMRNVIokDvTCRBCePgVMSC2-rYyv03WC1GmxzTUqsfibGusvG6Lixvydt3d7uGK4wlsCTwzd1zXDFu_0n3lNptWXGQvQjSpq40T9bPHMxIUsC6oqAzJuKlsUiJmuS2btlJlbTYxCr66YD"/>
+<div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-primary/90 to-transparent">
+<p class="text-tertiary-fixed font-label text-xs uppercase tracking-widest mb-1">Vida Urbana</p>
+<h5 class="text-on-primary font-headline text-lg font-bold">Centros Comerciales Premium</h5>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 6: CTA Section -->
+<section class="py-24">
+<div class="container mx-auto px-8">
+<div class="relative bg-primary-container rounded-[2.5rem] p-12 md:p-24 text-center overflow-hidden shadow-2xl shadow-primary/40">
+<div class="absolute top-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+<div class="absolute bottom-0 left-0 w-96 h-96 bg-tertiary-fixed/5 rounded-full blur-3xl -ml-48 -mb-48"></div>
+<div class="relative z-10 max-w-3xl mx-auto">
+<h2 class="font-headline text-4xl md:text-5xl font-black text-on-primary mb-6">Vive la experiencia Honduras</h2>
+<p class="font-body text-xl text-on-primary/80 mb-12">Nuestro equipo está listo para asesorarle en cada paso de su establecimiento en el país. Acelere su proceso de inversión con el apoyo del Centro Nacional de Inversiones.</p>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-10 py-5 rounded-md font-bold text-lg hover:bg-tertiary-fixed-dim transition-all shadow-lg scale-100 active:scale-95">
+                            Contactar al CNI para asistencia gratuita
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-primary-container w-full py-16 px-8 no-border">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-12 max-w-7xl mx-auto">
+<div class="space-y-6 max-w-xs">
+<div class="font-headline text-2xl font-bold text-primary dark:text-tertiary-fixed">Invest Honduras</div>
+<p class="font-body text-body-md text-on-surface-variant dark:text-on-primary-container/70">
+                    Sovereign Investment Authority of the Republic of Honduras. Building a future of prosperity and transparency.
+                </p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70">social_leaderboard</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70">share</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:opacity-70">mail</span>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-12">
+<div class="space-y-4">
+<h5 class="font-bold text-primary dark:text-tertiary-fixed">Resources</h5>
+<ul class="space-y-2 font-body text-on-surface-variant dark:text-on-primary-container/70">
+<li><a class="hover:text-primary transition-colors" href="#">Sala de Prensa</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Recursos CNI</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Transparency Portal</a></li>
+</ul>
+</div>
+<div class="space-y-4">
+<h5 class="font-bold text-primary dark:text-tertiary-fixed">Legal</h5>
+<ul class="space-y-2 font-body text-on-surface-variant dark:text-on-primary-container/70">
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Compliance</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-on-surface-variant/10 text-center md:text-left text-on-surface-variant/60 font-body text-sm">
+            © 2024 Republic of Honduras - Sovereign Investment Authority. All rights reserved.
+        </div>
+</footer>
+</body></html>

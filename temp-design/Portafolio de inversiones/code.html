@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Portafolio de Inversión | Invest Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#261900",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "primary-container": "#002147",
+                        "background": "#f8f9fa",
+                        "surface": "#f8f9fa",
+                        "on-surface-variant": "#44474e",
+                        "on-tertiary-container": "#a68440",
+                        "on-secondary-container": "#294f83",
+                        "primary-fixed-dim": "#aec7f6",
+                        "surface-container-high": "#e7e8e9",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "on-background": "#191c1d",
+                        "on-surface": "#191c1d",
+                        "secondary-fixed": "#d5e3ff",
+                        "on-primary-fixed": "#001b3d",
+                        "primary-fixed": "#d6e3ff",
+                        "inverse-primary": "#aec7f6",
+                        "outline": "#74777f",
+                        "on-secondary-fixed": "#001b3c",
+                        "on-secondary-fixed-variant": "#1f477b",
+                        "tertiary-container": "#2e1f00",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-primary-container": "#708ab5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "outline-variant": "#c4c6cf",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e1e3e4",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#ffdea5",
+                        "tertiary": "#110a00",
+                        "secondary": "#3a5f94",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#a7c8ff",
+                        "secondary-container": "#9fc2fe",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container": "#edeeef",
+                        "inverse-surface": "#2e3132",
+                        "primary": "#000a1e",
+                        "surface-container-low": "#f3f4f5",
+                        "surface-tint": "#465f88"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-nav {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-tertiary-fixed-dim selection:text-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 w-full max-w-none bg-primary-container/80 backdrop-blur-xl shadow-2xl shadow-primary/20">
+<div class="font-headline text-xl font-bold tracking-tighter text-tertiary-fixed-dim uppercase">
+        Invest Honduras
+    </div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-on-primary-fixed-variant font-medium hover:text-tertiary-fixed transition-colors duration-300" href="#">Sectores</a>
+<a class="text-tertiary-fixed-dim border-b-2 border-tertiary-fixed-dim pb-1 transition-colors duration-300" href="#">Proyectos</a>
+<a class="text-on-primary-fixed-variant font-medium hover:text-tertiary-fixed transition-colors duration-300" href="#">Casos de Éxito</a>
+<a class="text-on-primary-fixed-variant font-medium hover:text-tertiary-fixed transition-colors duration-300" href="#">Sobre Nosotros</a>
+</div>
+<div class="flex items-center space-x-6">
+<div class="flex space-x-4">
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer active:scale-95 transition-transform">language</span>
+<span class="material-symbols-outlined text-primary-fixed cursor-pointer active:scale-95 transition-transform">notifications</span>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-md font-bold active:scale-95 transition-transform">
+            Postular Proyecto
+        </button>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<header class="relative h-[614px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover grayscale-[20%] brightness-50" data-alt="A grand, architectural low-angle shot of a modern skyscraper reflecting a deep blue sky. The building features clean lines and glass surfaces that embody corporate authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDp6Rzq2CfbCoPYcx4zeJok3HWB1EllHIWKvLsfuh4UifKNjhn8lUCgv9K5QTBYkNndDtG-qMR-dVZ7i6W5BvQClChi_9ZHeXT5RYje9ZBzGPZfi9FyJ925xrfsK9ZlJgt06_tzzpxTODGky_yUbWxGqBRC3bw8G5tvAizoJ1cNJ_rm1lYXEmdXTYlpa5ZkG2bh46tUS6u7HsRitmcHUvbQPPUmDeRGlC1TPSrbwUSgYVpelYLHuO5f_qrPIpWOf5XojonzRPsvImjC"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-transparent"></div>
+</div>
+<div class="relative z-10 px-12 md:px-24 w-full max-w-7xl">
+<div class="inline-block px-4 py-1 mb-6 bg-tertiary-container border-l-4 border-tertiary-fixed-dim">
+<span class="font-label text-tertiary-fixed text-label-md tracking-widest uppercase font-bold">Portal de Inversión</span>
+</div>
+<h1 class="font-headline text-display-lg md:text-6xl text-white font-extrabold tracking-tight leading-tight mb-6 max-w-3xl">
+                Portafolio de Inversión <br/><span class="text-tertiary-fixed-dim">Soberana</span>
+</h1>
+<p class="text-on-primary-container text-xl max-w-2xl leading-relaxed font-light">
+                Acceda a una selección curada de proyectos estratégicos en los corredores de desarrollo primarios de Honduras. Cada activo es meticulosamente evaluado para el crecimiento sostenible y la alineación soberana.
+            </p>
+</div>
+</header>
+<!-- Main Content Area with SideNav Layout -->
+<div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-8 px-8 py-12">
+<!-- SideNavBar (Filter Shell) -->
+<aside class="hidden lg:flex flex-col h-fit sticky top-32 w-72 space-y-4 py-8 bg-surface-container-low rounded-xl">
+<div class="px-6 mb-4">
+<h2 class="font-headline font-extrabold text-primary text-xl">Sectores Estratégicos</h2>
+<p class="font-body text-label-md text-on-surface-variant">Plan Nacional de Desarrollo</p>
+</div>
+<nav class="flex flex-col space-y-1">
+<div class="flex items-center gap-4 px-6 py-3 cursor-pointer hover:translate-x-1 transition-all duration-200 bg-surface-container-highest text-primary font-bold rounded-r-full">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">agriculture</span>
+<span class="font-body text-label-md">Agroindustria</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 cursor-pointer hover:translate-x-1 transition-all duration-200 text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined">beach_access</span>
+<span class="font-body text-label-md">Turismo</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 cursor-pointer hover:translate-x-1 transition-all duration-200 text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined">bolt</span>
+<span class="font-body text-label-md">Energía</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 cursor-pointer hover:translate-x-1 transition-all duration-200 text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined">factory</span>
+<span class="font-body text-label-md">Manufactura</span>
+</div>
+<div class="flex items-center gap-4 px-6 py-3 cursor-pointer hover:translate-x-1 transition-all duration-200 text-on-surface-variant hover:bg-surface-container-high">
+<span class="material-symbols-outlined">architecture</span>
+<span class="font-body text-label-md">Infraestructura</span>
+</div>
+</nav>
+<div class="mt-8 px-6 pt-8 border-t border-outline-variant/10">
+<button class="w-full py-3 bg-primary text-white font-bold rounded-md hover:shadow-lg transition-shadow active:scale-95">
+                    Solicitar Prospecto
+                </button>
+<div class="mt-6 flex flex-col space-y-4">
+<div class="flex items-center gap-3 text-on-surface-variant hover:text-primary cursor-pointer text-sm font-medium">
+<span class="material-symbols-outlined text-lg">help_outline</span>
+<span>Soporte</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant hover:text-primary cursor-pointer text-sm font-medium">
+<span class="material-symbols-outlined text-lg">gavel</span>
+<span>Políticas</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Portfolio Grid -->
+<div class="flex-1">
+<div class="flex justify-between items-end mb-10">
+<div>
+<span class="font-label text-label-md tracking-widest text-on-surface-variant uppercase font-bold">Catálogo 2024</span>
+<h2 class="font-headline text-3xl font-extrabold text-primary-container">Oportunidades Actuales</h2>
+</div>
+<div class="flex gap-4">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest rounded-lg text-sm font-semibold text-primary">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Ordenar por Valor
+                    </button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Card 1: Sunset Woods -->
+<div class="group bg-surface-container-lowest rounded-xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 border-b-4 border-transparent hover:border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl">medical_services</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-tertiary-fixed-dim text-xs font-bold rounded-full uppercase tracking-widest">Buscando Socios</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Sunset Woods</h3>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-4 font-bold">Turismo Médico</p>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Desarrollo de un retiro médico premium enfocado en cuidados post-operatorios y bienestar en un entorno de tierras altas exuberantes.</p>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">CAPEX</p>
+<p class="text-primary font-bold">USD 3.7M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">OPEX</p>
+<p class="text-primary font-bold">USD 0.8M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">TOTAL</p>
+<p class="text-primary font-bold">USD 4.5M</p>
+</div>
+</div>
+</div>
+<!-- Card 2: Pandora Laguna -->
+<div class="group bg-surface-container-lowest rounded-xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 border-b-4 border-transparent hover:border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl">landscape</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-primary text-xs font-bold rounded-full uppercase tracking-widest">Estructuración</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Pandora Laguna</h3>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-4 font-bold">Turismo / Avatar</p>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Proyecto de hospitalidad inmersiva que integra experiencias avanzadas de RV/RA con eco-alojamientos de lujo a la orilla del lago.</p>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">CAPEX</p>
+<p class="text-primary font-bold">USD 12M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Estado</p>
+<p class="text-primary font-bold">Factibilidad</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Retorno (ROI)</p>
+<p class="text-primary font-bold">Alto</p>
+</div>
+</div>
+</div>
+<!-- Card 3: Quintara 5 Hub -->
+<div class="group bg-surface-container-lowest rounded-xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 border-b-4 border-transparent hover:border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl">precision_manufacturing</span>
+</div>
+<span class="px-3 py-1 bg-tertiary-container text-tertiary-fixed-dim text-xs font-bold rounded-full uppercase tracking-widest">Planificación</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Quintara 5 Hub</h3>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-4 font-bold">Logística</p>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Un centro neurálgico industrial y logístico masivo diseñado para aprovechar el posicionamiento estratégico del Corredor Interoceánico.</p>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">CAPEX</p>
+<p class="text-primary font-bold">USD 100M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Fase</p>
+<p class="text-primary font-bold">Primaria</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Retorno (ROI)</p>
+<p class="text-primary font-bold">14.5%</p>
+</div>
+</div>
+</div>
+<!-- Card 4: Energy for Education -->
+<div class="group bg-surface-container-lowest rounded-xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 border-b-4 border-transparent hover:border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl">solar_power</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-primary text-xs font-bold rounded-full uppercase tracking-widest">Búsqueda Activa</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Energía para la Educación</h3>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-4 font-bold">Energía</p>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Alianza público-privada para instalar redes de energía renovable en clústeres educativos regionales para operaciones sostenibles.</p>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">CAPEX</p>
+<p class="text-primary font-bold">USD 14.2M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Impacto</p>
+<p class="text-primary font-bold">Social</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Plazo</p>
+<p class="text-primary font-bold">12 Años</p>
+</div>
+</div>
+</div>
+<!-- Card 5: Kokiyá -->
+<div class="group bg-surface-container-lowest rounded-xl p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/5 border-b-4 border-transparent hover:border-tertiary-fixed-dim">
+<div class="flex justify-between items-start mb-6">
+<div class="p-3 bg-surface-container-high rounded-xl">
+<span class="material-symbols-outlined text-primary text-3xl">potted_plant</span>
+</div>
+<span class="px-3 py-1 bg-surface-container-high text-primary text-xs font-bold rounded-full uppercase tracking-widest">Listo</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Kokiyá</h3>
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-4 font-bold">Turismo / Té</p>
+<p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Plantación de té boutique de gran altitud combinada con alojamiento de lujo y circuitos de agroturismo educativo.</p>
+<div class="grid grid-cols-3 gap-4 pt-6 border-t border-outline-variant/10">
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">CAPEX</p>
+<p class="text-primary font-bold">USD 6M</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Ubicación</p>
+<p class="text-primary font-bold">Tierras Altas</p>
+</div>
+<div>
+<p class="text-[10px] uppercase font-bold text-on-surface-variant mb-1">Nicho</p>
+<p class="text-primary font-bold">Agro</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<section class="bg-primary-container py-24 px-12 md:px-24">
+<div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-16">
+<div class="flex-1">
+<h2 class="font-headline text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    Navegue por el Paisaje de <br/><span class="text-tertiary-fixed-dim">Inversión Soberana</span>
+</h2>
+<p class="text-on-primary-container text-lg mb-10 leading-relaxed">
+                    Nuestros asesores especializados están listos para brindar apoyo técnico a medida, marcos legales y garantías soberanas para su próximo movimiento estratégico en Honduras.
+                </p>
+<div class="flex flex-wrap gap-6">
+<button class="bg-tertiary-fixed-dim text-primary font-extrabold px-10 py-4 rounded-md shadow-xl hover:translate-y-[-2px] transition-all">
+                        Solicitar Consulta Privada
+                    </button>
+<button class="border border-on-primary-container text-white font-bold px-10 py-4 rounded-md hover:bg-white/5 transition-all">
+                        Descargar Guía Legal
+                    </button>
+</div>
+</div>
+<div class="w-full md:w-1/3 bg-white/5 p-8 rounded-2xl backdrop-blur-md border border-white/10">
+<div class="text-center">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-6xl mb-4">verified_user</span>
+<h4 class="text-white font-bold text-xl mb-2">Asistencia Segura</h4>
+<p class="text-on-primary-container text-sm">Apoyo profesional complementario para inversores institucionales y gestores de patrimonio.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full text-on-primary">
+<div class="mb-8 md:mb-0">
+<div class="font-headline text-lg font-bold text-tertiary-fixed mb-2">Invest Honduras</div>
+<p class="font-body text-label-sm opacity-80 max-w-xs leading-relaxed">© 2024 Invest Honduras. Todos los derechos reservados. Autoridad de Patrimonio Soberano.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 md:gap-12">
+<a class="text-on-primary-container text-label-sm font-medium hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Aviso de Privacidad</a>
+<a class="text-on-primary-container text-label-sm font-medium hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Términos de Servicio</a>
+<a class="text-on-primary-container text-label-sm font-medium hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Ley de Inversión</a>
+<a class="text-on-primary-container text-label-sm font-medium hover:text-white transition-colors opacity-80 hover:opacity-100" href="#">Mesa de Contacto</a>
+</div>
+<div class="mt-8 md:mt-0 flex gap-4">
+<span class="material-symbols-outlined text-tertiary-fixed-dim">account_balance</span>
+<span class="material-symbols-outlined text-tertiary-fixed-dim">public</span>
+</div>
+</footer>
+</body></html>

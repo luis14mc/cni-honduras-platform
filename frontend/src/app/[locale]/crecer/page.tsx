@@ -5,6 +5,10 @@ import { ArrowRight, Building2, Briefcase, Quote, Sparkles, Eye } from "lucide-r
 import { PageHero } from "@/src/components/cni/PageHero";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
 import { isLocale } from "@/src/i18n/config";
+import { makeGenerateMetadata } from "@/src/lib/seo";
+import { PAGE_SEO } from "@/src/config/pageSeo";
+
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO.crecer);
 import type { Locale } from "@/src/i18n/config";
 import { crecerPageCopy } from "@/src/i18n/copy/crecerPage";
 import { withLocale } from "@/src/i18n/path";
@@ -102,7 +106,7 @@ export default async function CrecerPage({ params }: { params: Promise<{ locale:
                     <p className="text-lg font-bold text-[#000a1e]">{p.capex}</p>
                   </div>
                   <Link
-                    href={L("/asesoria")}
+                    href={L("/contacto")}
                     className="inline-flex items-center justify-center gap-2 rounded-md bg-[#000a1e] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#3a5f94] group-hover:scale-[1.02]"
                   >
                     {c.downloadProspect}
@@ -170,7 +174,7 @@ export default async function CrecerPage({ params }: { params: Promise<{ locale:
               {c.pdiLink}
             </a>
             <Link
-              href={L("/asesoria")}
+              href={L("/contacto")}
               className="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-white/10"
             >
               {c.advisoryCta}

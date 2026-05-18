@@ -1,20 +1,24 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Cpu, Leaf, Sprout, Tent, Zap } from "lucide-react";
+import { ArrowRight, Building2, Cpu, Sprout, Tent, Zap } from "lucide-react";
 import { PageHero } from "@/src/components/cni/PageHero";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
 import { isLocale } from "@/src/i18n/config";
+import { makeGenerateMetadata } from "@/src/lib/seo";
+import { PAGE_SEO } from "@/src/config/pageSeo";
+
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO.invertir);
 import type { Locale } from "@/src/i18n/config";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
-import { withLocale } from "@/src/i18n/path";
+import { getSectorHref, withLocale } from "@/src/i18n/path";
 
 const ICONS = {
   agroindustria: Sprout,
   manufactura: Cpu,
   turismo: Tent,
   energia: Zap,
-  bpo: Leaf,
+  infraestructura: Building2,
 } as const;
 
 export default async function InvertirPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -43,7 +47,15 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
           imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCkhGbKl8Lz7IlbOD3CCQNNw7PIii4skuAOK5RQs4CG9eZvct26UCGdfj9t-CZKKM4XilJWv1G2ipBQw0jHUn8F-fIL5gFwWYKjBlTHSnq1ZEec8HstOuCoSRg6FVR0HhcJ9D7AzmVFMbjFZi1-Z69Kg7NoqC3crywxEHSTOKQeY0GfWp7bnzJ5iPwCCHUo3FIjbUG3WD1ImAc6ZOJJ9luz1VlnxAYQe5HbpdJ6MrzjoV3b0zpjCRNFqKlhlP7K5em02xaA3ntMzPPj"
           imageAlt={c.heroImageAlt}
           heightClass="min-h-[640px] md:min-h-[720px]"
-        />
+        >
+          <Link
+            href={L("/invertir/por-que-honduras")}
+            className="inline-flex items-center gap-2 border-b-2 border-[#e9c176] pb-1 text-sm font-bold uppercase tracking-widest text-white transition hover:text-[#e9c176]"
+          >
+            {c.linkWhyHonduras}
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </PageHero>
       </div>
 
       <div className="sticky top-28 z-30 glass-panel border-b border-[#c4c6cf]/30">
@@ -51,13 +63,13 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
           <ul className="flex items-center gap-10 py-5">
             {sectors.map((s) => (
               <li key={s.slug}>
-                <a
-                  href={`#${s.slug}`}
+                <Link
+                  href={getSectorHref(locale, s.slug)}
                   className="group flex items-center gap-3 whitespace-nowrap text-sm font-extrabold uppercase tracking-tight text-[#44474e] transition-colors hover:text-[#000a1e]"
                 >
                   <span className="block h-[2px] w-8 bg-[#e9c176] transition-all group-hover:w-12" />
                   {s.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -90,7 +102,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
                 <h3 className="text-xl font-bold text-[#000a1e]">{name}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{short}</p>
                 <Link
-                  href={`#${slug}`}
+                  href={getSectorHref(locale, slug)}
                   className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition-all group-hover:gap-3 group-hover:text-[#e9c176]"
                 >
                   {c.viewDetail} <ArrowRight className="h-3.5 w-3.5" />
@@ -124,7 +136,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
               </ul>
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
-                  href={L("/asesoria")}
+                  href={L("/contacto")}
                   className="inline-flex items-center gap-2 rounded-md bg-[#000a1e] px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#002147]"
                 >
                   {c.ctaAdvisor}
@@ -157,13 +169,13 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link
-              href={L("/asesoria")}
+              href={L("/contacto")}
               className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e9c176] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
             >
               {c.ctaAdvisory}
             </Link>
             <Link
-              href={L("/cni")}
+              href={L("/quienes-somos")}
               className="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-white/10"
             >
               {c.ctaCni}

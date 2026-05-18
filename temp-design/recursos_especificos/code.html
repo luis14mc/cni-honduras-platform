@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#191c1d",
+                    "on-primary-fixed": "#001b3d",
+                    "tertiary-container": "#2e1f00",
+                    "on-tertiary-fixed": "#261900",
+                    "secondary-fixed": "#d5e3ff",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "inverse-surface": "#2e3132",
+                    "tertiary": "#110a00",
+                    "primary-fixed": "#d6e3ff",
+                    "background": "#f8f9fa",
+                    "secondary": "#3a5f94",
+                    "on-secondary-fixed": "#001b3c",
+                    "surface-container-high": "#e7e8e9",
+                    "on-primary": "#ffffff",
+                    "tertiary-fixed": "#ffdea5",
+                    "surface-tint": "#465f88",
+                    "primary": "#000a1e",
+                    "surface-dim": "#d9dadb",
+                    "outline": "#74777f",
+                    "secondary-fixed-dim": "#a7c8ff",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-variant": "#e1e3e4",
+                    "on-secondary-fixed-variant": "#1f477b",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#294f83",
+                    "on-tertiary-container": "#a68440",
+                    "surface-container": "#edeeef",
+                    "primary-container": "#002147",
+                    "surface-container-low": "#f3f4f5",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "on-primary-container": "#708ab5",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#44474e",
+                    "secondary-container": "#9fc2fe",
+                    "outline-variant": "#c4c6cf",
+                    "inverse-primary": "#aec7f6",
+                    "surface": "#f8f9fa",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#aec7f6",
+                    "on-secondary": "#ffffff",
+                    "on-background": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface selection:bg-tertiary-fixed-dim selection:text-tertiary-container">
+<!-- TopNavBar -->
+<nav class="bg-surface/80 dark:bg-primary/80 backdrop-blur-2xl docked full-width top-0 sticky z-50 shadow-[0_20px_40px_rgba(0,10,30,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 w-full max-w-screen-2xl mx-auto">
+<div class="font-headline text-xl font-extrabold tracking-tighter text-primary dark:text-primary-fixed">
+                Sovereign Portals
+            </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label tracking-widest uppercase text-primary dark:text-primary-fixed border-b-2 border-tertiary-fixed-dim pb-1 font-bold" href="#">Institutional Reports</a>
+<a class="font-label tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Strategic Plans</a>
+<a class="font-label tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Governance</a>
+<a class="font-label tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Market Insights</a>
+<a class="font-label tracking-widest uppercase text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-primary-fixed transition-colors" href="#">Compliance</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<span class="material-symbols-outlined hover:bg-surface-container-highest/20 cursor-pointer p-2 rounded-full transition-all duration-300">notifications</span>
+<span class="material-symbols-outlined hover:bg-surface-container-highest/20 cursor-pointer p-2 rounded-full transition-all duration-300">account_circle</span>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold scale-95 active:scale-90 transition-transform">
+                    Investor Login
+                </button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Page Header -->
+<header class="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ugIMEstT4CSSV_EqiVwYo9PfwzLH2vN6efzWcFyryryzq9tnE9KcBqnUpxBFsBrcvZJwdMnU6OU7kSq-W45fTFJp3goodXbwD68jAS_o8xXhFnL5ET-Hl6NVlMUAUtxU4c_OR_PmRHUT4Bs2rV4jEpEsyv19X4f0JukcbD6orVy3NlUXW8JKDM_T6Lozm_y8RrfITW3mN-cd1QLYr8mk6zga9QwbOX4LR1UE0ySA7HzQ9wN5HHCTGMeilY"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-transparent"></div>
+</div>
+<div class="relative z-10 w-full max-w-screen-2xl mx-auto px-8 lg:px-12">
+<div class="max-w-2xl">
+<div class="h-1 w-20 bg-tertiary-fixed-dim mb-8"></div>
+<h1 class="font-headline text-display-lg text-5xl md:text-6xl font-extrabold text-on-primary tracking-tight mb-6">
+                        Recursos Institucionales
+                    </h1>
+<p class="font-body text-xl text-on-primary/80 leading-relaxed max-w-xl">
+                        Compromiso con la transparencia soberana. Acceda a la documentación oficial, marcos legales y reportes técnicos que rigen la inversión estratégica en Honduras.
+                    </p>
+</div>
+</div>
+</header>
+<!-- Document Directory Section -->
+<section class="py-24 px-8 lg:px-12 max-w-screen-2xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+<div class="space-y-4">
+<span class="font-label tracking-widest uppercase text-on-tertiary-container font-semibold">Repositorio Digital</span>
+<h2 class="font-headline text-4xl font-bold text-primary">Directorio de Documentos</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="bg-surface-container-high px-4 py-3 rounded-xl flex items-center gap-3 w-80">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-medium w-full" placeholder="Buscar documentos..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Beneficios de la Ley -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group">
+<div>
+<div class="w-12 h-12 bg-primary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">picture_as_pdf</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Beneficios de la Ley</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Análisis detallado de los incentivos fiscales y garantías legales para proyectos de inversión a gran escala.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Servicios Priorizados -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group">
+<div>
+<div class="w-12 h-12 bg-primary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">picture_as_pdf</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Servicios Priorizados</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Catálogo actualizado de sectores estratégicos y servicios estatales con vía rápida para inversores.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Inteligencia de Datos -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group border-t-4 border-tertiary-fixed-dim">
+<div>
+<div class="w-12 h-12 bg-tertiary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">insights</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Inteligencia de Datos</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Indicadores macroeconómicos y proyecciones de crecimiento sectorial validadas por el NIA.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Asesoría Legal -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group">
+<div>
+<div class="w-12 h-12 bg-primary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">gavel</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Asesoría Legal</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Marco normativo integral y procedimientos para la estructuración jurídica de inversiones.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Asesoría Técnica -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group">
+<div>
+<div class="w-12 h-12 bg-primary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">engineering</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Asesoría Técnica</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Guías de implementación técnica y estándares de infraestructura para proyectos nacionales.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Red del Inversionista -->
+<div class="bg-surface-container-lowest p-8 rounded-xl flex flex-col justify-between transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] group">
+<div>
+<div class="w-12 h-12 bg-primary-container text-tertiary-fixed-dim rounded-lg flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">hub</span>
+</div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-3">Red del Inversionista</h3>
+<p class="text-on-surface-variant leading-relaxed mb-8">Protocolos de conexión con socios locales y redes de colaboración público-privada.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 bg-primary text-on-primary py-3 rounded-lg font-bold text-sm transition-transform active:scale-95">Descargar</button>
+<button class="flex-1 bg-surface-container-high text-on-surface py-3 rounded-lg font-bold text-sm transition-all hover:bg-surface-container-highest">Ver Documento</button>
+</div>
+</div>
+<!-- Guía CNI (Featured Large) -->
+<div class="lg:col-span-3 bg-primary-container p-12 rounded-xl flex flex-col md:flex-row items-center gap-12 overflow-hidden relative">
+<div class="absolute top-0 right-0 w-64 h-64 bg-tertiary-fixed-dim/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+<div class="relative z-10 flex-1">
+<span class="font-label tracking-widest uppercase text-tertiary-fixed-dim font-bold mb-4 block">Documento Maestro</span>
+<h3 class="font-headline text-3xl md:text-4xl font-bold text-on-primary mb-4">Guía Integral CNI 2024</h3>
+<p class="text-on-primary-container text-lg leading-relaxed max-w-2xl mb-8">
+                            El manual definitivo para navegar el ecosistema de inversión en Honduras. Incluye pasos administrativos, marcos regulatorios y contactos institucionales clave.
+                        </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-tertiary-fixed-dim text-tertiary-container px-8 py-4 rounded-lg font-bold transition-all hover:brightness-110 active:scale-95">Descargar Guía Completa</button>
+<button class="border border-on-primary-container/30 text-on-primary px-8 py-4 rounded-lg font-bold transition-all hover:bg-on-primary-container/10">Vista Previa Interactiva</button>
+</div>
+</div>
+<div class="relative z-10 hidden md:block">
+<div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20">
+<span class="material-symbols-outlined text-[120px] text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">book_4</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Help Section (CTA) -->
+<section class="bg-surface-container py-24 px-8">
+<div class="max-w-4xl mx-auto text-center">
+<div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-8">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim">support_agent</span>
+</div>
+<h2 class="font-headline text-4xl font-bold text-primary mb-6">¿Necesita asistencia personalizada?</h2>
+<p class="text-xl text-on-surface-variant leading-relaxed mb-10">
+                    Nuestro equipo de expertos en inversión está disponible para guiarle a través de los requisitos técnicos y legales.
+                </p>
+<div class="flex flex-col sm:flex-row justify-center gap-6">
+<a class="bg-primary text-on-primary px-10 py-4 rounded-lg font-bold text-lg shadow-xl shadow-primary/20 transition-all hover:-translate-y-1" href="#">Contactar Asesor</a>
+<a class="bg-surface-container-lowest text-primary px-10 py-4 rounded-lg font-bold text-lg border border-outline-variant/30 transition-all hover:bg-surface-bright" href="#">Preguntas Frecuentes</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-tertiary-container full-width bottom-0">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full max-w-screen-2xl mx-auto">
+<div class="mb-8 md:mb-0">
+<div class="font-headline font-black text-on-primary text-2xl mb-2">Sovereign Architect</div>
+<p class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 max-w-xs">
+                    © 2024 Sovereign Architect Institutional. Authorized by the National Investment Authority.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center gap-8 md:gap-12">
+<a class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 hover:text-tertiary-fixed transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 hover:text-tertiary-fixed transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 hover:text-tertiary-fixed transition-colors duration-200" href="#">Regulatory Disclosure</a>
+<a class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 hover:text-tertiary-fixed transition-colors duration-200" href="#">Accessibility</a>
+<a class="font-body text-label-md text-on-primary/70 dark:text-on-tertiary-container/70 hover:text-tertiary-fixed transition-colors duration-200" href="#">Contact Support</a>
+</div>
+</div>
+</footer>
+</body></html>

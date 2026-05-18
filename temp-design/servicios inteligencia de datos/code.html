@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inteligencia de Datos | Invest Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#110a00",
+                        "surface-tint": "#465f88",
+                        "on-tertiary-fixed": "#261900",
+                        "tertiary-fixed": "#ffdea5",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e1e3e4",
+                        "outline": "#74777f",
+                        "on-secondary-fixed-variant": "#1f477b",
+                        "error": "#ba1a1a",
+                        "background": "#f8f9fa",
+                        "secondary": "#3a5f94",
+                        "on-surface-variant": "#44474e",
+                        "on-surface": "#191c1d",
+                        "primary": "#000a1e",
+                        "surface-container": "#edeeef",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#aec7f6",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#294f83",
+                        "on-tertiary-container": "#a68440",
+                        "secondary-fixed-dim": "#a7c8ff",
+                        "on-primary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "surface-container-low": "#f3f4f5",
+                        "inverse-surface": "#2e3132",
+                        "on-primary-fixed": "#001b3d",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#2e1f00",
+                        "outline-variant": "#c4c6cf",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#9fc2fe",
+                        "secondary-fixed": "#d5e3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface-dim": "#d9dadb",
+                        "primary-fixed": "#d6e3ff",
+                        "primary-container": "#002147",
+                        "on-background": "#191c1d",
+                        "inverse-on-surface": "#f0f1f2",
+                        "surface-container-high": "#e7e8e9",
+                        "on-primary-container": "#708ab5",
+                        "surface": "#f8f9fa",
+                        "primary-fixed-dim": "#aec7f6",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "on-secondary-fixed": "#001b3c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .glass-nav {
+            background-color: rgba(0, 33, 71, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .editorial-shadow {
+            box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
+        }
+        body {
+            background-color: #f8f9fa;
+            color: #191c1d;
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, .font-headline {
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 glass-nav shadow-2xl shadow-primary/20 flex justify-between items-center px-8 py-4 max-w-full">
+<div class="font-headline text-2xl font-black text-on-primary-fixed tracking-tighter">Invest Honduras</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors font-body" href="#">Servicios</a>
+<a class="text-tertiary-fixed-dim font-bold border-b-2 border-tertiary-fixed-dim pb-1 font-body" href="#">Inteligencia</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors font-body" href="#">Institucional</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors font-body" href="#">Misión</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors font-body" href="#">Contacto</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-primary-fixed-variant hover:bg-primary/10 p-2 rounded-full transition-all duration-300">search</button>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-md font-headline font-bold text-sm hover:opacity-90 active:scale-95 duration-200">
+                Portal Inversionista
+            </button>
+</div>
+</nav>
+<main class="flex-grow pt-24">
+<!-- Hero Section -->
+<section class="relative w-full py-24 md:py-32 px-8 overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary-container to-secondary opacity-95 z-0"></div>
+<div class="absolute inset-0 z-0 opacity-20 pointer-events-none overflow-hidden">
+<div class="w-full h-full bg-[radial-gradient(circle_at_50%_50%,_rgba(174,199,246,0.1)_0%,_transparent_50%)]"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+<div>
+<h1 class="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight mb-6">
+                        Inteligencia <br/><span class="text-tertiary-fixed-dim">de Datos</span>
+</h1>
+<p class="text-lg md:text-xl text-primary-fixed/80 max-w-xl leading-relaxed mb-10 font-body">
+                        Nuestro enfoque estratégico y analítico proporciona acceso directo a información crítica, transformando datos complejos en conocimiento accionable para la toma de decisiones empresariales.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-tertiary-fixed-dim text-tertiary px-8 py-4 rounded-md font-bold text-sm transition-all hover:scale-105 active:scale-95">
+                            Explorar Estadísticas
+                        </button>
+<button class="border border-primary-fixed/20 text-white px-8 py-4 rounded-md font-bold text-sm backdrop-blur-sm hover:bg-white/10 transition-all">
+                            Ver Informes Anuales
+                        </button>
+</div>
+</div>
+<div class="relative hidden md:block">
+<img alt="Regional Intelligence Map" class="rounded-xl shadow-2xl opacity-90 grayscale contrast-125 hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVcnaKH6MPJnhvMk9eUGJjcFGdTd7oMtMnUUwZYfUWoSADy_gE2IdceaWN4xUBhQkHUA-vixfWkCEjHbIqZ2Ub_Z82KHAxgcjIvj20pBLGz9owHyVw1ABwg2eoU7_Nq5jnzxYK7V4snTSaERMdjgQxVpOejnRVWB5XqTe7aXaa5K_CT8aRLrKe9_rJf2Gou_kvVcwWZGWNekuiNQ7kjs9FfM9SwOYG5um1FIYe-ou4eN8Ux5kQZuLxgH7dngWQHx_sCJB1--Z6OLPp"/>
+</div>
+</div>
+</section>
+<!-- Análisis de Condiciones (Bento Grid) -->
+<section class="py-24 px-8 max-w-7xl mx-auto">
+<div class="mb-16">
+<span class="text-secondary font-bold tracking-widest text-xs uppercase block mb-4">Metodología de Análisis</span>
+<h2 class="text-4xl font-extrabold text-primary tracking-tighter">Condiciones Macroeconómicas</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group border-t-4 border-primary">
+<div class="text-6xl font-black text-primary/5 mb-8 group-hover:text-tertiary-fixed-dim transition-colors duration-500">01</div>
+<h3 class="text-xl font-bold text-primary mb-6">Inteligencia del Ecosistema Nacional</h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Indicadores Demográficos
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Indicadores Económicos
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Indicadores Sociales
+                        </li>
+</ul>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group border-t-4 border-secondary">
+<div class="text-6xl font-black text-primary/5 mb-8 group-hover:text-secondary-fixed-dim transition-colors duration-500">02</div>
+<h3 class="text-xl font-bold text-primary mb-6">Inteligencia Comercial y Turística</h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Comercio Exterior
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Sectores y Empresas
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Tendencias Turísticas
+                        </li>
+</ul>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-10 rounded-xl editorial-shadow group border-t-4 border-tertiary-fixed-dim">
+<div class="text-6xl font-black text-primary/5 mb-8 group-hover:text-tertiary-fixed transition-colors duration-500">03</div>
+<h3 class="text-xl font-bold text-primary mb-6">Inversión y Competitividad</h3>
+<ul class="space-y-4">
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Inversión Extranjera (IED)
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Tratados y Convenios
+                        </li>
+<li class="flex items-center gap-3 text-on-surface-variant font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Infraestructura y Logística
+                        </li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Información Clave -->
+<section class="bg-surface-container-low py-24 px-8">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-extrabold text-primary tracking-tighter mb-4">Provisión de Información Clave</h2>
+<p class="text-on-surface-variant max-w-2xl mx-auto">Acceso centralizado a recursos estratégicos para exportadores, inversionistas y gremios nacionales e internacionales.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow hover:translate-y-[-4px] transition-all group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 group-hover:scale-110 transition-transform">groups</span>
+<h4 class="font-bold text-primary text-sm mb-2">Contactos de Inversionistas</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Red estratégica de contactos clave y gremios.</p>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow hover:translate-y-[-4px] transition-all group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 group-hover:scale-110 transition-transform">monitoring</span>
+<h4 class="font-bold text-primary text-sm mb-2">Estadística de Producción</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Datos precisos sobre producción y exportación.</p>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow hover:translate-y-[-4px] transition-all group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 group-hover:scale-110 transition-transform">gavel</span>
+<h4 class="font-bold text-primary text-sm mb-2">Normativas</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Políticas regulatorias y marcos legales actualizados.</p>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow hover:translate-y-[-4px] transition-all group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 group-hover:scale-110 transition-transform">newspaper</span>
+<h4 class="font-bold text-primary text-sm mb-2">Boletines</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Tendencias globales y reportes económicos.</p>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-container-lowest p-8 rounded-lg editorial-shadow hover:translate-y-[-4px] transition-all group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 group-hover:scale-110 transition-transform">account_tree</span>
+<h4 class="font-bold text-primary text-sm mb-2">Sectores Priorizados</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Oportunidades en áreas estratégicas nacionales.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Descargable -->
+<section class="py-24 px-8">
+<div class="max-w-4xl mx-auto bg-primary rounded-2xl p-12 text-center relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-tertiary-fixed-dim/5 rounded-full blur-3xl -ml-32 -mb-32"></div>
+<h2 class="text-3xl font-bold text-white mb-6">Guía Oficial de Inteligencia Comercial</h2>
+<p class="text-primary-fixed/70 mb-10 text-lg">Obtenga el documento completo con metodologías, fuentes y el ecosistema detallado de servicios de inteligencia del CNI.</p>
+<button class="bg-white text-primary px-10 py-4 rounded-md font-extrabold text-sm hover:bg-tertiary-fixed-dim transition-all flex items-center gap-3 mx-auto active:scale-95">
+<span class="material-symbols-outlined">download</span>
+                    Click para descargar
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary text-on-primary w-full mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-start px-12 py-16 w-full gap-12 max-w-7xl mx-auto">
+<div class="max-w-xs">
+<div class="font-headline font-extrabold text-tertiary-fixed text-2xl mb-6">Invest Honduras</div>
+<p class="text-on-primary-fixed-variant text-xs leading-relaxed font-body">
+                    El Consejo Nacional de Inversiones (CNI) es la entidad pública para la promoción y facilitación de la inversión privada en Honduras.
+                </p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-12">
+<div>
+<h5 class="font-body text-xs uppercase tracking-widest text-tertiary-fixed mb-6">Inversionistas</h5>
+<ul class="space-y-4 text-xs font-body text-on-primary-fixed-variant">
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Recursos CNI</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Casos de Éxito</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Portafolio</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-body text-xs uppercase tracking-widest text-tertiary-fixed mb-6">Legal</h5>
+<ul class="space-y-4 text-xs font-body text-on-primary-fixed-variant">
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Privacidad</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Transparencia</a></li>
+<li><a class="hover:text-tertiary-fixed-dim transition-colors" href="#">Términos</a></li>
+</ul>
+</div>
+<div class="col-span-2 md:col-span-1">
+<h5 class="font-body text-xs uppercase tracking-widest text-tertiary-fixed mb-6">Contacto</h5>
+<div class="text-xs font-body text-on-primary-fixed-variant space-y-2">
+<p>Tegucigalpa: (504) 2242-8955</p>
+<p>seguimiento@cni.hn</p>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-white/5 py-8 px-12 text-center text-[10px] font-body uppercase tracking-[0.2em] text-on-primary-fixed-variant">
+            © 2024 Consejo Nacional de Inversiones (CNI) - Gobierno de Honduras.
+        </div>
+</footer>
+</body></html>

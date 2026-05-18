@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Consejo Nacional de Inversiones (CNI) | Honduras</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "surface-tint": "#465f88",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#191c1d",
+                        "on-primary": "#ffffff",
+                        "background": "#f8f9fa",
+                        "on-primary-container": "#708ab5",
+                        "on-surface": "#191c1d",
+                        "on-secondary-fixed": "#001b3c",
+                        "surface-container": "#edeeef",
+                        "primary-fixed": "#d6e3ff",
+                        "outline": "#74777f",
+                        "primary": "#000a1e",
+                        "surface-container-low": "#f3f4f5",
+                        "secondary-fixed": "#d5e3ff",
+                        "on-surface-variant": "#44474e",
+                        "on-primary-fixed": "#001b3d",
+                        "primary-container": "#002147",
+                        "surface-container-high": "#e7e8e9",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#2e1f00",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "secondary-container": "#9fc2fe",
+                        "surface-dim": "#d9dadb",
+                        "on-tertiary-fixed": "#261900",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#f8f9fa",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdea5",
+                        "on-secondary-container": "#294f83",
+                        "on-secondary-fixed-variant": "#1f477b",
+                        "on-primary-fixed-variant": "#2d476f",
+                        "inverse-primary": "#aec7f6",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#a68440",
+                        "outline-variant": "#c4c6cf",
+                        "tertiary": "#110a00",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#a7c8ff",
+                        "primary-fixed-dim": "#aec7f6",
+                        "surface-container-highest": "#e1e3e4",
+                        "surface": "#f8f9fa",
+                        "inverse-surface": "#2e3132",
+                        "secondary": "#3a5f94",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e1e3e4",
+                        "inverse-on-surface": "#f0f1f2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "display": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-nav {
+            background-color: rgba(0, 33, 71, 0.8);
+            backdrop-filter: blur(24px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 glass-nav shadow-2xl shadow-primary/20">
+<div class="flex justify-between items-center px-8 py-4 max-w-full">
+<div class="flex items-center gap-4">
+<img alt="CNI Logo" class="h-10 object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0uiYbQyIzQd40W92IFaY9cgSVcwPrwYP9yagQI5Zb3GI2eyXIn9MfeEF2jiR4lSwbTklYhlpGRw6cWo8oJvk4kjgZ507sHZpm47YJzjnX9hqwZGDXvBdXf7F8QN9_eXzYSYWL7H6AWfkUZpMTM3qT44RzbTwRVy7MYnPFNfnxJdoFIJ4PzJbtwYvWRlSbqhb6bGhRdV8Wzj2R7iXLdfFhLBDvBo4NqI1vQFXFuh0raCBRIkU65U4xF2ghgIb"/>
+<span class="font-headline text-2xl font-black text-on-primary-fixed tracking-tighter">Invest Honduras</span>
+</div>
+<div class="hidden md:flex items-center gap-8 font-body">
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors text-sm font-medium" href="#">Servicios</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors text-sm font-medium" href="#">Inteligencia</a>
+<a class="text-tertiary-fixed-dim font-bold border-b-2 border-tertiary-fixed-dim pb-1 text-sm" href="#">Institucional</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors text-sm font-medium" href="#">Misión</a>
+<a class="text-on-primary-fixed-variant hover:text-on-primary-fixed transition-colors text-sm font-medium" href="#">Contacto</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-6 py-2.5 rounded-md font-semibold text-sm hover:opacity-90 transition-all active:scale-95 duration-200">
+                    Portal Inversionista
+                </button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A panoramic, high-angle view of a modern Honduran coastal cityscape during sunset, featuring high-rise buildings and lush tropical greenery. The lighting is golden and warm, creating a premium and professional mood. The overall aesthetic is clean and corporate, utilizing deep navy shadows and bright highlights to convey progress and stability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjDvopM-c-ejjSosudFDznXywZ8ZVEUyZihEa202J2cARfvncDutb0DF29vyHpfQt-SuQHuSD2rEljVwvqQtf8-D1emlc-PIlGoVRGdlZpYoMaoVtQtSdTxHD_zhnVflR9kvSlr6ZN4bSyIKoaDP6zQmEuP39yNYuHHhmJvSZtOSeQZFEhTWD1ojl9YtJwWPgFXOG_nrShTUAD-H8GfGwyuuQkKJvosshYq81s1_SOqlZSfVPDpDzHWJqC4HYewE-mRhMsTodvH0KI"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/80 to-transparent"></div>
+</div>
+<div class="container mx-auto px-8 z-10 grid md:grid-cols-2 gap-12">
+<div class="flex flex-col justify-center">
+<div class="flex items-center gap-2 mb-6">
+<span class="w-12 h-1 bg-tertiary-fixed"></span>
+<span class="font-headline font-bold text-tertiary-fixed uppercase tracking-widest text-xs">Autoridad Gubernamental</span>
+</div>
+<h1 class="font-display text-5xl md:text-7xl font-extrabold text-on-primary leading-tight tracking-tight mb-6">
+                    Consejo Nacional de Inversiones: <span class="text-tertiary-fixed-dim">Tu puerta para invertir en Honduras</span>
+</h1>
+<p class="text-primary-fixed font-body text-lg max-w-xl mb-10 leading-relaxed">
+                    El CNI es la entidad rectora para identificar oportunidades de inversión en sectores priorizados, brindando seguridad jurídica y acompañamiento técnico a capitales nacionales y extranjeros.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-tertiary-fixed text-on-tertiary-fixed px-8 py-4 rounded-md font-bold hover:bg-tertiary-fixed-dim transition-colors flex items-center gap-2">
+                        Explorar Oportunidades
+                        <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+<button class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-md font-bold hover:bg-white/20 transition-colors">
+                        Asesoría Gratuita
+                    </button>
+</div>
+</div>
+<div class="hidden md:flex justify-center items-center">
+<div class="relative group">
+<div class="absolute -inset-4 bg-tertiary-fixed/20 blur-3xl group-hover:bg-tertiary-fixed/30 transition-all"></div>
+<img alt="Decorativo Guacamaya" class="relative w-80 h-auto drop-shadow-2xl" src="https://lh3.googleusercontent.com/aida/ADBb0ujmKjEXPuA0dOwWR-IJDworuclugR6I1jJLhyEsa4PY3-bny1c6wt5zktH87xXaXDfSjRfvqD2lQGidKscJznC5uHW9uBHuVhg1ODi2u38Dx9RZtZUkzxu-EkxqNPd2Rr5Tv4WV4Xx8W6LkevUPPbBXxGlVuAPGeFjhAsbXiEj6yQhphNJ7d96PYh3ljMITvrVNVFemFdGKAllQqv0nZOv02TYX6Za1cQwRlHEw-0T6gQEM-sBnm5vYrfY"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Misión y Visión -->
+<section class="py-24 bg-surface-container-lowest relative overflow-hidden">
+<div class="container mx-auto px-8 grid md:grid-cols-2 gap-16">
+<div class="p-12 bg-surface rounded-full border-l-8 border-primary flex flex-col gap-6 shadow-xl shadow-primary/5">
+<span class="material-symbols-outlined text-4xl text-primary" data-weight="fill">track_changes</span>
+<h2 class="font-headline text-4xl font-bold text-primary">Misión</h2>
+<p class="text-on-surface-variant leading-relaxed text-lg italic">
+                    "Somos la agencia de promoción de inversión de Honduras que articula los esfuerzos entre el sector privado y el Estado para atraer la inversión y conectar el capital extranjero con el desarrollo local."
+                </p>
+</div>
+<div class="p-12 bg-surface rounded-full border-l-8 border-secondary flex flex-col gap-6 shadow-xl shadow-primary/5">
+<span class="material-symbols-outlined text-4xl text-secondary" data-weight="fill">visibility</span>
+<h2 class="font-headline text-4xl font-bold text-primary">Visión</h2>
+<p class="text-on-surface-variant leading-relaxed text-lg">
+                    Consolidarnos como la agencia de promoción líder que proyecta a Honduras como un destino competitivo de clase mundial para el desarrollo económico integral, turismo y exportaciones.
+                </p>
+</div>
+</div>
+</section>
+<!-- Filosofía y Fines -->
+<section class="py-24 bg-primary relative overflow-hidden">
+<div class="absolute right-0 top-0 w-1/3 h-full opacity-10 pointer-events-none">
+<div class="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-tertiary-fixed-dim via-transparent to-transparent"></div>
+</div>
+<div class="container mx-auto px-8 flex flex-col items-center text-center max-w-4xl">
+<h2 class="font-headline text-4xl font-extrabold text-on-primary mb-8 tracking-tight">Filosofía Institucional</h2>
+<p class="text-primary-fixed text-xl leading-loose font-light">
+                El CNI busca promover a Honduras como un destino atractivo, conectando intereses globales con oportunidades locales. Brindamos acompañamiento estratégico y servicios gratuitos durante toda la "Ruta del Inversionista", alineados con las políticas de desarrollo más exigentes del continente.
+            </p>
+<div class="mt-12 w-24 h-1 bg-tertiary-fixed rounded-full"></div>
+</div>
+</section>
+<!-- Ruta del Inversionista -->
+<section class="py-32 bg-white relative">
+<div class="container mx-auto px-8">
+<div class="flex flex-col items-center text-center mb-16">
+<h2 class="font-headline text-5xl font-black text-primary mb-4 tracking-tighter">Ruta del Inversionista</h2>
+<p class="text-on-surface-variant max-w-2xl">Un proceso estructurado y transparente para garantizar el éxito de su capital en territorio nacional.</p>
+</div>
+<div class="flex justify-center">
+<div class="relative w-full max-w-6xl overflow-hidden rounded-full shadow-2xl">
+<img alt="Ruta del Inversionista Infografía" class="w-full h-auto" src="https://lh3.googleusercontent.com/aida/ADBb0uiIfxYYiUmeD2f_x338vhaqA1yfmsAdPKBZ0B9hu7sN4eX7NFstXkKMGi5UygkpW7rbgCgf5fYf4shu4s4loPJOTalWf92EB7jp226QURqJxcsHH9pouo30e1Q1Dhb9hyw0mSvgxPLU_MhUMtBhRbnEFLJv_Cdt99ZhIeOXDzW16laAo3yQ9Ba3FBIYwOzg3rNJNTVi19L7dwG3k3HOf_OnlEMlJQBfx3-pQmDJhg6r0tWzIF5sj_4BGdc"/>
+<div class="absolute inset-0 bg-primary/5 hover:bg-transparent transition-colors duration-500 cursor-zoom-in"></div>
+</div>
+</div>
+<div class="grid md:grid-cols-5 gap-8 mt-20">
+<div class="text-center group">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xl mb-4 mx-auto group-hover:scale-110 transition-transform">1</div>
+<h3 class="font-headline font-bold text-primary mb-2">Punto de Partida</h3>
+<p class="text-xs text-on-surface-variant">Análisis inicial y diagnóstico de potencial.</p>
+</div>
+<div class="text-center group">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xl mb-4 mx-auto group-hover:scale-110 transition-transform">2</div>
+<h3 class="font-headline font-bold text-primary mb-2">Kick Off</h3>
+<p class="text-xs text-on-surface-variant">Reunión de coordinación estratégica.</p>
+</div>
+<div class="text-center group">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xl mb-4 mx-auto group-hover:scale-110 transition-transform">3</div>
+<h3 class="font-headline font-bold text-primary mb-2">Pitch de Inversión</h3>
+<p class="text-xs text-on-surface-variant">Oportunidades sectoriales detalladas.</p>
+</div>
+<div class="text-center group">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xl mb-4 mx-auto group-hover:scale-110 transition-transform">4</div>
+<h3 class="font-headline font-bold text-primary mb-2">Instalación</h3>
+<p class="text-xs text-on-surface-variant">Ejecución y puesta en marcha operativa.</p>
+</div>
+<div class="text-center group">
+<div class="w-12 h-12 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xl mb-4 mx-auto group-hover:scale-110 transition-transform">5</div>
+<h3 class="font-headline font-bold text-primary mb-2">Aftercare</h3>
+<p class="text-xs text-on-surface-variant">Acompañamiento post-inversión.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Objetivos Estratégicos (Bento Grid) -->
+<section class="py-24 bg-surface-container-low">
+<div class="container mx-auto px-8">
+<div class="mb-16">
+<h2 class="font-headline text-4xl font-bold text-primary">Nuestros Objetivos</h2>
+<div class="w-16 h-1.5 bg-tertiary-fixed-dim mt-4"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-6 gap-6">
+<!-- Informar -->
+<div class="md:col-span-3 bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all border-b-4 border-secondary group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 block" data-weight="fill">info</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">INFORMAR</h3>
+<p class="text-on-surface-variant leading-relaxed">Ser una fuente confiable, independiente y alineada a los intereses del Estado según el plan de nación y de gobierno, así como la visión país.</p>
+<button class="mt-8 text-secondary font-bold text-sm flex items-center gap-2 group-hover:gap-4 transition-all">Asistencia Gratuita <span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<!-- Promocionar -->
+<div class="md:col-span-3 bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all border-b-4 border-primary group">
+<span class="material-symbols-outlined text-4xl text-primary mb-6 block" data-weight="fill">campaign</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">PROMOCIONAR</h3>
+<p class="text-on-surface-variant leading-relaxed">Promover la inversión y reinversión a nivel nacional e internacional para el crecimiento económico sostenible y de alto impacto.</p>
+<button class="mt-8 text-primary font-bold text-sm flex items-center gap-2 group-hover:gap-4 transition-all">Asistencia Gratuita <span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+<!-- Acompañar -->
+<div class="md:col-span-2 bg-primary p-10 rounded-xl hover:shadow-2xl transition-all text-on-primary group">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed mb-6 block">handshake</span>
+<h3 class="font-headline text-2xl font-bold mb-4">ACOMPAÑAR</h3>
+<p class="text-primary-fixed/80 text-sm">Asesoramiento integral al inversionista en todas las etapas críticas de su proceso de establecimiento.</p>
+</div>
+<!-- Articular -->
+<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all border-b-4 border-secondary group">
+<span class="material-symbols-outlined text-4xl text-secondary mb-6 block">hub</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">ARTICULAR</h3>
+<p class="text-on-surface-variant text-sm">Coordinar esfuerzos interinstitucionales entre los actores claves del gobierno y los inversionistas privados.</p>
+</div>
+<!-- Incidir -->
+<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-xl hover:shadow-2xl transition-all border-b-4 border-tertiary-fixed-dim group">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim mb-6 block">gavel</span>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">INCIDIR</h3>
+<p class="text-on-surface-variant text-sm">Generar opiniones formales y espacios de debate para el estudio profundo del marco legal de incentivos.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Valores -->
+<section class="py-24 bg-white">
+<div class="container mx-auto px-8">
+<div class="grid md:grid-cols-4 gap-12">
+<div class="flex flex-col gap-4">
+<h3 class="font-headline text-4xl font-black text-primary leading-tight">Valores Institucionales</h3>
+<p class="text-on-surface-variant">Nuestros pilares éticos y operativos.</p>
+</div>
+<div class="flex flex-col gap-4 p-8 bg-surface rounded-xl hover:-translate-y-2 transition-transform shadow-lg">
+<span class="material-symbols-outlined text-3xl text-secondary">bolt</span>
+<h4 class="font-headline font-bold text-xl text-primary">Efectividad</h4>
+<p class="text-sm text-on-surface-variant">Enfocados en brindar resultados concretos en tiempo y forma para su negocio.</p>
+</div>
+<div class="flex flex-col gap-4 p-8 bg-surface rounded-xl hover:-translate-y-2 transition-transform shadow-lg">
+<span class="material-symbols-outlined text-3xl text-secondary">face_retouching_natural</span>
+<h4 class="font-headline font-bold text-xl text-primary">Identidad</h4>
+<p class="text-sm text-on-surface-variant">Promovemos nuestro mejor activo: Honduras y el talento excepcional de su gente.</p>
+</div>
+<div class="flex flex-col gap-4 p-8 bg-surface rounded-xl hover:-translate-y-2 transition-transform shadow-lg">
+<span class="material-symbols-outlined text-3xl text-secondary">psychology</span>
+<h4 class="font-headline font-bold text-xl text-primary">Resiliencia</h4>
+<p class="text-sm text-on-surface-variant">El cambio es nuestro aliado estratégico; nos adaptamos a la transformación constante.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Servicios del CNI -->
+<section class="py-32 bg-primary overflow-hidden relative">
+<div class="container mx-auto px-8 relative z-10">
+<div class="mb-20 text-center">
+<h2 class="font-display text-5xl font-extrabold text-on-primary mb-4">Ecosistema de Servicios</h2>
+<p class="text-primary-fixed max-w-2xl mx-auto">Soluciones integrales de asesoría para blindar y potenciar su inversión.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8">
+<!-- Servicio Legal -->
+<div class="bg-primary-container p-10 rounded-2xl border border-white/5 hover:border-tertiary-fixed/30 transition-all flex flex-col h-full group">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed mb-8">policy</span>
+<h3 class="font-headline text-2xl font-bold text-on-primary mb-6">Servicios Legales</h3>
+<p class="text-primary-fixed/70 leading-relaxed mb-8 grow">
+                        Ofrecemos asesoría legal integral y asistencia técnica en trámites administrativos. Facilitamos el establecimiento de proyectos mediante un blindaje jurídico sólido.
+                    </p>
+<a class="inline-flex items-center gap-2 text-tertiary-fixed font-bold group-hover:translate-x-2 transition-transform" href="#">
+                        Más detalles <span class="material-symbols-outlined">arrow_right_alt</span>
+</a>
+</div>
+<!-- Inteligencia de Datos -->
+<div class="bg-primary-container p-10 rounded-2xl border border-white/5 hover:border-secondary-container/30 transition-all flex flex-col h-full group">
+<span class="material-symbols-outlined text-5xl text-secondary-container mb-8">analytics</span>
+<h3 class="font-headline text-2xl font-bold text-on-primary mb-6">Inteligencia de Datos</h3>
+<p class="text-primary-fixed/70 leading-relaxed mb-8 grow">
+                        Acceso estratégico a información clave. Análisis precisos que fortalecen la competitividad y fomentan el crecimiento sostenible en el ámbito comercial y turístico.
+                    </p>
+<a class="inline-flex items-center gap-2 text-secondary-container font-bold group-hover:translate-x-2 transition-transform" href="#">
+                        Más detalles <span class="material-symbols-outlined">arrow_right_alt</span>
+</a>
+</div>
+<!-- Servicios Técnicos -->
+<div class="bg-primary-container p-10 rounded-2xl border border-white/5 hover:border-white/30 transition-all flex flex-col h-full group">
+<span class="material-symbols-outlined text-5xl text-white mb-8">engineering</span>
+<h3 class="font-headline text-2xl font-bold text-on-primary mb-6">Servicios Técnicos</h3>
+<p class="text-primary-fixed/70 leading-relaxed mb-8 grow">
+                        Asesoría especializada durante todo el ciclo de vida del proyecto. Proporcionamos acceso directo a una red de contactos estratégicos nacionales.
+                    </p>
+<a class="inline-flex items-center gap-2 text-white font-bold group-hover:translate-x-2 transition-transform" href="#">
+                        Más detalles <span class="material-symbols-outlined">arrow_right_alt</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Final -->
+<section class="py-24 bg-tertiary-fixed">
+<div class="container mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="text-center md:text-left">
+<h2 class="font-display text-4xl font-extrabold text-on-tertiary-fixed mb-2">Acelera tu proceso de inversión</h2>
+<p class="text-on-tertiary-fixed-variant text-lg">Contacta hoy mismo al CNI para recibir asistencia profesional gratuita.</p>
+</div>
+<button class="bg-primary text-on-primary px-10 py-5 rounded-md font-bold text-lg shadow-xl hover:scale-105 active:scale-95 transition-all">
+                Contactar Ahora
+            </button>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary pt-20 pb-12">
+<div class="container mx-auto px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+<div>
+<img alt="CNI Logo White" class="h-12 mb-8 brightness-0 invert" src="https://lh3.googleusercontent.com/aida/ADBb0uiYbQyIzQd40W92IFaY9cgSVcwPrwYP9yagQI5Zb3GI2eyXIn9MfeEF2jiR4lSwbTklYhlpGRw6cWo8oJvk4kjgZ507sHZpm47YJzjnX9hqwZGDXvBdXf7F8QN9_eXzYSYWL7H6AWfkUZpMTM3qT44RzbTwRVy7MYnPFNfnxJdoFIJ4PzJbtwYvWRlSbqhb6bGhRdV8Wzj2R7iXLdfFhLBDvBo4NqI1vQFXFuh0raCBRIkU65U4xF2ghgIb"/>
+<p class="text-primary-fixed-dim/60 text-sm leading-relaxed">
+                        El Consejo Nacional de Inversiones es la puerta oficial para el capital global en Honduras, promoviendo el desarrollo económico integral.
+                    </p>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-primary mb-6 uppercase tracking-widest text-xs">Inversionistas</h4>
+<ul class="flex flex-col gap-3 text-primary-fixed-dim/80 text-sm">
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Consejo Nacional</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Recursos CNI</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Preguntas Frecuentes</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Portafolio de Inversión</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-primary mb-6 uppercase tracking-widest text-xs">Enlaces Externos</h4>
+<ul class="flex flex-col gap-3 text-primary-fixed-dim/80 text-sm">
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Presidencia</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">COHEP</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Banco Central</a></li>
+<li><a class="hover:text-tertiary-fixed transition-colors" href="#">Aduanas de Honduras</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-primary mb-6 uppercase tracking-widest text-xs">Contacto</h4>
+<div class="flex flex-col gap-4 text-primary-fixed-dim/80 text-sm">
+<div>
+<p class="font-bold text-on-primary">Tegucigalpa</p>
+<p>seguimiento@cni.hn</p>
+<p>(504) 2242-8955</p>
+</div>
+<div>
+<p class="font-bold text-on-primary">San Pedro Sula</p>
+<p>oficinasps@cni.hn</p>
+<p>(504) 2561-6100 ext 109</p>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex gap-6">
+<a class="text-on-primary-fixed-variant hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
+<a class="text-on-primary-fixed-variant hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">group</span></a>
+<a class="text-on-primary-fixed-variant hover:text-white transition-colors" href="#"><span class="material-symbols-outlined">description</span></a>
+</div>
+<p class="font-body text-xs uppercase tracking-widest text-on-primary-fixed-variant">
+                    © 2024 Consejo Nacional de Inversiones (CNI) - Gobierno de Honduras.
+                </p>
+</div>
+</div>
+</footer>
+</body></html>

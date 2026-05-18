@@ -3,15 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { layoutCopy } from "@/src/i18n/copy/layout";
-import { getLocaleFromPathname, stripLocalePrefix, withLocale } from "@/src/i18n/path";
+import { getLocaleFromPathname, getMirrorPath } from "@/src/config/siteNavigation";
 import { cn } from "@/src/lib/utils";
 
 export function LanguageSwitch() {
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname);
-  const rest = stripLocalePrefix(pathname);
-  const hrefEs = withLocale("es", rest);
-  const hrefEn = withLocale("en", rest);
+  const hrefEs = getMirrorPath(pathname, "es");
+  const hrefEn = getMirrorPath(pathname, "en");
   const labels = layoutCopy[locale].language;
 
   return (

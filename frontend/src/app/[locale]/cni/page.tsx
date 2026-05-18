@@ -1,180 +1,175 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import {
-  ArrowRight,
-  BadgeCheck,
-  BarChart3,
-  Check,
-  FileSearch,
-  Gavel,
-  Globe,
-  ShieldCheck,
-  Wrench,
-} from "lucide-react";
-import { PageHero } from "@/src/components/cni/PageHero";
-import { Section, SectionHeader } from "@/src/components/cni/Section";
+import Image from "next/image";
+import Script from "next/script";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
-import { cniPageCopy } from "@/src/i18n/copy/cniPage";
-import { withLocale } from "@/src/i18n/path";
+import { resolveHref } from "@/src/i18n/path";
+import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import { designImages } from "@/src/lib/designAssets";
+import { makeGenerateMetadata } from "@/src/lib/seo";
+import { PAGE_SEO } from "@/src/config/pageSeo";
 
-export default async function CniServicesPage({ params }: { params: Promise<{ locale: string }> }) {
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO.cni);
+
+const copy = {
+  es: {
+    eyebrow: "Consejo Nacional de Inversiones",
+    title: "Servicios estratégicos para el inversionista",
+    description:
+      "Acompañamiento integral, gratuito y confidencial para activar, escalar y proteger su capital en Honduras.",
+    pillarsHeading: "Tres pilares de servicio",
+    pillars: [
+      {
+        icon: "policy",
+        title: "Servicios Legales",
+        href: "/cni/servicios-legales",
+        text: "Asesoría jurídica especializada sobre la Ley de Promoción y Protección de Inversiones (LPPI), regímenes aduaneros especiales y estructuración fiscal corporativa.",
+        bullets: ["Marco LPPI y regímenes especiales", "ZOLI y zonas francas", "Estructuración fiscal y due diligence"],
+      },
+      {
+        icon: "engineering",
+        title: "Servicios Técnicos",
+        href: "/cni/servicios-tecnicos",
+        text: "Acompañamiento operativo en la gestión de permisos ambientales, trámites de aduana, licencias sanitarias y mitigación de cuellos de botella burocráticos.",
+        bullets: ["Permisos ambientales", "Trámites aduaneros y sanitarios", "Gestión interinstitucional"],
+      },
+      {
+        icon: "analytics",
+        title: "Inteligencia de Datos",
+        href: "/cni/inteligencia-de-datos",
+        text: "Estudios de pre-factibilidad, matrices de costos operativos (energía, salarios, tierra/alquiler) y reportes de mercado a medida.",
+        bullets: ["Estudios de pre-factibilidad", "Matrices de costos operativos", "Reportes sectoriales a medida"],
+      },
+    ],
+    ctaTitle: "Active el respaldo institucional del CNI",
+    ctaText: "Solicite una asesoría gratuita con uno de nuestros oficiales de inversión.",
+    ctaButton: "Solicitar Asesoría Gratuita",
+  },
+  en: {
+    eyebrow: "National Investment Council",
+    title: "Strategic services for investors",
+    description:
+      "Comprehensive, free and confidential support to launch, scale and protect your capital in Honduras.",
+    pillarsHeading: "Three pillars of service",
+    pillars: [
+      {
+        icon: "policy",
+        title: "Legal Services",
+        href: "/en/cni/legal-services",
+        text: "Specialized legal advisory on the Investment Promotion and Protection Law (LPPI), special customs regimes and corporate tax structuring.",
+        bullets: ["LPPI framework", "Free trade zones (ZOLI)", "Tax structuring & due diligence"],
+      },
+      {
+        icon: "engineering",
+        title: "Technical Services",
+        href: "/en/cni/technical-services",
+        text: "Operational support for environmental permits, customs procedures, sanitary licenses and the mitigation of bureaucratic bottlenecks.",
+        bullets: ["Environmental permits", "Customs & sanitary procedures", "Inter-institutional management"],
+      },
+      {
+        icon: "analytics",
+        title: "Data Intelligence",
+        href: "/en/cni/data-intelligence",
+        text: "Pre-feasibility studies, operating cost matrices (energy, wages, land/rent) and tailor-made market reports.",
+        bullets: ["Pre-feasibility studies", "Operating cost matrices", "Custom sector reports"],
+      },
+    ],
+    ctaTitle: "Activate the CNI's institutional backing",
+    ctaText: "Schedule a free consultation with one of our investment officers.",
+    ctaButton: "Request Free Advisory",
+  },
+} as const;
+
+export default async function CNIServicesHubPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
-  const c = cniPageCopy[locale];
-  const L = (path: string) => withLocale(locale, path);
+  const c = copy[locale];
+  const L = (p: string) => resolveHref(locale, p);
 
-  const techIcons = [Wrench, Globe, Check] as const;
-
-  const dataIcons = [FileSearch, BarChart3, BarChart3, Globe] as const;
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: locale === "es" ? "Inicio" : "Home", item: L("/") },
+      { "@type": "ListItem", position: 2, name: "CNI", item: L("/cni") },
+    ],
+  };
 
   return (
     <div className="flex flex-1 flex-col bg-[#f8f9fa]">
-      <div className="-mt-28">
-        <PageHero
-          eyebrow={c.heroEyebrow}
-          title={
-            <>
-              {c.heroTitleBefore} <span className="text-gradient-gold">{c.heroTitleAccent}</span>
-            </>
-          }
-          description={c.heroDescription}
-          imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuDc3VS3kv8ZFwapSbMmcTxiKFUvM6QpK0flspcn8Ih_83P1mWx6BL5gsLQ7Jbz90q-D6q0VANdNiLspOADv8JVTeRCq49udWtBalmdAbu1__LkgrbC8Bypg77Hz6S6ivJ-NQrRt45mPYfXvw9S72TcWXQPqG00VmevBq-cB1cgozGI8qqgFVCQVRMwFMem1qq-2oDjJg2yJJmKT7vYiMkXBWokSPebAmn-Ob3kCT_iBGT8N8AM1qgWhG_JDUlfKBLpEHCarWq25YEuo"
-          imageAlt={c.heroImageAlt}
-          heightClass="min-h-[560px] md:min-h-[640px]"
+      <Script id="breadcrumb-cni" type="application/ld+json">
+        {JSON.stringify(breadcrumb)}
+      </Script>
+
+      <section className="relative -mt-28 flex min-h-[520px] items-center overflow-hidden bg-[#000a1e] pt-28">
+        <Image
+          src={designImages.cni.heroCity}
+          alt="Vista panorámica de la torre institucional del CNI en el Centro Cívico Gubernamental, Tegucigalpa"
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 object-cover opacity-50"
         />
-      </div>
-
-      <Section id="servicios-legales" tone="surface">
-        <SectionHeader eyebrow={c.legalEyebrow} title={c.legalTitle} description={c.legalDescription} />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-          <article className="group relative overflow-hidden rounded-xl bg-white p-10 transition-colors duration-500 hover:bg-[#000a1e] md:col-span-8 tonal-depth-layering">
-            <Gavel className="mb-8 h-12 w-12 text-[#a68440] transition-colors group-hover:text-white" />
-            <h3 className="text-3xl font-bold text-[#000a1e] transition-colors group-hover:text-white">{c.legalCardTitle}</h3>
-            <p className="mt-4 max-w-md text-lg text-[#44474e] transition-colors group-hover:text-slate-300">{c.legalCardBody}</p>
-          </article>
-          <div className="rounded-xl bg-[#e7e8e9] p-8 md:col-span-4">
-            <ShieldCheck className="mb-6 h-10 w-10 text-[#000a1e]" />
-            <h3 className="text-xl font-bold text-[#000a1e]">{c.repatTitle}</h3>
-            <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{c.repatBody}</p>
-          </div>
-          {c.fiscal.map((f) => (
-            <article key={f.title} className="md:col-span-4 rounded-xl border-l-4 border-[#e9c176] bg-white p-8 tonal-depth-layering">
-              <BadgeCheck className="mb-5 h-8 w-8 text-[#3a5f94]" />
-              <h3 className="text-lg font-bold text-[#000a1e]">{f.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{f.text}</p>
-            </article>
-          ))}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e] via-[#000a1e]/85 to-transparent" />
+        <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-10">
+          <span className="mb-6 inline-flex items-center rounded-sm border border-[#e9c176]/40 bg-[#2e1f00]/30 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[#e9c176] backdrop-blur">
+            {c.eyebrow}
+          </span>
+          <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
+            {c.title}
+          </h1>
+          <p className="mt-6 max-w-2xl text-base font-light leading-relaxed text-white/85 md:text-lg">
+            {c.description}
+          </p>
         </div>
-      </Section>
+      </section>
 
-      <Section id="servicios-tecnicos" tone="primary">
-        <SectionHeader eyebrow={c.techEyebrow} title={c.techTitle} description={c.techDescription} />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {c.techItems.map((item, i) => {
-            const Icon = techIcons[i] ?? Wrench;
-            return (
-              <article key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md">
-                <Icon className="mb-6 h-10 w-10 text-[#e9c176]" />
-                <h3 className="text-xl font-bold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/75">{item.text}</p>
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="mt-16">
-          <h3 className="text-2xl font-extrabold text-white">{c.roadmapTitle}</h3>
-          <p className="mt-3 max-w-2xl text-white/70">{c.roadmapDescription}</p>
-          <div className="relative mt-12">
-            <div className="absolute left-0 top-8 hidden h-px w-full bg-white/15 md:block" />
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-              {c.steps.map((s, i) => (
-                <div key={s.code} className="relative z-10">
-                  <div
-                    className={`flex h-16 w-16 items-center justify-center rounded-full text-base font-bold ${
-                      i === c.steps.length - 1 ? "bg-[#e9c176] text-[#191c1d]" : "border-2 border-white/30 bg-[#000a1e] text-white"
-                    }`}
-                  >
-                    {s.code}
-                  </div>
-                  <h4 className="mt-6 text-lg font-bold text-white">{s.title}</h4>
-                  <p className="mt-2 text-sm leading-relaxed text-white/65">{s.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      <Section id="inteligencia-de-datos" tone="surface">
-        <SectionHeader
-          eyebrow={c.dataEyebrow}
-          title={c.dataTitle}
-          description={c.dataDescription}
-          action={
-            <Link
-              href={L("/recursos")}
-              className="border-b-2 border-[#e9c176] pb-1 text-sm font-bold uppercase tracking-widest text-[#000a1e] hover:text-[#e9c176]"
-            >
-              {c.dataCta}
-            </Link>
-          }
-        />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {c.dataCards.map((card, i) => {
-            const Icon = dataIcons[i] ?? FileSearch;
-            return (
-              <article key={card.title} className="rounded-xl border-t-4 border-[#3a5f94] bg-white p-8 tonal-depth-layering">
-                <Icon className="mb-5 h-9 w-9 text-[#3a5f94]" />
-                <h3 className="text-base font-bold text-[#000a1e]">{card.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{card.text}</p>
-              </article>
-            );
-          })}
-        </div>
-      </Section>
-
-      <Section tone="low">
-        <div className="overflow-hidden rounded-2xl bg-[#e7e8e9] shadow-xl">
-          <div className="flex flex-col lg:flex-row">
-            <div className="p-10 lg:w-3/5 lg:p-14">
-              <h2 className="text-3xl font-extrabold text-[#000a1e]">{c.oneStopTitle}</h2>
-              <p className="mt-4 text-lg leading-relaxed text-[#44474e]">{c.oneStopBody}</p>
-              <ul className="mt-8 space-y-4 text-sm font-medium text-[#000a1e]">
-                {c.oneStopBullets.map((b) => (
-                  <li key={b} className="flex items-center gap-3">
-                    <Check className="h-5 w-5 text-[#a68440]" />
-                    {b}
+      <section className="mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-10">
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#000a1e] md:text-4xl">{c.pillarsHeading}</h2>
+        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {c.pillars.map((p) => (
+            <article key={p.href} className="flex flex-col gap-5 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5 transition hover:shadow-xl">
+              <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#000a1e] text-[#e9c176]">
+                <MaterialIcon name={p.icon} className="!text-3xl" />
+              </span>
+              <h3 className="text-xl font-bold text-[#000a1e]">{p.title}</h3>
+              <p className="text-sm leading-relaxed text-[#44474e]">{p.text}</p>
+              <ul className="mt-1 space-y-1.5 text-sm text-[#44474e]">
+                {p.bullets.map((b) => (
+                  <li key={b} className="flex items-start gap-2">
+                    <MaterialIcon name="check_circle" className="!text-base text-[#e9c176]" />
+                    <span>{b}</span>
                   </li>
                 ))}
               </ul>
               <Link
-                href={L("/asesoria")}
-                className="mt-10 inline-flex items-center gap-2 rounded-md bg-[#000a1e] px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#002147]"
+                href={L(p.href)}
+                className="mt-auto inline-flex w-fit items-center gap-2 border-b border-[#000a1e] pb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#000a1e] transition hover:gap-3 hover:text-[#3a5f94]"
+                aria-label={`${p.title} — ${locale === "en" ? "view details" : "ver detalles"}`}
               >
-                {c.oneStopCta}
-                <ArrowRight className="h-3.5 w-3.5" />
+                {locale === "en" ? "Explore service" : "Explorar servicio"}
+                <MaterialIcon name="arrow_forward" className="!text-base" />
               </Link>
-            </div>
-            <div className="relative min-h-[320px] flex-1 bg-[#000a1e] p-10 text-white lg:w-2/5">
-              <div className="absolute inset-0 hero-gradient opacity-90" />
-              <div className="relative z-10 flex h-full flex-col justify-between">
-                <div>
-                  <p className="text-[0.65rem] font-bold uppercase tracking-[0.25em] text-[#e9c176]">{c.freeLabel}</p>
-                  <p className="mt-3 text-2xl font-extrabold leading-tight">{c.freeTagline}</p>
-                </div>
-                <ul className="mt-6 space-y-2 text-sm text-white/80">
-                  {c.freeList.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
+            </article>
+          ))}
         </div>
-      </Section>
+      </section>
+
+      <section className="bg-[#000a1e] py-20 text-white">
+        <div className="mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 text-center md:px-10">
+          <h2 className="w-full text-3xl font-extrabold tracking-tight md:text-4xl">{c.ctaTitle}</h2>
+          <p className="w-full text-base text-white/80">{c.ctaText}</p>
+          <Link
+            href={L("/asesoria")}
+            className="mx-auto inline-flex items-center gap-2 rounded-full bg-[#e9c176] px-8 py-3 text-sm font-bold uppercase tracking-[0.2em] text-[#000a1e] transition hover:bg-white"
+          >
+            {c.ctaButton}
+            <MaterialIcon name="arrow_forward" className="!text-base" />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

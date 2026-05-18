@@ -1,0 +1,17 @@
+[
+  {
+    "id": "topbar-prensa",
+    "label": { "es": "Sala de Prensa", "en": "Newsroom" },
+    "path": { "es": "/prensa", "en": "/en/news" }
+  },
+  {
+    "id": "topbar-asesoria",
+    "label": { "es": "Asesoría Gratuita", "en": "Free Advisory" },
+    "path": { "es": "/asesoria", "en": "/en/advisory" }
+  },
+  {
+    "id": "topbar-tramites",
+    "label": { "es": "Trámites en Línea", "en": "Online Procedures" },
+    "path": { "es": "/tramites", "en": "/en/procedures" }
+  }
+]

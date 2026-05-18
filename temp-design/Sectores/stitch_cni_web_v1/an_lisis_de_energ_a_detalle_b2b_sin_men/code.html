@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invest Honduras | Sector de Energía</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#3a5f94",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-container-highest": "#e1e3e4",
+                    "surface-container": "#edeeef",
+                    "outline-variant": "#c4c6cf",
+                    "inverse-primary": "#aec7f6",
+                    "surface-bright": "#f8f9fa",
+                    "on-tertiary-fixed": "#261900",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#191c1d",
+                    "surface": "#f8f9fa",
+                    "inverse-surface": "#2e3132",
+                    "background": "#f8f9fa",
+                    "secondary-container": "#9fc2fe",
+                    "secondary-fixed-dim": "#a7c8ff",
+                    "on-tertiary-container": "#a68440",
+                    "on-surface-variant": "#44474e",
+                    "on-primary": "#ffffff",
+                    "secondary-fixed": "#d5e3ff",
+                    "primary-fixed-dim": "#aec7f6",
+                    "primary-container": "#002147",
+                    "on-tertiary-fixed-variant": "#5d4201",
+                    "outline": "#74777f",
+                    "primary": "#000a1e",
+                    "on-secondary-container": "#294f83",
+                    "on-primary-fixed": "#001b3d",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#e9c176",
+                    "on-primary-container": "#708ab5",
+                    "primary-fixed": "#d6e3ff",
+                    "tertiary-fixed": "#ffdea5",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed-variant": "#1f477b",
+                    "tertiary": "#110a00",
+                    "tertiary-container": "#2e1f00",
+                    "surface-container-high": "#e7e8e9",
+                    "surface-dim": "#d9dadb",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#2d476f",
+                    "surface-variant": "#e1e3e4",
+                    "on-secondary-fixed": "#001b3c",
+                    "surface-tint": "#465f88",
+                    "on-background": "#191c1d",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#f3f4f5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "display": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .backdrop-blur-xl { backdrop-filter: blur(24px); }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-primary/80 dark:bg-primary-container/80 backdrop-blur-xl shadow-2xl shadow-primary/20">
+<div class="flex justify-between items-center px-8 h-20 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-display font-black tracking-tighter text-on-primary">Invest Honduras</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-on-primary/70 hover:text-on-primary transition-colors" href="#">Agribusiness</a>
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-on-primary/70 hover:text-on-primary transition-colors" href="#">Tourism</a>
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-tertiary-fixed border-b-2 border-tertiary-fixed pb-1" href="#">Energy</a>
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-on-primary/70 hover:text-on-primary transition-colors" href="#">Manufacturing</a>
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-on-primary/70 hover:text-on-primary transition-colors" href="#">Logistics</a>
+<a class="font-headline text-label-md tracking-wider uppercase font-semibold text-on-primary/70 hover:text-on-primary transition-colors" href="#">Infrastructure</a>
+</div>
+</div>
+<div class="flex gap-4 items-center">
+<button class="px-6 py-2 bg-surface-container-highest text-on-surface font-semibold rounded-md active:scale-95 transition-all duration-300">Investor Guide</button>
+<button class="px-6 py-2 bg-gradient-to-br from-primary to-primary-container text-on-primary font-semibold rounded-md active:scale-95 transition-all duration-300">Contact Us</button>
+</div>
+</div>
+</nav>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[870px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 bg-primary/60 z-10"></div>
+<img class="w-full h-full object-cover" data-alt="A wide panoramic view of a massive wind turbine farm atop lush green hills in Honduras at sunset. The lighting is cinematic, with warm golden hues hitting the sleek white turbine blades. The sky is a gradient of deep indigo and soft amber, creating a high-end editorial atmosphere that balances industrial energy with natural beauty." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCi5g3T2QHQAkJASSB45ST98tFKSxAhxY0WoGvRfWpevE5ODuHtAdYf9t3IDDLkICYtVjE29L8Yi7u9ZZFFTJluvAyBC_xo1irUbpj6huW-VYW56p7XNkT2gYoiOKh4XdxbWEd0tLxoQicQz3iy20VTUQ57jvoTWsPmW3UTTnba82fcQYdheLdnQVLtFKhhUCvtdbC90NPlXapZW7UxL9j9R62dYQ45Gss7Bnv_oZ00w8xEd6a6LrLDM6b_VsoqcRFaeaSYuELFmcuR"/>
+</div>
+<div class="relative z-20 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<span class="inline-block px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed text-label-md font-bold uppercase tracking-widest mb-6">Sector Estratégico</span>
+<h1 class="font-display text-7xl font-extrabold text-on-primary leading-tight tracking-tighter mb-8">Sector de Energía: Matriz Renovable</h1>
+<p class="text-xl text-on-primary/80 mb-12 max-w-2xl font-body leading-relaxed">Impulsando el crecimiento soberano a través de la diversificación energética y la sostenibilidad a largo plazo en el corazón de Centroamérica.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-primary-container/40 backdrop-blur-md p-6 border-l-4 border-tertiary-fixed">
+<span class="block text-tertiary-fixed text-3xl font-bold font-headline mb-1">65%</span>
+<span class="text-on-primary/60 text-label-md uppercase tracking-wide">Renewable Mix</span>
+</div>
+<div class="bg-primary-container/40 backdrop-blur-md p-6 border-l-4 border-tertiary-fixed">
+<span class="block text-tertiary-fixed text-3xl font-bold font-headline mb-1">2.8 GW</span>
+<span class="text-on-primary/60 text-label-md uppercase tracking-wide">Capacity</span>
+</div>
+<div class="bg-primary-container/40 backdrop-blur-md p-6 border-l-4 border-tertiary-fixed">
+<span class="block text-tertiary-fixed text-3xl font-bold font-headline mb-1">$1.2B</span>
+<span class="text-on-primary/60 text-label-md uppercase tracking-wide">Sector Investment</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- About Section - Asymmetric Layout -->
+<section class="py-24 bg-surface-container-lowest">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-5">
+<h2 class="font-display text-4xl font-bold text-primary mb-6 leading-tight">Visión Energética 2030</h2>
+<div class="w-20 h-1 bg-tertiary-fixed mb-8"></div>
+<p class="text-lg text-on-surface-variant leading-relaxed mb-8">
+                            Honduras se posiciona como el líder regional en transformación energética. Nuestra ruta crítica está diseñada para lograr una matriz energética <span class="text-primary font-bold">100% limpia para el año 2030</span>, garantizando seguridad energética y precios competitivos para la industria global.
+                        </p>
+<div class="space-y-4">
+<div class="flex items-center gap-4 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Reducción de huella de carbono industrial</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Independencia de combustibles fósiles</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-medium">Modernización de la red nacional</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 relative">
+<div class="aspect-video bg-primary-container overflow-hidden rounded-xl shadow-2xl relative group cursor-pointer">
+<img class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" data-alt="A professional, high-angle aerial photograph of a vast solar power plant located in a bright, sun-drenched valley in Honduras. Thousands of solar panels are arranged in clean, geometric rows, reflecting the clear blue sky. The scene is shot in a clean, corporate style with high contrast and vibrant natural colors, emphasizing large-scale clean energy infrastructure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDydplN2nVR23L0l_3jKH7WBhrWXSPwoDqPEuoR6OO3I1ybmW04nKxl4hkYSPOSsOi7Ltr--gTwW3unAmBgAer_ig5BbbbXCythGIRN2b1T_Wkx97ff1V6Q9lwKJ2ICCtEaZ9ayLFSmz-OvDFlKETyExNYP6WQsHqpNv6qdpF5a3rCez3g6QljkAyMGVektH0SOzioQ4Jnmt9WtsxmiWfiFVmadjB1IjZHoEo7qHFeaoCj3b32jbS249Ch3EiKQxLo3GeAldVCnQaq5"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-24 h-24 bg-tertiary-fixed rounded-full flex items-center justify-center text-primary shadow-xl group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 text-on-primary">
+<p class="font-headline font-bold text-lg">CNI: Institucional Energía</p>
+<p class="text-sm opacity-80">Ver el futuro de la matriz hondureña</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Competitive Advantages - Bento Grid -->
+<section class="py-24 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<h2 class="font-display text-3xl font-bold text-center mb-16 uppercase tracking-widest text-primary">Ventajas Competitivas</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low p-10 rounded-xl flex flex-col justify-between hover:bg-surface-container-highest transition-colors duration-300">
+<span class="material-symbols-outlined text-5xl text-secondary mb-8">account_balance</span>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Mercado Abierto para IPPs</h3>
+<p class="text-on-surface-variant leading-relaxed">Marco regulatorio moderno que facilita la participación de Productores Independientes de Energía (IPPs), garantizando contratos de largo plazo y seguridad jurídica.</p>
+</div>
+</div>
+<div class="bg-primary-container p-10 rounded-xl flex flex-col justify-between text-on-primary hover:translate-y-[-4px] transition-transform duration-300 shadow-xl shadow-primary/20">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed mb-8">solar_power</span>
+<div>
+<h3 class="font-headline text-2xl font-bold mb-4">Recursos Naturales</h3>
+<p class="text-on-primary/70 leading-relaxed">Ubicación privilegiada con alta radiación solar y vastas cuencas hidrográficas para proyectos de gran escala.</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-10 rounded-xl flex flex-col justify-between border-t-4 border-secondary hover:shadow-lg transition-all duration-300">
+<span class="material-symbols-outlined text-5xl text-secondary mb-8">grid_view</span>
+<div>
+<h3 class="font-headline text-2xl font-bold text-primary mb-4">Estabilidad de Red</h3>
+<p class="text-on-surface-variant leading-relaxed">Interconexión regional SIERPAC que permite el intercambio de energía en todo el istmo centroamericano.</p>
+</div>
+</div>
+<div class="md:col-span-2 bg-gradient-to-r from-secondary to-primary-container p-10 rounded-xl flex items-center gap-10 text-on-primary">
+<div class="hidden sm:block w-32 h-32 rounded-full border-4 border-tertiary-fixed/30 flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-5xl text-tertiary-fixed">trending_up</span>
+</div>
+<div>
+<h3 class="font-headline text-2xl font-bold mb-4">Crecimiento Sostenido</h3>
+<p class="text-on-primary/80 leading-relaxed">Demanda proyectada con un crecimiento anual del 4.5% impulsado por la expansión industrial y el nearshoring.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Success Stories - Visual Cards -->
+<section class="py-24 bg-surface-container-lowest overflow-hidden">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="font-display text-4xl font-bold text-primary mb-4">Historias de Éxito</h2>
+<p class="text-on-surface-variant max-w-xl">Inversiones globales que ya están transformando el paisaje energético de Honduras.</p>
+</div>
+<div class="flex gap-4">
+<button class="p-3 rounded-full border border-outline hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="p-3 rounded-full bg-primary text-on-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<div class="group">
+<div class="h-[400px] rounded-xl overflow-hidden mb-6 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Close up of a modern hydroelectric dam facility in a tropical forest region of Honduras. The water flows powerfully through concrete structures, illuminated by bright daylight. The style is industrial and clean, with a focus on engineering precision and the powerful movement of water, rendered in high-definition photography with cool blue and slate grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwsGAb9CME4t9Uq044T1fpPM4FZyqBMQaV33ED8rm37ypgH9bxkfzB6LvsWzdT5biFnU4IRvnEfYPuE8zN_PE00S0DAR_LGw-lnIeJu2F8RvWAQZmVdI5lNAEmzRU-bVEOtTLsKkP77j-FF0GIJOzMWvwgGG0L5IkDjyLTR1ALggfYTjc7qn2WtjPkvQlzdNsCbsJnPR6tEKYRxwpPsa7QbNDYX3-OaqGyQFb00EruL86TqINH1WWWgtfZX-kXGQl_JX3T0c6nxuCP"/>
+<div class="absolute top-6 left-6 bg-tertiary-fixed px-4 py-1 text-primary text-label-md font-bold rounded-full">HIDROELÉCTRICO</div>
+</div>
+<h3 class="font-display text-2xl font-bold text-primary mb-3">Proyecto Patuca III</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">Central hidroeléctrica de 104 MW que ha estabilizado el suministro en la zona oriental del país, integrando tecnología de punta y gestión ambiental responsable.</p>
+<a class="text-secondary font-bold flex items-center gap-2 group-hover:underline" href="#">Leer Caso de Estudio <span class="material-symbols-outlined text-sm">open_in_new</span></a>
+</div>
+<div class="group">
+<div class="h-[400px] rounded-xl overflow-hidden mb-6 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="An expansive solar park in the southern region of Honduras during midday. The sky is perfectly clear, and the sun glints off the high-tech solar panels. The image captures the scale and efficiency of the operation, using a wide-angle lens and a bright, airy color palette to showcase high-end sustainable infrastructure development." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC643vLhvc12mB8hozpIBYGPNcrUUKLfFOX8Tp3pp-_sGN8rGrDW4YjXnVj7tGNpLyOffgyIgENrtUPg13-4mcJ80BXA45gcYEUE6SsAZWtJEAKF65hCKEPt8Si1vG6wTXyG49V3ureFvOoeEMgo6np0wpDlS9cfPSCFQ961qpUSoLYy0oQvO8Jetpa5llIGVOQqA_yVIYNJQJMhWpe-7kc6AIaWtOlbNEVus8a-7AeQeavyR5KNO0hF35j6DS-v8pfMARWBuZOTPSj"/>
+<div class="absolute top-6 left-6 bg-tertiary-fixed px-4 py-1 text-primary text-label-md font-bold rounded-full">SOLAR</div>
+</div>
+<h3 class="font-display text-2xl font-bold text-primary mb-3">Parque Solar Nacaome</h3>
+<p class="text-on-surface-variant leading-relaxed mb-6">Uno de los complejos solares más grandes de América Latina, demostrando la viabilidad de la energía fotovoltaica a gran escala en el corredor seco.</p>
+<a class="text-secondary font-bold flex items-center gap-2 group-hover:underline" href="#">Leer Caso de Estudio <span class="material-symbols-outlined text-sm">open_in_new</span></a>
+</div>
+</div>
+</div>
+</section>
+<!-- Investment Projects Table -->
+<section class="py-24 bg-surface">
+<div class="max-w-7xl mx-auto px-8">
+<h2 class="font-display text-3xl font-bold text-primary mb-12">Oportunidades de Inversión Vigentes</h2>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-primary-container text-on-primary">
+<tr>
+<th class="px-8 py-5 font-headline text-label-md uppercase tracking-widest rounded-tl-xl">Proyecto</th>
+<th class="px-8 py-5 font-headline text-label-md uppercase tracking-widest">Capacidad Proyectada</th>
+<th class="px-8 py-5 font-headline text-label-md uppercase tracking-widest">Inversión Estimada</th>
+<th class="px-8 py-5 font-headline text-label-md uppercase tracking-widest rounded-tr-xl">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-highest">
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-8 py-6 font-bold text-primary">Solar Farm Expansion - Southern Zone</td>
+<td class="px-8 py-6 text-on-surface-variant">50 MW</td>
+<td class="px-8 py-6 text-on-surface-variant">$45M USD</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-tertiary-fixed/30 text-on-tertiary-fixed-variant text-xs font-bold rounded-full">OPEN FOR BID</span>
+</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-8 py-6 font-bold text-primary">Hydroelectric Plant Project - Jicatuyo</td>
+<td class="px-8 py-6 text-on-surface-variant">210 MW</td>
+<td class="px-8 py-6 text-on-surface-variant">$280M USD</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-secondary-container/30 text-on-secondary-container text-xs font-bold rounded-full">FEASIBILITY STUDY</span>
+</td>
+</tr>
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low transition-colors group cursor-pointer">
+<td class="px-8 py-6 font-bold text-primary">Transmission Line Modernization - Central</td>
+<td class="px-8 py-6 text-on-surface-variant">230 kV</td>
+<td class="px-8 py-6 text-on-surface-variant">$120M USD</td>
+<td class="px-8 py-6">
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant text-xs font-bold rounded-full">UNDER REVIEW</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Final CTA -->
+<section class="py-20 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary z-0"></div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 text-center">
+<h2 class="font-display text-5xl font-extrabold text-on-primary mb-8 tracking-tighter">¿Listo para invertir en el futuro energético?</h2>
+<p class="text-xl text-on-primary/60 mb-12 max-w-2xl mx-auto">Obtenga acceso a los datos técnicos detallados, marcos legales y proyecciones financieras del sector.</p>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<button class="px-10 py-5 bg-tertiary-fixed text-primary font-bold rounded-md flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-tertiary-fixed/10">
+<span class="material-symbols-outlined">download</span>
+                        Download Energy Investment Guide
+                    </button>
+<button class="px-10 py-5 border-2 border-on-primary text-on-primary font-bold rounded-md hover:bg-on-primary hover:text-primary transition-all active:scale-95">
+                        Hablar con un Asesor
+                    </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary dark:bg-primary-container py-12">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto">
+<div class="mb-8 md:mb-0">
+<span class="font-display font-bold text-on-primary text-xl">Invest Honduras</span>
+<p class="font-body text-label-md text-on-primary/60 mt-2">© 2024 Invest Honduras - Sovereign Architect Portal. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="text-on-primary/60 hover:text-tertiary-fixed transition-colors font-body text-label-md" href="#">Legal Notice</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed transition-colors font-body text-label-md" href="#">Privacy Policy</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed transition-colors font-body text-label-md" href="#">Data Transparency</a>
+<a class="text-on-primary/60 hover:text-tertiary-fixed transition-colors font-body text-label-md" href="#">Sector Methodology</a>
+</div>
+</div>
+</footer>
+</body></html>

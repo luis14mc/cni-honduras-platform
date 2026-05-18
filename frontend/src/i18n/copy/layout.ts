@@ -17,7 +17,13 @@ export const layoutCopy: Record<
       learnMore: string;
       top: { press: string; advisory: string; procedures: string };
       dropdowns: {
-        invertir: { label: string; sectors: string };
+        invertir: {
+          label: string;
+          whyHonduras: string;
+          /** Título del grupo de tercer nivel (contiene vista general + sectores). */
+          sectorsNavLabel: string;
+          allSectors: string;
+        };
         crecer: {
           label: string;
           portfolio: string;
@@ -67,7 +73,9 @@ export const layoutCopy: Record<
       dropdowns: {
         invertir: {
           label: "Invertir en Honduras",
-          sectors: "Sectores de Inversión (Agroindustria, Manufactura, Turismo, Energía, BPO)",
+          whyHonduras: "¿Por qué Honduras?",
+          sectorsNavLabel: "Sectores",
+          allSectors: "Vista general de sectores",
         },
         crecer: {
           label: "Crecer en Honduras",
@@ -117,7 +125,9 @@ export const layoutCopy: Record<
       dropdowns: {
         invertir: {
           label: "Invest in Honduras",
-          sectors: "Investment sectors (Agribusiness, Manufacturing, Tourism, Energy, BPO)",
+          whyHonduras: "Why Honduras?",
+          sectorsNavLabel: "Sectors",
+          allSectors: "Sectors overview",
         },
         crecer: {
           label: "Grow in Honduras",

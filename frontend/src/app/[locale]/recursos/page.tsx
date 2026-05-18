@@ -1,162 +1,204 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Download, FileText, FolderOpen, Search } from "lucide-react";
-import { PageHero } from "@/src/components/cni/PageHero";
-import { Section, SectionHeader } from "@/src/components/cni/Section";
-import { isLocale } from "@/src/i18n/config";
-import type { Locale } from "@/src/i18n/config";
-import { recursosPageCopy } from "@/src/i18n/copy/recursosPage";
-import { withLocale } from "@/src/i18n/path";
+import { isLocale, type Locale } from "@/src/i18n/config";
+import { designImages } from "@/src/lib/designAssets";
+import { resolveHref } from "@/src/i18n/path";
+import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import { makeGenerateMetadata } from "@/src/lib/seo";
+import { PAGE_SEO } from "@/src/config/pageSeo";
+
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO.recursos);
+
+const copy = {
+  es: {
+    title: "Librería de Recursos",
+    description:
+      "Bienvenido al Centro de Recursos de Invest Honduras. Aquí encontrará una colección de herramientas, guías y documentos diseñados para apoyar a inversionistas y empresarios en el desarrollo económico nacional.",
+    searchPlaceholder: "Buscar documentos, leyes o guías...",
+    categoriesEyebrow: "Navegación",
+    categoriesTitle: "Categorías Especializadas",
+    categories: [
+      { icon: "account_balance", title: "Recursos Institucionales", text: "Información fundamental sobre el Consejo Nacional de Inversiones y memorias anuales.", cta: "Explorar Recursos", href: "/recursos/institucional" },
+      { icon: "folder_managed", title: "Portafolio de Inversiones", text: "Catálogo detallado de proyectos estratégicos y sectores con alto potencial de crecimiento.", cta: "Ver Portafolio", href: "/portafolio" },
+      { icon: "lightbulb", title: "Oportunidades de Inversión", text: "Análisis de mercado y ventanas de oportunidad para capitales nacionales y extranjeros.", cta: "Ver Oportunidades", href: "/invertir" },
+      { icon: "construction", title: "Recursos para la Inversión", text: "Guías técnicas y manuales de procedimientos para facilitar el aterrizaje de capital.", cta: "Descargar Guías", href: "/recursos/tecnicos" },
+      { icon: "gavel", title: "Recursos Legales", text: "Compendio actualizado de leyes, decretos y marcos regulatorios del país.", cta: "Marco Legal", href: "/cni/servicios-legales" },
+      { icon: "article", title: "Otros Documentos", text: "Formularios diversos, plantillas y material de consulta general.", cta: "Ver Biblioteca", href: "/recursos/biblioteca" },
+    ],
+    highlightsEyebrow: "Actualizados",
+    highlightsTitle: "Documentos Destacados",
+    viewAll: "Ver Todos los Documentos",
+    highlights: [
+      { icon: "policy", tag: "Legal • 2024", title: "Compendio de Leyes de Inversión 2024", desc: "Incluye la Ley de Promoción y Protección de Inversiones y sus reglamentos actualizados al presente año fiscal." },
+      { icon: "menu_book", tag: "Guía • v3.0", title: "Guía del Inversionista: Doing Business in Honduras", desc: "Manual integral para establecer operaciones en el país, incluyendo procesos de registro y obligaciones patronales." },
+      { icon: "monitoring", tag: "Datos • Q3", title: "Reporte de Indicadores Macroeconómicos Q3", desc: "Análisis detallado de la situación económica nacional para la toma de decisiones estratégicas." },
+    ],
+    preview: "Vista previa",
+    download: "Descargar",
+    ctaTitle: "¿Necesita asesoría técnica personalizada?",
+    ctaDesc: "Acelere su proceso de inversión en Honduras. El equipo del CNI está listo para brindarle asistencia técnica y legal de forma gratuita.",
+    ctaPrimary: "Contactar Asesoría Gratuita",
+    ctaSecondary: "Agendar Reunión Virtual",
+  },
+  en: {
+    title: "Resource Library",
+    description:
+      "Welcome to the Invest Honduras Resource Center. Here you will find a collection of tools, guides and documents designed to support investors and entrepreneurs in national economic development.",
+    searchPlaceholder: "Search documents, laws or guides...",
+    categoriesEyebrow: "Navigation",
+    categoriesTitle: "Specialized Categories",
+    categories: [
+      { icon: "account_balance", title: "Institutional Resources", text: "Fundamental information about the National Investment Council and annual reports.", cta: "Explore Resources", href: "/recursos/institucional" },
+      { icon: "folder_managed", title: "Investment Portfolio", text: "Detailed catalog of strategic projects and high-growth sectors.", cta: "View Portfolio", href: "/portafolio" },
+      { icon: "lightbulb", title: "Investment Opportunities", text: "Market analysis and opportunity windows for national and foreign capital.", cta: "View Opportunities", href: "/invertir" },
+      { icon: "construction", title: "Investment Resources", text: "Technical guides and procedure manuals to facilitate capital landing.", cta: "Download Guides", href: "/recursos/tecnicos" },
+      { icon: "gavel", title: "Legal Resources", text: "Updated compendium of laws, decrees and regulatory frameworks.", cta: "Legal Framework", href: "/cni/servicios-legales" },
+      { icon: "article", title: "Other Documents", text: "Various forms, templates and general consultation material.", cta: "View Library", href: "/recursos/biblioteca" },
+    ],
+    highlightsEyebrow: "Updated",
+    highlightsTitle: "Featured Documents",
+    viewAll: "View All Documents",
+    highlights: [
+      { icon: "policy", tag: "Legal • 2024", title: "Investment Laws Compendium 2024", desc: "Includes the Investment Promotion and Protection Law and its regulations updated for the current fiscal year." },
+      { icon: "menu_book", tag: "Guide • v3.0", title: "Investor Guide: Doing Business in Honduras", desc: "Comprehensive manual for establishing operations in the country, including registration processes and labor obligations." },
+      { icon: "monitoring", tag: "Data • Q3", title: "Q3 Macroeconomic Indicators Report", desc: "Detailed analysis of the national economic situation for strategic decision making." },
+    ],
+    preview: "Preview",
+    download: "Download",
+    ctaTitle: "Need personalized technical advice?",
+    ctaDesc: "Accelerate your investment process in Honduras. The CNI team is ready to provide free technical and legal assistance.",
+    ctaPrimary: "Contact Free Advisory",
+    ctaSecondary: "Schedule Virtual Meeting",
+  },
+} as const;
 
 export default async function RecursosPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
-  const c = recursosPageCopy[locale];
-  const L = (path: string) => withLocale(locale, path);
+  const c = copy[locale];
+  const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
-      <div className="-mt-28">
-        <PageHero
-          eyebrow={c.heroEyebrow}
-          title={c.heroTitle}
-          description={c.heroDescription}
-          imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCdeI-WkdY5QFtNnd2a8ZrroFonITqMJnilc4gRMvgabyuUcopeUlv_pL-yv-4hMCgEqjkRVdFIMZcpYADaBnS88_LFD_xK_PChdcFPClk5pIAosEGBBEDdl51dsIpwiiFS2SdOq35GM2yJyvksNL43-_NEUL_uWBAWIh2RKClpecDSMQdYWaMa5BiqK81uZgU_-CAh2jhSj8ujXJ4PLu6Oo6ea2r1oO1Ww4FbjJFmKnrTkgA7iSaq2vY1RBOuBbn-swfzeE9ljdNEG"
-          imageAlt={c.heroImageAlt}
-          heightClass="min-h-[480px] md:min-h-[520px]"
-          align="center"
-        >
-          <form action="#" method="get" className="mx-auto max-w-2xl">
-            <label htmlFor="search" className="sr-only">
-              {c.searchLabel}
-            </label>
-            <div className="relative">
-              <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-white/70" />
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+      <section className="relative flex h-[500px] items-center overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0">
+          <Image src={designImages.recursos.hero} alt="Recursos" fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 hero-gradient opacity-80" />
+        </div>
+        <div className="container relative z-10 mx-auto px-8">
+          <div className="max-w-3xl">
+            <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-white md:text-6xl">{c.title}</h1>
+            <p className="mb-10 text-lg font-light leading-relaxed text-[#d6e3ff]">{c.description}</p>
+            <div className="relative max-w-2xl">
               <input
-                id="search"
-                type="search"
-                name="q"
+                className="h-16 w-full rounded-lg border-none bg-white pl-14 pr-6 text-[#000a1e] shadow-xl transition-all focus:ring-2 focus:ring-[#e9c176]"
                 placeholder={c.searchPlaceholder}
-                className="w-full rounded-xl border border-white/15 bg-white/10 py-4 pl-14 pr-6 text-base text-white placeholder:text-white/40 backdrop-blur focus:border-[#e9c176] focus:outline-none focus:ring-2 focus:ring-[#e9c176]/40"
+                type="text"
               />
+              <MaterialIcon name="search" className="absolute left-5 top-1/2 -translate-y-1/2 text-[#000a1e]/50" />
             </div>
-          </form>
-        </PageHero>
-      </div>
+          </div>
+        </div>
+      </section>
 
-      <Section tone="surface">
-        <SectionHeader eyebrow={c.explorerEyebrow} title={c.explorerTitle} />
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {c.folders.map((f) => (
-            <Link
-              key={f.name}
-              href={f.href}
-              className={`group rounded-xl bg-white p-8 tonal-depth-layering transition-all hover:-translate-y-1 ${
-                f.featured ? "border-b-4 border-[#e9c176]" : ""
-              }`}
-            >
-              <div className="mb-6 flex items-start justify-between">
-                <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-lg transition-colors ${
-                    f.featured
-                      ? "bg-[#2e1f00]/10 text-[#a68440] group-hover:bg-[#a68440] group-hover:text-white"
-                      : "bg-[#000a1e]/5 text-[#000a1e] group-hover:bg-[#000a1e] group-hover:text-white"
-                  }`}
-                >
-                  <FolderOpen className="h-7 w-7" />
+      <section className="bg-[#f8f9fa] px-8 py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16">
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#708ab5]">{c.categoriesEyebrow}</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-[#000a1e]">{c.categoriesTitle}</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {c.categories.map((cat) => (
+              <div
+                key={cat.title}
+                className="group flex h-full flex-col rounded-xl bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              >
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg bg-[#002147]">
+                  <MaterialIcon name={cat.icon} className="text-3xl text-[#e9c176]" />
                 </div>
-                <span
-                  className={`text-[10px] font-bold uppercase tracking-widest ${
-                    f.featured ? "text-[#a68440]" : "text-[#74777f]"
-                  }`}
+                <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{cat.title}</h3>
+                <p className="mb-8 grow text-[#44474e]">{cat.text}</p>
+                <Link
+                  href={cat.href ? L(cat.href) : "#"}
+                  className="inline-flex items-center font-bold text-[#000a1e] transition-colors group-hover:text-[#3a5f94]"
                 >
-                  {f.count}
-                </span>
+                  {cat.cta}
+                  <MaterialIcon name="arrow_forward" className="ml-2 transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
-              <h3 className="text-xl font-bold text-[#000a1e]">{f.name}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{f.description}</p>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#3a5f94] transition-all group-hover:gap-3">
-                {c.exploreFolder}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </span>
-            </Link>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="guia" tone="low">
-        <SectionHeader eyebrow={c.recentEyebrow} title={c.recentTitle} description={c.recentDescription} />
-        <div className="overflow-hidden rounded-xl bg-white tonal-depth-layering">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-[#000a1e] text-white">
-                <tr className="text-[10px] uppercase tracking-[0.18em]">
-                  <th className="px-6 py-4 font-semibold">{c.thResource}</th>
-                  <th className="px-6 py-4 font-semibold">{c.thCategory}</th>
-                  <th className="px-6 py-4 font-semibold">{c.thSize}</th>
-                  <th className="px-6 py-4 text-right font-semibold">{c.thAction}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#edeeef]">
-                {c.docs.map((d) => (
-                  <tr key={d.title} className="hover:bg-[#f8f9fa]">
-                    <td className="px-6 py-5">
-                      <div className="flex items-start gap-3">
-                        <FileText className="mt-0.5 h-5 w-5 text-[#a68440]" />
-                        <div>
-                          <p className="font-bold text-[#000a1e]">{d.title}</p>
-                          <p className="mt-1 text-xs text-[#74777f]">{d.subtitle}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-5">
-                      <span className="rounded-full bg-[#000a1e]/5 px-3 py-1 text-xs font-bold text-[#000a1e]">{d.category}</span>
-                    </td>
-                    <td className="px-6 py-5">
-                      <p className="text-sm font-bold text-[#000a1e]">{d.size}</p>
-                      <p className="text-[10px] uppercase tracking-tight text-[#74777f]">{d.date}</p>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-2 rounded-md bg-[#e7e8e9] px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition hover:bg-[#000a1e] hover:text-white"
-                      >
-                        <Download className="h-3.5 w-3.5" />
-                        {c.download}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            ))}
           </div>
         </div>
-      </Section>
+      </section>
 
-      <Section tone="primary" className="relative overflow-hidden">
-        <div className="absolute right-0 top-0 h-full w-1/3 -skew-x-12 translate-x-20 bg-[#002147] opacity-40" />
-        <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
-          <div>
-            <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">{c.ctaTitle}</h2>
-            <p className="mt-4 text-lg text-white/75">{c.ctaBody}</p>
-          </div>
-          <div className="flex flex-col gap-4 sm:flex-row md:justify-end">
-            <Link
-              href={L("/asesoria")}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e9c176] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
+      <section className="bg-[#f3f4f5] px-8 py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 flex flex-col items-end justify-between gap-6 md:flex-row">
+            <div>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#708ab5]">{c.highlightsEyebrow}</span>
+              <h2 className="mt-2 text-4xl font-extrabold text-[#000a1e]">{c.highlightsTitle}</h2>
+            </div>
+            <button
+              type="button"
+              className="flex items-center rounded-md bg-[#000a1e] px-8 py-3 font-bold text-white transition-all hover:bg-[#002147]"
             >
-              {c.ctaData}
+              {c.viewAll}
+              <MaterialIcon name="open_in_new" className="ml-2" />
+            </button>
+          </div>
+          <div className="flex flex-col space-y-6">
+            {c.highlights.map((h) => (
+              <div key={h.title} className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row">
+                <div className="flex h-48 w-full shrink-0 flex-col items-center justify-center bg-[#002147] p-6 text-center md:w-64">
+                  <MaterialIcon name={h.icon} className="mb-2 text-5xl text-[#e9c176]" />
+                  <span className="text-xs font-bold uppercase tracking-widest text-white">{h.tag}</span>
+                </div>
+                <div className="flex flex-grow flex-col items-center justify-between gap-6 p-8 md:flex-row">
+                  <div>
+                    <h4 className="mb-2 text-xl font-bold text-[#000a1e]">{h.title}</h4>
+                    <p className="max-w-xl text-[#44474e]">{h.desc}</p>
+                  </div>
+                  <div className="flex shrink-0 gap-4">
+                    <button type="button" className="flex items-center rounded-md border border-[#c4c6cf] px-5 py-2 font-semibold text-[#000a1e] transition-colors hover:bg-[#e7e8e9]">
+                      <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
+                    </button>
+                    <button type="button" className="flex items-center rounded-md bg-[#000a1e] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90">
+                      <MaterialIcon name="download" className="mr-2 text-xl" /> {c.download}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden px-8 py-24">
+        <div className="absolute inset-0 z-0">
+          <Image src={designImages.recursos.cta} alt="CTA" fill sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-[#000a1e]/90" />
+        </div>
+        <div className="relative z-10 mx-auto max-w-5xl text-center">
+          <h2 className="mb-8 text-4xl font-extrabold tracking-tight text-white md:text-5xl">{c.ctaTitle}</h2>
+          <p className="mx-auto mb-12 max-w-2xl text-xl font-light leading-relaxed text-[#d6e3ff]">{c.ctaDesc}</p>
+          <div className="flex flex-col justify-center gap-6 sm:flex-row">
+            <Link
+              href={L("/contacto")}
+              className="rounded-md bg-[#e9c176] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-[#261900] shadow-2xl transition-transform duration-150 hover:scale-105"
+            >
+              {c.ctaPrimary}
             </Link>
             <Link
-              href={L("/cni")}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-white/10"
+              href={L("/contacto")}
+              className="rounded-md border-2 border-[#d6e3ff] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-white transition-all hover:bg-[#d6e3ff] hover:text-[#000a1e]"
             >
-              {c.ctaCni}
+              {c.ctaSecondary}
             </Link>
           </div>
         </div>
-      </Section>
+      </section>
     </div>
   );
 }
