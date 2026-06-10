@@ -5,6 +5,8 @@ import { isLocale, type Locale } from "@/src/i18n/config";
 import { designImages } from "@/src/lib/designAssets";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import { SectorIcon } from "@/src/components/cni/SectorIcon";
+import type { SectorSlug } from "@/src/data/investmentSectors";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 
@@ -63,6 +65,7 @@ const copy = {
     casos: [
       {
         icon: "eco",
+        sectorSlug: "energia",
         title: "Energía Sostenible",
         company: "SolarGen Corp",
         quote: "“La agilidad en los permisos y la infraestructura existente nos permitió conectar nuestra planta en tiempo récord.”",
@@ -71,6 +74,7 @@ const copy = {
       },
       {
         icon: "precision_manufacturing",
+        sectorSlug: "manufactura",
         title: "Manufactura",
         company: "Global AeroParts",
         quote: "“Encontramos talento técnico de alta precisión que compite directamente con mercados asiáticos y europeos.”",
@@ -141,6 +145,7 @@ const copy = {
     casos: [
       {
         icon: "eco",
+        sectorSlug: "energia",
         title: "Sustainable Energy",
         company: "SolarGen Corp",
         quote: "“Permit agility and existing infrastructure let us connect our plant in record time.”",
@@ -149,6 +154,7 @@ const copy = {
       },
       {
         icon: "precision_manufacturing",
+        sectorSlug: "manufactura",
         title: "Manufacturing",
         company: "Global AeroParts",
         quote: "“We found high-precision technical talent that directly competes with Asian and European markets.”",
@@ -353,7 +359,11 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
             {c.casos.map((cs) => (
               <div key={cs.title} className="rounded-xl border-t-4 border-[#e9c176] bg-white p-8 shadow-lg">
                 <div className="mb-6 flex items-center">
-                  <MaterialIcon name={cs.icon} className="text-4xl text-[#000a1e]" />
+                  {"sectorSlug" in cs && cs.sectorSlug ? (
+                    <SectorIcon slug={cs.sectorSlug as SectorSlug} size={36} />
+                  ) : (
+                    <MaterialIcon name={cs.icon} className="text-4xl text-[#000a1e]" />
+                  )}
                   <div className="ml-4">
                     <h3 className="text-xl font-extrabold text-[#000a1e]">{cs.title}</h3>
                     <p className="text-sm font-bold text-[#44474e]">{cs.company}</p>

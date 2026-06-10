@@ -36,7 +36,7 @@ export function PageHero({
           fill
           priority
           sizes="100vw"
-          className="absolute inset-0 object-cover opacity-60"
+          className="absolute inset-0 object-cover opacity-70"
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/80 to-transparent" />

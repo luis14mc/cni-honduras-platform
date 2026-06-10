@@ -5,6 +5,9 @@ import { isLocale, type Locale } from "@/src/i18n/config";
 import { designImages } from "@/src/lib/designAssets";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import { SectorIcon } from "@/src/components/cni/SectorIcon";
+import type { SectorSlug } from "@/src/data/investmentSectors";
+import { SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 
@@ -20,11 +23,11 @@ const copy = {
     sectorsTitle: "Sectores Estratégicos",
     sectorsSubtitle: "Plan Nacional de Desarrollo",
     sectors: [
-      { icon: "agriculture", label: "Agroindustria", active: true },
-      { icon: "beach_access", label: "Turismo", active: false },
-      { icon: "bolt", label: "Energía", active: false },
-      { icon: "factory", label: "Manufactura", active: false },
-      { icon: "architecture", label: "Infraestructura", active: false },
+      { slug: "agroindustria", label: "Agroindustria", active: true },
+      { slug: "turismo", label: "Turismo", active: false },
+      { slug: "energia", label: "Energía", active: false },
+      { slug: "manufactura", label: "Manufactura", active: false },
+      { slug: "infraestructura", label: "Infraestructura", active: false },
     ],
     requestProspect: "Solicitar Prospecto",
     support: "Soporte",
@@ -66,11 +69,11 @@ const copy = {
     sectorsTitle: "Strategic Sectors",
     sectorsSubtitle: "National Development Plan",
     sectors: [
-      { icon: "agriculture", label: "Agribusiness", active: true },
-      { icon: "beach_access", label: "Tourism", active: false },
-      { icon: "bolt", label: "Energy", active: false },
-      { icon: "factory", label: "Manufacturing", active: false },
-      { icon: "architecture", label: "Infrastructure", active: false },
+      { slug: "agroindustria", label: "Agroindustry", active: true },
+      { slug: "turismo", label: "Tourism", active: false },
+      { slug: "energia", label: "Energy", active: false },
+      { slug: "manufactura", label: "Manufacturing", active: false },
+      { slug: "infraestructura", label: "Infrastructure", active: false },
     ],
     requestProspect: "Request Prospectus",
     support: "Support",
@@ -145,7 +148,7 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
                   s.active ? "rounded-r-full bg-[#e1e3e4] font-bold text-[#000a1e]" : "text-[#44474e] hover:bg-[#e7e8e9]"
                 }`}
               >
-                <MaterialIcon name={s.icon} filled={Boolean(s.active)} />
+                <SectorIcon slug={s.slug as SectorSlug} size={SECTOR_ICON_SIZE.sidebar} className={s.active ? "opacity-100" : "opacity-80"} />
                 <span>{s.label}</span>
               </div>
             ))}

@@ -5,6 +5,7 @@ import { Section, SectionHeader } from "@/src/components/cni/Section";
 import type { Locale } from "@/src/i18n/config";
 import type { SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorBySlug } from "@/src/data/investmentSectors";
+import { SectorIcon } from "@/src/components/cni/SectorIcon";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { withLocale } from "@/src/i18n/path";
@@ -44,7 +45,8 @@ export function SectorDetailView({ locale, slug }: Props) {
           >
             {x.backToSectors}
           </Link>
-          <span className="mb-4 inline-flex rounded-full border border-[#e9c176]/35 bg-[#2e1f00]/40 px-4 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-[#e9c176] backdrop-blur">
+          <span className="mb-4 inline-flex items-center gap-3 rounded-full border border-[#e9c176]/35 bg-[#2e1f00]/40 px-4 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-[#e9c176] backdrop-blur">
+            <SectorIcon slug={slug} size={24} />
             {x.heroBadge}
           </span>
           <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">

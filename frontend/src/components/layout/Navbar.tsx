@@ -18,6 +18,7 @@ import {
   type SiteNavNode,
 } from "@/src/config/siteNavigation";
 import { LanguageSwitch } from "@/src/components/layout/LanguageSwitch";
+import { CniLogo } from "@/src/components/layout/CniLogo";
 
 function NavLinkItem({
   node,
@@ -34,7 +35,7 @@ function NavLinkItem({
   const label = getNavLabel(node, locale);
   const base =
     className ??
-    "block px-4 py-2.5 text-sm font-medium leading-snug text-white/85 hover:bg-white/5 hover:text-[#e9c176]";
+    "block px-4 py-2.5 text-sm font-medium leading-snug text-cni-on-surface-variant hover:bg-cni-surface-low hover:text-cni-primary transition-colors";
 
   if (node.external) {
     return (
@@ -81,7 +82,7 @@ function DesktopDropdownPanel({
     <div
       role="menu"
       className={cn(
-        "rounded-md border border-white/10 bg-[#000a1e] shadow-xl",
+        "rounded-md border border-cni-surface-high bg-white shadow-2xl",
         hasNestedFlyout ? "flex max-h-[min(70vh,520px)] max-w-[min(100vw-2rem,44rem)] overflow-hidden" : "min-w-[16rem] py-2",
       )}
       onMouseLeave={() => setFlyoutOpenId(null)}
@@ -91,7 +92,7 @@ function DesktopDropdownPanel({
           <Link
             role="menuitem"
             href={href}
-            className="block border-b border-white/10 px-4 py-2.5 text-sm font-semibold text-[#e9c176] hover:bg-white/5"
+            className="block border-b border-cni-surface-low px-4 py-2.5 text-sm font-semibold text-cni-primary hover:bg-cni-surface-low transition-colors"
             onClick={onClose}
           >
             {label}
@@ -117,8 +118,8 @@ function DesktopDropdownPanel({
                 className={cn(
                   "flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-left text-sm font-medium leading-snug transition-colors select-none",
                   isFlyoutOpen
-                    ? "bg-white/5 text-[#e9c176]"
-                    : "text-white/85 hover:bg-white/5 hover:text-[#e9c176]",
+                    ? "bg-cni-surface-low text-cni-primary font-semibold"
+                    : "text-cni-on-surface-variant hover:bg-cni-surface-low hover:text-cni-primary",
                 )}
                 onMouseEnter={() => setFlyoutOpenId(child.id)}
                 onFocus={() => setFlyoutOpenId(child.id)}
@@ -132,12 +133,12 @@ function DesktopDropdownPanel({
       </ul>
 
       {flyoutNode && (
-        <div className="min-w-[12rem] flex-1 overflow-y-auto border-l border-white/10 py-2 md:min-w-[14rem]">
+        <div className="min-w-[12rem] flex-1 overflow-y-auto border-l border-cni-surface-low py-2 md:min-w-[14rem]">
           <NavLinkItem
             node={flyoutNode}
             locale={locale}
             onNavigate={onClose}
-            className="block px-4 py-2.5 text-sm font-semibold text-[#e9c176] hover:bg-white/5"
+            className="block px-4 py-2.5 text-sm font-semibold text-cni-primary hover:bg-cni-surface-low"
           />
           {flyoutNode.children!.map((grandchild) => (
             <NavLinkItem key={grandchild.id} node={grandchild} locale={locale} onNavigate={onClose} />
@@ -169,7 +170,7 @@ function MobileNavBranch({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="block py-2 text-sm text-white/85"
+          className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
           onClick={onNavigate}
         >
           {label}
@@ -178,7 +179,7 @@ function MobileNavBranch({
       );
     }
     return (
-      <Link href={href} className="block py-2 text-sm text-white/85" onClick={onNavigate}>
+      <Link href={href} className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary" onClick={onNavigate}>
         {label}
       </Link>
     );
@@ -188,7 +189,7 @@ function MobileNavBranch({
     <div>
       <button
         type="button"
-        className="flex w-full items-center justify-between py-2 text-left text-sm font-medium text-white/85"
+        className="flex w-full items-center justify-between py-2 text-left text-sm font-medium text-cni-on-surface-variant hover:text-cni-primary"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -199,7 +200,7 @@ function MobileNavBranch({
         <div className="ml-3 border-l border-[#e9c176]/35 pb-2 pl-3">
           <Link
             href={getNavHref(node, locale)}
-            className="block py-2 text-sm text-white/75"
+            className="block py-2 text-sm text-cni-on-surface-variant/80 hover:text-cni-primary"
             onClick={onNavigate}
           >
             {getNavLabel(node, locale)}
@@ -246,11 +247,13 @@ export default function Navbar() {
   }, [closeMenus]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileOpen(false);
     closeMenus();
   }, [pathname, closeMenus]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!openDropdownId) setFlyoutOpenId(null);
   }, [openDropdownId]);
 
@@ -275,16 +278,9 @@ export default function Navbar() {
         <LanguageSwitch />
       </div>
 
-      <nav className="glass-nav border-b border-white/10" aria-label={locale === "es" ? "Menú principal" : "Main menu"}>
+      <nav className="bg-white/95 backdrop-blur-lg border-b border-cni-surface-low shadow-sm" aria-label={locale === "es" ? "Menú principal" : "Main menu"}>
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 md:px-10">
-          <Link href={homeHref} className="flex shrink-0 items-center gap-2.5" aria-label={t.brandSubtitle}>
-            <span className="flex h-10 items-center justify-center rounded-sm bg-[#e9c176] px-2.5 text-sm font-extrabold text-[#191c1d]">
-              CNI
-            </span>
-            <span className="hidden text-[0.58rem] font-extrabold uppercase leading-tight tracking-[0.12em] text-white sm:block md:text-[0.62rem]">
-              {t.brandSubtitle}
-            </span>
-          </Link>
+          <CniLogo href={homeHref} ariaLabel={t.brandSubtitle} priority variant="dark" />
 
           <ul className="hidden items-center gap-1 lg:flex" role="menubar">
             <li role="none">
@@ -292,8 +288,10 @@ export default function Navbar() {
                 role="menuitem"
                 href={homeHref}
                 className={cn(
-                  "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                  pathIsActive(pathname, homeHref) ? "text-[#e9c176]" : "text-white/75 hover:text-white",
+                  "px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
+                  pathIsActive(pathname, homeHref)
+                    ? "text-cni-primary border-cni-gold"
+                    : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
                 )}
               >
                 {t.home}
@@ -313,8 +311,10 @@ export default function Navbar() {
                       role="menuitem"
                       href={href}
                       className={cn(
-                        "rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
-                        pathIsActive(pathname, href) ? "text-[#e9c176]" : "text-white/75 hover:text-white",
+                        "px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
+                        pathIsActive(pathname, href)
+                          ? "text-cni-primary border-cni-gold"
+                          : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
                       )}
                     >
                       {label}
@@ -337,10 +337,10 @@ export default function Navbar() {
                       aria-expanded={isOpen}
                       aria-haspopup="true"
                       className={cn(
-                        "flex items-center gap-1 rounded px-3 py-2 text-xs font-bold uppercase tracking-widest transition",
+                        "flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
                         isOpen || pathIsActive(pathname, href)
-                          ? "text-[#e9c176]"
-                          : "text-white/75 hover:text-white",
+                          ? "text-cni-primary border-cni-gold"
+                          : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
                       )}
                       onClick={() => {
                         setOpenDropdownId((cur) => (cur === node.id ? null : node.id));
@@ -373,7 +373,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="rounded-lg p-2 text-white lg:hidden"
+            className="rounded-lg p-2 text-cni-primary lg:hidden"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? t.closeMenu : t.openMenu}
             onClick={() => setMobileOpen((o) => !o)}
@@ -384,7 +384,7 @@ export default function Navbar() {
 
         {mobileOpen && (
           <div
-            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-white/10 bg-[#000a1e] px-4 py-4 lg:hidden"
+            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-cni-surface-low bg-white px-4 py-4 lg:hidden shadow-lg"
             aria-label={locale === "es" ? "Menú móvil" : "Mobile menu"}
           >
             <div className="mb-4 flex justify-end">
@@ -392,21 +392,21 @@ export default function Navbar() {
             </div>
             <Link
               href={homeHref}
-              className="block py-2 text-sm font-bold uppercase tracking-wide text-white"
+              className="block py-2 text-sm font-bold uppercase tracking-wide text-cni-primary"
               onClick={() => setMobileOpen(false)}
             >
               {t.home}
             </Link>
             {siteNavigation.map((node) => (
-              <div key={node.id} className="border-t border-white/10 py-3">
+              <div key={node.id} className="border-t border-cni-surface-low py-3">
                 {node.children?.length ? (
                   <>
-                    <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#e9c176]">
+                    <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-cni-gold-dark">
                       {getNavLabel(node, locale)}
                     </p>
                     <Link
                       href={getNavHref(node, locale)}
-                      className="block py-2 text-sm text-white/75"
+                      className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
                       onClick={() => setMobileOpen(false)}
                     >
                       {locale === "es" ? "Vista general" : "Overview"}
@@ -423,7 +423,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={getNavHref(node, locale)}
-                    className="block py-2 text-sm text-white/85"
+                    className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
                     onClick={() => setMobileOpen(false)}
                   >
                     {getNavLabel(node, locale)}
@@ -432,15 +432,15 @@ export default function Navbar() {
               </div>
             ))}
 
-            <div className="mt-2 border-t border-white/10 py-3">
-              <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-[#e9c176]">
+            <div className="mt-2 border-t border-cni-surface-low py-3">
+              <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-cni-gold-dark">
                 {locale === "es" ? "Enlaces rápidos" : "Quick links"}
               </p>
               {topBarNodes.map((n) => (
                 <Link
                   key={n.id}
                   href={getNavHref(n, locale)}
-                  className="block py-2 text-sm text-white/85"
+                  className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
                   onClick={() => setMobileOpen(false)}
                 >
                   {getNavLabel(n, locale)}

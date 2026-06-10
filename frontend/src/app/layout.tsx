@@ -1,11 +1,33 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, Manrope } from "next/font/google";
+import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import "@/src/app/globals.css";
 import { cn } from "@/src/lib/utils";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", weight: ["300", "400", "500", "600"] });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", weight: ["600", "700", "800"] });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", weight: ["300", "400", "500", "600", "700", "800"] });
+
+const aptos = localFont({
+  src: [
+    {
+      path: '../fonts/Microsoft-Aptos-Fonts-Family/Aptos-Display.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../fonts/Microsoft-Aptos-Fonts-Family/Aptos-Display-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../fonts/Microsoft-Aptos-Fonts-Family/Aptos-ExtraBold.ttf',
+      weight: '800',
+      style: 'normal',
+    }
+  ],
+  variable: '--font-aptos',
+  display: 'swap',
+});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cni.hn";
 
@@ -136,7 +158,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={cn("scroll-smooth", inter.variable, manrope.variable)}>
+    <html lang="es" className={cn("scroll-smooth", montserrat.variable, aptos.variable)}>
       <head>
         <link
           rel="stylesheet"

@@ -97,8 +97,8 @@ export default function HondurasMap() {
 
           {data && (
             <GeoJSON
-              key={selectedSlug ?? "all"}
-              data={data as unknown as any}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              data={data as any}
               style={(feature) => {
                 const props = (feature?.properties || {}) as DepartmentProperties;
                 if (selectedSlug && props.slug === selectedSlug) return selectedStyle;

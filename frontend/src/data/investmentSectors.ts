@@ -25,10 +25,32 @@ export function isSectorSlug(value: string): value is SectorSlug {
   return (SECTOR_SLUGS as readonly string[]).includes(value);
 }
 
+/** Nombre canónico de cada sector (sin calificativos adicionales). */
+export const SECTOR_DISPLAY_NAMES: Record<Locale, Record<SectorSlug, string>> = {
+  es: {
+    agroindustria: "Agroindustria",
+    manufactura: "Manufactura",
+    turismo: "Turismo",
+    energia: "Energía",
+    infraestructura: "Infraestructura",
+  },
+  en: {
+    agroindustria: "Agroindustry",
+    manufactura: "Manufacturing",
+    turismo: "Tourism",
+    energia: "Energy",
+    infraestructura: "Infrastructure",
+  },
+};
+
+export function getSectorDisplayName(locale: Locale, slug: SectorSlug): string {
+  return SECTOR_DISPLAY_NAMES[locale][slug];
+}
+
 const esSectores: ReadonlyArray<SectorCopy> = [
   {
     slug: "agroindustria",
-    name: "Agroindustria Premium",
+    name: SECTOR_DISPLAY_NAMES.es.agroindustria,
     short: "Clima fértil los 365 días. Café, cacao, tabaco.",
     fullText:
       "Aprovechando la diversidad ecológica y las rutas comerciales estratégicas para diseñar la próxima generación de inversión agrícola global de alto rendimiento.",
@@ -37,7 +59,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "manufactura",
-    name: "Manufactura y Textil",
+    name: SECTOR_DISPLAY_NAMES.es.manufactura,
     short: "Liderazgo en nearshoring, beneficios 'Zero-Duty' hacia EE.UU.",
     fullText:
       "Hub de clase mundial para confección, ensamble ligero y componentes automotrices destinados a Norteamérica, con un ecosistema maduro de zonas libres y logística automatizada.",
@@ -46,7 +68,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "turismo",
-    name: "Turismo Sustentable",
+    name: SECTOR_DISPLAY_NAMES.es.turismo,
     short: "Islas de la Bahía, arrecifes y arqueología Maya.",
     fullText:
       "Activos naturales sin igual, proximidad geográfica estratégica e incentivos institucionales para la hospitalidad de alta gama y eco-lujo certificado.",
@@ -55,7 +77,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "energia",
-    name: "Energía Renovable",
+    name: SECTOR_DISPLAY_NAMES.es.energia,
     short: "Matriz 60% limpia. Proyectos solares, eólicos e hidroeléctricos.",
     fullText:
       "Transición acelerada hacia energías 100% renovables, con apertura en producción solar, eólica e hidrógeno verde, y demanda eléctrica creciente al 3.5–4% anual.",
@@ -64,7 +86,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "infraestructura",
-    name: "Infraestructura",
+    name: SECTOR_DISPLAY_NAMES.es.infraestructura,
     short: "Conectividad logística y proyectos de escala nacional.",
     fullText:
       "Puertos, carreteras, energía y zonas logísticas que articulan la inversión productiva con los mercados globales bajo marco LPPI y alianzas público-privadas.",
@@ -76,7 +98,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
 const enSectores: ReadonlyArray<SectorCopy> = [
   {
     slug: "agroindustria",
-    name: "Premium agribusiness",
+    name: SECTOR_DISPLAY_NAMES.en.agroindustria,
     short: "Fertile climate year-round. Coffee, cocoa, tobacco.",
     fullText:
       "Leveraging ecological diversity and strategic trade routes to design the next generation of high-yield global agricultural investment.",
@@ -85,7 +107,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "manufactura",
-    name: "Manufacturing & textiles",
+    name: SECTOR_DISPLAY_NAMES.en.manufactura,
     short: "Nearshoring leadership, Zero-Duty benefits to the U.S.",
     fullText:
       "World-class hub for apparel, light assembly, and automotive components bound for North America, with mature free zones and automated logistics.",
@@ -94,7 +116,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "turismo",
-    name: "Sustainable tourism",
+    name: SECTOR_DISPLAY_NAMES.en.turismo,
     short: "Bay Islands, reefs, and Maya archaeology.",
     fullText:
       "Unmatched natural assets, strategic geography, and institutional incentives for high-end hospitality and certified eco-luxury.",
@@ -103,7 +125,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "energia",
-    name: "Renewable energy",
+    name: SECTOR_DISPLAY_NAMES.en.energia,
     short: "~60% clean matrix. Solar, wind, and hydro projects.",
     fullText:
       "Accelerated transition toward 100% renewable generation, with openings in solar, wind, and green hydrogen, and power demand growing ~3.5–4% annually.",
@@ -112,7 +134,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
   },
   {
     slug: "infraestructura",
-    name: "Infrastructure",
+    name: SECTOR_DISPLAY_NAMES.en.infraestructura,
     short: "Logistics connectivity and national-scale projects.",
     fullText:
       "Ports, roads, energy, and logistics zones linking productive investment to global markets under LPPI and public-private partnerships.",

@@ -19,6 +19,13 @@ export type HomeCopy = {
     export: { label: string; value: string; hint: string };
     maquila: { label: string; value: string; hint: string };
   };
+  enlacesRapidos: {
+    sectionTitle: string;
+    guia: string;
+    memoria: string;
+    portal: string;
+    estudios: string;
+  };
   testimonials: {
     title: string;
     cta: string;
@@ -30,11 +37,17 @@ export type HomeCopy = {
     description: string;
     bullets: [string, string, string];
     labels: { name: string; company: string; email: string; sector: string; summary: string };
-    sectors: [string, string, string, string, string, string];
+    sectors: [string, string, string, string, string, string, string];
     submit: string;
     fullForm: string;
   };
   porque: { eyebrow: string; title: string; description: string; cards: ReadonlyArray<{ title: string; text: string }> };
+  graficos: {
+    title: string;
+    ied: { label: string; value: string; desc: string };
+    negocios: { label: string; value: string; desc: string };
+    pib: { label: string; value: string; desc: string };
+  };
   clima: {
     eyebrow: string;
     title: string;
@@ -51,7 +64,7 @@ export type HomeCopy = {
     title: string;
     description: string;
     stats: ReadonlyArray<{ value: string; label: string; hint: string }>;
-    cards: ReadonlyArray<{ label: string; delta: string; hint: string }>;
+    cards: ReadonlyArray<{ label: string; delta: string; hint: string; backText: string }>;
     extra: ReadonlyArray<{ value: string; label: string }>;
   };
   mapaTerritorial: {
@@ -88,9 +101,30 @@ export type HomeCopy = {
     description: string;
     cta: string;
     readMore: string;
-    items: ReadonlyArray<{ date: string; title: string; excerpt: string }>;
+    items: ReadonlyArray<{ date: string; title: string; excerpt: string; imageAlt?: string }>;
   };
   newsletter: { title: string; description: string; placeholder: string; button: string };
+  actionCards?: {
+    investTitle: string;
+    investDesc: string;
+    growTitle: string;
+    growDesc: string;
+    moreInfo: string;
+  };
+  postulacionExtra?: {
+    advisoryTitle: string;
+    advisoryDesc: string;
+    ctaProject: string;
+  };
+  graficosDashboard?: {
+    eyebrow: string;
+    title: string;
+    downloadBtn: string;
+    sources: string;
+    ied: { label: string; title: string; desc: string; value: string; insight: string; source: string };
+    pib: { label: string; title: string; desc: string; value: string; insight: string; source: string };
+    clima: { label: string; title: string; desc: string; value: string; insight: string; source: string };
+  };
 };
 
 const CIFRAS_VALUES = [
@@ -98,6 +132,8 @@ const CIFRAS_VALUES = [
   { value: "3.8%", deltaEs: "Estable", deltaEn: "Stable" },
   { value: "142", deltaEs: "Total", deltaEn: "Total" },
   { value: "~60%", deltaEs: "Limpia", deltaEn: "Clean" },
+  { value: "$5.0B", deltaEs: "+5.1%", deltaEn: "+5.1%" },
+  { value: "4M+", deltaEs: "Activa", deltaEn: "Active" },
 ] as const;
 
 export const homeCopy: Record<Locale, HomeCopy> = {
@@ -136,6 +172,13 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         hint: "Liderazgo regional indiscutible",
       },
     },
+    enlacesRapidos: {
+      sectionTitle: "Enlaces de Interés",
+      guia: "Guía Invierte en Honduras",
+      memoria: "Memoria Institucional",
+      portal: "Portal Digital de Inversiones",
+      estudios: "Vista de Estudios CNI",
+    },
     testimonials: {
       title: "Casos de Éxito",
       cta: "Ver todos los casos",
@@ -158,9 +201,9 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     },
     postulacion: {
       eyebrow: "Ventanilla de proyectos",
-      title: "Postule su proyecto de inversión",
+      title: "¿TIENES UN PROYECTO DE INVERSIÓN?",
       description:
-        "Registre su iniciativa para que un ejecutivo del CNI la evalúe, la oriente hacia incentivos LPPI o ZOLI y coordine con las instituciones del Estado. Asesoría gratuita en todas las etapas de la Ruta del Inversionista.",
+        "Un proyecto de inversión es una iniciativa lista para desarrollarse, que ya cuenta con estudios técnicos, financieros y de mercado, y que permite a un inversionista conocer con claridad qué se va a ejecutar, cuánto debe invertir y qué beneficios puede esperar.",
       bullets: [
         "Prefactibilidad y encaje sectorial",
         "Articulación con ambiente, energía y municipalidades",
@@ -175,9 +218,10 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       },
       sectors: [
         "Agroindustria",
-        "Manufactura y textil",
+        "Manufactura",
         "Turismo",
         "Energía",
+        "Infraestructura",
         "BPO / servicios",
         "Otro",
       ],
@@ -188,25 +232,27 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       eyebrow: "Ventaja competitiva",
       title: "¿Por qué Honduras?",
       description:
-        "Cuatro razones que explican por qué capitales regionales y globales eligen el país como hub de manufactura, servicios y energía.",
+        "Razones principales por las que capitales regionales y globales eligen el país como hub de manufactura, servicios y energía.",
       cards: [
         {
-          title: "Ubicación geoestratégica",
-          text: "Puente entre Norteamérica, Centroamérica y Sudamérica, con corredores logísticos hacia Puerto Cortés y la Franja Transístmica.",
+          title: "Ubicación Estratégica",
+          text: "Corazón de las Américas con acceso a ambos océanos y conectividad global privilegiada para el comercio transatlántico y pacífico.",
         },
         {
-          title: "Marco legal para el capital",
-          text: "Ley de Promoción y Protección de Inversiones (LPPI), régimen de Zonas Libres (ZOLI) y acompañamiento gratuito del CNI en la Ruta del Inversionista.",
+          title: "Marco Legal Robusto",
+          text: "Leyes modernas de protección a la inversión y regímenes especiales que garantizan seguridad jurídica y estabilidad fiscal a largo plazo.",
         },
         {
-          title: "Talento y nearshoring",
-          text: "Población joven, servicios bilingües en expansión y costos competitivos para manufactura ligera, BPO y tecnología.",
-        },
-        {
-          title: "Tratados y mercados",
-          text: "CAFTA-DR y red de acuerdos comerciales que facilitan la inserción exportadora de bienes y servicios hondureños.",
+          title: "Talento Humano",
+          text: "Fuerza laboral joven, altamente capacitada en manufactura avanzada, bilingüe y con una fuerte ética de trabajo competitiva regional.",
         },
       ],
+    },
+    graficos: {
+      title: "Desempeño y Clima de Negocios",
+      ied: { label: "Flujo IED", value: "$1.24B", desc: "Atracción de Inversión Extranjera Directa constante en sectores estratégicos." },
+      negocios: { label: "Facilidad Negocios", value: "Mejora", desc: "Optimización de procesos gubernamentales y ventanillas únicas operativas." },
+      pib: { label: "Crecimiento PIB", value: "3.8%", desc: "Expansión económica respaldada por exportaciones y consumo interno." },
     },
     clima: {
       eyebrow: "Analítica",
@@ -237,24 +283,40 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       ],
       cards: [
         {
-          label: "IED proyectada (referencia)",
+          label: "IED proyectada",
           delta: CIFRAS_VALUES[0].deltaEs,
-          hint: "Flujo anual de inversión extranjera directa (referencia de mercado).",
+          hint: "Flujo anual de inversión extranjera directa.",
+          backText: "Honduras mantiene un flujo de IED sólido, atrayendo capitales a los sectores de energía, maquila y telecomunicaciones.",
         },
         {
           label: "Crecimiento PIB",
           delta: CIFRAS_VALUES[1].deltaEs,
-          hint: "Tasa promedio de expansión del producto interno bruto.",
+          hint: "Tasa promedio de expansión.",
+          backText: "El desempeño macroeconómico es resiliente, impulsado por el consumo, las remesas y la recuperación de exportaciones agroindustriales.",
         },
         {
-          label: "Proyectos activos (referencia)",
+          label: "Proyectos activos",
           delta: CIFRAS_VALUES[2].deltaEs,
-          hint: "Desarrollos industriales y de infraestructura en cartera institucional.",
+          hint: "Desarrollos en cartera institucional.",
+          backText: "El CNI brinda acompañamiento integral a múltiples iniciativas privadas y público-privadas a lo largo de la Ruta del Inversionista.",
         },
         {
-          label: "Matriz renovable (referencia)",
+          label: "Matriz renovable",
           delta: CIFRAS_VALUES[3].deltaEs,
-          hint: "Participación de fuentes renovables en la matriz eléctrica.",
+          hint: "Participación de fuentes limpias.",
+          backText: "El país avanza en su transición energética, aprovechando su vasta red de recursos solares, eólicos e hidroeléctricos.",
+        },
+        {
+          label: "Exportaciones de bienes",
+          delta: CIFRAS_VALUES[4].deltaEs,
+          hint: "Crecimiento anual en comercio exterior.",
+          backText: "Los productos agrícolas premium (café, cacao, puros) y las prendas de vestir mantienen a Honduras competitiva a nivel global.",
+        },
+        {
+          label: "Fuerza laboral joven",
+          delta: CIFRAS_VALUES[5].deltaEs,
+          hint: "Población económicamente activa.",
+          backText: "La juventud hondureña provee un bono demográfico clave, cada vez más orientada hacia carreras STEM y bilingüismo.",
         },
       ],
       extra: [
@@ -325,18 +387,21 @@ export const homeCopy: Record<Locale, HomeCopy> = {
           title: "Honduras consolida su presencia global con más de $58 millones en nuevas inversiones",
           excerpt:
             "Resultados del primer trimestre y priorización de sectores estratégicos bajo la Estrategia de Inversiones 2024.",
+          imageAlt: "Reunión de inversores",
         },
         {
           date: "Mar 2025",
           title: "Foro Honduras Investment Summit — Tegucigalpa",
           excerpt:
             "Diálogo entre Estado, sector privado y socios multilaterales para acelerar proyectos Ready to Invest.",
+          imageAlt: "Foro de inversión",
         },
         {
           date: "Abr 2025",
           title: "CNI presenta avances de la Estrategia de Inversiones ante la junta directiva",
           excerpt:
             "Informar, promocionar, acompañar, articular e incidir: resultados operativos del Consejo Nacional de Inversiones.",
+          imageAlt: "Junta directiva CNI",
         },
       ],
     },
@@ -346,6 +411,48 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         "Suscríbase a nuestras perspectivas de inversión trimestrales y actualizaciones de políticas del CNI.",
       placeholder: "Dirección de correo profesional",
       button: "Unirse a la Red",
+    },
+    actionCards: {
+      investTitle: "Invertir en Honduras",
+      investDesc: "Forma parte de nuestra red de inversionista",
+      growTitle: "Crecer en Honduras",
+      growDesc: "Conoce las oportunidades y proyectos de inversión para expandir tus operaciones en Honduras",
+      moreInfo: "Más información",
+    },
+    postulacionExtra: {
+      advisoryTitle: "Asesoría Técnica",
+      advisoryDesc: "Conoce las oportunidades y proyectos de inversión para expandir tus operaciones en Honduras",
+      ctaProject: "Postular Mi Proyecto",
+    },
+    graficosDashboard: {
+      eyebrow: "Dashboard Inteligente",
+      title: "Comparativa Regional",
+      downloadBtn: "Descargar Reporte Completo",
+      sources: "Fuentes: Banco Central de Honduras, GCBI Index 2025, Proyecciones FMI.",
+      ied: {
+        label: "Reporte 2020-2025",
+        title: "Inversión Extranjera Directa (Millones de Dólares)",
+        desc: "La IED al cierre del 2024 fue de USD 993.9 millones y al cierre del I semestre 2025 fue de USD 500.4 millones siendo este semestre el mayor receptor de inversión extranjera en los últimos años.",
+        value: "$500.4M",
+        insight: "El primer semestre del 2025 reporta un comportamiento sumamente dinámico en atracción de capitales.",
+        source: "Fuente: Sección de Balanza de Pagos, Departamento de Sector Externo, BCH",
+      },
+      pib: {
+        label: "Proyección 2024-2029",
+        title: "Crecimiento proyectado del PIB",
+        desc: "En 2023 Honduras fue la tercer económia que reportó mayor crecimiento en Centramérica y la cuarta en la región. Las proyecciones indican que el crecimiento se mantendrá para este 2024 y 2025 encabezando la lista de los países de la región solo por debajo de Costa Rica.",
+        value: "3.85%",
+        insight: "Las proyecciones indican que el dinamismo económico de Honduras se mantendrá estable en los próximos años.",
+        source: "Elaboración propia con datos del Informe Proyecciones 2024-2025, Banco Central de Honduras; CEPAL, Balance Preiminar de las Económias de ALC 2023 (dic. 2023).",
+      },
+      clima: {
+        label: "GCBI Index 2025",
+        title: "Facilidad para hacer negocios",
+        desc: "Honduras es el país más confiable para hacer negocios en Centroamérica según el índice de Complejidad Corporativa (GCBI) 2025, publicado en 12.º informe e anual de TMF Group",
+        value: "60 Pts",
+        insight: "La reducción de la complejidad corporativa y simplificación de trámites impulsa la confianza país.",
+        source: "Elaboración propia con datos de TMF group, 2025.",
+      },
     },
   },
   en: {
@@ -383,6 +490,13 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         hint: "Undisputed regional leadership",
       },
     },
+    enlacesRapidos: {
+      sectionTitle: "Links of Interest",
+      guia: "Invest in Honduras Guide",
+      memoria: "Institutional Report",
+      portal: "Digital Investment Portal",
+      estudios: "CNI Studies View",
+    },
     testimonials: {
       title: "Success stories",
       cta: "View all cases",
@@ -404,8 +518,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       ],
     },
     postulacion: {
-      eyebrow: "Project desk",
-      title: "Submit your investment project",
+      eyebrow: "Project Desk",
+      title: "DO YOU HAVE AN INVESTMENT PROJECT?",
       description:
         "Register your initiative so a CNI executive can assess it, guide you on LPPI or ZOLI incentives, and coordinate with government agencies. Free advisory across the Investor Journey.",
       bullets: [
@@ -421,11 +535,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         summary: "Project summary (estimated CAPEX, location, timeline)",
       },
       sectors: [
-        "Agribusiness",
-        "Manufacturing & textiles",
+        "Agroindustry",
+        "Manufacturing",
         "Tourism",
         "Energy",
         "Infrastructure",
+        "BPO / services",
         "Other",
       ],
       submit: "Send application",
@@ -435,25 +550,27 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       eyebrow: "Competitive edge",
       title: "Why Honduras?",
       description:
-        "Four reasons regional and global capital choose the country as a hub for manufacturing, services, and energy.",
+        "Key reasons regional and global capital choose the country as a hub for manufacturing, services, and energy.",
       cards: [
         {
-          title: "Geostrategic location",
-          text: "Bridge between North, Central, and South America, with logistics corridors to Puerto Cortés and the interoceanic route.",
+          title: "Strategic Location",
+          text: "Heart of the Americas with access to both oceans and privileged global connectivity for transatlantic and Pacific trade.",
         },
         {
-          title: "Legal framework for capital",
-          text: "Investment Promotion and Protection Law (LPPI), Free Zones (ZOLI), and free CNI support along the Investor Journey.",
+          title: "Robust Legal Framework",
+          text: "Modern investment protection laws and special regimes that guarantee legal certainty and long-term fiscal stability.",
         },
         {
-          title: "Talent & nearshoring",
-          text: "Young population, growing bilingual services, and competitive costs for light manufacturing, BPO, and technology.",
-        },
-        {
-          title: "Treaties & markets",
-          text: "CAFTA-DR and a network of trade agreements supporting export integration for Honduran goods and services.",
+          title: "Human Talent",
+          text: "Young workforce, highly trained in advanced manufacturing, bilingual, and with a strong regional competitive work ethic.",
         },
       ],
+    },
+    graficos: {
+      title: "Performance & Business Climate",
+      ied: { label: "FDI Flow", value: "$1.24B", desc: "Constant Foreign Direct Investment attraction in strategic sectors." },
+      negocios: { label: "Ease of Doing Business", value: "Improved", desc: "Optimization of government processes and operational single windows." },
+      pib: { label: "GDP Growth", value: "3.8%", desc: "Economic expansion supported by exports and domestic consumption." },
     },
     clima: {
       eyebrow: "Analytics",
@@ -484,24 +601,40 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       ],
       cards: [
         {
-          label: "FDI projected (reference)",
+          label: "FDI projected",
           delta: CIFRAS_VALUES[0].deltaEn,
-          hint: "Annual foreign direct investment flow (market reference).",
+          hint: "Annual foreign direct investment flow.",
+          backText: "Honduras maintains a solid FDI flow, attracting capital to the energy, maquila, and telecommunications sectors.",
         },
         {
           label: "GDP growth",
           delta: CIFRAS_VALUES[1].deltaEn,
           hint: "Average gross domestic product expansion rate.",
+          backText: "Macroeconomic performance is resilient, driven by consumption, remittances, and the recovery of agribusiness exports.",
         },
         {
-          label: "Active projects (reference)",
+          label: "Active projects",
           delta: CIFRAS_VALUES[2].deltaEn,
-          hint: "Industrial and infrastructure developments in the institutional pipeline.",
+          hint: "Developments in the institutional pipeline.",
+          backText: "The CNI provides comprehensive support to multiple private and public-private initiatives throughout the Investor Journey.",
         },
         {
-          label: "Renewable matrix (reference)",
+          label: "Renewable matrix",
           delta: CIFRAS_VALUES[3].deltaEn,
           hint: "Share of renewable sources in the power mix.",
+          backText: "The country is advancing its energy transition, leveraging its vast network of solar, wind, and hydroelectric resources.",
+        },
+        {
+          label: "Goods exports",
+          delta: CIFRAS_VALUES[4].deltaEn,
+          hint: "Annual growth in foreign trade.",
+          backText: "Premium agricultural products (coffee, cocoa, cigars) and apparel keep Honduras globally competitive.",
+        },
+        {
+          label: "Young workforce",
+          delta: CIFRAS_VALUES[5].deltaEn,
+          hint: "Economically active population.",
+          backText: "Honduran youth provide a key demographic dividend, increasingly oriented toward STEM careers and bilingualism.",
         },
       ],
       extra: [
@@ -527,11 +660,11 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         "Five priority engines promoted by the CNI to channel foreign capital with LPPI and ZOLI legal backing.",
       cta: "Full sector brief →",
       teasers: [
-        { name: "Agribusiness", tagline: "Coffee, cocoa, and premium tobacco." },
+        { name: "Agroindustry", tagline: "Coffee, cocoa, and premium tobacco." },
         { name: "Manufacturing", tagline: "Nearshoring with Zero-Duty benefits." },
         { name: "Tourism", tagline: "Bay Islands and Maya archaeology." },
         { name: "Energy", tagline: "Solar, wind, and hydro." },
-        { name: "BPO", tagline: "Young bilingual talent." },
+        { name: "Infrastructure", tagline: "Ports, roads, and connectivity." },
       ],
       more: "Learn more",
     },
@@ -572,16 +705,19 @@ export const homeCopy: Record<Locale, HomeCopy> = {
           date: "Mar 2025",
           title: "Honduras strengthens its global footprint with over $58M in new investment",
           excerpt: "First-quarter results and strategic sector focus under the 2024 Investment Strategy.",
+          imageAlt: "Investors meeting",
         },
         {
           date: "Mar 2025",
           title: "Honduras Investment Summit forum — Tegucigalpa",
           excerpt: "Dialogue among government, private sector, and multilateral partners to accelerate Ready to Invest projects.",
+          imageAlt: "Investment forum",
         },
         {
           date: "Apr 2025",
           title: "CNI reports progress on the Investment Strategy to its board",
           excerpt: "Inform, promote, accompany, coordinate, and influence—operational results of the National Investment Council.",
+          imageAlt: "CNI board meeting",
         },
       ],
     },
@@ -590,6 +726,48 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       description: "Subscribe to our quarterly investment outlook and CNI policy updates.",
       placeholder: "Work email address",
       button: "Join the network",
+    },
+    actionCards: {
+      investTitle: "Invest in Honduras",
+      investDesc: "Join our network of investors",
+      growTitle: "Grow in Honduras",
+      growDesc: "Learn about opportunities and investment projects to expand your operations in Honduras",
+      moreInfo: "More information",
+    },
+    postulacionExtra: {
+      advisoryTitle: "Technical Advisory",
+      advisoryDesc: "Learn about opportunities and investment projects to expand your operations in Honduras",
+      ctaProject: "Submit My Project",
+    },
+    graficosDashboard: {
+      eyebrow: "Smart Dashboard",
+      title: "Regional Comparison",
+      downloadBtn: "Download Full Report",
+      sources: "Sources: Central Bank of Honduras, GCBI Index 2025, IMF Projections.",
+      ied: {
+        label: "Report 2020-2025",
+        title: "Foreign Direct Investment (USD Millions)",
+        desc: "FDI at the end of 2024 was USD 993.9 million and at the end of the first half of 2025 it was USD 500.4 million, making this semester the largest recipient of foreign investment in recent years.",
+        value: "$500.4M",
+        insight: "The first half of 2025 reports a highly dynamic behavior in capital attraction.",
+        source: "Source: Balance of Payments Section, External Sector Department, BCH",
+      },
+      pib: {
+        label: "Projection 2024-2029",
+        title: "Projected GDP Growth",
+        desc: "In 2023 Honduras was the third economy with the highest growth in Central America and the fourth in the region. Projections indicate that growth will remain steady for 2024 and 2025, leading the region's countries, only behind Costa Rica.",
+        value: "3.85%",
+        insight: "Projections indicate that Honduras's economic dynamism will remain stable in the coming years.",
+        source: "Own elaboration with data from the Projections Report 2024-2025, Central Bank of Honduras; ECLAC, Preliminary Overview of the Economies of LAC 2023 (Dec. 2023).",
+      },
+      clima: {
+        label: "GCBI Index 2025",
+        title: "Ease of doing business",
+        desc: "Honduras is the most reliable country for doing business in Central America according to the Global Complexity Business Index (GCBI) 2025, published in the 12th annual report of TMF Group",
+        value: "60 Pts",
+        insight: "Reducing corporate complexity and simplifying procedures drives country confidence.",
+        source: "Own elaboration with data from TMF Group, 2025.",
+      },
     },
   },
 };

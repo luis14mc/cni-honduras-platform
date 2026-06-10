@@ -1,387 +1,783 @@
-<!DOCTYPE html>
+<!DOCTYPE html><html class="light" lang="es" style=""><head></head><body class="bg-background font-body text-on-background antialiased selection:bg-cni-gold/30">```html
 
-<html class="light" lang="es"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Invest Honduras | El Soberano Arquitecto de su Inversión</title>
+
+
+    <meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CNI Honduras - Consejo Nacional de Inversiones</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "secondary": "#3a5f94",
-                    "primary": "#000a1e",
-                    "surface-dim": "#d9dadb",
-                    "background": "#f8f9fa",
-                    "outline-variant": "#c4c6cf",
-                    "primary-fixed-dim": "#aec7f6",
-                    "outline": "#74777f",
-                    "on-secondary-fixed": "#001b3c",
-                    "on-tertiary-fixed": "#261900",
-                    "on-primary-container": "#708ab5",
-                    "surface-bright": "#f8f9fa",
-                    "on-secondary-container": "#294f83",
-                    "surface-container-low": "#f3f4f5",
-                    "on-primary": "#ffffff",
-                    "error": "#ba1a1a",
-                    "surface-container-highest": "#e1e3e4",
-                    "error-container": "#ffdad6",
-                    "on-error": "#ffffff",
-                    "inverse-on-surface": "#f0f1f2",
-                    "on-secondary": "#ffffff",
-                    "surface": "#f8f9fa",
-                    "surface-variant": "#e1e3e4",
-                    "secondary-container": "#9fc2fe",
-                    "on-tertiary-fixed-variant": "#5d4201",
-                    "surface-container-high": "#e7e8e9",
-                    "on-primary-fixed": "#001b3d",
-                    "inverse-primary": "#aec7f6",
-                    "on-tertiary": "#ffffff",
-                    "on-background": "#191c1d",
-                    "primary-container": "#002147",
-                    "tertiary-fixed": "#ffdea5",
-                    "inverse-surface": "#2e3132",
-                    "primary-fixed": "#d6e3ff",
-                    "on-error-container": "#93000a",
-                    "on-tertiary-container": "#a68440",
-                    "on-surface-variant": "#44474e",
-                    "on-surface": "#191c1d",
-                    "on-secondary-fixed-variant": "#1f477b",
-                    "tertiary-fixed-dim": "#e9c176",
-                    "surface-container-lowest": "#ffffff",
-                    "on-primary-fixed-variant": "#2d476f",
-                    "tertiary": "#110a00",
-                    "secondary-fixed-dim": "#a7c8ff",
-                    "surface-tint": "#465f88",
-                    "tertiary-container": "#2e1f00",
-                    "secondary-fixed": "#d5e3ff",
-                    "surface-container": "#edeeef"
-            },
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Manrope"],
-                    "display": ["Manrope"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
-          }
-        }
-      }
-    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
 <style>
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
         }
-        .glass-nav {
-            background: rgba(0, 33, 71, 0.8);
-            backdrop-filter: blur(24px);
+        /* Custom Architectural Ledger Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f3f4f5; }
+        ::-webkit-scrollbar-thumb { background: #000a1e; border-radius: 0px; }
+
+        /* Animated Hero Slider */
+        @keyframes fadeSlide {
+            0%, 20% { opacity: 1; transform: scale(1); }
+            25%, 45% { opacity: 0; transform: scale(1.05); }
+            50%, 70% { opacity: 0; transform: scale(1); }
+            75%, 95% { opacity: 0; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1); }
         }
-        .text-shadow-sm {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            animation: fadeSlide 20s infinite;
         }
-        .asymmetric-clip {
-            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+        .hero-slide:nth-child(1) { animation-delay: 0s; opacity: 1; }
+        .hero-slide:nth-child(2) { animation-delay: 5s; }
+        .hero-slide:nth-child(3) { animation-delay: 10s; }
+        .hero-slide:nth-child(4) { animation-delay: 15s; }
+
+        /* Marquee for Partners */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee { animation: marquee 30s linear infinite; }
+        .animate-marquee-reverse { animation: marquee 35s linear infinite reverse; }
+
+        /* Chart Transitions */
+        .chart-view {
+            transition: opacity 0.4s ease-in-out, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .chart-view.hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .chart-view.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
-</head>
-<body class="bg-surface font-body text-on-surface selection:bg-tertiary-fixed selection:text-on-tertiary-fixed">
-<!-- TopNavBar Shell -->
-<nav class="fixed top-0 w-full z-50 glass-nav shadow-sm">
-<div class="flex justify-between items-center w-full px-8 py-4 max-w-screen-2xl mx-auto">
-<div class="flex items-center gap-2">
-<span class="font-headline text-xl font-bold tracking-tight text-on-primary">Invest Honduras</span>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#000a1e",
+                        "secondary": "#e9c176",
+                        "surface": "#fbf8fb",
+                        "surface-dim": "#dbd9db",
+                        "surface-bright": "#fbf8fb",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f5f3f5",
+                        "cni-primary": "#000a1e",
+                        "cni-gold": "#e9c176",
+                        "cni-surface-low": "#f3f4f5",
+                        "on-background": "#191c1d",
+                        "on-surface-variant": "#44474e",
+                        "outline": "#74777f"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope", "sans-serif"],
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+                },
+            },
+        }
+    </script>
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-[100] bg-white/90 backdrop-blur-lg border-b border-cni-surface-low">
+<div class="flex items-center justify-between px-8 py-5 max-w-screen-2xl mx-auto">
+<div class="text-xl font-headline font-extrabold tracking-tight text-cni-primary uppercase">
+            CNI Honduras
+        </div>
+<div class="hidden md:flex items-center gap-8 font-label font-semibold text-xs uppercase tracking-wider">
+<a class="text-cni-primary border-b-2 border-cni-gold pb-1" href="#">Inicio</a>
+<a class="text-on-surface-variant hover:text-cni-primary transition-colors" href="#">Sectores</a>
+<a class="text-on-surface-variant hover:text-cni-primary transition-colors" href="#">Mapa Interactivo</a>
+<a class="text-on-surface-variant hover:text-cni-primary transition-colors" href="#">Proyectos</a>
+<a class="text-on-surface-variant hover:text-cni-primary transition-colors" href="#">Noticias</a>
+<a class="text-on-surface-variant hover:text-cni-primary transition-colors" href="#">Documentos</a>
 </div>
-<div class="hidden md:flex items-center gap-8">
-<a class="font-headline text-label-md tracking-[0.05em] uppercase text-on-primary-fixed-variant hover:text-tertiary-fixed transition-colors duration-300" href="#">Sectors</a>
-<a class="font-headline text-label-md tracking-[0.05em] uppercase text-on-primary-fixed-variant hover:text-tertiary-fixed transition-colors duration-300" href="#">Resources</a>
-<a class="font-headline text-label-md tracking-[0.05em] uppercase text-on-primary-fixed-variant hover:text-tertiary-fixed transition-colors duration-300" href="#">Investment Map</a>
-<a class="font-headline text-label-md tracking-[0.05em] uppercase text-on-primary-fixed-variant hover:text-tertiary-fixed transition-colors duration-300" href="#">Transparency</a>
-<a class="font-headline text-label-md tracking-[0.05em] uppercase text-on-primary-fixed-variant hover:text-tertiary-fixed transition-colors duration-300" href="#">Contact</a>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-cni-primary">
+<span class="material-symbols-outlined cursor-pointer hover:text-cni-gold transition-colors text-[20px]">language</span>
+<span class="material-symbols-outlined cursor-pointer hover:text-cni-gold transition-colors text-[20px]">search</span>
 </div>
-<div class="flex items-center gap-4">
-<button class="material-symbols-outlined text-on-primary-fixed-variant hover:text-tertiary-fixed transition-all" data-icon="language">language</button>
-<button class="material-symbols-outlined text-on-primary-fixed-variant hover:text-tertiary-fixed transition-all" data-icon="notifications">notifications</button>
-<button class="bg-primary-container text-on-primary-fixed px-6 py-2 rounded-md font-headline font-bold text-sm hover:bg-secondary transition-all active:scale-95">Investor Portal</button>
+<button class="bg-cni-primary text-white px-6 py-2.5 rounded-DEFAULT font-headline font-bold text-[11px] uppercase tracking-[0.15em] hover:bg-cni-gold hover:text-cni-primary transition-all">
+                Contacto
+            </button>
 </div>
 </div>
 </nav>
-<!-- Hero Section -->
-<header class="relative h-screen min-h-[700px] flex items-center overflow-hidden asymmetric-clip bg-primary">
+<main class="pt-[72px]">
+<!-- 1. Animated Hero -->
+<section class="relative h-[85vh] flex items-center overflow-hidden bg-cni-primary">
 <div class="absolute inset-0 z-0">
-<img class="w-full h-full object-cover opacity-60 mix-blend-overlay" data-alt="A cinematic, high-resolution wide shot of the Honduran coastline at sunset, featuring deep navy blue waters meeting golden sands. The lighting is dramatic and editorial, with a warm sun setting on the horizon creating a high-contrast prestige aesthetic. The overall mood is authoritative and stable, reflecting a premium enterprise financial environment with expansive negative space." src="https://lh3.googleusercontent.com/aida/ADBb0ujmmJBuKL6YFrPb3v0NTkIx0kpt__kZq1f6zZntXKBi_n4TKhAo7HeHG1P3570rb8O4Tz92LaGsibMJQwz2gBk-dz-RTqytFN-JWU_2dX9Vv2DHIxevhJhRGSDSEp-oEsACK1hgLSjApssYEJ5BhZ7sQF2ftmkrrWkxIYgmMJQdewnmazDbCg0yZxfnNps52iZ352pK7x6z4dIkl1_imvU-b4pyPxEO0Ax99kulyTbBJfWE7La9bEV2rHIC"/>
-<div class="absolute inset-0 bg-gradient-to-br from-primary via-primary/40 to-transparent"></div>
+<div class="hero-slide">
+<img class="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsq5m8WvhzkGaEwrif3BKiju0BDpEk9F0RzAm9cBdY4nMZcu6TdFaL8EDsPwyH9NWE8H0lRVBg3RuyWwWBfkbgUwyOJkWN2pjDlPy4B1eKDCx5SWVlKusbFBSQFn_R8cD6skHzBCvUIWym1h5jxXF6pjVh3tsxp-2G5SztKYne72Z-kjBqlgTh_mHwbUGJCwDBlYDWkpA7pszFSoUtelZFkJlp72ZNQVuE9eFZXnMNZpgJEKQv-wiPHO2i8fpbz8VmGf_YtTcdgE0">
+</div>
+<div class="hero-slide">
+<img class="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClUWl0qeuPq74UIDN7WdqhNWQZ3ys4DM8pasJvHdmhRDvW2LaCBpG2FyhwAIrsrzEJZmAK1iRDdo5LOB6TFICf8xocqQVKF7eh6UcCIMIWrExqWEzTdOBksyWftmlaPKu-v1uKjc9Lkh66WjJ_DwEQkgVp8aq7DTCOwfyfTMTFqcRW93tPYuCSvkjvSZKGZ_iuEVfkHBzi4Jv1097p_gHEkE71LuJYh2tun2mFLxnOopKgAak9giyVWxsZiO18yH6wmwXeGKLTTOU">
+</div>
+<div class="hero-slide">
+<img class="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLeOzKajqhalcfmd6t0Y77JjpvOtSrf8GYtNoa1CmbRNU-2Bmb9r3b8WtDxgdqzqxgFVTx2alVdlODmHzJRFPV1Y6vbXur2hOW04cz2rJ18JZd7p5MQ6odd2LPu4Im4wNpf9tZnzqCfOx8he0sbEL40H4C76j8Q75kScs2XBCc0gDFvCCNFYk0hvHyXvokqDNf0gIxiSvzZSN2Y-5Y54CrtlZGrroOP1YQGuZCnOU7cOqHqjQjG81R1DGb0KBM5QDqxHw5qmDt3Lg">
+</div>
+<div class="hero-slide">
+<img class="w-full h-full object-cover opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfKbgE8A8NbJ8h1rDyiVxDkYDQxMRRY572tw1594bk6VAQ4HRBKuC62ZRhuOBl_e0KHD3h_PwWCnwGgtlmjXUwsG6MlZxxO864V-X7rJ_UeamN8rox4q5v7NN061MJ80kxYCIAJETPyPsLj-CixaPdkhwaQEvHOU1O22Rke0c3XbIQenob0BprQpEY2l6bPfAPzo0mN4jvL6zuZ6vL_BICpoVIvaKPN40Z-Mmq-SYGAVkiIeOgQTsf-uGwwoNpm92PWXZBoZhBZ6E">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-cni-primary via-cni-primary/40 to-transparent"></div>
 </div>
 <div class="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
-<div class="max-w-4xl">
-<span class="inline-block px-4 py-1 mb-6 rounded-full border border-tertiary-fixed-dim/30 text-tertiary-fixed-dim font-headline text-label-md tracking-widest uppercase">Destino Global de Inversión</span>
-<h1 class="font-display text-5xl md:text-7xl font-extrabold text-on-primary leading-tight tracking-tight mb-8">
-                    HONDURAS: UN PAÍS PARA <br/>
-<span class="text-tertiary-fixed">INVERTIR, CRECER Y VIVIR</span>
+
+<h1 class="text-white text-6xl md:text-[100px] font-display font-extrabold tracking-tighter leading-[0.9] mb-10 uppercase">
+                INVIERTE EN <br><span class="text-cni-gold">HONDURAS</span>
 </h1>
-<p class="text-xl text-on-primary-fixed-variant max-w-2xl mb-12 font-light leading-relaxed">
-                    Facilitamos su entrada al mercado de mayor crecimiento en Centroamérica con transparencia, seguridad jurídica y talento excepcional.
-                </p>
-<div class="flex flex-wrap gap-6">
-<button class="bg-gradient-to-r from-primary-container to-secondary text-on-primary px-10 py-4 rounded-md font-headline font-bold text-lg hover:shadow-xl transition-all active:scale-95">
-                        Invertir
-                    </button>
-<button class="bg-surface-container-lowest/10 backdrop-blur-md border border-on-primary/20 text-on-primary px-10 py-4 rounded-md font-headline font-bold text-lg hover:bg-on-primary/10 transition-all active:scale-95">
-                        Crecer
-                    </button>
+<p class="text-white/80 text-lg md:text-xl font-body font-light leading-relaxed mb-12 max-w-2xl">
+                Impulsando el crecimiento económico sostenible a través de alianzas estratégicas y facilitación de capital en sectores de alto impacto.
+            </p>
+<div class="flex gap-6">
+<button class="bg-cni-gold text-cni-primary px-10 py-5 rounded-DEFAULT font-headline font-extrabold text-[12px] tracking-[0.2em] uppercase hover:bg-white transition-all flex items-center gap-4">
+                    Explorar Oportunidades
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
 </div>
 </div>
+</section>
+<!-- 2. Action Entry Points -->
+<section class="py-12 px-8 -mt-24 relative z-20">
+<div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-0 shadow-2xl">
+<a class="group relative overflow-hidden bg-cni-primary p-12 h-72 flex flex-col justify-end border-r border-cni-gold/20 rounded-[32px]" href="#">
+<div class="absolute top-8 right-8">
+<span class="material-symbols-outlined text-cni-gold/10 text-[100px] group-hover:text-cni-gold/30 transition-all">add_circle</span>
 </div>
-</header>
-<!-- Value Proposition: Bento Grid Style -->
-<section class="py-24 px-8 max-w-screen-2xl mx-auto -mt-16 relative z-20">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-<!-- Port Efficiency -->
-<div class="md:col-span-2 bg-surface-container-lowest p-10 rounded-xl shadow-sm group hover:bg-primary-container transition-colors duration-500 overflow-hidden relative">
-<div class="relative z-10">
-<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim mb-6 block" data-icon="lan">lan</span>
-<h3 class="font-headline text-3xl font-bold mb-4 group-hover:text-on-primary">Eficiencia Portuaria Estratégica</h3>
-<p class="text-on-surface-variant group-hover:text-on-primary-fixed-variant text-lg leading-relaxed mb-6">
-                        Puerto Cortés se posiciona como el más eficiente del Mar Caribe, manejando el 78.6% del movimiento nacional con una carga de 12,548 TM en 2024.
-                    </p>
-<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
-<div class="h-full bg-tertiary-fixed-dim w-[78.6%] transition-all duration-1000"></div>
+<h3 class="text-white font-headline text-3xl font-bold uppercase mb-3">Invertir en Honduras</h3>
+<p class="text-white/60 font-body text-sm max-w-xs">Descubra por qué somos el destino ideal para su capital a través de nuestra guía estratégica.</p>
+</a>
+<a class="group relative overflow-hidden bg-white p-12 h-72 flex flex-col justify-end border-l border-cni-surface-low rounded-[32px]" href="#">
+<div class="absolute top-8 right-8">
+<span class="material-symbols-outlined text-cni-primary/5 text-[100px] group-hover:text-cni-gold/40 transition-all">trending_up</span>
 </div>
+<h3 class="text-cni-primary font-headline text-3xl font-bold uppercase mb-3">Crecer en Honduras</h3>
+<p class="text-on-surface-variant font-body text-sm max-w-xs">Herramientas, inteligencia de mercado y soporte especializado para empresas establecidas.</p>
+</a>
 </div>
+</section>
+<!-- 3. Project Submission -->
+<section class="py-28 px-8 bg-white">
+<div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-20">
+<div class="lg:w-1/2">
+<h2 class="text-cni-primary font-display text-5xl font-extrabold tracking-tight uppercase mb-8 leading-[1.1]">Postulación de <br><span class="text-cni-gold">Proyectos</span></h2>
+<p class="text-on-surface-variant font-body text-lg mb-10 leading-relaxed">¿Tiene un proyecto de inversión estratégico? El CNI le brinda el acompañamiento técnico y legal necesario para materializar sus iniciativas en el territorio nacional bajo marcos de seguridad jurídica.</p>
+<button class="bg-cni-primary text-white px-10 py-4 rounded-DEFAULT font-headline font-bold text-[12px] tracking-[0.2em] uppercase hover:bg-cni-gold hover:text-cni-primary transition-all flex items-center gap-4">
+                    Postular Mi Proyecto
+                    <span class="material-symbols-outlined">send</span>
+</button>
 </div>
-<!-- Bilingual Talent -->
-<div class="bg-secondary p-10 rounded-xl shadow-sm text-on-secondary flex flex-col justify-between">
-<div>
-<h3 class="font-headline text-2xl font-bold mb-4">Capital Humano Bilingüe</h3>
-<p class="font- light text-on-secondary-fixed opacity-90 leading-relaxed">
-                        Líderes en Centroamérica y 3º en LatAm en dominio del inglés (EF EPI 2024), con más de 824 centros de educación bilingüe.
-                    </p>
+<div class="lg:w-1/2 relative">
+<div class="aspect-video bg-cni-primary overflow-hidden shadow-2xl">
+<img alt="Colaboración profesional" class="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqlhU_RbYvkxBlYzAj4-JtinsyOxfbNJWy3dijV5GdOD--pP85WIxoiQ7Sk0Q-lRYx5sMe7kzQ9jIcHdOVm2s-dmhYYOGr1LHnyFIi9Jph5IoX_fNsF4hHqhdugIzWl9t7eGGor3MD99NX2QA6-mO-uxN97DKeH2m9pItMpoZlymNvIiga0_Uokz5xO5dN_fospS89vsPMohMijrLWO6LVrvX4k3OiF6ww07a2JJFkhX614J_rk3IE27CvkIR0gvbFmNDamGonIFU">
 </div>
-<div class="mt-8 flex items-baseline gap-2">
-<span class="text-5xl font-bold">#1</span>
-<span class="text-sm uppercase tracking-widest opacity-70">En Centroamérica</span>
-</div>
-</div>
-<!-- Manufacturing Leadership -->
-<div class="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-8">
-<div class="bg-primary-container p-10 rounded-xl text-on-primary flex items-center gap-8">
-<div class="flex-1">
-<h4 class="font-label text-tertiary-fixed-dim uppercase tracking-widest mb-2">Exportación de Manufactura</h4>
-<span class="text-4xl font-extrabold text-on-primary tracking-tighter">USD 4,212.7 M</span>
-<p class="mt-2 text-on-primary-fixed-variant text-sm">Cifras destacadas a Noviembre 2024</p>
-</div>
-<div class="w-px h-full bg-on-primary/10 hidden md:block"></div>
-<div class="flex-1">
-<h4 class="font-label text-tertiary-fixed-dim uppercase tracking-widest mb-2">Maquila y Bienes</h4>
-<span class="text-4xl font-extrabold text-on-primary tracking-tighter">USD 5,014.1 M</span>
-<p class="mt-2 text-on-primary-fixed-variant text-sm">Liderazgo regional indiscutible</p>
-</div>
+<div class="absolute -bottom-8 -left-8 bg-cni-gold p-10 text-cni-primary max-w-xs shadow-xl">
+<p class="font-headline text-[10px] font-extrabold uppercase tracking-[0.3em] mb-3">Asesoría Técnica</p>
+<p class="font-body text-sm font-medium leading-relaxed">Contamos con un equipo multidisciplinario experto para evaluar la viabilidad integral de su inversión.</p>
 </div>
 </div>
 </div>
 </section>
-<!-- Strategic Sectors: Elegant Gallery -->
-<section class="py-24 bg-surface-container-low">
-<div class="max-w-screen-2xl mx-auto px-8">
-<div class="text-center mb-16">
-<h2 class="font-display text-4xl md:text-5xl font-bold text-primary mb-4">Sectores Estratégicos</h2>
-<div class="h-1 w-24 bg-tertiary-fixed-dim mx-auto"></div>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-5 gap-6">
-<!-- Sector Agro -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer">
-<div class="aspect-[1.19/1] relative overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A professional commercial photography shot of high-tech agricultural fields in Honduras. The lighting is bright and clear, reflecting a modern industrial farming approach with lush green crops and precision irrigation systems. The image has a clean, light-mode corporate aesthetic, emphasizing productivity and growth in a primary-container navy blue and white brand environment." src="https://lh3.googleusercontent.com/aida/ADBb0uhJTX0gTNkoswMnVbyh13Vx2RnhwOPJJugQw3q0pwCxMiAxPpBLR1IKsUQKMwj-bI4J_n5-W0l39-LUAHYL5dHQx6Ll_wUqfrQ7fYf1wvMt_iUcIyXU1iyPpQXWv9zm22oJYbHgLZq-STAHag7mOuMX04NeFfQ2-_dnvzae6Eujy-rsBj9vMQ4Cfb-df7QyT_p8439ZNsCRe5l-gl9eYVYzzWbVZU-tzb9esTWBilmjY7j0hdKAjyot7kqV"/>
-</div>
-<div class="p-6 text-center">
-<h3 class="font-headline font-bold text-primary">Agroindustria</h3>
-</div>
-</div>
-<!-- Sector Manufactura -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer">
-<div class="aspect-[1.19/1] relative overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A high-end interior shot of a modern manufacturing facility in Honduras, showcasing clean, white industrial surfaces and advanced robotics. The scene is illuminated with soft, professional studio lighting, highlighting high-tech precision and enterprise efficiency. The color palette integrates deep navy blue accents with a pristine, bright professional atmosphere." src="https://lh3.googleusercontent.com/aida/ADBb0uj61cKafW7wdl8W3kAssgQ6HVjOA_8O0ZvZOdQCY-B8L7mWGWAsQI5CdY00k4mzxDH525E26UGDC7txcfA6Oq6rG0yWF96ALCSAxA2SVFjyMaWU8zqeWYHk23Ek5b5iRs0vGobKSJx_eU90GcKL44yd4zwmlRtfNeb1A78RjMveepA995uO2FRPooeWFwhVj73NlUmTQNXSrdy64fw1-hbcBGn8kH8oYCI1UxKZT7RiGR20XV6ML_RjcClN"/>
-</div>
-<div class="p-6 text-center">
-<h3 class="font-headline font-bold text-primary">Manufactura</h3>
-</div>
-</div>
-<!-- Sector Turismo -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer">
-<div class="aspect-[1.19/1] relative overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="An editorial luxury travel photograph of a high-end resort in Honduras, featuring turquoise infinity pools and modern architectural lines. The lighting is golden-hour sunlight, casting warm glows on high-contrast surfaces. The mood is aspirational and premium, reflecting the luxury investment potential within the tourism sector of the country." src="https://lh3.googleusercontent.com/aida/ADBb0uio3JoU2M7y9dVBS2wOC8CSmTUal9voa_WHLlL_rwFfmkL3QpisQrGFGlFCKOTpio_EcndP81v40XbRyXnVSKdC2emJMesmi6xv2XcXIKEg7BJuplsVeC8Kl8CzoauLv00LveCvVz2OKce8aUctUw5_35UEfIEse085NsNXHCq_-DIx5WKrZ1Y1uMOeeOjaSWFTfgxZBOLFaM_11rG0-pK0ZjnuMtNai8TUfZU760i0ObhA-h3ltiIh1zVd"/>
-</div>
-<div class="p-6 text-center">
-<h3 class="font-headline font-bold text-primary">Turismo</h3>
-</div>
-</div>
-<!-- Sector Energía -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer">
-<div class="aspect-[1.19/1] relative overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A panoramic shot of a renewable energy wind farm located on a Honduran mountain range. The sky is a clear, vibrant blue, and the lighting is crisp and natural. The image communicates technological advancement and sustainable investment opportunities, maintaining a professional corporate aesthetic with deep blue and white tones." src="https://lh3.googleusercontent.com/aida/ADBb0uiVvDD_5X4aAq6ldncZ7oxvaVNIhK2ylDI2mwdG5ZR82JZT6PdcZNf_ZPBgSGNqFQwa5HaumTkq4Yv_fWXM15eg9kEpPseU5XyNMJY7yVrC0bMqVh90Sig3kd4xX5ggvcudbjDoZ8dT-l78Av54v7jKds3loytZC1AqmcuFUwshL2z9kq2I7R6NLE3dGHK44eiYDb4hVw8u66R1i1gxnfHCVyrbG9ZnuTANkDfeLLc8_weOPfgbVtE2HT5y"/>
-</div>
-<div class="p-6 text-center">
-<h3 class="font-headline font-bold text-primary">Energía</h3>
-</div>
-</div>
-<!-- Sector Infraestructura -->
-<div class="bg-surface-container-lowest rounded-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer">
-<div class="aspect-[1.19/1] relative overflow-hidden">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A modern architectural view of a large-scale infrastructure project in Honduras, like a modern bridge or highway interchange. The shot is low-angle to emphasize authority and scale, with clean lines and high-contrast lighting. The visual style is enterprise-level and architectural, using a palette of navy blues and neutral greys." src="https://lh3.googleusercontent.com/aida/ADBb0ui7nETWh-bpAJkFeMV-Uww_D1faj8jmh5sBWrEAYLjifONxDK_CqDcQIcI3xDqYmO1qzTFp6OklIsjrJkO_zJowJlgvAOuuyrq3JQcql-5vW4iy2B0mPYjq3rbjHhsdjUf_j8irk6HxnJoFYG8D7yf8fCHKWhYbbBZYWyyDVWtOjJdbTRmQLD_9jWMB9Z3vUYo16RxnNtUcagZzjfOJYQmmKGjrkix63p1vXjUwH7RjAdIg7SSR-Ii10Gq7"/>
-</div>
-<div class="p-6 text-center">
-<h3 class="font-headline font-bold text-primary">Infraestructura</h3>
-</div>
-</div>
-</div>
+<!-- 4. Quick Access Grid -->
+<section class="py-12 bg-cni-surface-low border-y border-cni-surface-low/50">
+<div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
+<a class="bg-white hover:bg-cni-primary p-10 text-center transition-all group border border-transparent hover:border-cni-gold rounded-[32px]" href="#">
+<span class="material-symbols-outlined text-cni-gold text-4xl mb-6 group-hover:scale-110 transition-transform">menu_book</span>
+<h4 class="font-headline font-extrabold uppercase text-[10px] tracking-[0.2em] text-cni-primary group-hover:text-white">Guía Invierte en Honduras</h4>
+</a>
+<a class="bg-white hover:bg-cni-primary p-10 text-center transition-all group border border-transparent hover:border-cni-gold rounded-[32px]" href="#">
+<span class="material-symbols-outlined text-cni-gold text-4xl mb-6 group-hover:scale-110 transition-transform">history_edu</span>
+<h4 class="font-headline font-extrabold uppercase text-[10px] tracking-[0.2em] text-cni-primary group-hover:text-white">Memoria Institucional</h4>
+</a>
+<a class="bg-white hover:bg-cni-primary p-10 text-center transition-all group border border-transparent hover:border-cni-gold" href="#">
+<span class="material-symbols-outlined text-cni-gold text-4xl mb-6 group-hover:scale-110 transition-transform">desktop_windows</span>
+<h4 class="font-headline font-extrabold uppercase text-[10px] tracking-[0.2em] text-cni-primary group-hover:text-white">Portal Digital de Inversiones</h4>
+</a>
+<a class="bg-white hover:bg-cni-primary p-10 text-center transition-all group border border-transparent hover:border-cni-gold" href="#">
+<span class="material-symbols-outlined text-cni-gold text-4xl mb-6 group-hover:scale-110 transition-transform">query_stats</span>
+<h4 class="font-headline font-extrabold uppercase text-[10px] tracking-[0.2em] text-cni-primary group-hover:text-white">Vista de Estudios CNI</h4>
+</a>
 </div>
 </section>
-<!-- Interactive Map & Figures -->
-<section class="py-24 bg-primary text-on-primary">
-<div class="max-w-screen-2xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-<div>
-<h2 class="font-display text-4xl md:text-5xl font-bold mb-8">Honduras en Cifras</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-<div class="border-l-4 border-tertiary-fixed-dim pl-6 py-2">
-<span class="block text-3xl font-bold text-tertiary-fixed-dim">112,777 km²</span>
-<p class="text-on-primary-fixed-variant text-sm mt-1 uppercase tracking-wider">Extensión Territorial</p>
-<p class="mt-3 text-xs opacity-70">Ubicación estratégica en el corazón de América.</p>
-</div>
-<div class="border-l-4 border-secondary pl-6 py-2">
-<span class="block text-3xl font-bold text-secondary-fixed-dim">58.6%</span>
-<p class="text-on-primary-fixed-variant text-sm mt-1 uppercase tracking-wider">Energía Renovable</p>
-<p class="mt-3 text-xs opacity-70">Matriz diversificada con 10 fuentes energéticas.</p>
-</div>
-<div class="border-l-4 border-tertiary-fixed-dim pl-6 py-2">
-<span class="block text-3xl font-bold text-tertiary-fixed-dim">9.89M</span>
-<p class="text-on-primary-fixed-variant text-sm mt-1 uppercase tracking-wider">Habitantes</p>
-<p class="mt-3 text-xs opacity-70">Fuerza laboral joven con promedio de 31 años.</p>
-</div>
-<div class="border-l-4 border-secondary pl-6 py-2">
-<span class="block text-3xl font-bold text-secondary-fixed-dim">11 TLCs</span>
-<p class="text-on-primary-fixed-variant text-sm mt-1 uppercase tracking-wider">Tratados Comerciales</p>
-<p class="mt-3 text-xs opacity-70">Acceso preferencial a más de 45 naciones.</p>
-</div>
-</div>
-</div>
+<!-- 5. Why Honduras Slider -->
+<section class="py-32 bg-cni-primary text-white overflow-hidden"><div class="max-w-screen-2xl mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<!-- Left Column: Institutional Image -->
 <div class="relative group">
-<div class="bg-surface-container-lowest/5 rounded-3xl p-8 backdrop-blur-sm border border-on-primary/10 shadow-2xl">
-<!-- Placeholder for Interactive Map visualization -->
-<div class="aspect-square relative flex items-center justify-center">
-<div class="absolute inset-0 opacity-20 pointer-events-none">
-<div class="w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-secondary to-transparent blur-3xl"></div>
-</div>
-<div class="relative z-10 text-center">
-<span class="material-symbols-outlined text-8xl text-tertiary-fixed-dim mb-4" data-icon="map">map</span>
-<h4 class="font-headline font-bold text-xl mb-2">Visualización de Departamentos</h4>
-<p class="text-sm text-on-primary-fixed-variant">Interactúe con los 18 departamentos para ver data específica.</p>
-<div class="data-location hidden" data-location="Honduras" style=""></div>
+<div class="absolute -inset-4 border border-cni-gold/20 rounded-xl group-hover:scale-105 transition-transform duration-700"></div>
+<div class="relative h-[600px] overflow-hidden rounded-xl shadow-2xl">
+<img alt="Infraestructura Estratégica" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF8ZnKL1oGbIFyqRVDjKbMM7vGT9G5E8IQSy6cIT0XyfYcvPf6xVBrCGc-cC-SBjsKsEGHqZyv3bMMIllRBKgCYd3hVUWJSaeK457yBQTtbPvqynP6GnS8V_8kjSvrDwIMfruvXsjc7Q7w0qJB5bm8BztCpIjpzTsIePU8pRbYspK8SWFSCYZDKA_9PJ1_yyxAU9L44HCMYUbsTDTk-9nxeL0LN-TOzm66VlFRlICgduYUdioeesg1c-gXR9S2SZI-jKqyFulHCd4">
+<div class="absolute inset-0 bg-gradient-to-t from-cni-primary/80 to-transparent"></div>
 </div>
 </div>
+<!-- Right Column: Carousel Content -->
+<div class="flex flex-col">
+<h2 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight uppercase mb-12">
+                ¿Por qué <span class="text-cni-gold">Honduras?</span>
+</h2>
+<div class="relative overflow-hidden">
+<div class="flex transition-transform duration-700 ease-in-out" id="why-honduras-carousel">
+<!-- Item 01 -->
+<div class="min-w-full">
+<span class="font-display text-7xl font-extrabold text-white/10 mb-6 block">01</span>
+<h3 class="font-headline text-3xl font-bold uppercase mb-6 tracking-wide text-cni-gold">Ubicación Estratégica</h3>
+<p class="text-white/70 font-body leading-relaxed text-lg max-w-lg">Corazón de las Américas con acceso a ambos océanos y conectividad global privilegiada para el comercio transatlántico y pacífico.</p>
+</div>
+<!-- Item 02 -->
+<div class="min-w-full">
+<span class="font-display text-7xl font-extrabold text-white/10 mb-6 block">02</span>
+<h3 class="font-headline text-3xl font-bold uppercase mb-6 tracking-wide text-cni-gold">Marco Legal Robusto</h3>
+<p class="text-white/70 font-body leading-relaxed text-lg max-w-lg">Leyes modernas de protección a la inversión y regímenes especiales que garantizan seguridad jurídica y estabilidad fiscal a largo plazo.</p>
+</div>
+<!-- Item 03 -->
+<div class="min-w-full">
+<span class="font-display text-7xl font-extrabold text-white/10 mb-6 block">03</span>
+<h3 class="font-headline text-3xl font-bold uppercase mb-6 tracking-wide text-cni-gold">Talento Humano</h3>
+<p class="text-white/70 font-body leading-relaxed text-lg max-w-lg">Fuerza laboral joven, altamente capacitada en manufactura avanzada, bilingüe y con una fuerte ética de trabajo competitiva regional.</p>
 </div>
 </div>
 </div>
-</section>
-<!-- Testimonials Section -->
-<section class="py-24 bg-surface">
+<!-- Navigation Controls -->
+<div class="flex items-center gap-8 mt-16">
+<div class="flex gap-3">
+<button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all" onclick="moveCarousel(-1)">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all" onclick="moveCarousel(1)">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="flex gap-2">
+<div class="w-8 h-1 bg-cni-gold rounded-full"></div>
+<div class="w-8 h-1 bg-white/20 rounded-full"></div>
+<div class="w-8 h-1 bg-white/20 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+    let currentSlide = 0;
+    function moveCarousel(direction) {
+        const carousel = document.getElementById('why-honduras-carousel');
+        const totalSlides = 3;
+        currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Update dots
+        const dots = carousel.parentElement.nextElementSibling.querySelectorAll('.rounded-full:not(button)');
+        dots.forEach((dot, i) => {
+            dot.className = i === currentSlide ? 'w-8 h-1 bg-cni-gold rounded-full' : 'w-8 h-1 bg-white/20 rounded-full';
+        });
+    }
+</script></section>
+<!-- 6. Economic Indicators Slider (Dynamic Dashboard Upgrade) -->
+<section class="py-32 bg-surface overflow-hidden">
 <div class="max-w-screen-2xl mx-auto px-8">
-<h2 class="font-display text-4xl font-bold text-primary text-center mb-16">Casos de Éxito</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
-<!-- Sinclair -->
-<div class="bg-surface-container-lowest p-12 rounded-xl shadow-sm border-t-8 border-tertiary-fixed-dim relative">
-<span class="absolute -top-4 -right-4 text-7xl text-tertiary-fixed-dim/20 font-serif leading-none italic">“</span>
-<p class="text-xl italic font-light leading-relaxed text-on-surface-variant mb-8">
-                        “Nuestro país tiene gente trabajadora, tierra fértil y una ubicación privilegiada. Invertir aquí es invertir en un modelo de crecimiento sostenible con rostro humano.”
-                    </p>
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 bg-primary-container rounded-full flex items-center justify-center text-on-primary font-bold">NS</div>
-<div>
-<p class="font-bold text-primary">Naman Antonio Sánchez</p>
-<p class="text-sm text-on-surface-variant">Gerente General - Sinclair</p>
+<div class="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
+<div class="max-w-xl">
+<p class="font-headline text-xs font-extrabold uppercase tracking-[0.4em] text-cni-gold mb-4">Dashboard Inteligente</p>
+<h2 class="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight uppercase leading-tight mb-6">Comparativa <span class="text-cni-gold">Regional</span></h2>
+<div class="h-1.5 w-28 bg-cni-gold"></div>
+</div>
+<!-- Sub-navigation / Toggle Buttons -->
+<nav class="flex flex-wrap gap-2 bg-cni-primary/5 p-1.5 rounded-full border border-cni-primary/10">
+<button class="chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all bg-cni-primary text-white shadow-lg" id="btn-ied" onclick="switchChart('ied')">Inversión Extranjera</button>
+<button class="chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all text-cni-primary hover:bg-cni-primary/10" id="btn-pib" onclick="switchChart('pib')">Crecimiento PIB</button>
+<button class="chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all text-cni-primary hover:bg-cni-primary/10" id="btn-clima" onclick="switchChart('clima')">Facilidad de Negocios</button>
+</nav>
+</div>
+<div class="relative bg-cni-primary rounded-xl overflow-hidden shadow-2xl border border-white/10 group">
+<!-- AJAX Simulation Overlay -->
+<div class="absolute inset-0 bg-cni-primary/80 backdrop-blur-sm z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300" id="chart-loader">
+<div class="flex flex-col items-center gap-4">
+<div class="w-12 h-12 border-4 border-cni-gold border-t-transparent rounded-full animate-spin"></div>
+<p class="font-headline text-[10px] uppercase tracking-[0.3em] text-white">Actualizando Datos...</p>
+</div>
+</div>
+<!-- Background Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none">
+<div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(233, 193, 118, 0.2) 1px, transparent 0); background-size: 32px 32px;"></div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-0 relative z-10 min-h-[650px]">
+<!-- Dashboard Sidebar Stats -->
+<div class="lg:col-span-4 p-12 bg-white/5 border-r border-white/10 flex flex-col justify-between">
+<div id="sidebar-content">
+<div class="mb-12">
+<span class="inline-block px-3 py-1 bg-cni-gold text-cni-primary font-headline font-extrabold text-[9px] uppercase tracking-widest mb-6 rounded-full" id="chart-label">Reporte 2024-2025</span>
+<h3 class="font-display text-4xl font-extrabold text-white uppercase leading-none mb-6" id="chart-title">Inversión Extranjera Directa</h3>
+<p class="text-white/60 font-body text-sm leading-relaxed" id="chart-desc">Honduras consolida su posición como un receptor clave de capital extranjero en Centroamérica, superando expectativas regionales.</p>
+</div>
+<div class="space-y-8">
+<div class="group/stat cursor-pointer">
+<p class="text-white/40 font-headline text-[10px] uppercase tracking-widest mb-2">Valor Destacado (Honduras)</p>
+<div class="flex items-baseline gap-2">
+<span class="text-5xl font-display font-extrabold text-cni-gold" id="stat-value">$993.9M</span>
+<span class="material-symbols-outlined text-green-400 text-sm">trending_up</span>
+</div>
+</div>
+<div class="p-6 bg-white/5 border border-white/10 rounded-lg group/info hover:bg-cni-gold/10 transition-colors">
+<div class="flex items-center gap-4 mb-4">
+<span class="material-symbols-outlined text-cni-gold">insights</span>
+<p class="font-headline text-xs font-bold uppercase text-white tracking-wider">Insight del Sector</p>
+</div>
+<p class="text-white/50 text-xs leading-relaxed font-body" id="stat-insight">El crecimiento sostenido en la reinversión de utilidades refleja la confianza del inversor a largo plazo.</p>
 </div>
 </div>
 </div>
-<!-- Kimpton -->
-<div class="bg-surface-container-lowest p-12 rounded-xl shadow-sm border-t-8 border-secondary relative">
-<span class="absolute -top-4 -right-4 text-7xl text-secondary/20 font-serif leading-none italic">“</span>
-<p class="text-xl italic font-light leading-relaxed text-on-surface-variant mb-8">
-                        “Honduras tiene un potencial increíble para los inversionistas que buscan más que un retorno financiero; aquí se puede generar un impacto real y construir un futuro sostenible.”
-                    </p>
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-on-primary font-bold">DD</div>
-<div>
-<p class="font-bold text-primary">David Dachner</p>
-<p class="text-sm text-on-surface-variant">Gerente Propietario - Kimpton Grand Hotel</p>
+<button class="mt-12 w-full py-4 border border-white/20 text-white font-headline text-[11px] font-bold uppercase tracking-widest hover:bg-white hover:text-cni-primary transition-all flex items-center justify-center gap-3">
+            Descargar Reporte Completo
+            <span class="material-symbols-outlined text-[16px]">download</span>
+</button>
+</div>
+<!-- Main Chart Display Area -->
+<div class="lg:col-span-8 p-8 md:p-16 flex flex-col">
+<div class="relative flex-grow bg-white/[0.02] rounded-xl border border-white/5 overflow-hidden flex items-center justify-center">
+<!-- View: IED -->
+<div class="chart-view active w-full h-full p-4 relative group/chart" id="view-ied">
+<img alt="IED Honduras" class="w-full h-full object-contain filter drop-shadow-2xl opacity-90 group-hover/chart:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMYvuExzMoHQ1-zZM3EmsNT1M7Ib6X8AgKFb8WaS5E37XF72ydLAb3s1uva8Q1hDNEDkEd1Y5BFwUt8UHR5tO288CpAi5CBs-Uht7nj_LJGBXraujHd2iT-LAeffrs7LDs-dYxU1N8JJ-dZfesgNkNCimO6KjIx8uVQrKiwG2YJUv7G7b6rtcEiF9HYhqdjr5whm1hm7F58aOe4__ZIIPYCe6rh72IjEkKGa38M6ta8BTo_0HCDE6vGnSB0z1-IuWJebkDWuzHBXY">
+<!-- Interactive Tooltips Simulation -->
+<div class="absolute inset-0 pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity">
+<div class="absolute bottom-[35%] left-[68%] w-8 h-8 bg-cni-gold/20 rounded-full animate-ping"></div>
+<div class="absolute bottom-[35%] left-[68%] bg-white p-3 rounded shadow-2xl pointer-events-auto cursor-help border-l-4 border-cni-gold">
+<p class="font-headline text-[10px] font-bold uppercase text-cni-primary">Honduras 2024</p>
+<p class="font-display text-lg font-extrabold text-cni-primary">$993.9M</p>
+</div>
+</div>
+</div>
+<!-- View: PIB -->
+<div class="chart-view hidden w-full h-full p-4 group/chart" id="view-pib">
+<img alt="Crecimiento PIB" class="w-full h-full object-contain filter drop-shadow-2xl opacity-90 group-hover/chart:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8Z0ruouDlO_TmknmLQoufvYxazbUu0ieQagyyWtFtLsGY0hmWh-y82DxQR3ZypXbIQqV90CXlo1nJ26S_Ammd1xgijR7N-cMXCg0zMVB0u8OjFQqvjaPtjsOZl66_8SFmWk7luD-gB9rvfQGHIGogF_R5SeVb99pptktPb5z8symO6C_D1TcjYKRgFBRNujhpzL49Dkc2ODiB_lZvZr6-UnnIk-cNMrUpNlDhfQlufobbpqFmL2-2AaX1WVLmODPQVhtwZFpC-cM">
+<!-- Interactive Tooltips Simulation -->
+<div class="absolute inset-0 pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity">
+<div class="absolute top-[28%] left-[75%] bg-white p-3 rounded shadow-2xl pointer-events-auto cursor-help border-l-4 border-cni-gold">
+<p class="font-headline text-[10px] font-bold uppercase text-cni-primary">Proyección 2029</p>
+<p class="font-display text-lg font-extrabold text-cni-primary">3.85%</p>
+</div>
+</div>
+</div>
+<!-- View: CLIMA -->
+<div class="chart-view hidden w-full h-full p-4 group/chart" id="view-clima">
+<img alt="Clima de Negocios" class="w-full h-full object-contain filter drop-shadow-2xl opacity-90 group-hover/chart:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTIVkSNZ0SXIxo-GeOwea2DTNrxkRZqkVl7d54ZN3M0hSR0pb3wdYKXWdZ600zZH2s5tpepArvgXeBfh6wcP-LCna1nK0xqT3VEmdgi9pYrDnhUco8BzKoj5ap_dDJNGInTnppqtV4UWQQ0dLsqAR1jY5cgTsoups0qHTRs3hshTta9ckFlXkSoN1YjP06qsyu57E2nwhimCcVaM4J_z6NStBv0tW5WGT7zJurzDqu0RI4ne6HSJyXUZcw9Cv0SEszmxekjMzyD9c">
+<!-- Interactive Tooltips Simulation -->
+<div class="absolute inset-0 pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity">
+<div class="absolute bottom-[25%] left-[82%] bg-white p-3 rounded shadow-2xl pointer-events-auto cursor-help border-l-4 border-cni-gold">
+<p class="font-headline text-[10px] font-bold uppercase text-cni-primary">Puntaje GCBI</p>
+<p class="font-display text-lg font-extrabold text-cni-primary">60 Pts</p>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-cni-gold"></div>
+<span class="text-white/60 font-headline text-[10px] uppercase tracking-widest">Honduras</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-white/20"></div>
+<span class="text-white/60 font-headline text-[10px] uppercase tracking-widest">Promedio Regional</span>
+</div>
+</div>
+<p class="text-white/40 text-[10px] font-body italic">Fuentes: Banco Central de Honduras, GCBI Index 2025, Proyecciones FMI.</p>
 </div>
 </div>
 </div>
 </div>
 </div>
 </section>
-<!-- Strategic Allies -->
-<section class="py-16 bg-surface-container-highest/30">
-<div class="max-w-screen-2xl mx-auto px-8 text-center">
-<p class="font-label text-sm uppercase tracking-widest text-outline mb-10">Nuestros Aliados Estratégicos</p>
-<div class="max-w-4xl mx-auto opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-<img class="w-full h-auto" data-alt="A high-quality composite graphic showing a series of professional corporate logos of strategic investment partners and government agencies in Honduras. The presentation is clean, balanced, and editorial, using a minimalist light-mode aesthetic that fits a premium enterprise environment. The mood is one of collaboration, stability, and institutional strength." src="https://lh3.googleusercontent.com/aida/ADBb0ugdSIbnr21XsTFOj1HrgB9-r0hKzDOR2aDGNDhAONTJTv54Hogv5tNfnFd3pNWR5JLrZd_u7o0uJzeYyuVGThGG-y9TfGKeKRZ8QG2p4n05BThFC9E45qIKOiLk-prM4ux4TKMM_ybhTviyMyw_ZolhxKozr_6MuFXMc9ax1lM2vEXazxq_8IJbXDHBmq0vyQGZn-sIVdkB5HATZSYkEnZ3X6Ot-iMXBqO23VNu854S2hnyXIqntQav6bzD"/>
+<script>
+  function switchChart(type) {
+    const loader = document.getElementById('chart-loader');
+    const views = document.querySelectorAll('.chart-view');
+    const buttons = document.querySelectorAll('.chart-toggle');
+    
+    // UI Feedback for loading
+    loader.classList.remove('opacity-0', 'pointer-events-none');
+    
+    setTimeout(() => {
+      // Hide all views
+      views.forEach(v => {
+        v.classList.remove('active');
+        v.classList.add('hidden');
+      });
+      
+      // Reset buttons
+      buttons.forEach(b => {
+        b.classList.remove('bg-cni-primary', 'text-white', 'shadow-lg');
+        b.classList.add('text-cni-primary', 'hover:bg-cni-primary/10');
+      });
+
+      // Update Sidebar & Data
+      const title = document.getElementById('chart-title');
+      const desc = document.getElementById('chart-desc');
+      const val = document.getElementById('stat-value');
+      const insight = document.getElementById('stat-insight');
+      const label = document.getElementById('chart-label');
+
+      if (type === 'ied') {
+        document.getElementById('view-ied').classList.add('active');
+        document.getElementById('view-ied').classList.remove('hidden');
+        document.getElementById('btn-ied').className = 'chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all bg-cni-primary text-white shadow-lg';
+        
+        title.innerText = 'Inversión Extranjera Directa';
+        desc.innerText = 'Honduras consolida su posición como un receptor clave de capital extranjero en Centroamérica, superando expectativas regionales.';
+        val.innerText = '$993.9M';
+        insight.innerText = 'El crecimiento sostenido en la reinversión de utilidades refleja la confianza del inversor a largo plazo.';
+        label.innerText = 'Reporte 2024-2025';
+      } else if (type === 'pib') {
+        document.getElementById('view-pib').classList.add('active');
+        document.getElementById('view-pib').classList.remove('hidden');
+        document.getElementById('btn-pib').className = 'chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all bg-cni-primary text-white shadow-lg';
+        
+        title.innerText = 'Crecimiento Proyectado PIB';
+        desc.innerText = 'Estimaciones macroeconómicas que posicionan a Honduras con una de las recuperaciones más robustas de la región.';
+        val.innerText = '3.85%';
+        insight.innerText = 'La estabilidad monetaria y el control inflacionario son pilares de esta proyección positiva.';
+        label.innerText = 'Proyección 2024-2029';
+      } else if (type === 'clima') {
+        document.getElementById('view-clima').classList.add('active');
+        document.getElementById('view-clima').classList.remove('hidden');
+        document.getElementById('btn-clima').className = 'chart-toggle px-8 py-3 rounded-full font-headline font-bold text-[11px] uppercase tracking-widest transition-all bg-cni-primary text-white shadow-lg';
+        
+        title.innerText = 'Facilidad para Negocios';
+        desc.innerText = 'Honduras lidera los índices de confianza corporativa gracias a la digitalización de trámites y seguridad jurídica.';
+        val.innerText = '60 Pts';
+        insight.innerText = 'Honduras es calificado como el país más confiable para negocios en CA según el GCBI 2025.';
+        label.innerText = 'GCBI Index 2025';
+      }
+
+      // Finalize loading state
+      loader.classList.add('opacity-0', 'pointer-events-none');
+    }, 400); // Simulated delay for AJAX feel
+  }
+</script>
+<!-- 7. Honduras in Figures (Flip Cards) -->
+<section class="relative py-32 bg-cni-primary overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(233, 193, 118, 0.1) 1px, transparent 0); background-size: 40px 40px;"></div>
+</div>
+<div class="max-w-screen-2xl mx-auto px-8 relative z-10">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-4">
+<div class="border-l border-white/20 pl-8">
+<h2 class="font-display text-6xl md:text-7xl font-extrabold tracking-tighter uppercase text-white leading-tight">
+<span class="text-cni-gold block mb-2">Honduras</span>
+            en cifras
+          </h2>
+<div class="h-1.5 w-24 bg-cni-gold mt-8"></div>
+</div>
+</div>
+<div class="md:col-span-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">groups</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">9.5M</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">Población</p>
+</div>
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">map</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">112k</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">Km² Extensión</p>
+</div>
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">account_balance</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">18</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">Deptos</p>
+</div>
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">eco</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">75%</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">E. Renovable</p>
+</div>
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">handshake</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">+12</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">TLCs</p>
+</div>
+<div class="bg-white/5 backdrop-blur-lg p-10 border border-white/10 rounded-xl flex flex-col items-center text-center group hover:bg-white/10 transition-all">
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-6">directions_boat</span>
+<span class="font-display text-5xl font-extrabold text-white mb-2">6</span>
+<p class="font-headline text-xs font-bold uppercase tracking-widest text-white/60">Puertos</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
-<!-- Footer Shell -->
-<footer class="bg-primary text-on-primary">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-12 py-16 w-full max-w-screen-2xl mx-auto">
+<!-- 8. Sectors Navigation -->
+<section class="py-32 px-8 bg-white">
+<div class="max-w-screen-2xl mx-auto">
+<div class="mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
 <div>
-<span class="font-headline text-lg font-bold text-tertiary-fixed block mb-6">Invest Honduras</span>
-<p class="text-on-primary-fixed-variant text-sm leading-relaxed opacity-80">
-                    El CNI es la puerta para invertir en Honduras, identificando oportunidades en sectores priorizados para nacionales y extranjeros.
+<h2 class="text-cni-primary font-display text-4xl font-extrabold tracking-tight uppercase mb-4">Sectores Estratégicos</h2>
+<div class="h-1.5 w-28 bg-cni-gold"></div>
+</div>
+<a class="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.2em] border-b-2 border-cni-gold/30 pb-2 hover:border-cni-gold transition-all" href="#">Ver todos los sectores</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-1 h-auto bg-cni-surface-low p-1">
+<!-- Agroindustria -->
+<div class="md:col-span-4 group relative overflow-hidden bg-white p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-10 group-hover:opacity-30 transition-all duration-700">
+<img alt="Agroindustria" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfKbgE8A8NbJ8h1rDyiVxDkYDQxMRRY572tw1594bk6VAQ4HRBKuC62ZRhuOBl_e0KHD3h_PwWCnwGgtlmjXUwsG6MlZxxO864V-X7rJ_UeamN8rox4q5v7NN061MJ80kxYCIAJETPyPsLj-CixaPdkhwaQEvHOU1O22Rke0c3XbIQenob0BprQpEY2l6bPfAPzo0mN4jvL6zuZ6vL_BICpoVIvaKPN40Z-Mmq-SYGAVkiIeOgQTsf-uGwwoNpm92PWXZBoZhBZ6E">
+</div>
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">agriculture</span>
+<h3 class="font-display text-2xl font-extrabold text-cni-primary uppercase mb-3">Agroindustria</h3>
+<p class="text-on-surface-variant font-body text-sm mb-8 leading-relaxed">Liderazgo regional consolidado en café, banano y productos de alto valor no tradicionales.</p>
+<a class="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+<!-- Manufactura Avanzada -->
+<div class="md:col-span-8 group relative overflow-hidden bg-cni-primary p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-20 group-hover:opacity-40 transition-all duration-700">
+<img alt="Manufactura" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqlhU_RbYvkxBlYzAj4-JtinsyOxfbNJWy3dijV5GdOD--pP85WIxoiQ7Sk0Q-lRYx5sMe7kzQ9jIcHdOVm2s-dmhYYOGr1LHnyFIi9Jph5IoX_fNsF4hHqhdugIzWl9t7eGGor3MD99NX2QA6-mO-uxN97DKeH2m9pItMpoZlymNvIiga0_Uokz5xO5dN_fospS89vsPMohMijrLWO6LVrvX4k3OiF6ww07a2JJFkhX614J_rk3IE27CvkIR0gvbFmNDamGonIFU">
+</div>
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">precision_manufacturing</span>
+<h3 class="font-display text-2xl font-extrabold text-white uppercase mb-3">Manufactura Avanzada</h3>
+<p class="text-white/70 font-body text-sm mb-8 leading-relaxed max-w-lg">Hub logístico estratégico para textiles técnicos y autopartes con acceso preferencial a Norteamérica.</p>
+<a class="text-cni-gold font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+<!-- Energía Renovable -->
+<div class="md:col-span-6 group relative overflow-hidden bg-white p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-10 group-hover:opacity-30 transition-all duration-700">
+<img alt="Energía" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLeOzKajqhalcfmd6t0Y77JjpvOtSrf8GYtNoa1CmbRNU-2Bmb9r3b8WtDxgdqzqxgFVTx2alVdlODmHzJRFPV1Y6vbXur2hOW04cz2rJ18JZd7p5MQ6odd2LPu4Im4wNpf9tZnzqCfOx8he0sbEL40H4C76j8Q75kScs2XBCc0gDFvCCNFYk0hvHyXvokqDNf0gIxiSvzZSN2Y-5Y54CrtlZGrroOP1YQGuZCnOU7cOqHqjQjG81R1DGb0KBM5QDqxHw5qmDt3Lg">
+</div>
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">bolt</span>
+<h3 class="font-display text-2xl font-extrabold text-cni-primary uppercase mb-3">Energía Renovable</h3>
+<p class="text-on-surface-variant font-body text-sm mb-8 leading-relaxed">Incentivos para el desarrollo de proyectos solares, eólicos e hidroeléctricos a gran escala.</p>
+<a class="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+<!-- Logística -->
+<div class="md:col-span-6 group relative overflow-hidden bg-cni-primary p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-20 group-hover:opacity-40 transition-all duration-700">
+<img alt="Logística" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfKbgE8A8NbJ8h1rDyiVxDkYDQxMRRY572tw1594bk6VAQ4HRBKuC62ZRhuOBl_e0KHD3h_PwWCnwGgtlmjXUwsG6MlZxxO864V-X7rJ_UeamN8rox4q5v7NN061MJ80kxYCIAJETPyPsLj-CixaPdkhwaQEvHOU1O22Rke0c3XbIQenob0BprQpEY2l6bPfAPzo0mN4jvL6zuZ6vL_BICpoVIvaKPN40Z-Mmq-SYGAVkiIeOgQTsf-uGwwoNpm92PWXZBoZhBZ6E">
+</div>
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">local_shipping</span>
+<h3 class="font-display text-2xl font-extrabold text-white uppercase mb-3">Logística</h3>
+<p class="text-white/70 font-body text-sm mb-8 leading-relaxed">Conectividad multimodal y servicios de valor agregado para el comercio global eficiente.</p>
+<a class="text-cni-gold font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+<!-- Turismo -->
+<div class="md:col-span-8 group relative overflow-hidden bg-white p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-10 group-hover:opacity-30 transition-all duration-700">
+<img alt="Turismo" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClUWl0qeuPq74UIDN7WdqhNWQZ3ys4DM8pasJvHdmhRDvW2LaCBpG2FyhwAIrsrzEJZmAK1iRDdo5LOB6TFICf8xocqQVKF7eh6UcCIMIWrExqWEzTdOBksyWftmlaPKu-v1uKjc9Lkh66WjJ_DwEQkgVp8aq7DTCOwfyfTMTFqcRW93tPYuCSvkjvSZKGZ_iuEVfkHBzi4Jv1097p_gHEkE71LuJYh2tun2mFLxnOopKgAak9giyVWxsZiO18yH6wmwXeGKLTTOU">
+</div>
+<span class="material-symbols-outlined text-cni-gold text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">beach_access</span>
+<h3 class="font-display text-2xl font-extrabold text-cni-primary uppercase mb-3">Turismo</h3>
+<p class="text-on-surface-variant font-body text-sm mb-8 leading-relaxed max-w-lg">Destino de clase mundial para ecoturismo, arqueología y playas vírgenes con incentivos fiscales.</p>
+<a class="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+<!-- Infraestructura -->
+<div class="md:col-span-4 group relative overflow-hidden bg-cni-gold p-12 flex flex-col justify-end min-h-[350px]">
+<div class="absolute inset-0 opacity-20 group-hover:opacity-40 transition-all duration-700">
+<img alt="Infraestructura" class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF8ZnKL1oGbIFyqRVDjKbMM7vGT9G5E8IQSy6cIT0XyfYcvPf6xVBrCGc-cC-SBjsKsEGHqZyv3bMMIllRBKgCYd3hVUWJSaeK457yBQTtbPvqynP6GnS8V_8kjSvrDwIMfruvXsjc7Q7w0qJB5bm8BztCpIjpzTsIePU8pRbYspK8SWFSCYZDKA_9PJ1_yyxAU9L44HCMYUbsTDTk-9nxeL0LN-TOzm66VlFRlICgduYUdioeesg1c-gXR9S2SZI-jKqyFulHCd4">
+</div>
+<span class="material-symbols-outlined text-cni-primary text-5xl mb-8 group-hover:translate-y-[-10px] transition-transform">architecture</span>
+<h3 class="font-display text-2xl font-extrabold text-cni-primary uppercase mb-3">Infraestructura</h3>
+<p class="text-cni-primary/70 font-body text-sm mb-8 leading-relaxed">Desarrollo de corredores interoceánicos, modernización portuaria y zonas de empleo especial.</p>
+<a class="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all" href="#">Ver Detalles <span class="material-symbols-outlined text-[16px]">north_east</span></a>
+</div>
+</div>
+</div>
+</section>
+<!-- 9. Two-Level Partners Carousel -->
+<section class="py-24 bg-cni-surface-low overflow-hidden border-y border-cni-surface-low/50">
+<div class="max-w-screen-2xl mx-auto px-8 mb-16">
+<h2 class="font-headline text-[12px] font-extrabold uppercase text-cni-primary tracking-[0.3em] text-center">Nuestros Aliados Estratégicos</h2>
+</div>
+<div class="space-y-16">
+<div class="flex animate-marquee whitespace-nowrap">
+<div class="flex gap-20 items-center px-10">
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">account_balance</span> IDB</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">public</span> USAID</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">payments</span> CABEI</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">language</span> WORLD BANK</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">corporate_fare</span> UNDP</div>
+<!-- Repeated for seamless loop -->
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">account_balance</span> IDB</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">public</span> USAID</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">payments</span> CABEI</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">language</span> WORLD BANK</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">corporate_fare</span> UNDP</div>
+</div>
+</div>
+<div class="flex animate-marquee-reverse whitespace-nowrap">
+<div class="flex gap-20 items-center px-10">
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">handshake</span> AMCHAM</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">apartment</span> COHEP</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">factory</span> ANDI</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">groups</span> CCIT</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">policy</span> CCIC</div>
+<!-- Repeated for seamless loop -->
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">handshake</span> AMCHAM</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">apartment</span> COHEP</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">factory</span> ANDI</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">groups</span> CCIT</div>
+<div class="flex items-center gap-4 font-display text-xl font-extrabold text-cni-primary/40 grayscale hover:grayscale-0 transition-all"><span class="material-symbols-outlined text-4xl">policy</span> CCIC</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 10. Testimonials -->
+<section class="py-32 bg-white">
+<div class="max-w-4xl mx-auto px-8 text-center">
+<span class="material-symbols-outlined text-cni-gold text-7xl mb-12">format_quote</span>
+<div class="mb-16">
+<p class="font-display text-2xl md:text-3xl font-medium italic text-cni-primary leading-[1.6]">"Honduras ha demostrado ser un socio excepcional. La agilidad del CNI para facilitar procesos y la calidad de la mano de obra local han sido fundamentales para nuestra expansión regional exitosa."</p>
+</div>
+<div class="flex flex-col items-center">
+<div class="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-cni-surface-low p-1.5 shadow-lg">
+<img alt="Testimonio" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAynfQtrN2sQT_LyRZK4dw5TJ4Qyfc0LXOqWj1jthApUsA5OCX9tzLTtzTMoZHZ3AOyvcJKLPYTTyTNMLYj5kheeqFs-1D-eqd32N4RCZLR167C990QuTqklco9cUEcKI7NZCaLo1PyT_uhcywx-v_P5ottPbhTYO67A2DrML87Vm8YufScs9wVdnaGASUgTBpHJKsyNbo4M51UqlPu2cwkJm2pyVcdbgij8uKIQT7oQaZf2BQm40NzCT_aaPZtPALanu6MIeQneAM">
+</div>
+<p class="font-headline font-extrabold text-cni-primary uppercase text-[12px] tracking-[0.2em] mb-1">James Wilson</p>
+<p class="font-body text-[10px] text-on-surface-variant uppercase tracking-[0.1em]">CEO, Global Logistics Group</p>
+</div>
+</div>
+</section>
+<!-- 11. CNI al Día (News Section) -->
+<section class="py-32 px-8 bg-cni-surface-low">
+<div class="max-w-screen-2xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
+<div>
+<h2 class="text-cni-primary font-display text-4xl font-extrabold tracking-tight uppercase mb-4">CNI al Día</h2>
+<div class="h-1.5 w-24 bg-cni-gold"></div>
+</div>
+<button class="bg-cni-primary text-white px-8 py-3 rounded-DEFAULT font-headline font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-cni-gold hover:text-cni-primary transition-all">Ver Todas las Noticias</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<!-- Main News--></div></div></section></main><footer class="bg-cni-primary text-white relative overflow-hidden pt-24 pb-12">
+    <!-- Wave Divider -->
+    <div class="absolute top-0 left-0 w-full overflow-hidden leading-none rotate-180"><svg class="relative block w-full h-[80px]" data-name="Layer 1" preserveAspectRatio="none" viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg">
+    <path class="fill-white" d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+</svg></div>
+    
+    <!-- Dot Pattern Overlay -->
+    <div class="absolute inset-0 opacity-10 pointer-events-none">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, rgba(233, 193, 118, 0.2) 1px, transparent 0); background-size: 32px 32px;"></div>
+    </div>
+
+    <div class="max-w-screen-2xl mx-auto px-8 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 mb-20">
+            <!-- Left Column: Logo & Social -->
+            <div class="lg:col-span-3">
+                <div class="text-2xl font-display font-extrabold tracking-tight uppercase mb-8">
+                    CNI <span class="text-cni-gold">Honduras</span>
+                </div>
+                <p class="text-white/60 font-body text-sm leading-relaxed mb-8 max-w-xs">
+                    Entidad pública de derecho privado encargada de promover y facilitar la inversión nacional y extranjera.
                 </p>
-<div class="flex gap-4 mt-6">
-<a class="material-symbols-outlined text-on-primary-fixed-variant hover:text-tertiary-fixed" data-icon="public" href="#">public</a>
-<a class="material-symbols-outlined text-on-primary-fixed-variant hover:text-tertiary-fixed" data-icon="business" href="#">business</a>
-<a class="material-symbols-outlined text-on-primary-fixed-variant hover:text-tertiary-fixed" data-icon="mail" href="#">mail</a>
-</div>
-</div>
-<div>
-<h5 class="text-sm font-bold uppercase tracking-widest text-on-primary mb-6">Inversionistas</h5>
-<ul class="space-y-4">
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">Sectores Estratégicos</a></li>
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">Marco Legal</a></li>
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">Portafolio de Inversión</a></li>
-</ul>
-</div>
-<div>
-<h5 class="text-sm font-bold uppercase tracking-widest text-on-primary mb-6">Enlaces Externos</h5>
-<ul class="space-y-4">
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">Presidencia</a></li>
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">COHEP</a></li>
-<li><a class="text-on-primary-fixed-variant text-sm hover:text-on-primary transition-opacity duration-200" href="#">BCH</a></li>
-</ul>
-</div>
-<div>
-<h5 class="text-sm font-bold uppercase tracking-widest text-on-primary mb-6">Contacto</h5>
-<p class="text-on-primary-fixed-variant text-sm mb-4">
-<strong>Tegucigalpa:</strong><br/>
-                    seguimiento@cni.hn<br/>
-                    (504) 2242-8955
-                </p>
-<p class="text-on-primary-fixed-variant text-sm">
-<strong>San Pedro Sula:</strong><br/>
-                    oficinasps@cni.hn<br/>
-                    (504) 2561-6100
-                </p>
-</div>
-</div>
-<div class="px-12 py-8 border-t border-on-primary/10 text-center">
-<p class="text-xs text-on-primary-fixed-variant">© 2024 Invest Honduras - Republic of Honduras Investment Promotion Agency. All rights reserved.</p>
-</div>
+                <div class="flex gap-4"><a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all">
+    <span class="material-symbols-outlined text-[20px]">facebook</span>
+</a>
+<a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all">
+    <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</a>
+<a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all">
+    <span class="material-symbols-outlined text-[20px]">close</span>
+</a>
+<a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all">
+    <span class="material-symbols-outlined text-[20px]">work</span>
+</a>
+<a href="#" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all">
+    <span class="material-symbols-outlined text-[20px]">play_circle</span>
+</a></div>
+            </div>
+
+            <!-- Middle Column 1: Inversionistas -->
+            <div class="lg:col-span-2">
+                <h4 class="font-headline text-xs font-extrabold uppercase tracking-[0.2em] text-cni-gold mb-8">Inversionistas</h4>
+                <ul class="space-y-4 font-body text-sm text-white/70">
+                    <li class=""><a href="#" class="hover:text-white transition-colors">Consejo Nacional de Inversiones</a></li>
+                    <li class=""><a href="#" class="hover:text-white transition-colors">Recursos CNI</a></li>
+                    <li class=""><a href="#" class="hover:text-white transition-colors">Preguntas frecuentes</a></li>
+                    <li class=""><a href="#" class="hover:text-white transition-colors">Casos de éxito</a></li>
+                    <li class=""><a href="#" class="hover:text-white transition-colors">Portafolio de inversiones</a></li>
+                </ul>
+            </div>
+
+            <!-- Middle Column 2: Enlaces Externos -->
+            <div class="lg:col-span-3">
+                <h4 class="font-headline text-xs font-extrabold uppercase tracking-[0.2em] text-cni-gold mb-8">Enlaces Externos</h4>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-4 font-body text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                    <a href="#" class="hover:text-cni-gold transition-colors">Presidencia</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">COHEP</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">BCH</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">INE</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">Aduanas</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">Fedecamaras</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">SDE</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">SERNA</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">ANDI</a>
+                    <a href="#" class="hover:text-cni-gold transition-colors">WAIPA</a>
+                </div>
+            </div>
+
+            <!-- Right Column: CTA -->
+            <div class="lg:col-span-4">
+                <div class="bg-white/5 border border-white/10 p-8 rounded-xl relative overflow-hidden group">
+                    <div class="relative z-10">
+                        <h4 class="font-display text-xl font-extrabold uppercase mb-4">Acelera tu proceso de inversión</h4>
+                        <p class="text-white/60 text-sm mb-8">Obtenga asesoría personalizada y gratuita para sus proyectos en Honduras.</p>
+                        <button class="w-full bg-cni-gold text-cni-primary py-4 rounded-DEFAULT font-headline font-extrabold text-[11px] uppercase tracking-[0.2em] hover:bg-white transition-all">
+                            Contacta al CNI
+                        </button>
+                    </div>
+                    <div class="absolute -bottom-4 -right-4 opacity-20 group-hover:opacity-40 transition-opacity">
+                        <span class="material-symbols-outlined text-[120px] text-cni-gold">support_agent</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="pt-12 border-t border-white/10">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div class="space-y-4">
+                    <p class="font-headline text-[10px] font-extrabold uppercase tracking-widest text-cni-gold">Tegucigalpa</p>
+                    <p class="text-white/50 text-xs leading-relaxed">
+                        Colonia Lomas del Guijarro Sur, Calle Roma, Edificio Torre Alianza II, Nivel 5.
+                        <br>Tel: +504 2232-3535
+                    </p>
+                </div>
+                <div class="space-y-4">
+                    <p class="font-headline text-[10px] font-extrabold uppercase tracking-widest text-cni-gold">San Pedro Sula</p>
+                    <p class="text-white/50 text-xs leading-relaxed">
+                        Barrio Los Andes, 2da Calle, entre 10 y 11 Ave. Edificio Cámara de Comercio e Industrias de Cortés.
+                        <br>Tel: +504 2561-6100
+                    </p>
+                </div>
+                <div class="lg:text-right flex flex-col lg:items-end justify-between h-full">
+                    <p class="text-white/40 text-[10px] uppercase tracking-widest">
+                        © 2024 Consejo Nacional de Inversiones. Todos los derechos reservados.
+                    </p>
+                    <div class="flex gap-6 mt-4 text-[10px] font-bold uppercase tracking-widest text-white/30">
+                        <a href="#" class="hover:text-white transition-colors">Privacidad</a>
+                        <a href="#" class="hover:text-white transition-colors">Términos</a>
+                        <a href="#" class="hover:text-white transition-colors">Transparencia</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </footer>
+
+
+
 </body></html>

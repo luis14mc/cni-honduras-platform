@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Building2, Cpu, Sprout, Tent, Zap } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PageHero } from "@/src/components/cni/PageHero";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
+import { SectorTeaserCard } from "@/src/components/cni/SectorTeaserCard";
+import { SectorIcon } from "@/src/components/cni/SectorIcon";
+import type { SectorSlug } from "@/src/data/investmentSectors";
+import { sectorPhotoHeaders, SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { isLocale } from "@/src/i18n/config";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
@@ -13,14 +17,6 @@ import type { Locale } from "@/src/i18n/config";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
 
-const ICONS = {
-  agroindustria: Sprout,
-  manufactura: Cpu,
-  turismo: Tent,
-  energia: Zap,
-  infraestructura: Building2,
-} as const;
-
 export default async function InvertirPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
@@ -28,10 +24,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
   const c = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
 
-  const sectors = c.sectors.map((s) => ({
-    ...s,
-    Icon: ICONS[s.slug as keyof typeof ICONS] ?? Sprout,
-  }));
+  const sectors = c.sectors;
 
   return (
     <div className="flex flex-1 flex-col bg-[#f8f9fa]">
@@ -79,41 +72,28 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
       <Section id="sectores" tone="white">
         <SectionHeader eyebrow={c.sectionEyebrow} title={c.sectionTitle} description={c.sectionDescription} />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sectors.map(({ slug, name, short, Icon, image }, idx) => (
-            <article
-              key={slug}
-              className="group relative overflow-hidden rounded-xl bg-[#f3f4f5] tonal-depth-layering transition-all hover:shadow-2xl"
-            >
-              <div className="relative h-48 w-full overflow-hidden">
-                <Image
-                  src={image}
-                  alt={name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/80 via-[#000a1e]/20 to-transparent" />
-                <span className="absolute left-4 top-4 inline-flex items-center justify-center rounded bg-[#e9c176] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-[#191c1d]">
-                  {c.sectorBadge} 0{idx + 1}
-                </span>
-              </div>
-              <div className="p-8">
-                <Icon className="mb-4 h-10 w-10 text-[#3a5f94]" />
-                <h3 className="text-xl font-bold text-[#000a1e]">{name}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{short}</p>
-                <Link
-                  href={getSectorHref(locale, slug)}
-                  className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition-all group-hover:gap-3 group-hover:text-[#e9c176]"
-                >
-                  {c.viewDetail} <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </article>
+          {sectors.map((sector, idx) => (
+            <SectorTeaserCard
+              key={sector.slug}
+              locale={locale}
+              slug={sector.slug as SectorSlug}
+              name={sector.name}
+              short={sector.short}
+              image={sector.image}
+              badge={c.sectorBadge}
+              badgeIndex={idx}
+              viewDetailLabel={c.viewDetail}
+            />
           ))}
         </div>
       </Section>
 
-      {sectors.map((s, idx) => (
+      {sectors.map((s, idx) => {
+        const slug = s.slug as SectorSlug;
+        const sidePhoto = sectorPhotoHeaders[slug] ?? s.image;
+        const sideUsesIcon = !sectorPhotoHeaders[slug];
+
+        return (
         <Section key={s.slug} id={s.slug} tone={idx % 2 === 0 ? "surface" : "low"}>
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div className={`lg:col-span-7 ${idx % 2 === 1 ? "lg:order-2" : ""}`}>
@@ -129,7 +109,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
                     key={h}
                     className="flex items-center gap-3 rounded-lg border-l-4 border-[#e9c176] bg-white px-5 py-3 text-sm font-medium text-[#000a1e] tonal-depth-layering"
                   >
-                    <s.Icon className="h-4 w-4 text-[#3a5f94]" />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3a5f94]" />
                     {h}
                   </li>
                 ))}
@@ -151,14 +131,21 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
               </div>
             </div>
             <div className={`lg:col-span-5 ${idx % 2 === 1 ? "lg:order-1" : ""}`}>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl tonal-depth-layering">
-                <Image src={s.image} alt={s.name} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/70 via-transparent to-transparent" />
-              </div>
+              {sideUsesIcon ? (
+                <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-white to-[#eef0f2] tonal-depth-layering">
+                  <SectorIcon slug={slug} size={SECTOR_ICON_SIZE.card} />
+                </div>
+              ) : (
+                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl tonal-depth-layering">
+                  <Image src={sidePhoto} alt={s.name} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/70 via-transparent to-transparent" />
+                </div>
+              )}
             </div>
           </div>
         </Section>
-      ))}
+        );
+      })}
 
       <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
         <div className="absolute right-0 top-0 h-full w-1/3 skew-x-12 translate-x-20 bg-[#002147] opacity-50" />
