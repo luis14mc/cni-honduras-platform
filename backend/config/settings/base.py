@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     "apps.geo",
     "apps.investment",
     "apps.media_library",
+    "apps.forms",
+    "apps.integrations",
 ]
 
 MIDDLEWARE = [
