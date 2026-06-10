@@ -68,7 +68,7 @@ class Municipality(models.Model):
         related_name="municipalities",
     )
     name = models.CharField(max_length=120)
-    slug = models.SlugField(max_length=140, unique=True, db_index=True)
+    slug = models.SlugField(max_length=140, db_index=True)
     code = models.CharField(max_length=32, blank=True, default="")
     description = models.TextField(blank=True, default="")
 
@@ -84,6 +84,12 @@ class Municipality(models.Model):
         ordering = ("name",)
         verbose_name = "Municipio"
         verbose_name_plural = "Municipios"
+        constraints = [
+            models.UniqueConstraint(
+                fields=("department", "slug"),
+                name="unique_municipality_slug_per_department",
+            )
+        ]
 
     def __str__(self) -> str:
         return self.name
@@ -92,4 +98,3 @@ class Municipality(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-

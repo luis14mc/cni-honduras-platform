@@ -1,9 +1,10 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .views import DepartmentDetailView, DepartmentListView
+from .viewsets import CNIRegionViewSet, DepartmentViewSet, MunicipalityViewSet
 
-urlpatterns = [
-    path("departments/", DepartmentListView.as_view(), name="geo-department-list"),
-    path("departments/<slug:slug>/", DepartmentDetailView.as_view(), name="geo-department-detail"),
-]
+router = DefaultRouter()
+router.register(r"departments", DepartmentViewSet, basename="geo-department")
+router.register(r"regions", CNIRegionViewSet, basename="geo-region")
+router.register(r"municipalities", MunicipalityViewSet, basename="geo-municipality")
 
+urlpatterns = router.urls

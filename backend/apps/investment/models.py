@@ -96,11 +96,13 @@ class InvestmentOpportunity(TimeStampedModel):
 
 
 class ProjectStage(models.TextChoices):
-    IDEA = "idea", "Idea"
-    PLANNING = "planning", "Planificación"
-    EXECUTION = "execution", "Ejecución"
-    OPERATING = "operating", "En operación"
-    COMPLETED = "completed", "Completado"
+    PROMOTION = "promotion", "Promoción"
+    ANNOUNCED = "announced", "Anunciado"
+    STARTUP = "startup", "Arranque"
+    IMPLEMENTING = "implementing", "Implementando"
+    STALLED = "stalled", "Parado"
+    FINISHED = "finished", "Finalizado"
+    CANCELLED = "cancelled", "Cancelado"
 
 
 class InvestmentProject(TimeStampedModel):
@@ -143,7 +145,7 @@ class InvestmentProject(TimeStampedModel):
     project_stage = models.CharField(
         max_length=16,
         choices=ProjectStage.choices,
-        default=ProjectStage.IDEA,
+        default=ProjectStage.PROMOTION,
         db_index=True,
     )
     is_public = models.BooleanField(default=True, db_index=True)
