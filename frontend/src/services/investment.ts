@@ -34,6 +34,12 @@ export function getProjects(): Promise<InvestmentProject[]> {
   return apiGet<InvestmentProject[]>(`${BASE}/projects/`);
 }
 
+export function getProjectsBySector(sectorSlug: string): Promise<InvestmentProject[]> {
+  return apiGet<InvestmentProject[]>(
+    `${BASE}/projects/?sector=${encodeURIComponent(sectorSlug)}`,
+  );
+}
+
 export function getProject(slug: string): Promise<InvestmentProject> {
   return apiGet<InvestmentProject>(`${BASE}/projects/${slug}/`);
 }
