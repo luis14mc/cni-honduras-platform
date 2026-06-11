@@ -122,7 +122,7 @@ type PortfolioSector = {
 
 const PROJECT_STAGE_LABELS: Record<Locale, Record<ProjectStage, string>> = {
   es: {
-    promotion: "PromociÃ³n",
+    promotion: "Promoción",
     announced: "Anunciado",
     startup: "Arranque",
     implementing: "Implementando",
@@ -156,16 +156,16 @@ const OPPORTUNITY_STATUS_LABELS = {
 
 const portfolioLabels = {
   es: {
-    projectsSummary: "Proyectos pÃºblicos",
-    opportunitiesSummary: "Oportunidades pÃºblicas",
-    projectsTitle: "Proyectos de inversiÃ³n",
-    opportunitiesTitle: "Oportunidades de inversiÃ³n",
-    emptyProjects: "No hay proyectos pÃºblicos disponibles en este momento.",
-    emptyOpportunities: "No hay oportunidades pÃºblicas disponibles en este momento.",
+    projectsSummary: "Proyectos públicos",
+    opportunitiesSummary: "Oportunidades públicas",
+    projectsTitle: "Proyectos de inversión",
+    opportunitiesTitle: "Oportunidades de inversión",
+    emptyProjects: "No hay proyectos públicos disponibles en este momento.",
+    emptyOpportunities: "No hay oportunidades públicas disponibles en este momento.",
     sector: "Sector",
     stage: "Etapa",
     status: "Estado",
-    investment: "InversiÃ³n",
+    investment: "Inversión",
     jobs: "Empleos",
   },
   en: {
