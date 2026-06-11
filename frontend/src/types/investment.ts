@@ -76,11 +76,13 @@ export interface InvestmentOpportunity {
 }
 
 export type ProjectStage =
-  | "idea"
-  | "planning"
-  | "execution"
-  | "operating"
-  | "completed";
+  | "promotion"
+  | "announced"
+  | "startup"
+  | "implementing"
+  | "stalled"
+  | "finished"
+  | "cancelled";
 
 export interface InvestmentProject {
   id: number;
