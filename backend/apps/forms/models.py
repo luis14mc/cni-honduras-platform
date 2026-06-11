@@ -51,12 +51,26 @@ class ContactSubmission(BaseSubmission):
 
 
 class ProjectApplication(BaseSubmission):
+    project_name = models.CharField(
+        max_length=255, blank=True, default="", verbose_name="Nombre del proyecto"
+    )
     details = models.TextField(blank=True, default="", verbose_name="Detalles del proyecto")
+    message = models.TextField(blank=True, default="", verbose_name="Mensaje adicional")
     sector = models.CharField(max_length=150, blank=True, default="", verbose_name="Sector")
     department = models.CharField(max_length=150, blank=True, default="", verbose_name="Departamento")
+    project_location = models.CharField(
+        max_length=255, blank=True, default="", verbose_name="Ubicación del proyecto"
+    )
+    investment_range = models.CharField(
+        max_length=150, blank=True, default="", verbose_name="Rango de inversión"
+    )
     estimated_investment = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True, verbose_name="Inversión estimada"
     )
+    expected_jobs = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name="Empleos esperados"
+    )
+    consent = models.BooleanField(default=False, verbose_name="Consentimiento de contacto")
 
     class Meta(BaseSubmission.Meta):
         abstract = False

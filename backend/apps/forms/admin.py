@@ -23,7 +23,24 @@ class ContactSubmissionAdmin(BaseSubmissionAdmin):
 
 @admin.register(ProjectApplication)
 class ProjectApplicationAdmin(BaseSubmissionAdmin):
+    list_display = (
+        "full_name",
+        "email",
+        "company",
+        "project_name",
+        "sector",
+        "investment_range",
+        "status",
+        "created_at",
+    )
     list_filter = BaseSubmissionAdmin.list_filter + ("sector", "department")
+    search_fields = BaseSubmissionAdmin.search_fields + (
+        "project_name",
+        "project_location",
+        "investment_range",
+        "details",
+        "message",
+    )
 
 
 @admin.register(AdvisoryRequest)

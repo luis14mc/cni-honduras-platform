@@ -25,6 +25,7 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/portfolio": "/portafolio",
     "/portfolio/success-stories": "/portafolio/casos",
     "/portfolio/submit": "/portafolio/postulacion",
+    "/application": "/postulacion",
     "/portfolio/map": "/portafolio/mapa",
     "/resources": "/recursos",
     "/resources/institutional": "/recursos/institucional",
@@ -70,9 +71,11 @@ function buildMaps() {
   es.set("/asesoria", "/es/asesoria");
   es.set("/tramites", "/es/tramites");
   es.set("/prensa", "/es/prensa");
+  es.set("/postulacion", "/es/postulacion");
   en.set("/en/advisory", "/en/asesoria");
   en.set("/en/procedures", "/en/tramites");
   en.set("/en/news", "/en/prensa");
+  en.set("/en/application", "/en/postulacion");
   // Categorías de recursos
   es.set("/recursos/institucional", "/es/recursos/institucional");
   es.set("/recursos/tecnicos", "/es/recursos/tecnicos");
@@ -88,7 +91,12 @@ const maps = buildMaps();
 export function resolveInternalPath(pathname: string): string | null {
   const normalized = normalizePath(pathname);
 
-  if (/^\/(es|en)(\/|$)/.test(normalized)) {
+  if (normalized === "/en" || normalized.startsWith("/en/")) {
+    const slug = internalSlugFromPublic(normalized, "en");
+    return slug === "" ? "/en" : `/en${slug}`;
+  }
+
+  if (/^\/es(\/|$)/.test(normalized)) {
     return normalized;
   }
 
