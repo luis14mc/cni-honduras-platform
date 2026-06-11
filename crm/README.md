@@ -68,6 +68,16 @@ Detalle: [docs/03-suitecrm-integration-flow.md](docs/03-suitecrm-integration-flo
 
 Mapeo de módulos CRM: [docs/02-suitecrm-modules-cni.md](docs/02-suitecrm-modules-cni.md).
 
+## Configuración operativa SIGI CNI
+
+Documentación para la primera configuración manual del CRM (después del instalador web):
+
+| Documento | Contenido |
+|-----------|-----------|
+| [docs/05-suitecrm-cni-configuration.md](docs/05-suitecrm-cni-configuration.md) | Identidad SIGI CNI, módulos, usuarios, principios |
+| [docs/06-suitecrm-custom-fields.md](docs/06-suitecrm-custom-fields.md) | Campos personalizados Accounts, Contacts, Opportunities |
+| [docs/07-suitecrm-pipeline-stages.md](docs/07-suitecrm-pipeline-stages.md) | Ciclo de vida, Lead Status, etapas de proyecto |
+
 ## Qué no subir a Git
 
 - `crm/.env` (credenciales reales)
@@ -84,6 +94,7 @@ Mapeo de módulos CRM: [docs/02-suitecrm-modules-cni.md](docs/02-suitecrm-module
 ## Próximos pasos (referencia)
 
 - [ ] Descargar e instalar SuiteCRM en `crm/suitecrm/`
-- [ ] Configurar módulos y campos según `docs/02-suitecrm-modules-cni.md`
+- [ ] Configurar SIGI CNI según [docs/05-suitecrm-cni-configuration.md](docs/05-suitecrm-cni-configuration.md)
+- [ ] Crear campos y pipelines: [docs/06](docs/06-suitecrm-custom-fields.md), [docs/07](docs/07-suitecrm-pipeline-stages.md)
 - [ ] Conectar n8n con el webhook `N8N_PROJECT_APPLICATION_WEBHOOK_URL` (backend)
 - [ ] Desplegar en `crm.cni.hn` con TLS y backups de MariaDB
