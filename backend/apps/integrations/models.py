@@ -1,6 +1,10 @@
 from django.db import models
 
 
+WEBHOOK_SOURCE_WEBSITE = "website"
+WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED = "project_application.created"
+
+
 class WebhookEvent(models.Model):
     source = models.CharField(max_length=120, db_index=True, verbose_name="Origen")
     event_type = models.CharField(max_length=150, db_index=True, verbose_name="Tipo de evento")

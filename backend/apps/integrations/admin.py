@@ -7,7 +7,7 @@ from .models import SuiteCRMIntegrationLog, WebhookEvent
 class WebhookEventAdmin(admin.ModelAdmin):
     list_display = ("source", "event_type", "processed", "created_at", "processed_at")
     list_filter = ("processed", "source", "event_type", "created_at")
-    search_fields = ("source", "event_type", "error_message")
+    search_fields = ("source", "event_type", "error_message", "payload")
     readonly_fields = ("created_at",)
     date_hierarchy = "created_at"
 
