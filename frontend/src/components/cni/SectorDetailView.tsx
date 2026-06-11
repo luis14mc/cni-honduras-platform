@@ -3,17 +3,15 @@ import Image from "next/image";
 import { ArrowRight, Check } from "lucide-react";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
 import type { Locale } from "@/src/i18n/config";
-import type { SectorSlug } from "@/src/data/investmentSectors";
-import { getSectorBySlug } from "@/src/data/investmentSectors";
+import type { SectorCopy, SectorSlug } from "@/src/data/investmentSectors";
 import { SectorIcon } from "@/src/components/cni/SectorIcon";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { withLocale } from "@/src/i18n/path";
 
-type Props = { locale: Locale; slug: SectorSlug };
+type Props = { locale: Locale; slug: SectorSlug; sector: SectorCopy };
 
-export function SectorDetailView({ locale, slug }: Props) {
-  const sector = getSectorBySlug(locale, slug)!;
+export function SectorDetailView({ locale, slug, sector }: Props) {
   const x = getSectorPageExtra(slug, locale);
   const inv = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);

@@ -1,13 +1,17 @@
 import { notFound } from "next/navigation";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
-import { isSectorSlug } from "@/src/data/investmentSectors";
+import {
+  getSectorBySlug,
+  isSectorSlug,
+  mergeSectorWithApi,
+  SECTOR_SLUGS,
+} from "@/src/data/investmentSectors";
+import { getSector } from "@/src/services/investment";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 
 export function generateStaticParams() {
-  return (["agroindustria", "manufactura", "turismo", "energia", "infraestructura"] as const).map((slug) => ({
-    slug,
-  }));
+  return SECTOR_SLUGS.map((slug) => ({ slug }));
 }
 
 export default async function SectorPage({
@@ -17,5 +21,18 @@ export default async function SectorPage({
 }) {
   const { locale: raw, slug } = await params;
   if (!isLocale(raw) || !isSectorSlug(slug)) notFound();
-  return <SectorDetailView locale={raw as Locale} slug={slug} />;
+
+  const locale = raw as Locale;
+  const fallback = getSectorBySlug(locale, slug);
+  if (!fallback) notFound();
+
+  let sector = fallback;
+  try {
+    const apiSector = await getSector(slug);
+    sector = mergeSectorWithApi(fallback, apiSector);
+  } catch {
+    // 404, red u otros errores HTTP: mantener fallback estático.
+  }
+
+  return <SectorDetailView locale={locale} slug={slug} sector={sector} />;
 }

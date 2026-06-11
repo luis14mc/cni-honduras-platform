@@ -1,4 +1,5 @@
 import type { Locale } from "@/src/i18n/config";
+import type { Sector } from "@/src/types/investment";
 import { designImages } from "@/src/lib/designAssets";
 
 const IMG = {
@@ -150,4 +151,16 @@ export function getSectors(locale: Locale): ReadonlyArray<SectorCopy> {
 export function getSectorBySlug(locale: Locale, slug: string): SectorCopy | undefined {
   if (!isSectorSlug(slug)) return undefined;
   return getSectors(locale).find((s) => s.slug === slug);
+}
+
+/** Combina datos del sector estático con respuesta de la API (campos API tienen prioridad). */
+export function mergeSectorWithApi(fallback: SectorCopy, api: Sector): SectorCopy {
+  return {
+    slug: fallback.slug,
+    name: api.name || fallback.name,
+    short: api.short_description || fallback.short,
+    fullText: api.description || fallback.fullText,
+    highlights: fallback.highlights,
+    image: api.image || fallback.image,
+  };
 }
