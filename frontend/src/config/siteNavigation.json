@@ -70,5 +70,10 @@
     "id": "recursos",
     "label": { "es": "Recursos", "en": "Resources" },
     "path": { "es": "/recursos", "en": "/en/resources" }
+  },
+  {
+    "id": "prensa",
+    "label": { "es": "Prensa", "en": "News" },
+    "path": { "es": "/prensa", "en": "/en/news" }
   }
 ]

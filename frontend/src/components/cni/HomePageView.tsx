@@ -7,12 +7,52 @@ import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
+import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 
-type Props = { locale: Locale };
+type Props = {
+  locale: Locale;
+  latestNews?: NewsArticle[];
+};
 
-export function HomePageView({ locale }: Props) {
+const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
+  es: {
+    news: "Noticia",
+    press_release: "Comunicado",
+    event: "Evento",
+    announcement: "Anuncio",
+    article: "Artículo",
+  },
+  en: {
+    news: "News",
+    press_release: "Press release",
+    event: "Event",
+    announcement: "Announcement",
+    article: "Article",
+  },
+};
+
+const newsFallbackImages = [
+  "/images/hero/home/logistica.webp",
+  "/images/hero/home/energia.webp",
+  "/images/hero/home/turismo.webp",
+];
+
+function formatNewsDate(locale: Locale, value: string): string {
+  return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "es-HN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+function newsImage(article: NewsArticle, index: number): string {
+  return article.featured_image?.file || newsFallbackImages[index % newsFallbackImages.length]!;
+}
+
+export function HomePageView({ locale, latestNews = [] }: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
+  const visibleNews = latestNews.slice(0, 3);
 
   // 1. Slider interactivo "¿Por qué Honduras?"
   const [whyHondurasIndex, setWhyHondurasIndex] = useState(0);
@@ -1397,72 +1437,59 @@ export function HomePageView({ locale }: Props) {
         </div>
       </section>
 
-      {/* 11. CNI al Día (Color Matched Layout) */}
-      <section className="py-32 px-8 bg-white border-t border-cni-surface-low/50">
-        <div className="max-w-screen-xl mx-auto">
-          {/* Centered Title */}
-          <div className="text-center mb-16 flex flex-col items-center">
-            <h2 className="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-2 uppercase">
-              CNI al día
-            </h2>
-            <h3 className="text-cni-secondary font-display text-2xl md:text-3xl font-bold">
-              Consejo Nacional de Inversiones Honduras
-            </h3>
-            <div className="h-1.5 w-24 bg-cni-gold mt-6"></div>
-          </div>
+      {visibleNews.length > 0 && (
+        <section className="py-32 px-8 bg-white border-t border-cni-surface-low/50">
+          <div className="max-w-screen-xl mx-auto">
+            <div className="text-center mb-16 flex flex-col items-center">
+              <h2 className="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-2 uppercase">
+                {locale === "es" ? "CNI al día" : "CNI News"}
+              </h2>
+              <h3 className="text-cni-secondary font-display text-2xl md:text-3xl font-bold">
+                {locale === "es" ? "Consejo Nacional de Inversiones Honduras" : "National Investment Council Honduras"}
+              </h3>
+              <div className="h-1.5 w-24 bg-cni-gold mt-6"></div>
+            </div>
 
-          {/* Main Layout Container */}
-          <div className="bg-cni-surface-low rounded-[32px] p-8 lg:p-12 flex flex-col lg:flex-row gap-12 border border-cni-primary/5">
-            
-            {/* Left Column: List of 4 recent news */}
-            <div className="w-full lg:w-5/12 flex flex-col justify-center gap-2">
-              {[
-                { date: "09-06-2026", title: "Friendshoring farmacéutico" },
-                { date: "05-06-2026", title: "Fomento a la Inversión extranjera" },
-                { date: "05-06-2026", title: "Lanzamiento Estratégia País 2027-2031" },
-                { date: "05-06-2026", title: "Nueva regulación HAND CARRIER" }
-              ].map((item, idx) => (
-                <div key={idx} className={`py-6 flex flex-col gap-3 ${idx !== 3 ? 'border-b border-cni-primary/10' : ''}`}>
-                  <span className="text-cni-primary/50 font-body text-xs tracking-wider">{item.date}</span>
-                  <Link href={L("/prensa")} className="flex items-center gap-4 group">
-                    <span className="material-symbols-outlined text-cni-primary/30 group-hover:text-cni-secondary transition-colors text-[22px]">radio_button_checked</span>
-                    <h4 className="font-headline font-bold text-cni-primary text-lg group-hover:text-cni-secondary transition-colors">
-                      {item.title}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {visibleNews.map((article, idx) => (
+                <Link
+                  key={article.slug}
+                  href={L(`/prensa/${article.slug}`)}
+                  className="group flex h-full flex-col overflow-hidden rounded-[24px] bg-cni-surface-low border border-cni-primary/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                >
+                  <div className="relative h-56 overflow-hidden bg-cni-primary">
+                    <img
+                      src={newsImage(article, idx)}
+                      alt={article.title}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-8">
+                    <div className="mb-5 flex flex-wrap items-center gap-3">
+                      <span className="text-[10px] font-headline font-extrabold uppercase tracking-[0.18em] text-cni-secondary">
+                        {newsCategoryLabels[locale][article.category]}
+                      </span>
+                      <span className="text-[11px] font-body text-cni-primary/50">
+                        {formatNewsDate(locale, article.published_at)}
+                      </span>
+                    </div>
+                    <h4 className="font-headline text-xl font-extrabold leading-tight text-cni-primary group-hover:text-cni-secondary transition-colors">
+                      {article.title}
                     </h4>
-                  </Link>
-                </div>
+                    <p className="mt-4 line-clamp-3 font-body text-sm leading-relaxed text-cni-on-surface-variant">
+                      {article.summary}
+                    </p>
+                    <span className="mt-8 inline-flex items-center gap-3 font-headline text-[10px] font-extrabold uppercase tracking-[0.18em] text-cni-primary">
+                      {locale === "es" ? "Leer noticia" : "Read news"}
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                    </span>
+                  </div>
+                </Link>
               ))}
             </div>
-
-            {/* Right Column: Featured News */}
-            <div className="w-full lg:w-7/12">
-              <div className="bg-white rounded-3xl overflow-hidden shadow-xl group flex flex-col h-full border border-cni-primary/5">
-                {/* Image */}
-                <div className="relative w-full aspect-[4/3] lg:aspect-auto lg:flex-1 overflow-hidden">
-                  <img 
-                    src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
-                    alt="Noticia principal" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
-                {/* Primary blue content box */}
-                <div className="bg-cni-primary p-8 md:p-10 flex flex-col items-start gap-6 relative z-10">
-                  <p className="text-white/90 font-body text-base md:text-lg leading-relaxed line-clamp-3">
-                    CNI impulsa promoción del sector ciencias de la vida y fortalece agenda de friendshoring farmacéutico en Foro EE. UU.–Triángulo Norte...
-                  </p>
-                  <Link
-                    href={L("/prensa")}
-                    className="px-8 py-2.5 rounded-full border border-cni-gold text-cni-gold font-headline font-bold text-xs uppercase tracking-widest hover:bg-cni-gold hover:text-cni-primary transition-colors mt-2"
-                  >
-                    Leer Más
-                  </Link>
-                </div>
-              </div>
-            </div>
-
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
     </div>
   );

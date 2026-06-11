@@ -19,6 +19,11 @@ const SECTOR_PATH_PREFIX: LocalizedString = {
   en: "/en/invest/sectors",
 };
 
+const NEWS_PATH_PREFIX: LocalizedString = {
+  es: "/prensa",
+  en: "/en/news",
+};
+
 function buildSectorChildren(): SiteNavNode[] {
   return getSectors("es").map((sector) => ({
     id: `sector-${sector.slug}`,
@@ -177,6 +182,18 @@ export function getMirrorPath(pathname: string, targetLocale: Locale): string {
     return `${base}/${slug}${hash}`;
   }
 
+  const newsMatch = normalized.match(
+    currentLocale === "es"
+      ? /^\/prensa\/([^/]+)$/
+      : /^\/en\/news\/([^/]+)$/,
+  );
+  if (newsMatch) {
+    const slug = newsMatch[1]!;
+    const base = targetLocale === "es" ? NEWS_PATH_PREFIX.es : NEWS_PATH_PREFIX.en;
+    const hash = pathname.includes("#") ? pathname.slice(pathname.indexOf("#")) : "";
+    return `${base}/${slug}${hash}`;
+  }
+
   return targetLocale === "es" ? "/" : "/en";
 }
 
@@ -248,6 +265,13 @@ export function resolveHref(locale: Locale, path: string): string {
   if (sectorMatch) {
     const slug = sectorMatch[1]!;
     const base = locale === "es" ? SECTOR_PATH_PREFIX.es : SECTOR_PATH_PREFIX.en;
+    return `${base}/${slug}${suffix}`;
+  }
+
+  const newsMatch = normalized.match(/^\/prensa\/([^/]+)$/);
+  if (newsMatch) {
+    const slug = newsMatch[1]!;
+    const base = locale === "es" ? NEWS_PATH_PREFIX.es : NEWS_PATH_PREFIX.en;
     return `${base}/${slug}${suffix}`;
   }
 

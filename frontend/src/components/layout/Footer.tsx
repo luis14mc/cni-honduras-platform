@@ -31,6 +31,7 @@ const footerTranslations = {
       { label: "Preguntas frecuentes", href: "/recursos" },
       { label: "Casos de éxito", href: "/portafolio/casos" },
       { label: "Portafolio de inversiones", href: "/portafolio" },
+      { label: "Sala de Prensa", href: "/prensa" },
     ],
     externalTitle: "Enlaces Externos",
     externalLinks: [
@@ -74,6 +75,7 @@ const footerTranslations = {
       { label: "FAQ", href: "/recursos" },
       { label: "Success Stories", href: "/portafolio/casos" },
       { label: "Investment Portfolio", href: "/portafolio" },
+      { label: "Press Room", href: "/prensa" },
     ],
     externalTitle: "External Links",
     externalLinks: [
