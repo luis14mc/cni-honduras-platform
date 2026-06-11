@@ -1,0 +1,16 @@
+# SuiteCRM source (download locally, never commit)
+suitecrm/
+
+# Persistent data and database files
+data/
+mysql/
+mariadb/
+uploads/
+cache/
+
+# Secrets
+.env
+
+# Archives
+*.zip
+*.tar.gz
