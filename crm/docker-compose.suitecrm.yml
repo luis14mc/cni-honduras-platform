@@ -29,9 +29,11 @@ services:
       start_period: 30s
 
   suitecrm-app:
-    # Temporary base image for local development.
+    # Custom PHP image with extensions required by SuiteCRM 8+ (see php/Dockerfile).
     # Replace with an official SuiteCRM image when one is adopted for production.
-    image: php:8.2-apache
+    build:
+      context: .
+      dockerfile: php/Dockerfile
     container_name: cni-suitecrm-app
     restart: unless-stopped
     depends_on:
@@ -55,5 +57,5 @@ services:
         sed 's/$${SUITECRM_DOMAIN}/'"$${SUITECRM_DOMAIN}"'/g' \
           /etc/apache2/sites-available/000-default.conf.template \
           > /etc/apache2/sites-available/000-default.conf
-        a2enmod rewrite
+        a2enmod rewrite headers
         exec apache2-foreground

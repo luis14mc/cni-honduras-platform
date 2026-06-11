@@ -20,6 +20,7 @@ crm/
 ├── .env.example          # Plantilla de variables (copiar a .env)
 ├── .gitignore
 ├── docker-compose.suitecrm.yml
+├── php/Dockerfile        # Imagen PHP 8.2 personalizada (extensiones SuiteCRM)
 ├── apache/               # Configuración Apache para el contenedor app
 ├── docs/                 # Guías de setup, módulos e integración
 ├── scripts/              # Checklist y permisos locales
@@ -40,9 +41,10 @@ crm/
    bash scripts/check-suitecrm-files.sh
    bash scripts/fix-suitecrm-permissions.sh   # Linux/WSL
    ```
-4. **Levantar servicios:**
+4. **Levantar servicios** (la primera vez construye la imagen PHP desde `php/Dockerfile`):
    ```bash
-   docker compose -f docker-compose.suitecrm.yml up -d
+   docker compose -f docker-compose.suitecrm.yml up -d --build
+   docker exec -it cni-suitecrm-app php -m | grep intl   # debe mostrar intl
    docker exec -it cni-suitecrm-app apache2ctl -S   # DocumentRoot → /var/www/html/public
    ```
 5. **Abrir en el navegador:**

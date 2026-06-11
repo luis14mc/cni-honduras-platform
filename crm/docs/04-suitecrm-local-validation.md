@@ -93,7 +93,9 @@ Volúmenes montados:
 | `./suitecrm` | `/var/www/html` | Código SuiteCRM 8+ |
 | `./apache/vhost.conf` | `/etc/apache2/sites-available/000-default.conf.template` | VirtualHost (DocumentRoot `/public`) |
 
-Al iniciar, el contenedor sustituye `${SUITECRM_DOMAIN}` desde `.env`, habilita `mod_rewrite` y arranca Apache.
+Al iniciar, el contenedor sustituye `${SUITECRM_DOMAIN}` desde `.env`, habilita `mod_rewrite` y `mod_headers`, y arranca Apache.
+
+La imagen de `suitecrm-app` se construye desde `php/Dockerfile` (PHP 8.2 + extensiones requeridas por SuiteCRM). Tras cambiar el Dockerfile, reconstruir con `docker compose ... build --no-cache suitecrm-app`.
 
 Abrir en el navegador (puerto por defecto):
 
@@ -110,6 +112,15 @@ App (Apache/PHP):
 ```bash
 docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-app
 ```
+
+Verificar extensiones PHP instaladas:
+
+```bash
+docker exec -it cni-suitecrm-app php -m
+docker exec -it cni-suitecrm-app php -m | grep intl
+```
+
+Debe incluir `intl` (y otras extensiones del Dockerfile: `pdo_mysql`, `mysqli`, `zip`, `gd`, `mbstring`, `soap`, `opcache`).
 
 Verificar virtual host y DocumentRoot:
 
@@ -133,6 +144,7 @@ docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-db
 - [ ] `bash scripts/check-suitecrm-files.sh` → OK
 - [ ] `bash scripts/fix-suitecrm-permissions.sh` (Linux/WSL)
 - [ ] `docker compose -f docker-compose.suitecrm.yml up -d`
+- [ ] `docker exec -it cni-suitecrm-app php -m | grep intl` → `intl`
 - [ ] `docker exec -it cni-suitecrm-app apache2ctl -S` → DocumentRoot `/var/www/html/public`
 - [ ] Contenedores `suitecrm-db` y `suitecrm-app` en estado running/healthy
 - [ ] Instalador web accesible en `http://localhost:${SUITECRM_PORT}` (sin listado de directorio ni 403)
@@ -140,6 +152,41 @@ docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-db
 - [ ] Login SuiteCRM funcional tras instalación
 
 ## Errores comunes
+
+### Error: Call to undefined function locale_get_default()
+
+**Síntoma:** Al abrir `http://localhost:${SUITECRM_PORT}` aparece un fatal error en `SugarLogger.php` indicando que `locale_get_default()` no está definida.
+
+**Explicación:** La función `locale_get_default()` pertenece a la extensión PHP **intl**. Si aparece este error, el contenedor PHP no tiene `ext-intl` instalada.
+
+**Solución:** Reconstruir `suitecrm-app` con el Dockerfile personalizado:
+
+```bash
+cd crm
+docker compose -f docker-compose.suitecrm.yml down
+docker compose -f docker-compose.suitecrm.yml build --no-cache suitecrm-app
+docker compose -f docker-compose.suitecrm.yml up -d
+```
+
+Validar:
+
+```bash
+docker exec -it cni-suitecrm-app php -m | grep intl
+```
+
+Debe devolver:
+
+```
+intl
+```
+
+Comandos adicionales de diagnóstico:
+
+```bash
+docker exec -it cni-suitecrm-app php -m
+docker exec -it cni-suitecrm-app apache2ctl -S
+docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-app
+```
 
 ### Carpeta `suitecrm/` vacía
 
