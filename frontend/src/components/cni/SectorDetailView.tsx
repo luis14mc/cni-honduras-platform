@@ -8,13 +8,20 @@ import { SectorIcon } from "@/src/components/cni/SectorIcon";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { withLocale } from "@/src/i18n/path";
+import type { InvestmentOpportunity } from "@/src/types/investment";
 
-type Props = { locale: Locale; slug: SectorSlug; sector: SectorCopy };
+type Props = {
+  locale: Locale;
+  slug: SectorSlug;
+  sector: SectorCopy;
+  opportunities?: InvestmentOpportunity[];
+};
 
-export function SectorDetailView({ locale, slug, sector }: Props) {
+export function SectorDetailView({ locale, slug, sector, opportunities = [] }: Props) {
   const x = getSectorPageExtra(slug, locale);
   const inv = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
+  const hasOpportunities = opportunities.length > 0;
 
   const borderClass = (i: number, wide?: boolean) => {
     if (wide) return "border-l-4 border-[#3a5f94] md:col-span-2";
@@ -131,6 +138,54 @@ export function SectorDetailView({ locale, slug, sector }: Props) {
           </div>
         </div>
       </Section>
+
+      {hasOpportunities && (
+        <Section tone="white">
+          <SectionHeader
+            eyebrow={locale === "en" ? "Investment pipeline" : "Cartera de inversión"}
+            title={locale === "en" ? "Related opportunities" : "Oportunidades relacionadas"}
+            description={
+              locale === "en"
+                ? "Public opportunities currently associated with this strategic sector."
+                : "Oportunidades públicas actualmente asociadas a este sector estratégico."
+            }
+          />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {opportunities.map((opportunity) => (
+              <article
+                key={opportunity.slug}
+                className="rounded-xl border border-[#c4c6cf]/30 bg-[#f8f9fa] p-7 tonal-depth-layering"
+              >
+                <p className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                  {opportunity.status}
+                </p>
+                <h3 className="mt-3 text-lg font-bold text-[#000a1e]">{opportunity.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">
+                  {opportunity.summary || opportunity.description}
+                </p>
+                <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/10 pt-5 text-sm">
+                  {opportunity.estimated_investment && (
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                        {locale === "en" ? "Investment" : "Inversión"}
+                      </dt>
+                      <dd className="mt-1 font-bold text-[#000a1e]">{opportunity.estimated_investment}</dd>
+                    </div>
+                  )}
+                  {opportunity.estimated_jobs !== null && (
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                        {locale === "en" ? "Jobs" : "Empleos"}
+                      </dt>
+                      <dd className="mt-1 font-bold text-[#000a1e]">{opportunity.estimated_jobs}</dd>
+                    </div>
+                  )}
+                </dl>
+              </article>
+            ))}
+          </div>
+        </Section>
+      )}
 
       <section className="relative overflow-hidden bg-[#000a1e] py-20 text-white">
         <div className="absolute right-0 top-0 h-full w-1/2 -skew-x-12 translate-x-24 bg-[#002147] opacity-45" />

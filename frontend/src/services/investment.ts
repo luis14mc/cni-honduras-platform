@@ -20,6 +20,12 @@ export function getOpportunities(): Promise<InvestmentOpportunity[]> {
   return apiGet<InvestmentOpportunity[]>(`${BASE}/opportunities/`);
 }
 
+export function getOpportunitiesBySector(sectorSlug: string): Promise<InvestmentOpportunity[]> {
+  return apiGet<InvestmentOpportunity[]>(
+    `${BASE}/opportunities/?sector=${encodeURIComponent(sectorSlug)}`,
+  );
+}
+
 export function getOpportunity(slug: string): Promise<InvestmentOpportunity> {
   return apiGet<InvestmentOpportunity>(`${BASE}/opportunities/${slug}/`);
 }
