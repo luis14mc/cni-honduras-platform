@@ -82,7 +82,7 @@ Documentación para la primera configuración manual del CRM (después del insta
 | [docs/05-suitecrm-cni-configuration.md](docs/05-suitecrm-cni-configuration.md) | Identidad SIGI CNI, módulos, usuarios, principios |
 | [docs/06-suitecrm-custom-fields.md](docs/06-suitecrm-custom-fields.md) | Campos personalizados Accounts, Contacts, Opportunities |
 | [docs/07-suitecrm-pipeline-stages.md](docs/07-suitecrm-pipeline-stages.md) | Ciclo de vida, Lead Status, etapas de proyecto |
-| [docs/08-suitecrm-code-customization.md](docs/08-suitecrm-code-customization.md) | Automatizar campos SIGI CNI vía `custom/Extension` (script) |
+| [docs/08-suitecrm-code-customization.md](docs/08-suitecrm-code-customization.md) | Automatizar campos SIGI CNI vía `custom/Extension` + `fields_meta_data` |
 
 ## Qué no subir a Git
 
@@ -101,6 +101,6 @@ Documentación para la primera configuración manual del CRM (después del insta
 
 - [ ] Descargar e instalar SuiteCRM en `crm/suitecrm/`
 - [ ] Configurar SIGI CNI según [docs/05-suitecrm-cni-configuration.md](docs/05-suitecrm-cni-configuration.md)
-- [ ] Crear campos y pipelines: [docs/06](docs/06-suitecrm-custom-fields.md), [docs/07](docs/07-suitecrm-pipeline-stages.md), o automatizar con [docs/08](docs/08-suitecrm-code-customization.md)
+- [ ] Crear campos SIGI CNI: [docs/08](docs/08-suitecrm-code-customization.md) (`apply-sigi-cni-suitecrm-customizations.sh` + `register-sigi-cni-fields-metadata.sh`), o manualmente [docs/06](docs/06-suitecrm-custom-fields.md) / [docs/07](docs/07-suitecrm-pipeline-stages.md)
 - [ ] Conectar n8n con el webhook `N8N_PROJECT_APPLICATION_WEBHOOK_URL` (backend)
 - [ ] Desplegar en `crm.cni.hn` con TLS y backups de MariaDB
