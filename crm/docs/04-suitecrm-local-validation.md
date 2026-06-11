@@ -23,6 +23,8 @@ bash scripts/fix-suitecrm-permissions.sh
 
 Estructura esperada (SuiteCRM 8+):
 
+> **SuiteCRM 8+ usa `/public` como DocumentRoot.** Apache debe apuntar a `/var/www/html/public`, no a la raíz del proyecto. La configuración está en `apache/vhost.conf` y se monta en el contenedor `suitecrm-app`.
+
 ```
 crm/
 ├── suitecrm/
@@ -84,6 +86,15 @@ docker compose -f docker-compose.suitecrm.yml up -d
 docker compose -f docker-compose.suitecrm.yml ps
 ```
 
+Volúmenes montados:
+
+| Host | Contenedor | Propósito |
+|------|------------|-----------|
+| `./suitecrm` | `/var/www/html` | Código SuiteCRM 8+ |
+| `./apache/vhost.conf` | `/etc/apache2/sites-available/000-default.conf.template` | VirtualHost (DocumentRoot `/public`) |
+
+Al iniciar, el contenedor sustituye `${SUITECRM_DOMAIN}` desde `.env`, habilita `mod_rewrite` y arranca Apache.
+
 Abrir en el navegador (puerto por defecto):
 
 ```
@@ -92,13 +103,21 @@ http://localhost:8085
 
 Si cambiaste `SUITECRM_PORT` en `.env`, usa ese puerto.
 
-## Paso 5 — Revisar logs
+## Paso 5 — Revisar logs y Apache
 
 App (Apache/PHP):
 
 ```bash
 docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-app
 ```
+
+Verificar virtual host y DocumentRoot:
+
+```bash
+docker exec -it cni-suitecrm-app apache2ctl -S
+```
+
+Debe mostrar `DocumentRoot "/var/www/html/public"`. Si aparece listado de directorio o 403, revisar que exista `suitecrm/public/index.php` y permisos.
 
 Base de datos (MariaDB):
 
@@ -114,8 +133,9 @@ docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-db
 - [ ] `bash scripts/check-suitecrm-files.sh` → OK
 - [ ] `bash scripts/fix-suitecrm-permissions.sh` (Linux/WSL)
 - [ ] `docker compose -f docker-compose.suitecrm.yml up -d`
+- [ ] `docker exec -it cni-suitecrm-app apache2ctl -S` → DocumentRoot `/var/www/html/public`
 - [ ] Contenedores `suitecrm-db` y `suitecrm-app` en estado running/healthy
-- [ ] Instalador web accesible en `http://localhost:${SUITECRM_PORT}`
+- [ ] Instalador web accesible en `http://localhost:${SUITECRM_PORT}` (sin listado de directorio ni 403)
 - [ ] Conexión DB en instalador: host `suitecrm-db`, puerto `3306`, credenciales de `.env`
 - [ ] Login SuiteCRM funcional tras instalación
 

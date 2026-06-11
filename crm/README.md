@@ -43,6 +43,7 @@ crm/
 4. **Levantar servicios:**
    ```bash
    docker compose -f docker-compose.suitecrm.yml up -d
+   docker exec -it cni-suitecrm-app apache2ctl -S   # DocumentRoot → /var/www/html/public
    ```
 5. **Abrir en el navegador:**
    ```
@@ -51,6 +52,8 @@ crm/
    (o el puerto definido en `SUITECRM_PORT` dentro de `.env`).
 
 6. Completar el **asistente de instalación** de SuiteCRM apuntando a la base MariaDB del compose (`suitecrm-db`).
+
+SuiteCRM 8+ sirve la aplicación desde `suitecrm/public/`; Apache local está configurado con **DocumentRoot `/var/www/html/public`** (ver `apache/vhost.conf`).
 
 Guía detallada: [docs/01-suitecrm-setup.md](docs/01-suitecrm-setup.md).
 

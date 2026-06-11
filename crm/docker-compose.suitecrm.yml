@@ -2,6 +2,8 @@
 # Usage (from crm/):
 #   cp .env.example .env
 #   docker compose -f docker-compose.suitecrm.yml up -d
+#
+# SuiteCRM 8+ DocumentRoot: /var/www/html/public (see apache/vhost.conf)
 
 services:
   suitecrm-db:
@@ -42,5 +44,16 @@ services:
     ports:
       - "${SUITECRM_PORT}:80"
     volumes:
+      # SuiteCRM 8+ source (local only, gitignored)
       - ./suitecrm:/var/www/html
-      - ./apache/vhost.conf:/etc/apache2/sites-available/000-default.conf:ro
+      # Apache vhost template; SUITECRM_DOMAIN substituted at container start
+      - ./apache/vhost.conf:/etc/apache2/sites-available/000-default.conf.template:ro
+    command:
+      - bash
+      - -c
+      - |
+        sed 's/$${SUITECRM_DOMAIN}/'"$${SUITECRM_DOMAIN}"'/g' \
+          /etc/apache2/sites-available/000-default.conf.template \
+          > /etc/apache2/sites-available/000-default.conf
+        a2enmod rewrite
+        exec apache2-foreground
