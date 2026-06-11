@@ -7,9 +7,14 @@ import {
   mergeSectorWithApi,
   SECTOR_SLUGS,
 } from "@/src/data/investmentSectors";
-import { getOpportunitiesBySector, getProjectsBySector, getSector } from "@/src/services/investment";
+import {
+  getOpportunitiesBySector,
+  getProjectsBySector,
+  getSector,
+  getSuccessStoriesBySector,
+} from "@/src/services/investment";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
-import type { InvestmentOpportunity, InvestmentProject } from "@/src/types/investment";
+import type { InvestmentOpportunity, InvestmentProject, SuccessStory } from "@/src/types/investment";
 
 export function generateStaticParams() {
   return SECTOR_SLUGS.map((slug) => ({ slug }));
@@ -49,6 +54,13 @@ export default async function SectorPage({
     projects = [];
   }
 
+  let successStories: SuccessStory[] = [];
+  try {
+    successStories = await getSuccessStoriesBySector(slug);
+  } catch {
+    successStories = [];
+  }
+
   return (
     <SectorDetailView
       locale={locale}
@@ -56,6 +68,7 @@ export default async function SectorPage({
       sector={sector}
       opportunities={opportunities}
       projects={projects}
+      successStories={successStories}
     />
   );
 }

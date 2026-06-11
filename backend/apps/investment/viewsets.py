@@ -54,8 +54,12 @@ class SuccessStoryViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return (
+        queryset = (
             SuccessStory.objects.select_related("sector")
             .filter(is_public=True)
             .order_by(*SuccessStory._meta.ordering)
         )
+        sector_slug = self.request.query_params.get("sector")
+        if sector_slug:
+            queryset = queryset.filter(sector__slug=sector_slug)
+        return queryset

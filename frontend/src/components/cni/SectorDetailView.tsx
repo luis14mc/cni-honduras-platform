@@ -8,7 +8,12 @@ import { SectorIcon } from "@/src/components/cni/SectorIcon";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { withLocale } from "@/src/i18n/path";
-import type { InvestmentOpportunity, InvestmentProject, ProjectStage } from "@/src/types/investment";
+import type {
+  InvestmentOpportunity,
+  InvestmentProject,
+  ProjectStage,
+  SuccessStory,
+} from "@/src/types/investment";
 
 type Props = {
   locale: Locale;
@@ -16,6 +21,7 @@ type Props = {
   sector: SectorCopy;
   opportunities?: InvestmentOpportunity[];
   projects?: InvestmentProject[];
+  successStories?: SuccessStory[];
 };
 
 const PROJECT_STAGE_LABELS: Record<Locale, Record<ProjectStage, string>> = {
@@ -49,12 +55,14 @@ export function SectorDetailView({
   sector,
   opportunities = [],
   projects = [],
+  successStories = [],
 }: Props) {
   const x = getSectorPageExtra(slug, locale);
   const inv = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
   const hasOpportunities = opportunities.length > 0;
   const hasProjects = projects.length > 0;
+  const hasSuccessStories = successStories.length > 0;
 
   const borderClass = (i: number, wide?: boolean) => {
     if (wide) return "border-l-4 border-[#3a5f94] md:col-span-2";
@@ -259,6 +267,62 @@ export function SectorDetailView({
                         {locale === "en" ? "Jobs" : "Empleos"}
                       </dt>
                       <dd className="mt-1 font-bold text-[#000a1e]">{project.estimated_jobs}</dd>
+                    </div>
+                  )}
+                </dl>
+              </article>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {hasSuccessStories && (
+        <Section tone="white">
+          <SectionHeader
+            eyebrow={locale === "en" ? "Investor outcomes" : "Resultados de inversión"}
+            title={locale === "en" ? "Related success stories" : "Casos de éxito relacionados"}
+            description={
+              locale === "en"
+                ? "Companies and investments connected to this strategic sector."
+                : "Empresas e inversiones vinculadas a este sector estratégico."
+            }
+          />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {successStories.map((story) => (
+              <article
+                key={story.slug}
+                className="rounded-xl border border-[#c4c6cf]/30 bg-[#f8f9fa] p-7 tonal-depth-layering"
+              >
+                {story.company_name && (
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                    {story.company_name}
+                  </p>
+                )}
+                <h3 className="mt-3 text-lg font-bold text-[#000a1e]">{story.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{story.summary}</p>
+                <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/10 pt-5 text-sm">
+                  {story.country_origin && (
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                        {locale === "en" ? "Origin" : "Origen"}
+                      </dt>
+                      <dd className="mt-1 font-bold text-[#000a1e]">{story.country_origin}</dd>
+                    </div>
+                  )}
+                  {story.investment_amount && (
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                        {locale === "en" ? "Investment" : "Inversión"}
+                      </dt>
+                      <dd className="mt-1 font-bold text-[#000a1e]">{story.investment_amount}</dd>
+                    </div>
+                  )}
+                  {story.jobs_generated !== null && (
+                    <div>
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                        {locale === "en" ? "Jobs" : "Empleos"}
+                      </dt>
+                      <dd className="mt-1 font-bold text-[#000a1e]">{story.jobs_generated}</dd>
                     </div>
                   )}
                 </dl>

@@ -48,6 +48,12 @@ export function getSuccessStories(): Promise<SuccessStory[]> {
   return apiGet<SuccessStory[]>(`${BASE}/success-stories/`);
 }
 
+export function getSuccessStoriesBySector(sectorSlug: string): Promise<SuccessStory[]> {
+  return apiGet<SuccessStory[]>(
+    `${BASE}/success-stories/?sector=${encodeURIComponent(sectorSlug)}`,
+  );
+}
+
 export function getSuccessStory(slug: string): Promise<SuccessStory> {
   return apiGet<SuccessStory>(`${BASE}/success-stories/${slug}/`);
 }
