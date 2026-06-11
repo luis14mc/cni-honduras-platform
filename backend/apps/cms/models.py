@@ -79,6 +79,14 @@ class Page(EditorialModel):
         return self.title
 
 
+class NewsCategory(models.TextChoices):
+    NEWS = "news", "Noticia"
+    PRESS_RELEASE = "press_release", "Comunicado"
+    EVENT = "event", "Evento"
+    ANNOUNCEMENT = "announcement", "Anuncio"
+    ARTICLE = "article", "Artículo"
+
+
 class News(EditorialModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
@@ -91,7 +99,18 @@ class News(EditorialModel):
         blank=True,
         related_name="featured_in_news",
     )
-    category = models.CharField(max_length=100, blank=True, db_index=True)
+    category = models.CharField(
+        max_length=32,
+        choices=NewsCategory.choices,
+        default=NewsCategory.NEWS,
+        db_index=True,
+    )
+    author_name = models.CharField(max_length=150, blank=True, default="")
+    source = models.CharField(max_length=150, blank=True, default="CNI")
+    external_url = models.URLField(blank=True, default="")
+    is_featured = models.BooleanField(default=False, db_index=True)
+    seo_title = models.CharField(max_length=255, blank=True, default="")
+    seo_description = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["-published_at", "-updated_at", "-id"]

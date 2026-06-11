@@ -60,15 +60,17 @@ class PageAdmin(EditorialAdminMixin):
 
 @admin.register(News)
 class NewsAdmin(EditorialAdminMixin):
-    list_display = ("id", "title", "category", "status", "published_at", "updated_at")
-    search_fields = ("title", "slug", "summary", "content", "category")
-    list_filter = ("category",) + EditorialAdminMixin.list_filter
+    list_display = ("title", "category", "status", "is_featured", "published_at", "updated_at")
+    list_filter = ("status", "category", "is_featured", "published_at")
+    search_fields = ("title", "summary", "content")
     prepopulated_fields = {"slug": ("title",)}
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "category", "status", "published_at")}),
+        (None, {"fields": ("title", "slug", "category", "status", "published_at", "is_featured")}),
         ("Contenido", {"fields": ("summary", "content")}),
         ("Imagen destacada", {"fields": ("featured_image",)}),
+        ("Fuente", {"fields": ("author_name", "source", "external_url")}),
+        ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
 

@@ -20,15 +20,25 @@ class PageViewSet(viewsets.ReadOnlyModelViewSet):
 
 class NewsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NewsSerializer
+    lookup_field = "slug"
 
     def get_queryset(self):
         now = timezone.now()
-        return (
+        queryset = (
             News.objects.select_related("featured_image")
             .filter(status=PublishStatus.PUBLISHED)
             .filter(published_at__isnull=False, published_at__lte=now)
-            .order_by(*News._meta.ordering)
+            .order_by("-published_at", "-updated_at")
         )
+        category = self.request.query_params.get("category")
+        if category:
+            queryset = queryset.filter(category=category)
+
+        featured = self.request.query_params.get("featured")
+        if featured and featured.lower() in {"1", "true", "yes"}:
+            queryset = queryset.filter(is_featured=True)
+
+        return queryset
 
 
 class DocumentViewSet(viewsets.ReadOnlyModelViewSet):
