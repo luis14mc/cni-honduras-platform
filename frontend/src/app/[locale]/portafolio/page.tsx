@@ -6,10 +6,16 @@ import { designImages } from "@/src/lib/designAssets";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { SectorIcon } from "@/src/components/cni/SectorIcon";
-import type { SectorSlug } from "@/src/data/investmentSectors";
+import {
+  getSectors as getStaticSectors,
+  isSectorSlug,
+  type SectorSlug,
+} from "@/src/data/investmentSectors";
 import { SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
+import { getOpportunities, getProjects, getSectors } from "@/src/services/investment";
+import type { InvestmentOpportunity, InvestmentProject, ProjectStage, Sector } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.portafolio);
 
@@ -108,12 +114,149 @@ const copy = {
   },
 } as const;
 
+type PortfolioSector = {
+  slug: SectorSlug;
+  label: string;
+  active: boolean;
+};
+
+const PROJECT_STAGE_LABELS: Record<Locale, Record<ProjectStage, string>> = {
+  es: {
+    promotion: "PromociÃ³n",
+    announced: "Anunciado",
+    startup: "Arranque",
+    implementing: "Implementando",
+    stalled: "Parado",
+    finished: "Finalizado",
+    cancelled: "Cancelado",
+  },
+  en: {
+    promotion: "Promotion",
+    announced: "Announced",
+    startup: "Startup",
+    implementing: "Implementing",
+    stalled: "Stalled",
+    finished: "Finished",
+    cancelled: "Cancelled",
+  },
+};
+
+const OPPORTUNITY_STATUS_LABELS = {
+  es: {
+    open: "Abierta",
+    in_progress: "En progreso",
+    closed: "Cerrada",
+  },
+  en: {
+    open: "Open",
+    in_progress: "In progress",
+    closed: "Closed",
+  },
+} as const;
+
+const portfolioLabels = {
+  es: {
+    projectsSummary: "Proyectos pÃºblicos",
+    opportunitiesSummary: "Oportunidades pÃºblicas",
+    projectsTitle: "Proyectos de inversiÃ³n",
+    opportunitiesTitle: "Oportunidades de inversiÃ³n",
+    emptyProjects: "No hay proyectos pÃºblicos disponibles en este momento.",
+    emptyOpportunities: "No hay oportunidades pÃºblicas disponibles en este momento.",
+    sector: "Sector",
+    stage: "Etapa",
+    status: "Estado",
+    investment: "InversiÃ³n",
+    jobs: "Empleos",
+  },
+  en: {
+    projectsSummary: "Public projects",
+    opportunitiesSummary: "Public opportunities",
+    projectsTitle: "Investment projects",
+    opportunitiesTitle: "Investment opportunities",
+    emptyProjects: "No public projects are available right now.",
+    emptyOpportunities: "No public opportunities are available right now.",
+    sector: "Sector",
+    stage: "Stage",
+    status: "Status",
+    investment: "Investment",
+    jobs: "Jobs",
+  },
+} as const;
+
+async function safeLoadProjects(): Promise<InvestmentProject[]> {
+  try {
+    return await getProjects();
+  } catch {
+    return [];
+  }
+}
+
+async function safeLoadOpportunities(): Promise<InvestmentOpportunity[]> {
+  try {
+    return await getOpportunities();
+  } catch {
+    return [];
+  }
+}
+
+async function safeLoadSectors(locale: Locale, fallback: readonly PortfolioSector[]): Promise<PortfolioSector[]> {
+  try {
+    const sectors = await getSectors();
+    const apiSectors = sectors
+      .filter((sector): sector is Sector & { slug: SectorSlug } => isSectorSlug(sector.slug))
+      .sort((a, b) => a.order - b.order)
+      .map((sector, index) => ({
+        slug: sector.slug,
+        label: sector.name || getStaticSectorLabel(locale, sector.slug),
+        active: index === 0,
+      }));
+
+    return apiSectors.length > 0 ? apiSectors : [...fallback];
+  } catch {
+    return [...fallback];
+  }
+}
+
+function getStaticSectorLabel(locale: Locale, slug: SectorSlug): string {
+  return getStaticSectors(locale).find((sector) => sector.slug === slug)?.name ?? slug;
+}
+
+function formatProjectStage(locale: Locale, stage: ProjectStage): string {
+  return PROJECT_STAGE_LABELS[locale][stage] ?? stage;
+}
+
+function formatOpportunityStatus(locale: Locale, status: InvestmentOpportunity["status"]): string {
+  return OPPORTUNITY_STATUS_LABELS[locale][status] ?? status;
+}
+
+function formatMoney(value: string | null): string | null {
+  if (!value) return null;
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return value;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 export default async function PortafolioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = copy[locale];
+  const labels = portfolioLabels[locale];
   const L = (p: string) => resolveHref(locale, p);
+  const fallbackSectors = c.sectors.map((sector, index) => ({
+    slug: sector.slug as SectorSlug,
+    label: sector.label,
+    active: index === 0,
+  }));
+  const [projects, opportunities, sectors] = await Promise.all([
+    safeLoadProjects(),
+    safeLoadOpportunities(),
+    safeLoadSectors(locale, fallbackSectors),
+  ]);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
@@ -141,7 +284,7 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
             <p className="text-sm text-[#44474e]">{c.sectorsSubtitle}</p>
           </div>
           <nav className="flex flex-col space-y-1">
-            {c.sectors.map((s) => (
+            {sectors.map((s) => (
               <div
                 key={s.label}
                 className={`flex cursor-pointer items-center gap-4 px-6 py-3 transition-all duration-200 hover:translate-x-1 ${
@@ -178,6 +321,14 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
             <div>
               <span className="text-sm font-bold uppercase tracking-widest text-[#44474e]">{c.catalogYear}</span>
               <h2 className="text-3xl font-extrabold text-[#002147]">{c.catalogTitle}</h2>
+              <div className="mt-4 grid gap-3 text-sm font-bold uppercase tracking-widest text-[#44474e] sm:grid-cols-2">
+                <div className="rounded-lg bg-white px-4 py-3 tonal-depth-layering">
+                  {projects.length} {labels.projectsSummary}
+                </div>
+                <div className="rounded-lg bg-white px-4 py-3 tonal-depth-layering">
+                  {opportunities.length} {labels.opportunitiesSummary}
+                </div>
+              </div>
             </div>
             <div className="flex gap-4">
               <button type="button" className="flex items-center gap-2 rounded-lg bg-[#e1e3e4] px-4 py-2 text-sm font-semibold text-[#000a1e]">
@@ -186,38 +337,111 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
               </button>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {c.projects.map((p) => (
-              <article
-                key={p.title}
-                className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#e9c176] hover:shadow-2xl hover:shadow-[#000a1e]/5"
-              >
-                <div className="mb-6 flex items-start justify-between">
-                  <div className="rounded-xl bg-[#e7e8e9] p-3">
-                    <MaterialIcon name={p.icon} className="text-3xl text-[#000a1e]" />
-                  </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${
-                      p.statusType === "gold" ? "bg-[#2e1f00] text-[#e9c176]" : "bg-[#e7e8e9] text-[#000a1e]"
-                    }`}
+          <section className="mb-12">
+            <h3 className="mb-6 text-2xl font-extrabold text-[#000a1e]">{labels.projectsTitle}</h3>
+            {projects.length > 0 ? (
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                {projects.map((project) => (
+                  <article
+                    key={project.slug}
+                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#e9c176] hover:shadow-2xl hover:shadow-[#000a1e]/5"
                   >
-                    {p.status}
-                  </span>
-                </div>
-                <h3 className="mb-3 text-2xl font-bold text-[#000a1e]">{p.title}</h3>
-                <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#44474e]">{p.sub}</p>
-                <p className="mb-6 text-sm leading-relaxed text-[#44474e]">{p.desc}</p>
-                <div className="grid grid-cols-3 gap-4 border-t border-[#c4c6cf]/10 pt-6">
-                  {[p.a, p.b, p.c].map(([label, value]) => (
-                    <div key={label}>
-                      <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{label}</p>
-                      <p className="font-bold text-[#000a1e]">{value}</p>
+                    <div className="mb-6 flex items-start justify-between">
+                      <div className="rounded-xl bg-[#e7e8e9] p-3">
+                        <MaterialIcon name="folder_managed" className="text-3xl text-[#000a1e]" />
+                      </div>
+                      <span className="rounded-full bg-[#2e1f00] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#e9c176]">
+                        {formatProjectStage(locale, project.project_stage)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
+                    <h4 className="mb-3 text-2xl font-bold text-[#000a1e]">{project.title}</h4>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#44474e]">
+                      {labels.sector}: {project.sector.name}
+                    </p>
+                    <p className="mb-6 text-sm leading-relaxed text-[#44474e]">
+                      {project.summary || project.description}
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 border-t border-[#c4c6cf]/10 pt-6">
+                      <div>
+                        <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.stage}</p>
+                        <p className="font-bold text-[#000a1e]">{formatProjectStage(locale, project.project_stage)}</p>
+                      </div>
+                      {project.investment_amount && (
+                        <div>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.investment}</p>
+                          <p className="font-bold text-[#000a1e]">{formatMoney(project.investment_amount)}</p>
+                        </div>
+                      )}
+                      {project.estimated_jobs !== null && (
+                        <div>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.jobs}</p>
+                          <p className="font-bold text-[#000a1e]">{project.estimated_jobs}</p>
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#44474e] tonal-depth-layering">
+                {labels.emptyProjects}
+              </div>
+            )}
+          </section>
+
+          <section>
+            <h3 className="mb-6 text-2xl font-extrabold text-[#000a1e]">{labels.opportunitiesTitle}</h3>
+            {opportunities.length > 0 ? (
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                {opportunities.map((opportunity) => (
+                  <article
+                    key={opportunity.slug}
+                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#e9c176] hover:shadow-2xl hover:shadow-[#000a1e]/5"
+                  >
+                    <div className="mb-6 flex items-start justify-between">
+                      <div className="rounded-xl bg-[#e7e8e9] p-3">
+                        <MaterialIcon name="trending_up" className="text-3xl text-[#000a1e]" />
+                      </div>
+                      <span className="rounded-full bg-[#e7e8e9] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#000a1e]">
+                        {formatOpportunityStatus(locale, opportunity.status)}
+                      </span>
+                    </div>
+                    <h4 className="mb-3 text-2xl font-bold text-[#000a1e]">{opportunity.title}</h4>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#44474e]">
+                      {labels.sector}: {opportunity.sector.name}
+                    </p>
+                    <p className="mb-6 text-sm leading-relaxed text-[#44474e]">
+                      {opportunity.summary || opportunity.description}
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 border-t border-[#c4c6cf]/10 pt-6">
+                      <div>
+                        <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.status}</p>
+                        <p className="font-bold text-[#000a1e]">
+                          {formatOpportunityStatus(locale, opportunity.status)}
+                        </p>
+                      </div>
+                      {opportunity.estimated_investment && (
+                        <div>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.investment}</p>
+                          <p className="font-bold text-[#000a1e]">{formatMoney(opportunity.estimated_investment)}</p>
+                        </div>
+                      )}
+                      {opportunity.estimated_jobs !== null && (
+                        <div>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.jobs}</p>
+                          <p className="font-bold text-[#000a1e]">{opportunity.estimated_jobs}</p>
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#44474e] tonal-depth-layering">
+                {labels.emptyOpportunities}
+              </div>
+            )}
+          </section>
         </div>
       </div>
 
