@@ -156,3 +156,9 @@ REST_FRAMEWORK = {
 }
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# n8n outbound webhooks (optional — used by ``process_webhook_events`` management command).
+N8N_PROJECT_APPLICATION_WEBHOOK_URL = env.str(
+    "N8N_PROJECT_APPLICATION_WEBHOOK_URL",
+    default="",
+).strip()
