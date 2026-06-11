@@ -22,6 +22,7 @@ crm/
 ├── docker-compose.suitecrm.yml
 ├── apache/               # Configuración Apache para el contenedor app
 ├── docs/                 # Guías de setup, módulos e integración
+├── scripts/              # Checklist y permisos locales
 ├── suitecrm/             # Código SuiteCRM (local, ignorado por Git)
 ├── mariadb/              # Datos MariaDB (local, ignorado por Git)
 └── ...
@@ -36,6 +37,8 @@ crm/
    cd crm
    cp .env.example .env
    # Editar .env con contraseñas seguras (no commitear .env)
+   bash scripts/check-suitecrm-files.sh
+   bash scripts/fix-suitecrm-permissions.sh   # Linux/WSL
    ```
 4. **Levantar servicios:**
    ```bash
@@ -50,6 +53,8 @@ crm/
 6. Completar el **asistente de instalación** de SuiteCRM apuntando a la base MariaDB del compose (`suitecrm-db`).
 
 Guía detallada: [docs/01-suitecrm-setup.md](docs/01-suitecrm-setup.md).
+
+Validación local y checklist: [docs/04-suitecrm-local-validation.md](docs/04-suitecrm-local-validation.md).
 
 ## Integración con la plataforma web
 
