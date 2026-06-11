@@ -24,4 +24,6 @@ RUN apt-get update && apt-get install -y \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
+COPY php/conf.d/suitecrm.ini /usr/local/etc/php/conf.d/suitecrm.ini
+
 WORKDIR /var/www/html

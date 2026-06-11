@@ -95,7 +95,7 @@ Volúmenes montados:
 
 Al iniciar, el contenedor sustituye `${SUITECRM_DOMAIN}` desde `.env`, habilita `mod_rewrite` y `mod_headers`, y arranca Apache.
 
-La imagen de `suitecrm-app` se construye desde `php/Dockerfile` (PHP 8.2 + extensiones requeridas por SuiteCRM). Tras cambiar el Dockerfile, reconstruir con `docker compose ... build --no-cache suitecrm-app`.
+La imagen de `suitecrm-app` se construye desde `php/Dockerfile` (PHP 8.2 + extensiones requeridas por SuiteCRM). Los límites PHP para instalación local están en `php/conf.d/suitecrm.ini`. Tras cambiar el Dockerfile o ese archivo, reconstruir con `docker compose ... build --no-cache suitecrm-app`.
 
 Abrir en el navegador (puerto por defecto):
 
@@ -122,6 +122,25 @@ docker exec -it cni-suitecrm-app php -m | grep intl
 
 Debe incluir `intl` (y otras extensiones del Dockerfile: `pdo_mysql`, `mysqli`, `zip`, `gd`, `mbstring`, `soap`, `opcache`).
 
+Verificar límites PHP para el instalador:
+
+```bash
+docker exec -it cni-suitecrm-app php -i | grep -E "memory_limit|upload_max_filesize|post_max_size|max_execution_time|max_input_time|date.timezone"
+```
+
+> **Nota:** `php -i` usa el SAPI **CLI**. En CLI, PHP ignora `max_execution_time` (muestra `0`) y `max_input_time` (muestra `-1`) aunque estén en `suitecrm.ini`. El instalador web usa **Apache/mod_php**, donde sí aplican `300`. Para comprobarlo vía HTTP: crear temporalmente un script en `public/` que haga `echo ini_get('max_execution_time');` y abrirlo en el navegador, o revisar **PHP CHECKS** en `/install.php`.
+
+Valores esperados (desde `php/conf.d/suitecrm.ini`):
+
+| Directiva | Valor |
+|-----------|-------|
+| `memory_limit` | 512M |
+| `upload_max_filesize` | 64M |
+| `post_max_size` | 64M |
+| `max_execution_time` | 300 |
+| `max_input_time` | 300 |
+| `date.timezone` | America/Tegucigalpa |
+
 Verificar virtual host y DocumentRoot:
 
 ```bash
@@ -145,7 +164,8 @@ docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-db
 - [ ] `bash scripts/fix-suitecrm-permissions.sh` (Linux/WSL)
 - [ ] `docker compose -f docker-compose.suitecrm.yml up -d`
 - [ ] `docker exec -it cni-suitecrm-app php -m | grep intl` → `intl`
-- [ ] `docker exec -it cni-suitecrm-app apache2ctl -S` → DocumentRoot `/var/www/html/public`
+- [ ] `docker exec -it cni-suitecrm-app php -i | grep memory_limit` → 512M
+- [ ] `docker exec -it cni-suitecrm-app apache2ctl -S` → DocumentRoot `/var/www/html/public` (sin warning AH00558)
 - [ ] Contenedores `suitecrm-db` y `suitecrm-app` en estado running/healthy
 - [ ] Instalador web accesible en `http://localhost:${SUITECRM_PORT}` (sin listado de directorio ni 403)
 - [ ] Conexión DB en instalador: host `suitecrm-db`, puerto `3306`, credenciales de `.env`
@@ -187,6 +207,48 @@ docker exec -it cni-suitecrm-app php -m
 docker exec -it cni-suitecrm-app apache2ctl -S
 docker compose -f docker-compose.suitecrm.yml logs -f suitecrm-app
 ```
+
+### PHP CHECKS fallan por límites bajos
+
+**Síntoma:** En el instalador (`/install.php`), la sección **PHP CHECKS** marca error en `memory_limit`, `upload_max_filesize`, `post_max_size`, `max_execution_time`, `max_input_time` o `date.timezone`.
+
+**Explicación:** SuiteCRM requiere valores PHP más altos que los de la imagen base `php:8.2-apache` (por defecto: 128M, 2M, 8M, etc.). Los valores para instalación local se configuran en `crm/php/conf.d/suitecrm.ini` y se copian al contenedor en el build del Dockerfile.
+
+**Solución:** Reconstruir la imagen tras cambiar `suitecrm.ini`:
+
+```bash
+cd crm
+docker compose -f docker-compose.suitecrm.yml down
+docker compose -f docker-compose.suitecrm.yml build --no-cache suitecrm-app
+docker compose -f docker-compose.suitecrm.yml up -d
+```
+
+Validar:
+
+```bash
+docker exec -it cni-suitecrm-app php -i | grep -E "memory_limit|upload_max_filesize|post_max_size|max_execution_time|max_input_time|date.timezone"
+```
+
+En CLI, `memory_limit`, `upload_max_filesize`, `post_max_size` y `date.timezone` deben coincidir con la tabla. `max_execution_time` y `max_input_time` solo se validan correctamente bajo Apache (ver nota arriba).
+
+### Warning AH00558 ServerName
+
+**Síntoma:** Al ejecutar `apache2ctl -S` o revisar logs aparece:
+
+```
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name
+```
+
+**Explicación:** Apache no tiene un `ServerName` global definido. Al iniciar el contenedor, el `command` de `docker-compose.suitecrm.yml` genera `/etc/apache2/conf-available/servername.conf` con el valor de `SUITECRM_DOMAIN` desde `.env` y lo habilita con `a2enconf servername`.
+
+**Solución:** Verificar que `.env` tenga `SUITECRM_DOMAIN` (ej. `crm.localhost`) y reiniciar:
+
+```bash
+docker compose -f docker-compose.suitecrm.yml restart suitecrm-app
+docker exec -it cni-suitecrm-app apache2ctl -S
+```
+
+El warning AH00558 no debe aparecer tras el reinicio.
 
 ### Carpeta `suitecrm/` vacía
 

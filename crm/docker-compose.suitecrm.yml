@@ -58,4 +58,6 @@ services:
           /etc/apache2/sites-available/000-default.conf.template \
           > /etc/apache2/sites-available/000-default.conf
         a2enmod rewrite headers
+        echo "ServerName $${SUITECRM_DOMAIN}" > /etc/apache2/conf-available/servername.conf
+        a2enconf servername
         exec apache2-foreground
