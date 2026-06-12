@@ -84,6 +84,24 @@ Documentación para la primera configuración manual del CRM (después del insta
 | [docs/07-suitecrm-pipeline-stages.md](docs/07-suitecrm-pipeline-stages.md) | Ciclo de vida, Lead Status, etapas de proyecto |
 | [docs/08-suitecrm-code-customization.md](docs/08-suitecrm-code-customization.md) | Automatizar campos SIGI CNI vía `custom/Extension` + `fields_meta_data` (labels `es_es` y `en_us`) |
 | [docs/09-suitecrm-layout-customization.md](docs/09-suitecrm-layout-customization.md) | Layouts EditView/DetailView SIGI CNI (`apply-sigi-cni-suitecrm-layouts.sh`; labels `es_es` y `en_us`) |
+| [docs/10-suitecrm-dev-permissions.md](docs/10-suitecrm-dev-permissions.md) | Permisos `custom/` en desarrollo (`dev-unlock` / `dev-lock`) |
+
+## Desarrollo local con permisos
+
+Antes y después de los scripts SIGI CNI, alternar ownership entre tu usuario local y `www-data` del contenedor:
+
+```bash
+cd crm
+bash scripts/dev-unlock-suitecrm-custom.sh
+bash scripts/apply-sigi-cni-suitecrm-customizations.sh
+bash scripts/register-sigi-cni-fields-metadata.sh
+bash scripts/apply-sigi-cni-suitecrm-layouts.sh
+bash scripts/dev-lock-suitecrm-custom.sh
+```
+
+Luego: **Admin → Repair → Quick Repair and Rebuild** en SuiteCRM.
+
+Detalle: [docs/10-suitecrm-dev-permissions.md](docs/10-suitecrm-dev-permissions.md).
 
 ## Qué no subir a Git
 

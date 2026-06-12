@@ -32,9 +32,8 @@ if ! mkdir -p "${WRITE_TEST}" 2>/dev/null; then
   echo "Error: cannot write under ${CUSTOM_BASE}/modules/"
   echo ""
   echo "SuiteCRM files may belong to the Docker web user (www-data)."
-  echo "Fix ownership for local scripts, for example:"
-  echo "  sudo chown -R \$(whoami):\$(whoami) suitecrm/public/legacy/custom"
-  echo "Or run: bash scripts/fix-suitecrm-permissions.sh"
+  echo "Run first: bash scripts/dev-unlock-suitecrm-custom.sh"
+  echo "See: docs/10-suitecrm-dev-permissions.md"
   exit 1
 fi
 rmdir "${WRITE_TEST}"
