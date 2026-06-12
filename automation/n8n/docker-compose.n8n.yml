@@ -1,0 +1,28 @@
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: cni-n8n
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: ${N8N_HOST:-localhost}
+      N8N_PORT: ${N8N_PORT:-5678}
+      N8N_PROTOCOL: ${N8N_PROTOCOL:-http}
+      GENERIC_TIMEZONE: ${N8N_TIMEZONE:-America/Tegucigalpa}
+      TZ: ${N8N_TIMEZONE:-America/Tegucigalpa}
+      WEBHOOK_URL: ${N8N_PROTOCOL:-http}://${N8N_HOST:-localhost}:${N8N_PORT:-5678}/
+      SUITECRM_BASE_URL: ${SUITECRM_BASE_URL:-http://host.docker.internal:8085}
+      SUITECRM_CLIENT_ID: ${SUITECRM_CLIENT_ID:-}
+      SUITECRM_CLIENT_SECRET: ${SUITECRM_CLIENT_SECRET:-}
+      DJANGO_WEBHOOK_TOKEN: ${DJANGO_WEBHOOK_TOKEN:-}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_data:
