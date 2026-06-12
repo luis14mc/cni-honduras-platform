@@ -38,14 +38,21 @@ Genera:
 | Destino | Contenido |
 |---------|-----------|
 | `application/Ext/Language/es_es.sigi_cni_lists.php` | Listas desplegables globales (`app_list_strings`) |
+| `application/Ext/Language/en_us.sigi_cni_lists.php` | Mismas listas (etiquetas en español institucional) |
 | `modules/Accounts/Ext/Vardefs/sigi_cni_fields.php` | Campos personalizados Accounts |
-| `modules/Accounts/Ext/Language/es_es.sigi_cni_fields.php` | Etiquetas en español |
+| `modules/Accounts/Ext/Language/es_es.sigi_cni_fields.php` | Etiquetas de campos |
+| `modules/Accounts/Ext/Language/en_us.sigi_cni_fields.php` | Mismas etiquetas (español institucional CNI) |
 | `modules/Contacts/Ext/Vardefs/sigi_cni_fields.php` | Campos Contacts |
 | `modules/Contacts/Ext/Language/es_es.sigi_cni_fields.php` | Etiquetas Contacts |
+| `modules/Contacts/Ext/Language/en_us.sigi_cni_fields.php` | Mismas etiquetas (español institucional CNI) |
 | `modules/Opportunities/Ext/Vardefs/sigi_cni_fields.php` | Campos Opportunities |
 | `modules/Opportunities/Ext/Language/es_es.sigi_cni_fields.php` | Etiquetas Opportunities |
+| `modules/Opportunities/Ext/Language/en_us.sigi_cni_fields.php` | Mismas etiquetas (español institucional CNI) |
 | `modules/Leads/Ext/Vardefs/sigi_cni_fields.php` | Campos Leads |
 | `modules/Leads/Ext/Language/es_es.sigi_cni_fields.php` | Etiquetas Leads |
+| `modules/Leads/Ext/Language/en_us.sigi_cni_fields.php` | Mismas etiquetas (español institucional CNI) |
+
+Cada par `es_es` / `en_us` usa **el mismo texto en español** por ahora, para que las etiquetas se vean aunque la interfaz de SuiteCRM esté en inglés (`en_us`).
 
 Listas globales incluidas: ciclo de vida, sector económico, fuente de contacto, prioridad, tipo de inversión, estado de proyecto, idioma preferido y estado de lead.
 
@@ -111,7 +118,17 @@ SuiteCRM fusionará Extension en `custom/application/` y `custom/modules/` duran
 1. **Admin → Studio → Accounts / Contacts / Opportunities / Leads → Fields**
    - Deben aparecer campos `_c` SIGI CNI junto a los creados manualmente.
 2. Si existen pero no se ven en formularios:
-   - **Studio → [Módulo] → Layouts → Edit View / Detail View** — arrastrar campos.
+   - **Studio → [Módulo] → Layouts → Edit View / Detail View** — arrastrar campos, o usar [09-suitecrm-layout-customization.md](09-suitecrm-layout-customization.md).
+
+### Etiquetas no visibles con UI en inglés
+
+Si la interfaz está en **English (US)** y los campos muestran claves (`LBL_*`) en lugar de texto:
+
+1. Re-ejecutar `apply-sigi-cni-suitecrm-customizations.sh` (genera `en_us.sigi_cni_*.php`).
+2. **Admin → Repair → Quick Repair and Rebuild**.
+3. Limpiar caché del navegador.
+
+Los archivos `en_us` usan las mismas etiquetas en español que `es_es` (decisión institucional CNI).
 
 Verificación rápida en base de datos:
 
