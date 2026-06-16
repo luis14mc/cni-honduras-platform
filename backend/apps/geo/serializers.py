@@ -6,12 +6,18 @@ from .models import CNIRegion, Department, Municipality
 
 
 class GeometrySerializerMixin:
-    geometry = serializers.SerializerMethodField()
+    """Convert GeoDjango geometry fields to GeoJSON dicts in API responses."""
 
-    def get_geometry(self, obj):
+    def geometry_to_geojson(self, obj):
         if not obj.geometry:
             return None
         return json.loads(obj.geometry.geojson)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if "geometry" in data:
+            data["geometry"] = self.geometry_to_geojson(instance)
+        return data
 
 
 class DepartmentLiteSerializer(serializers.ModelSerializer):
