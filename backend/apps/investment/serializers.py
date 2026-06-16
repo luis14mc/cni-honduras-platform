@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.geo.models import Department
 from apps.geo.serializers import CNIRegionSerializer, DepartmentLiteSerializer, MunicipalitySerializer
 
 from .models import InvestmentOpportunity, InvestmentProject, Sector, SuccessStory
@@ -107,3 +108,20 @@ class SuccessStorySerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+
+
+class DepartmentMapCenterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ("id", "name", "slug", "code", "center_lat", "center_lng")
+
+
+class DepartmentMapSummarySerializer(serializers.Serializer):
+    department = DepartmentMapCenterSerializer()
+    projects_count = serializers.IntegerField()
+    opportunities_count = serializers.IntegerField()
+    total_investment = serializers.DecimalField(
+        max_digits=18, decimal_places=2, allow_null=True
+    )
+    estimated_jobs = serializers.IntegerField(allow_null=True)
+    sectors = SectorLiteSerializer(many=True)

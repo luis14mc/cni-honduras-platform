@@ -30,11 +30,18 @@ class MunicipalityViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
-        return (
+        queryset = (
             Municipality.objects.select_related("department")
             .filter(is_active=True, department__is_active=True)
             .order_by(*Municipality._meta.ordering)
         )
+        department_slug = self.request.query_params.get("department")
+        if department_slug:
+            queryset = queryset.filter(department__slug=department_slug)
+        region_slug = self.request.query_params.get("region")
+        if region_slug:
+            queryset = queryset.filter(department__regions__slug=region_slug).distinct()
+        return queryset
 
     def get_object(self):
         slug = self.kwargs.get(self.lookup_field)
