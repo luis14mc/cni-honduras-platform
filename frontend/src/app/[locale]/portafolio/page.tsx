@@ -259,36 +259,36 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
   ]);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="relative flex h-[614px] items-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.portfolio.hero} alt="Portafolio" fill priority sizes="100vw" className="object-cover brightness-50 grayscale-[20%]" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e] via-[#000a1e]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#252A58] via-[#252A58]/80 to-transparent" />
         </div>
         <div className="relative z-10 w-full max-w-7xl px-12 md:px-24">
-          <div className="mb-6 inline-block border-l-4 border-[#e9c176] bg-[#2e1f00] px-4 py-1">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#ffdea5]">{c.eyebrow}</span>
+          <div className="mb-6 inline-block border-l-4 border-[#35A963] bg-[#0E7A7C] px-4 py-1">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#8DC046]">{c.eyebrow}</span>
           </div>
           <h1 className="mb-6 max-w-3xl text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl">
             {c.titleA} <br />
-            <span className="text-[#e9c176]">{c.titleB}</span>
+            <span className="text-[#35A963]">{c.titleB}</span>
           </h1>
-          <p className="max-w-2xl text-xl font-light leading-relaxed text-[#708ab5]">{c.description}</p>
+          <p className="max-w-2xl text-xl font-light leading-relaxed text-[#b6c2d3]">{c.description}</p>
         </div>
       </header>
 
       <div className="mx-auto flex max-w-[1600px] flex-col gap-8 px-8 py-12 lg:flex-row">
-        <aside className="sticky top-32 hidden h-fit w-72 flex-col space-y-4 rounded-xl bg-[#f3f4f5] py-8 lg:flex">
+        <aside className="sticky top-32 hidden h-fit w-72 flex-col space-y-4 rounded-xl bg-[#eff4ff] py-8 lg:flex">
           <div className="mb-4 px-6">
-            <h2 className="text-xl font-extrabold text-[#000a1e]">{c.sectorsTitle}</h2>
-            <p className="text-sm text-[#44474e]">{c.sectorsSubtitle}</p>
+            <h2 className="text-xl font-extrabold text-[#252A58]">{c.sectorsTitle}</h2>
+            <p className="text-sm text-[#0E7A7C]">{c.sectorsSubtitle}</p>
           </div>
           <nav className="flex flex-col space-y-1">
             {sectors.map((s) => (
               <div
                 key={s.label}
                 className={`flex cursor-pointer items-center gap-4 px-6 py-3 transition-all duration-200 hover:translate-x-1 ${
-                  s.active ? "rounded-r-full bg-[#e1e3e4] font-bold text-[#000a1e]" : "text-[#44474e] hover:bg-[#e7e8e9]"
+                  s.active ? "rounded-r-full bg-[#d3e4fe] font-bold text-[#252A58]" : "text-[#0E7A7C] hover:bg-[#dce9ff]"
                 }`}
               >
                 <SectorIcon slug={s.slug as SectorSlug} size={SECTOR_ICON_SIZE.sidebar} className={s.active ? "opacity-100" : "opacity-80"} />
@@ -296,19 +296,19 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
               </div>
             ))}
           </nav>
-          <div className="mt-8 border-t border-[#c4c6cf]/10 px-6 pt-8">
+          <div className="mt-8 border-t border-[#dce9ff]/10 px-6 pt-8">
             <Link
               href={L("/postulacion")}
-              className="block w-full rounded-md bg-[#000a1e] py-3 text-center font-bold text-white transition-shadow hover:shadow-lg active:scale-95"
+              className="block w-full rounded-md bg-[#252A58] py-3 text-center font-bold text-white transition-shadow hover:shadow-lg active:scale-95"
             >
               {c.requestProspect}
             </Link>
             <div className="mt-6 flex flex-col space-y-4">
-              <div className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#44474e] hover:text-[#000a1e]">
+              <div className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#0E7A7C] hover:text-[#252A58]">
                 <MaterialIcon name="help_outline" className="text-lg" />
                 <span>{c.support}</span>
               </div>
-              <div className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#44474e] hover:text-[#000a1e]">
+              <div className="flex cursor-pointer items-center gap-3 text-sm font-medium text-[#0E7A7C] hover:text-[#252A58]">
                 <MaterialIcon name="gavel" className="text-lg" />
                 <span>{c.policies}</span>
               </div>
@@ -319,9 +319,9 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
         <div className="flex-1">
           <div className="mb-10 flex items-end justify-between">
             <div>
-              <span className="text-sm font-bold uppercase tracking-widest text-[#44474e]">{c.catalogYear}</span>
-              <h2 className="text-3xl font-extrabold text-[#002147]">{c.catalogTitle}</h2>
-              <div className="mt-4 grid gap-3 text-sm font-bold uppercase tracking-widest text-[#44474e] sm:grid-cols-2">
+              <span className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{c.catalogYear}</span>
+              <h2 className="text-3xl font-extrabold text-[#24436B]">{c.catalogTitle}</h2>
+              <div className="mt-4 grid gap-3 text-sm font-bold uppercase tracking-widest text-[#0E7A7C] sm:grid-cols-2">
                 <div className="rounded-lg bg-white px-4 py-3 tonal-depth-layering">
                   {projects.length} {labels.projectsSummary}
                 </div>
@@ -331,51 +331,51 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
               </div>
             </div>
             <div className="flex gap-4">
-              <button type="button" className="flex items-center gap-2 rounded-lg bg-[#e1e3e4] px-4 py-2 text-sm font-semibold text-[#000a1e]">
+              <button type="button" className="flex items-center gap-2 rounded-lg bg-[#d3e4fe] px-4 py-2 text-sm font-semibold text-[#252A58]">
                 <MaterialIcon name="filter_list" className="text-sm" />
                 {c.sortByValue}
               </button>
             </div>
           </div>
           <section className="mb-12">
-            <h3 className="mb-6 text-2xl font-extrabold text-[#000a1e]">{labels.projectsTitle}</h3>
+            <h3 className="mb-6 text-2xl font-extrabold text-[#252A58]">{labels.projectsTitle}</h3>
             {projects.length > 0 ? (
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {projects.map((project) => (
                   <article
                     key={project.slug}
-                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#e9c176] hover:shadow-2xl hover:shadow-[#000a1e]/5"
+                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#35A963] hover:shadow-2xl hover:shadow-[#252A58]/5"
                   >
                     <div className="mb-6 flex items-start justify-between">
-                      <div className="rounded-xl bg-[#e7e8e9] p-3">
-                        <MaterialIcon name="folder_managed" className="text-3xl text-[#000a1e]" />
+                      <div className="rounded-xl bg-[#dce9ff] p-3">
+                        <MaterialIcon name="folder_managed" className="text-3xl text-[#252A58]" />
                       </div>
-                      <span className="rounded-full bg-[#2e1f00] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#e9c176]">
+                      <span className="rounded-full bg-[#0E7A7C] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#35A963]">
                         {formatProjectStage(locale, project.project_stage)}
                       </span>
                     </div>
-                    <h4 className="mb-3 text-2xl font-bold text-[#000a1e]">{project.title}</h4>
-                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#44474e]">
+                    <h4 className="mb-3 text-2xl font-bold text-[#252A58]">{project.title}</h4>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                       {labels.sector}: {project.sector.name}
                     </p>
-                    <p className="mb-6 text-sm leading-relaxed text-[#44474e]">
+                    <p className="mb-6 text-sm leading-relaxed text-[#0E7A7C]">
                       {project.summary || project.description}
                     </p>
-                    <div className="grid grid-cols-3 gap-4 border-t border-[#c4c6cf]/10 pt-6">
+                    <div className="grid grid-cols-3 gap-4 border-t border-[#dce9ff]/10 pt-6">
                       <div>
-                        <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.stage}</p>
-                        <p className="font-bold text-[#000a1e]">{formatProjectStage(locale, project.project_stage)}</p>
+                        <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.stage}</p>
+                        <p className="font-bold text-[#252A58]">{formatProjectStage(locale, project.project_stage)}</p>
                       </div>
                       {project.investment_amount && (
                         <div>
-                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.investment}</p>
-                          <p className="font-bold text-[#000a1e]">{formatMoney(project.investment_amount)}</p>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.investment}</p>
+                          <p className="font-bold text-[#252A58]">{formatMoney(project.investment_amount)}</p>
                         </div>
                       )}
                       {project.estimated_jobs !== null && (
                         <div>
-                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.jobs}</p>
-                          <p className="font-bold text-[#000a1e]">{project.estimated_jobs}</p>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.jobs}</p>
+                          <p className="font-bold text-[#252A58]">{project.estimated_jobs}</p>
                         </div>
                       )}
                     </div>
@@ -383,53 +383,53 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
                 ))}
               </div>
             ) : (
-              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#44474e] tonal-depth-layering">
+              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#0E7A7C] tonal-depth-layering">
                 {labels.emptyProjects}
               </div>
             )}
           </section>
 
           <section>
-            <h3 className="mb-6 text-2xl font-extrabold text-[#000a1e]">{labels.opportunitiesTitle}</h3>
+            <h3 className="mb-6 text-2xl font-extrabold text-[#252A58]">{labels.opportunitiesTitle}</h3>
             {opportunities.length > 0 ? (
               <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                 {opportunities.map((opportunity) => (
                   <article
                     key={opportunity.slug}
-                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#e9c176] hover:shadow-2xl hover:shadow-[#000a1e]/5"
+                    className="group rounded-xl border-b-4 border-transparent bg-white p-8 transition-all duration-300 hover:border-[#35A963] hover:shadow-2xl hover:shadow-[#252A58]/5"
                   >
                     <div className="mb-6 flex items-start justify-between">
-                      <div className="rounded-xl bg-[#e7e8e9] p-3">
-                        <MaterialIcon name="trending_up" className="text-3xl text-[#000a1e]" />
+                      <div className="rounded-xl bg-[#dce9ff] p-3">
+                        <MaterialIcon name="trending_up" className="text-3xl text-[#252A58]" />
                       </div>
-                      <span className="rounded-full bg-[#e7e8e9] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#000a1e]">
+                      <span className="rounded-full bg-[#dce9ff] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#252A58]">
                         {formatOpportunityStatus(locale, opportunity.status)}
                       </span>
                     </div>
-                    <h4 className="mb-3 text-2xl font-bold text-[#000a1e]">{opportunity.title}</h4>
-                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#44474e]">
+                    <h4 className="mb-3 text-2xl font-bold text-[#252A58]">{opportunity.title}</h4>
+                    <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                       {labels.sector}: {opportunity.sector.name}
                     </p>
-                    <p className="mb-6 text-sm leading-relaxed text-[#44474e]">
+                    <p className="mb-6 text-sm leading-relaxed text-[#0E7A7C]">
                       {opportunity.summary || opportunity.description}
                     </p>
-                    <div className="grid grid-cols-3 gap-4 border-t border-[#c4c6cf]/10 pt-6">
+                    <div className="grid grid-cols-3 gap-4 border-t border-[#dce9ff]/10 pt-6">
                       <div>
-                        <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.status}</p>
-                        <p className="font-bold text-[#000a1e]">
+                        <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.status}</p>
+                        <p className="font-bold text-[#252A58]">
                           {formatOpportunityStatus(locale, opportunity.status)}
                         </p>
                       </div>
                       {opportunity.estimated_investment && (
                         <div>
-                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.investment}</p>
-                          <p className="font-bold text-[#000a1e]">{formatMoney(opportunity.estimated_investment)}</p>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.investment}</p>
+                          <p className="font-bold text-[#252A58]">{formatMoney(opportunity.estimated_investment)}</p>
                         </div>
                       )}
                       {opportunity.estimated_jobs !== null && (
                         <div>
-                          <p className="mb-1 text-[10px] font-bold uppercase text-[#44474e]">{labels.jobs}</p>
-                          <p className="font-bold text-[#000a1e]">{opportunity.estimated_jobs}</p>
+                          <p className="mb-1 text-[10px] font-bold uppercase text-[#0E7A7C]">{labels.jobs}</p>
+                          <p className="font-bold text-[#252A58]">{opportunity.estimated_jobs}</p>
                         </div>
                       )}
                     </div>
@@ -437,7 +437,7 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
                 ))}
               </div>
             ) : (
-              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#44474e] tonal-depth-layering">
+              <div className="rounded-xl bg-white p-8 text-sm font-medium text-[#0E7A7C] tonal-depth-layering">
                 {labels.emptyOpportunities}
               </div>
             )}
@@ -445,24 +445,24 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
         </div>
       </div>
 
-      <section className="bg-[#002147] px-12 py-24 md:px-24">
+      <section className="bg-[#24436B] px-12 py-24 md:px-24">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-16 md:flex-row">
           <div className="flex-1">
             <h2 className="mb-6 text-4xl font-extrabold leading-tight text-white md:text-5xl">
               {c.ctaTitle1} <br />
-              <span className="text-[#e9c176]">{c.ctaTitle2}</span>
+              <span className="text-[#35A963]">{c.ctaTitle2}</span>
             </h2>
-            <p className="mb-10 text-lg leading-relaxed text-[#708ab5]">{c.ctaDesc}</p>
+            <p className="mb-10 text-lg leading-relaxed text-[#b6c2d3]">{c.ctaDesc}</p>
             <div className="flex flex-wrap gap-6">
               <Link
                 href={L("/contacto")}
-                className="rounded-md bg-[#e9c176] px-10 py-4 font-extrabold text-[#000a1e] shadow-xl transition-all hover:-translate-y-0.5"
+                className="rounded-md bg-[#35A963] px-10 py-4 font-extrabold text-[#252A58] shadow-xl transition-all hover:-translate-y-0.5"
               >
                 {c.ctaPrimary}
               </Link>
               <button
                 type="button"
-                className="rounded-md border border-[#708ab5] px-10 py-4 font-bold text-white transition-all hover:bg-white/5"
+                className="rounded-md border border-[#b6c2d3] px-10 py-4 font-bold text-white transition-all hover:bg-white/5"
               >
                 {c.ctaSecondary}
               </button>
@@ -470,9 +470,9 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
           </div>
           <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md md:w-1/3">
             <div className="text-center">
-              <MaterialIcon name="verified_user" className="mb-4 block text-6xl text-[#e9c176]" />
+              <MaterialIcon name="verified_user" className="mb-4 block text-6xl text-[#35A963]" />
               <h4 className="mb-2 text-xl font-bold text-white">{c.secureTitle}</h4>
-              <p className="text-sm text-[#708ab5]">{c.secureText}</p>
+              <p className="text-sm text-[#b6c2d3]">{c.secureText}</p>
             </div>
           </div>
         </div>

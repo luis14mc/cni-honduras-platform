@@ -97,15 +97,15 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
   const archive = featured ? articles.filter((article) => article.slug !== featured.slug) : articles;
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <section className="relative flex h-[60vh] items-center overflow-hidden premium-gradient">
         <div className="absolute inset-0 opacity-40">
-          <div className="absolute inset-0 bg-[#000a1e]/60" />
+          <div className="absolute inset-0 bg-[#252A58]/60" />
           <Image src={designImages.prensa.hero} alt="Press" fill priority sizes="100vw" className="object-cover" />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-7xl px-8">
           <div className="max-w-2xl">
-            <span className="mb-6 inline-block rounded-sm bg-[#e9c176] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#261900]">
+            <span className="mb-6 inline-block rounded-sm bg-[#35A963] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#261900]">
               {c.eyebrow}
             </span>
             <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tighter text-white md:text-6xl">
@@ -117,16 +117,16 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
       </section>
 
       {featured && (
-        <section className="bg-[#f8f9fa] px-8 py-24">
+        <section className="bg-[#f8f9ff] px-8 py-24">
           <div className="mx-auto max-w-7xl">
-            <div className="mb-12 border-l-4 border-[#e9c176] pl-6">
-              <h2 className="text-3xl font-bold tracking-tight text-[#000a1e]">{c.featuredTitle}</h2>
+            <div className="mb-12 border-l-4 border-[#35A963] pl-6">
+              <h2 className="text-3xl font-bold tracking-tight text-[#252A58]">{c.featuredTitle}</h2>
             </div>
             <Link
               href={L(`/prensa/${featured.slug}`)}
-              className="group grid overflow-hidden rounded-xl bg-white shadow-2xl shadow-[#000a1e]/5 transition-all hover:-translate-y-1 lg:grid-cols-12"
+              className="group grid overflow-hidden rounded-xl bg-white shadow-2xl shadow-[#252A58]/5 transition-all hover:-translate-y-1 lg:grid-cols-12"
             >
-              <div className="relative min-h-[360px] bg-[#000a1e] lg:col-span-7">
+              <div className="relative min-h-[360px] bg-[#252A58] lg:col-span-7">
                 {mediaUrl(featured) ? (
                   <img
                     src={mediaUrl(featured) ?? ""}
@@ -142,30 +142,30 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
                     className="object-cover"
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/80 via-transparent to-transparent" />
               </div>
               <div className="flex flex-col justify-center p-10 lg:col-span-5">
                 <div className="mb-4 flex flex-wrap items-center gap-4">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                     {categoryLabels[locale][featured.category]}
                   </span>
-                  <span className="text-xs text-[#74777f]">{formatDate(locale, featured.published_at)}</span>
+                  <span className="text-xs text-[#b6c2d3]">{formatDate(locale, featured.published_at)}</span>
                 </div>
-                <h3 className="mb-4 text-3xl font-bold leading-tight text-[#000a1e] transition-colors group-hover:text-[#3a5f94]">
+                <h3 className="mb-4 text-3xl font-bold leading-tight text-[#252A58] transition-colors group-hover:text-[#0E7A7C]">
                   {featured.title}
                 </h3>
-                <p className="line-clamp-4 text-[#44474e]">{featured.summary}</p>
+                <p className="line-clamp-4 text-[#0E7A7C]">{featured.summary}</p>
               </div>
             </Link>
           </div>
         </section>
       )}
 
-      <section id="archive" className="bg-[#f3f4f5] px-8 py-24">
+      <section id="archive" className="bg-[#eff4ff] px-8 py-24">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-12 text-4xl font-extrabold tracking-tight text-[#000a1e]">{c.archiveTitle}</h2>
+          <h2 className="mb-12 text-4xl font-extrabold tracking-tight text-[#252A58]">{c.archiveTitle}</h2>
           {articles.length === 0 ? (
-            <div className="rounded-xl bg-white p-10 text-center text-lg font-medium text-[#44474e] shadow-md">
+            <div className="rounded-xl bg-white p-10 text-center text-lg font-medium text-[#0E7A7C] shadow-md">
               {c.empty}
             </div>
           ) : (
@@ -176,7 +176,7 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
                   href={L(`/prensa/${article.slug}`)}
                   className="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
                 >
-                  <div className="h-56 overflow-hidden bg-[#e7e8e9]">
+                  <div className="h-56 overflow-hidden bg-[#dce9ff]">
                     {mediaUrl(article) ? (
                       <img
                         src={mediaUrl(article) ?? ""}
@@ -196,15 +196,15 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
                   </div>
                   <div className="flex flex-1 flex-col p-8">
                     <div className="mb-4 flex items-center gap-4">
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                      <span className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                         {categoryLabels[locale][article.category]}
                       </span>
-                      <span className="text-xs text-[#74777f]">{formatDate(locale, article.published_at)}</span>
+                      <span className="text-xs text-[#b6c2d3]">{formatDate(locale, article.published_at)}</span>
                     </div>
-                    <h3 className="mb-4 text-xl font-bold leading-tight text-[#000a1e]">{article.title}</h3>
-                    <p className="mb-8 line-clamp-3 text-sm text-[#44474e]">{article.summary}</p>
-                    <div className="mt-auto border-t border-[#e7e8e9] pt-6">
-                      <span className="flex items-center gap-2 font-bold text-[#000a1e]">
+                    <h3 className="mb-4 text-xl font-bold leading-tight text-[#252A58]">{article.title}</h3>
+                    <p className="mb-8 line-clamp-3 text-sm text-[#0E7A7C]">{article.summary}</p>
+                    <div className="mt-auto border-t border-[#dce9ff] pt-6">
+                      <span className="flex items-center gap-2 font-bold text-[#252A58]">
                         {c.readArticle}
                         <MaterialIcon name="north_east" className="text-sm" />
                       </span>
@@ -217,24 +217,24 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
         </div>
       </section>
 
-      <section className="border-b border-[#edeeef] bg-[#f8f9fa] px-8 py-24">
+      <section className="border-b border-[#e5eeff] bg-[#f8f9ff] px-8 py-24">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-3xl font-extrabold leading-tight text-[#000a1e]">{c.newsletterTitle}</h2>
-          <p className="mx-auto mb-10 max-w-2xl text-[#44474e]">{c.newsletterDesc}</p>
+          <h2 className="mb-6 text-3xl font-extrabold leading-tight text-[#252A58]">{c.newsletterTitle}</h2>
+          <p className="mx-auto mb-10 max-w-2xl text-[#0E7A7C]">{c.newsletterDesc}</p>
           <form className="mx-auto flex max-w-xl flex-col gap-4 sm:flex-row">
             <input
-              className="flex-1 rounded-lg border-none bg-[#e7e8e9] px-6 py-4 transition-all focus:ring-2 focus:ring-[#3a5f94]/20"
+              className="flex-1 rounded-lg border-none bg-[#dce9ff] px-6 py-4 transition-all focus:ring-2 focus:ring-[#0E7A7C]/20"
               placeholder={c.newsletterPlaceholder}
               type="email"
             />
             <button
               type="button"
-              className="rounded-lg bg-[#000a1e] px-10 py-4 font-bold text-white shadow-lg shadow-[#000a1e]/10 transition-all hover:bg-[#3a5f94]"
+              className="rounded-lg bg-[#252A58] px-10 py-4 font-bold text-white shadow-lg shadow-[#252A58]/10 transition-all hover:bg-[#0E7A7C]"
             >
               {c.newsletterCta}
             </button>
           </form>
-          <p className="mt-6 text-xs text-[#74777f]">{c.newsletterDisclaimer}</p>
+          <p className="mt-6 text-xs text-[#b6c2d3]">{c.newsletterDisclaimer}</p>
         </div>
       </section>
     </div>

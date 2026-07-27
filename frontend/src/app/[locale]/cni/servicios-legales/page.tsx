@@ -118,7 +118,7 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <section className="relative flex h-[819px] items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.servicios.legal} alt="Legal" fill priority sizes="100vw" className="object-cover" />
@@ -126,23 +126,23 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
         </div>
         <div className="container relative z-10 mx-auto px-8">
           <div className="max-w-4xl">
-            <span className="mb-4 block text-sm uppercase tracking-widest text-[#e9c176]">{c.eyebrow}</span>
+            <span className="mb-4 block text-sm uppercase tracking-widest text-[#35A963]">{c.eyebrow}</span>
             <h1 className="mb-6 text-6xl font-extrabold leading-tight tracking-tighter text-white md:text-8xl">{c.title}</h1>
-            <p className="max-w-2xl text-xl font-light leading-relaxed text-[#708ab5] md:text-2xl">{c.description}</p>
+            <p className="max-w-2xl text-xl font-light leading-relaxed text-[#b6c2d3] md:text-2xl">{c.description}</p>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f8f9fa] py-24">
+      <section className="bg-[#f8f9ff] py-24">
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-12">
             <div className="md:col-span-7">
-              <h2 className="mb-8 text-4xl font-bold tracking-tight text-[#000a1e]">{c.introTitle}</h2>
-              <p className="mb-6 text-lg leading-relaxed text-[#44474e]">{c.intro1}</p>
-              <p className="text-lg leading-relaxed text-[#44474e]">{c.intro2}</p>
+              <h2 className="mb-8 text-4xl font-bold tracking-tight text-[#252A58]">{c.introTitle}</h2>
+              <p className="mb-6 text-lg leading-relaxed text-[#0E7A7C]">{c.intro1}</p>
+              <p className="text-lg leading-relaxed text-[#0E7A7C]">{c.intro2}</p>
             </div>
             <div className="flex justify-end md:col-span-5">
-              <div className="group relative h-80 w-full overflow-hidden rounded-xl bg-[#e7e8e9] shadow-2xl">
+              <div className="group relative h-80 w-full overflow-hidden rounded-xl bg-[#dce9ff] shadow-2xl">
                 <Image src={designImages.servicios.legalHandshake} alt="Handshake" fill sizes="(min-width:768px) 40vw, 100vw" className="object-cover grayscale transition-all duration-700 hover:grayscale-0" />
               </div>
             </div>
@@ -150,11 +150,11 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
         </div>
       </section>
 
-      <section className="bg-[#f3f4f5] py-24">
+      <section className="bg-[#eff4ff] py-24">
         <div className="container mx-auto px-8">
           <div className="mb-16 flex items-end justify-between">
-            <h2 className="text-4xl font-bold tracking-tight text-[#000a1e]">{c.portfolioTitle}</h2>
-            <span className="select-none text-7xl font-bold text-[#000a1e] opacity-5">{c.portfolioWatermark}</span>
+            <h2 className="text-4xl font-bold tracking-tight text-[#252A58]">{c.portfolioTitle}</h2>
+            <span className="select-none text-7xl font-bold text-[#252A58] opacity-5">{c.portfolioWatermark}</span>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {c.services.map((s) => {
@@ -163,11 +163,11 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
                 return (
                   <div key={s.title} className={`${base} bg-white md:col-span-2`}>
                     <div>
-                      <MaterialIcon name={s.icon} filled className="mb-6 block text-4xl text-[#e9c176]" />
-                      <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{s.title}</h3>
-                      <p className="max-w-xl text-lg leading-relaxed text-[#44474e]">{s.text}</p>
+                      <MaterialIcon name={s.icon} filled className="mb-6 block text-4xl text-[#35A963]" />
+                      <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{s.title}</h3>
+                      <p className="max-w-xl text-lg leading-relaxed text-[#0E7A7C]">{s.text}</p>
                     </div>
-                    <div className="group mt-8 flex cursor-pointer items-center gap-2 font-semibold text-[#3a5f94]">
+                    <div className="group mt-8 flex cursor-pointer items-center gap-2 font-semibold text-[#0E7A7C]">
                       <span>{s.action}</span>
                       <MaterialIcon name="arrow_forward" className="transition-transform group-hover:translate-x-1" />
                     </div>
@@ -176,11 +176,11 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
               }
               if (s.variant === "dark") {
                 return (
-                  <div key={s.title} className={`${base} bg-[#000a1e] text-white`}>
+                  <div key={s.title} className={`${base} bg-[#252A58] text-white`}>
                     <div>
-                      <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#e9c176]" />
+                      <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#35A963]" />
                       <h3 className="mb-4 text-2xl font-bold">{s.title}</h3>
-                      <p className="leading-relaxed text-[#708ab5]">{s.text}</p>
+                      <p className="leading-relaxed text-[#b6c2d3]">{s.text}</p>
                     </div>
                     <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
                       <span className="text-sm opacity-60">{s.action}</span>
@@ -191,20 +191,20 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
               }
               if (s.variant === "highest") {
                 return (
-                  <div key={s.title} className={`${base} bg-[#e1e3e4]`}>
+                  <div key={s.title} className={`${base} bg-[#d3e4fe]`}>
                     <div>
-                      <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#3a5f94]" />
-                      <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{s.title}</h3>
-                      <p className="leading-relaxed text-[#44474e]">{s.text}</p>
+                      <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#0E7A7C]" />
+                      <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{s.title}</h3>
+                      <p className="leading-relaxed text-[#0E7A7C]">{s.text}</p>
                     </div>
                   </div>
                 );
               }
               return (
-                <div key={s.title} className={`${base} bg-[#2e1f00] text-[#5d4201] md:col-span-2 md:flex-row md:gap-8 md:items-center`}>
+                <div key={s.title} className={`${base} bg-[#0E7A7C] text-[#5d4201] md:col-span-2 md:flex-row md:gap-8 md:items-center`}>
                   <div className="flex-1">
-                    <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#e9c176]" />
-                    <h3 className="mb-4 text-2xl font-bold text-[#e9c176]">{s.title}</h3>
+                    <MaterialIcon name={s.icon} className="mb-6 block text-4xl text-[#35A963]" />
+                    <h3 className="mb-4 text-2xl font-bold text-[#35A963]">{s.title}</h3>
                     <p className="text-lg leading-relaxed text-white opacity-80">{s.text}</p>
                   </div>
                   <div className="flex aspect-video w-full items-center justify-center rounded-lg bg-black/20 md:w-1/3">
@@ -220,20 +220,20 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
       <section className="bg-white py-24">
         <div className="container mx-auto px-8">
           <div className="mb-20 max-w-3xl">
-            <h2 className="mb-6 text-4xl font-bold tracking-tight text-[#000a1e]">{c.lppiTitle}</h2>
-            <p className="text-xl text-[#44474e]">{c.lppiSub}</p>
+            <h2 className="mb-6 text-4xl font-bold tracking-tight text-[#252A58]">{c.lppiTitle}</h2>
+            <p className="text-xl text-[#0E7A7C]">{c.lppiSub}</p>
           </div>
           <div className="space-y-12">
             {c.mechanisms.map((m) => (
-              <div key={m.n} className="flex flex-col items-start gap-12 border-b border-[#e7e8e9] py-12 last:border-none md:flex-row">
+              <div key={m.n} className="flex flex-col items-start gap-12 border-b border-[#dce9ff] py-12 last:border-none md:flex-row">
                 <div className="flex-shrink-0">
-                  <span className="text-6xl font-extrabold text-[#e9c176] opacity-40">{m.n}</span>
+                  <span className="text-6xl font-extrabold text-[#35A963] opacity-40">{m.n}</span>
                 </div>
                 <div className="flex-grow">
-                  <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{m.title}</h3>
-                  <p className="mb-6 max-w-4xl text-lg leading-relaxed text-[#44474e]">{m.text}</p>
+                  <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{m.title}</h3>
+                  <p className="mb-6 max-w-4xl text-lg leading-relaxed text-[#0E7A7C]">{m.text}</p>
                   {m.cta && (
-                    <button type="button" className="flex items-center gap-2 font-bold text-[#000a1e] transition-all hover:gap-4">
+                    <button type="button" className="flex items-center gap-2 font-bold text-[#252A58] transition-all hover:gap-4">
                       <MaterialIcon name="qr_code_2" />
                       <span>{m.cta}</span>
                     </button>
@@ -245,14 +245,14 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
         </div>
       </section>
 
-      <section className="bg-[#000a1e] py-24 text-white">
+      <section className="bg-[#252A58] py-24 text-white">
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 items-center gap-16 md:grid-cols-2">
             <div>
               <h2 className="mb-8 text-4xl font-bold leading-tight">{c.docsTitle}</h2>
-              <p className="mb-10 text-xl font-light text-[#708ab5]">{c.docsDesc}</p>
+              <p className="mb-10 text-xl font-light text-[#b6c2d3]">{c.docsDesc}</p>
               <div className="flex flex-col gap-6 sm:flex-row">
-                <a href="#" className="inline-flex items-center justify-center gap-3 rounded-md bg-[#e9c176] px-8 py-4 font-bold text-[#000a1e] transition-all hover:bg-white">
+                <a href="#" className="inline-flex items-center justify-center gap-3 rounded-md bg-[#35A963] px-8 py-4 font-bold text-[#252A58] transition-all hover:bg-white">
                   <MaterialIcon name="download" />
                   {c.docsPrimary}
                 </a>
@@ -263,43 +263,43 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
               </div>
             </div>
             <div className="relative">
-              <div className="absolute -inset-4 rounded-full bg-[#e9c176]/10 blur-3xl" />
+              <div className="absolute -inset-4 rounded-full bg-[#35A963]/10 blur-3xl" />
               <Image src={designImages.servicios.legalDocs} alt="Legal Docs" width={700} height={500} className="relative z-10 rounded-xl shadow-2xl" unoptimized />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f8f9fa] py-24">
+      <section className="bg-[#f8f9ff] py-24">
         <div className="container mx-auto px-8">
           <div className="mx-auto mb-16 max-w-2xl text-center">
-            <h2 className="mb-4 text-4xl font-bold text-[#000a1e]">{c.zonesTitle}</h2>
-            <p className="text-[#44474e]">{c.zonesSub}</p>
+            <h2 className="mb-4 text-4xl font-bold text-[#252A58]">{c.zonesTitle}</h2>
+            <p className="text-[#0E7A7C]">{c.zonesSub}</p>
           </div>
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
             {[
-              { tag: "ZOLI", bg: "bg-[#000a1e]", icon: "factory", data: c.zoli },
-              { tag: "RIT", bg: "bg-[#3a5f94]", icon: "inventory_2", data: c.rit },
+              { tag: "ZOLI", bg: "bg-[#252A58]", icon: "factory", data: c.zoli },
+              { tag: "RIT", bg: "bg-[#0E7A7C]", icon: "inventory_2", data: c.rit },
             ].map((z) => (
-              <div key={z.tag} className="overflow-hidden rounded-2xl bg-[#f3f4f5] shadow-sm transition-shadow duration-500 hover:shadow-xl">
+              <div key={z.tag} className="overflow-hidden rounded-2xl bg-[#eff4ff] shadow-sm transition-shadow duration-500 hover:shadow-xl">
                 <div className="p-12">
                   <div className="mb-8 flex items-start justify-between">
                     <span className={`rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest text-white ${z.bg}`}>{z.tag}</span>
-                    <MaterialIcon name={z.icon} className="text-4xl text-[#e9c176]" />
+                    <MaterialIcon name={z.icon} className="text-4xl text-[#35A963]" />
                   </div>
-                  <h3 className="mb-6 text-3xl font-bold text-[#000a1e]">{z.data.title}</h3>
-                  <p className="mb-8 leading-relaxed text-[#44474e]">{z.data.text}</p>
+                  <h3 className="mb-6 text-3xl font-bold text-[#252A58]">{z.data.title}</h3>
+                  <p className="mb-8 leading-relaxed text-[#0E7A7C]">{z.data.text}</p>
                   <ul className="mb-10 space-y-4">
                     {z.data.items.map((it) => (
-                      <li key={it} className="flex gap-3 text-[#191c1d]">
-                        <MaterialIcon name="check_circle" className="text-sm text-[#3a5f94]" />
+                      <li key={it} className="flex gap-3 text-[#252A58]">
+                        <MaterialIcon name="check_circle" className="text-sm text-[#0E7A7C]" />
                         <span>{it}</span>
                       </li>
                     ))}
                   </ul>
                   <Link
                     href={L("/tramites")}
-                    className="block w-full rounded-md border border-[#c4c6cf] py-4 text-center font-bold text-[#000a1e] transition-all hover:bg-[#000a1e] hover:text-white"
+                    className="block w-full rounded-md border border-[#dce9ff] py-4 text-center font-bold text-[#252A58] transition-all hover:bg-[#252A58] hover:text-white"
                   >
                     {z.data.cta}
                   </Link>
@@ -314,10 +314,10 @@ export default async function ServiciosLegalesPage({ params }: { params: Promise
         <div className="absolute inset-0 sovereign-gradient" />
         <div className="container relative z-10 mx-auto px-8 text-center">
           <h2 className="mb-8 text-5xl font-extrabold tracking-tighter text-white md:text-6xl">{c.ctaTitle}</h2>
-          <p className="mx-auto mb-12 max-w-2xl text-xl font-light text-[#708ab5] md:text-2xl">{c.ctaSub}</p>
+          <p className="mx-auto mb-12 max-w-2xl text-xl font-light text-[#b6c2d3] md:text-2xl">{c.ctaSub}</p>
           <Link
             href={L("/contacto")}
-            className="rounded-md bg-[#e9c176] px-10 py-5 text-lg font-bold text-[#000a1e] transition-transform duration-300 hover:scale-105"
+            className="rounded-md bg-[#35A963] px-10 py-5 text-lg font-bold text-[#252A58] transition-transform duration-300 hover:scale-105"
           >
             {c.ctaButton}
           </Link>

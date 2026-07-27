@@ -26,6 +26,19 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       "Honduras Investment",
     ],
   },
+  "home-ledger": {
+    canonical: "/home-ledger",
+    enMirror: "/en/home-ledger",
+    title: {
+      es: "Architectural Ledger · Vista previa del Home",
+      en: "Architectural Ledger · Home Preview",
+    },
+    description: {
+      es: "Vista previa del diseño Architectural Ledger para el portal CNI Honduras — paleta Sovereign, tipografía Aptos y estilo Corporate Modern.",
+      en: "Architectural Ledger design preview for the CNI Honduras portal — Sovereign palette, Aptos typography and Corporate Modern style.",
+    },
+    keywords: ["CNI Honduras", "Architectural Ledger", "Design System Preview"],
+  },
   invertir: {
     canonical: "/invertir",
     enMirror: "/en/invest",

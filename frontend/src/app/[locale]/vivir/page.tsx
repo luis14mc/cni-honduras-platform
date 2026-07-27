@@ -113,7 +113,7 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="relative flex min-h-[870px] items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.vivir.hero} alt="Tegucigalpa" fill priority sizes="100vw" className="object-cover" />
@@ -122,13 +122,13 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
         <div className="container relative z-10 mx-auto px-8 text-center md:text-left">
           <div className="max-w-4xl">
             <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl">
-              {c.titleA} <span className="text-[#ffdea5]">{c.titleB}</span>
+              {c.titleA} <span className="text-[#8DC046]">{c.titleB}</span>
             </h1>
             <p className="mb-8 max-w-2xl text-xl leading-relaxed text-white/90">{c.description}</p>
             <div className="flex flex-wrap justify-center gap-4 md:justify-start">
               <Link
                 href={L("/vivir/calidad-de-vida")}
-                className="inline-flex items-center gap-2 rounded-md bg-[#ffdea5] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#e9c176]"
+                className="inline-flex items-center gap-2 rounded-md bg-[#8DC046] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#35A963]"
               >
                 {c.ctaPrimary}
                 <MaterialIcon name="arrow_forward" />
@@ -138,19 +138,19 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
         </div>
       </header>
 
-      <section className="bg-[#f8f9fa] py-24">
+      <section className="bg-[#f8f9ff] py-24">
         <div className="container mx-auto px-8">
           <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <span className="mb-4 block text-sm font-bold uppercase tracking-widest text-[#3a5f94]">{c.section2Eyebrow}</span>
-              <h2 className="mb-8 text-4xl font-black leading-tight text-[#000a1e] md:text-5xl">{c.section2Title}</h2>
-              <div className="space-y-6 text-lg leading-relaxed text-[#44474e]">
+              <span className="mb-4 block text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{c.section2Eyebrow}</span>
+              <h2 className="mb-8 text-4xl font-black leading-tight text-[#252A58] md:text-5xl">{c.section2Title}</h2>
+              <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
                 <p>{c.section2Lead}</p>
                 {c.section2Items.map((it) => (
-                  <div key={it.title} className="flex items-start gap-4 rounded-xl bg-[#f3f4f5] p-4 shadow-sm">
-                    <MaterialIcon name={it.icon} className="scale-125 pt-1 text-[#3a5f94]" />
+                  <div key={it.title} className="flex items-start gap-4 rounded-xl bg-[#eff4ff] p-4 shadow-sm">
+                    <MaterialIcon name={it.icon} className="scale-125 pt-1 text-[#0E7A7C]" />
                     <div>
-                      <h4 className="mb-1 font-bold text-[#000a1e]">{it.title}</h4>
+                      <h4 className="mb-1 font-bold text-[#252A58]">{it.title}</h4>
                       <p className="text-base">{it.text}</p>
                     </div>
                   </div>
@@ -176,33 +176,33 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
       <section className="bg-[#d9dadb] py-24">
         <div className="container mx-auto px-8">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-[#000a1e]">{c.eduTitle}</h2>
-            <p className="mx-auto max-w-2xl text-lg text-[#44474e]">{c.eduSub}</p>
+            <h2 className="mb-4 text-4xl font-bold text-[#252A58]">{c.eduTitle}</h2>
+            <p className="mx-auto max-w-2xl text-lg text-[#0E7A7C]">{c.eduSub}</p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {c.edu.map((e) => (
               <div
                 key={e.title}
                 className={`flex h-full flex-col rounded-2xl p-10 shadow-xl ${
-                  e.dark ? "bg-[#002147] text-white shadow-[#000a1e]/10" : "border border-[#c4c6cf]/10 bg-white shadow-[#000a1e]/5"
+                  e.dark ? "bg-[#24436B] text-white shadow-[#252A58]/10" : "border border-[#dce9ff]/10 bg-white shadow-[#252A58]/5"
                 }`}
               >
-                <div className={`mb-4 text-6xl font-black ${e.dark ? "text-[#ffdea5]" : "text-[#3a5f94]"}`}>{e.value}</div>
-                <h3 className={`mb-6 text-2xl font-bold ${e.dark ? "text-white" : "text-[#000a1e]"}`}>{e.title}</h3>
+                <div className={`mb-4 text-6xl font-black ${e.dark ? "text-[#8DC046]" : "text-[#0E7A7C]"}`}>{e.value}</div>
+                <h3 className={`mb-6 text-2xl font-bold ${e.dark ? "text-white" : "text-[#252A58]"}`}>{e.title}</h3>
                 {e.items.length > 0 ? (
-                  <ul className={`space-y-4 ${e.dark ? "opacity-90" : "text-[#44474e]"}`}>
+                  <ul className={`space-y-4 ${e.dark ? "opacity-90" : "text-[#0E7A7C]"}`}>
                     {e.items.map((it) => (
                       <li key={it} className="flex items-center gap-3">
-                        <MaterialIcon name="check_circle" className={`text-sm ${e.dark ? "text-[#ffdea5]" : "text-[#e9c176]"}`} />
+                        <MaterialIcon name="check_circle" className={`text-sm ${e.dark ? "text-[#8DC046]" : "text-[#35A963]"}`} />
                         {it}
                       </li>
                     ))}
                   </ul>
                 ) : (
                   <div className="space-y-3 text-sm">
-                    <p className="font-bold text-[#000a1e]">{locale === "es" ? "Red de Excelencia:" : "Excellence Network:"}</p>
+                    <p className="font-bold text-[#252A58]">{locale === "es" ? "Red de Excelencia:" : "Excellence Network:"}</p>
                     {e.lines.map((line) => (
-                      <p key={line} className="text-[#44474e]">• {line}</p>
+                      <p key={line} className="text-[#0E7A7C]">• {line}</p>
                     ))}
                   </div>
                 )}
@@ -212,24 +212,24 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
         </div>
       </section>
 
-      <section className="bg-[#f8f9fa] py-24">
+      <section className="bg-[#f8f9ff] py-24">
         <div className="container mx-auto px-8">
-          <div className="flex flex-col overflow-hidden rounded-3xl bg-[#e7e8e9] shadow-2xl lg:flex-row">
+          <div className="flex flex-col overflow-hidden rounded-3xl bg-[#dce9ff] shadow-2xl lg:flex-row">
             <div className="relative min-h-[400px] lg:w-1/2">
               <Image src={designImages.vivir.healthcare} alt="Salud" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" />
             </div>
             <div className="flex flex-col justify-center p-12 lg:w-1/2 lg:p-16">
-              <h2 className="mb-6 text-4xl font-bold text-[#000a1e]">{c.healthTitle}</h2>
-              <p className="mb-8 text-lg leading-relaxed text-[#44474e]">{c.healthText}</p>
+              <h2 className="mb-6 text-4xl font-bold text-[#252A58]">{c.healthTitle}</h2>
+              <p className="mb-8 text-lg leading-relaxed text-[#0E7A7C]">{c.healthText}</p>
               <div className="mb-10 grid grid-cols-2 gap-8">
                 {c.healthStats.map((s) => (
                   <div key={s.label}>
-                    <div className="mb-1 text-3xl font-black text-[#3a5f94]">{s.value}</div>
-                    <div className="text-xs uppercase tracking-widest text-[#44474e]">{s.label}</div>
+                    <div className="mb-1 text-3xl font-black text-[#0E7A7C]">{s.value}</div>
+                    <div className="text-xs uppercase tracking-widest text-[#0E7A7C]">{s.label}</div>
                   </div>
                 ))}
               </div>
-              <div className="rounded-xl border-l-4 border-[#3a5f94] bg-white p-4">
+              <div className="rounded-xl border-l-4 border-[#0E7A7C] bg-white p-4">
                 <p className="italic">{c.healthQuote}</p>
               </div>
             </div>
@@ -241,18 +241,18 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
         <div className="container mx-auto px-8">
           <div className="flex flex-col gap-16 lg:flex-row">
             <div className="lg:w-1/3">
-              <h2 className="mb-8 text-4xl font-black leading-tight text-[#000a1e]">{c.cultureTitle}</h2>
-              <p className="mb-12 text-lg text-[#44474e]">{c.cultureSub}</p>
+              <h2 className="mb-8 text-4xl font-black leading-tight text-[#252A58]">{c.cultureTitle}</h2>
+              <p className="mb-12 text-lg text-[#0E7A7C]">{c.cultureSub}</p>
               <div className="space-y-8">
                 {c.cultureGroups.map((g) => (
                   <div key={g.title}>
-                    <h4 className="mb-4 flex items-center gap-2 font-bold text-[#3a5f94]">
+                    <h4 className="mb-4 flex items-center gap-2 font-bold text-[#0E7A7C]">
                       <MaterialIcon name={g.icon} />
                       {g.title}
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {g.tags.map((t) => (
-                        <span key={t} className="rounded-full bg-[#edeeef] px-4 py-1.5 text-sm font-semibold text-[#000a1e]">
+                        <span key={t} className="rounded-full bg-[#e5eeff] px-4 py-1.5 text-sm font-semibold text-[#252A58]">
                           {t}
                         </span>
                       ))}
@@ -264,23 +264,23 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:w-2/3">
               <div className="group relative overflow-hidden rounded-2xl">
                 <Image src={designImages.vivir.museum} alt="MIN" width={600} height={750} className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-105" unoptimized />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000a1e]/90 to-transparent p-8">
-                  <p className="mb-1 text-xs uppercase tracking-widest text-[#ffdea5]">{c.minTag}</p>
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#252A58]/90 to-transparent p-8">
+                  <p className="mb-1 text-xs uppercase tracking-widest text-[#8DC046]">{c.minTag}</p>
                   <h5 className="text-xl font-bold text-white">{c.minTitle}</h5>
                 </div>
               </div>
               <div className="space-y-8">
                 <div className="group relative overflow-hidden rounded-2xl">
                   <Image src={designImages.vivir.nature} alt="La Tigra" width={600} height={350} className="aspect-video w-full object-cover transition-transform duration-700 group-hover:scale-105" unoptimized />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000a1e]/90 to-transparent p-6">
-                    <p className="mb-1 text-xs uppercase tracking-widest text-[#ffdea5]">{c.natureTag}</p>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#252A58]/90 to-transparent p-6">
+                    <p className="mb-1 text-xs uppercase tracking-widest text-[#8DC046]">{c.natureTag}</p>
                     <h5 className="text-lg font-bold text-white">{c.natureTitle}</h5>
                   </div>
                 </div>
                 <div className="group relative overflow-hidden rounded-2xl">
                   <Image src={designImages.vivir.mall} alt="Mall" width={600} height={350} className="aspect-video w-full object-cover transition-transform duration-700 group-hover:scale-105" unoptimized />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#000a1e]/90 to-transparent p-6">
-                    <p className="mb-1 text-xs uppercase tracking-widest text-[#ffdea5]">{c.mallTag}</p>
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#252A58]/90 to-transparent p-6">
+                    <p className="mb-1 text-xs uppercase tracking-widest text-[#8DC046]">{c.mallTag}</p>
                     <h5 className="text-lg font-bold text-white">{c.mallTitle}</h5>
                   </div>
                 </div>
@@ -292,16 +292,16 @@ export default async function VivirPage({ params }: { params: Promise<{ locale: 
 
       <section className="py-24">
         <div className="container mx-auto px-8">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-[#002147] p-12 text-center shadow-2xl shadow-[#000a1e]/40 md:p-24">
-            <div className="absolute right-0 top-0 -mr-48 -mt-48 h-96 w-96 rounded-full bg-[#3a5f94]/10 blur-3xl" />
-            <div className="absolute bottom-0 left-0 -mb-48 -ml-48 h-96 w-96 rounded-full bg-[#ffdea5]/5 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-[#24436B] p-12 text-center shadow-2xl shadow-[#252A58]/40 md:p-24">
+            <div className="absolute right-0 top-0 -mr-48 -mt-48 h-96 w-96 rounded-full bg-[#0E7A7C]/10 blur-3xl" />
+            <div className="absolute bottom-0 left-0 -mb-48 -ml-48 h-96 w-96 rounded-full bg-[#8DC046]/5 blur-3xl" />
             <div className="relative z-10 mx-auto max-w-3xl">
               <h2 className="mb-6 text-4xl font-black text-white md:text-5xl">{c.ctaTitle}</h2>
               <p className="mb-12 text-xl text-white/80">{c.ctaDesc}</p>
               <div className="flex flex-col justify-center gap-6 sm:flex-row">
                 <Link
                   href={L("/contacto")}
-                  className="rounded-md bg-[#ffdea5] px-10 py-5 text-lg font-bold text-[#261900] shadow-lg transition-all hover:bg-[#e9c176] active:scale-95"
+                  className="rounded-md bg-[#8DC046] px-10 py-5 text-lg font-bold text-[#261900] shadow-lg transition-all hover:bg-[#35A963] active:scale-95"
                 >
                   {c.ctaButton}
                 </Link>

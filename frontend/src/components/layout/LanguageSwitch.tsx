@@ -23,7 +23,7 @@ export function LanguageSwitch() {
         href={hrefEs}
         className={cn(
           "rounded px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest transition",
-          locale === "es" ? "bg-[#e9c176] text-[#191c1d]" : "text-white/70 hover:text-white",
+          locale === "es" ? "bg-[#35A963] text-white" : "text-white/70 hover:text-white",
         )}
         hrefLang="es"
       >
@@ -33,7 +33,7 @@ export function LanguageSwitch() {
         href={hrefEn}
         className={cn(
           "rounded px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest transition",
-          locale === "en" ? "bg-[#e9c176] text-[#191c1d]" : "text-white/70 hover:text-white",
+          locale === "en" ? "bg-[#35A963] text-white" : "text-white/70 hover:text-white",
         )}
         hrefLang="en"
       >

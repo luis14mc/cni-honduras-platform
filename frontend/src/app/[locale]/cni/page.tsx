@@ -98,12 +98,12 @@ export default async function CNIServicesHubPage({ params }: { params: Promise<{
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <Script id="breadcrumb-cni" type="application/ld+json">
         {JSON.stringify(breadcrumb)}
       </Script>
 
-      <section className="relative -mt-28 flex min-h-[520px] items-center overflow-hidden bg-[#000a1e] pt-28">
+      <section className="relative -mt-28 flex min-h-[520px] items-center overflow-hidden bg-[#252A58] pt-28">
         <Image
           src={designImages.cni.heroCity}
           alt="Vista panorámica de la torre institucional del CNI en el Centro Cívico Gubernamental, Tegucigalpa"
@@ -112,9 +112,9 @@ export default async function CNIServicesHubPage({ params }: { params: Promise<{
           sizes="100vw"
           className="absolute inset-0 object-cover opacity-50"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e] via-[#000a1e]/85 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#252A58] via-[#252A58]/85 to-transparent" />
         <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-10">
-          <span className="mb-6 inline-flex items-center rounded-sm border border-[#e9c176]/40 bg-[#2e1f00]/30 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[#e9c176] backdrop-blur">
+          <span className="mb-6 inline-flex items-center rounded-sm border border-[#35A963]/40 bg-[#0E7A7C]/30 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.28em] text-[#35A963] backdrop-blur">
             {c.eyebrow}
           </span>
           <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -127,26 +127,26 @@ export default async function CNIServicesHubPage({ params }: { params: Promise<{
       </section>
 
       <section className="mx-auto w-full max-w-screen-2xl px-6 py-20 md:px-10">
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#000a1e] md:text-4xl">{c.pillarsHeading}</h2>
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#252A58] md:text-4xl">{c.pillarsHeading}</h2>
         <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
           {c.pillars.map((p) => (
             <article key={p.href} className="flex flex-col gap-5 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5 transition hover:shadow-xl">
-              <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#000a1e] text-[#e9c176]">
+              <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#252A58] text-[#35A963]">
                 <MaterialIcon name={p.icon} className="!text-3xl" />
               </span>
-              <h3 className="text-xl font-bold text-[#000a1e]">{p.title}</h3>
-              <p className="text-sm leading-relaxed text-[#44474e]">{p.text}</p>
-              <ul className="mt-1 space-y-1.5 text-sm text-[#44474e]">
+              <h3 className="text-xl font-bold text-[#252A58]">{p.title}</h3>
+              <p className="text-sm leading-relaxed text-[#0E7A7C]">{p.text}</p>
+              <ul className="mt-1 space-y-1.5 text-sm text-[#0E7A7C]">
                 {p.bullets.map((b) => (
                   <li key={b} className="flex items-start gap-2">
-                    <MaterialIcon name="check_circle" className="!text-base text-[#e9c176]" />
+                    <MaterialIcon name="check_circle" className="!text-base text-[#35A963]" />
                     <span>{b}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href={L(p.href)}
-                className="mt-auto inline-flex w-fit items-center gap-2 border-b border-[#000a1e] pb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#000a1e] transition hover:gap-3 hover:text-[#3a5f94]"
+                className="mt-auto inline-flex w-fit items-center gap-2 border-b border-[#252A58] pb-1 text-xs font-bold uppercase tracking-[0.2em] text-[#252A58] transition hover:gap-3 hover:text-[#0E7A7C]"
                 aria-label={`${p.title} — ${locale === "en" ? "view details" : "ver detalles"}`}
               >
                 {locale === "en" ? "Explore service" : "Explorar servicio"}
@@ -157,13 +157,13 @@ export default async function CNIServicesHubPage({ params }: { params: Promise<{
         </div>
       </section>
 
-      <section className="bg-[#000a1e] py-20 text-white">
+      <section className="bg-[#252A58] py-20 text-white">
         <div className="mx-auto flex max-w-5xl flex-col items-start gap-6 px-6 text-center md:px-10">
           <h2 className="w-full text-3xl font-extrabold tracking-tight md:text-4xl">{c.ctaTitle}</h2>
           <p className="w-full text-base text-white/80">{c.ctaText}</p>
           <Link
             href={L("/asesoria")}
-            className="mx-auto inline-flex items-center gap-2 rounded-full bg-[#e9c176] px-8 py-3 text-sm font-bold uppercase tracking-[0.2em] text-[#000a1e] transition hover:bg-white"
+            className="mx-auto inline-flex items-center gap-2 rounded-full bg-[#35A963] px-8 py-3 text-sm font-bold uppercase tracking-[0.2em] text-[#252A58] transition hover:bg-white"
           >
             {c.ctaButton}
             <MaterialIcon name="arrow_forward" className="!text-base" />

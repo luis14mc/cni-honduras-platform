@@ -27,13 +27,13 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
   const sectors = c.sectors;
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <div className="-mt-28">
         <PageHero
           eyebrow={c.heroEyebrow}
           title={
             <>
-              {c.heroTitleBefore} <span className="text-[#e9c176]">{c.heroTitleAccent}</span> {c.heroTitleAfter}
+              {c.heroTitleBefore} <span className="text-[#35A963]">{c.heroTitleAccent}</span> {c.heroTitleAfter}
             </>
           }
           description={c.heroDescription}
@@ -43,7 +43,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
         >
           <Link
             href={L("/invertir/por-que-honduras")}
-            className="inline-flex items-center gap-2 border-b-2 border-[#e9c176] pb-1 text-sm font-bold uppercase tracking-widest text-white transition hover:text-[#e9c176]"
+            className="inline-flex items-center gap-2 border-b-2 border-[#35A963] pb-1 text-sm font-bold uppercase tracking-widest text-white transition hover:text-[#35A963]"
           >
             {c.linkWhyHonduras}
             <ArrowRight className="h-4 w-4" />
@@ -51,16 +51,16 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
         </PageHero>
       </div>
 
-      <div className="sticky top-28 z-30 glass-panel border-b border-[#c4c6cf]/30">
+      <div className="sticky top-28 z-30 glass-panel border-b border-[#dce9ff]/30">
         <div className="mx-auto max-w-screen-2xl overflow-x-auto px-6 no-scrollbar md:px-10">
           <ul className="flex items-center gap-10 py-5">
             {sectors.map((s) => (
               <li key={s.slug}>
                 <Link
                   href={getSectorHref(locale, s.slug)}
-                  className="group flex items-center gap-3 whitespace-nowrap text-sm font-extrabold uppercase tracking-tight text-[#44474e] transition-colors hover:text-[#000a1e]"
+                  className="group flex items-center gap-3 whitespace-nowrap text-sm font-extrabold uppercase tracking-tight text-[#0E7A7C] transition-colors hover:text-[#252A58]"
                 >
-                  <span className="block h-[2px] w-8 bg-[#e9c176] transition-all group-hover:w-12" />
+                  <span className="block h-[2px] w-8 bg-[#35A963] transition-all group-hover:w-12" />
                   {s.name}
                 </Link>
               </li>
@@ -97,19 +97,19 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
         <Section key={s.slug} id={s.slug} tone={idx % 2 === 0 ? "surface" : "low"}>
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div className={`lg:col-span-7 ${idx % 2 === 1 ? "lg:order-2" : ""}`}>
-              <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#2e1f00]/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.25em] text-[#a68440]">
+              <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-[#0E7A7C]/10 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.25em] text-[#0E7A7C]">
                 {c.sectorBadge} 0{idx + 1}
               </span>
-              <h2 className="text-3xl font-extrabold tracking-tight text-[#000a1e] md:text-4xl">{s.name}</h2>
-              <p className="mt-4 max-w-2xl text-base font-bold leading-relaxed text-[#000a1e]">{s.short}</p>
-              <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#44474e]">{s.fullText}</p>
+              <h2 className="text-3xl font-extrabold tracking-tight text-[#252A58] md:text-4xl">{s.name}</h2>
+              <p className="mt-4 max-w-2xl text-base font-bold leading-relaxed text-[#252A58]">{s.short}</p>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#0E7A7C]">{s.fullText}</p>
               <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {s.highlights.map((h) => (
                   <li
                     key={h}
-                    className="flex items-center gap-3 rounded-lg border-l-4 border-[#e9c176] bg-white px-5 py-3 text-sm font-medium text-[#000a1e] tonal-depth-layering"
+                    className="flex items-center gap-3 rounded-lg border-l-4 border-[#35A963] bg-white px-5 py-3 text-sm font-medium text-[#252A58] tonal-depth-layering"
                   >
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#3a5f94]" />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0E7A7C]" />
                     {h}
                   </li>
                 ))}
@@ -117,14 +117,14 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href={L("/contacto")}
-                  className="inline-flex items-center gap-2 rounded-md bg-[#000a1e] px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#002147]"
+                  className="inline-flex items-center gap-2 rounded-md bg-[#252A58] px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#24436B]"
                 >
                   {c.ctaAdvisor}
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
                 <Link
                   href={L("/recursos")}
-                  className="inline-flex items-center gap-2 rounded-md border border-[#000a1e]/15 bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition hover:border-[#e9c176]"
+                  className="inline-flex items-center gap-2 rounded-md border border-[#252A58]/15 bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:border-[#35A963]"
                 >
                   {c.ctaGuide}
                 </Link>
@@ -138,7 +138,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
               ) : (
                 <div className="relative aspect-[4/5] overflow-hidden rounded-2xl tonal-depth-layering">
                   <Image src={sidePhoto} alt={s.name} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/70 via-transparent to-transparent" />
                 </div>
               )}
             </div>
@@ -147,8 +147,8 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
         );
       })}
 
-      <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
-        <div className="absolute right-0 top-0 h-full w-1/3 skew-x-12 translate-x-20 bg-[#002147] opacity-50" />
+      <section className="relative overflow-hidden bg-[#252A58] py-24 text-white">
+        <div className="absolute right-0 top-0 h-full w-1/3 skew-x-12 translate-x-20 bg-[#24436B] opacity-50" />
         <div className="relative z-10 mx-auto flex max-w-screen-2xl flex-col items-start justify-between gap-10 px-6 md:flex-row md:items-center md:px-10">
           <div className="max-w-2xl">
             <h2 className="text-3xl font-extrabold leading-tight tracking-tight md:text-4xl">{c.ctaTitle}</h2>
@@ -157,7 +157,7 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link
               href={L("/contacto")}
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e9c176] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#35A963] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:brightness-95"
             >
               {c.ctaAdvisory}
             </Link>

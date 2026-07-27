@@ -1,30 +1,31 @@
 @import "tailwindcss";
+@import "../styles/architectural-ledger.css";
 
-/* CNI Honduras — Sovereign Design System (temp-design) */
+/* CNI Honduras — Institutional Design System */
 
 :root {
-  --background: #f8f9fa;
-  --foreground: #191c1d;
-  --cni-primary: #000a1e;
-  --cni-primary-container: #002147;
-  --cni-secondary: #3a5f94;
-  --cni-secondary-container: #9fc2fe;
-  --cni-secondary-fixed-dim: #a7c8ff;
-  --cni-tertiary-gold: #e9c176;
-  --cni-tertiary-fixed: #ffdea5;
-  --cni-tertiary-container: #2e1f00;
-  --cni-on-tertiary-container: #a68440;
-  --cni-on-primary-container: #708ab5;
-  --cni-on-primary-fixed-variant: #2d476f;
+  --background: #f8f9ff;
+  --foreground: #252a58;
+  --cni-primary: #252a58;
+  --cni-primary-container: #24436b;
+  --cni-secondary: #0e7a7c;
+  --cni-secondary-container: #e5eeff;
+  --cni-secondary-fixed-dim: #b6c2d3;
+  --cni-tertiary-gold: #35a963;
+  --cni-tertiary-fixed: #8dc046;
+  --cni-tertiary-container: #0e7a7c;
+  --cni-on-tertiary-container: #29ab85;
+  --cni-on-primary-container: #b6c2d3;
+  --cni-on-primary-fixed-variant: #24436b;
   --cni-surface-lowest: #ffffff;
-  --cni-surface-low: #f3f4f5;
-  --cni-surface-container: #edeeef;
-  --cni-surface-high: #e7e8e9;
-  --cni-surface-highest: #e1e3e4;
-  --cni-on-surface: #191c1d;
-  --cni-on-surface-variant: #44474e;
-  --cni-outline: #74777f;
-  --cni-outline-variant: #c4c6cf;
+  --cni-surface-low: #eff4ff;
+  --cni-surface-container: #e5eeff;
+  --cni-surface-high: #dce9ff;
+  --cni-surface-highest: #d3e4fe;
+  --cni-on-surface: #252a58;
+  --cni-on-surface-variant: #0e7a7c;
+  --cni-outline: #b6c2d3;
+  --cni-outline-variant: #dce9ff;
 }
 
 @theme {
@@ -59,31 +60,31 @@
   .font-body { font-family: var(--font-body); }
 
   .glass-nav {
-    background: rgba(0, 33, 71, 0.8);
+    background: rgba(37, 42, 88, 0.82);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
 
   .glass-card,
   .glass-panel {
-    background: rgba(0, 33, 71, 0.75);
+    background: rgba(37, 42, 88, 0.78);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
 
   .glass-dark {
-    background: rgba(0, 33, 71, 0.8);
+    background: rgba(37, 42, 88, 0.82);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
 
   .tonal-depth-layering {
-    box-shadow: 0 20px 40px rgba(0, 10, 30, 0.04);
+    box-shadow: 0 20px 40px rgba(37, 42, 88, 0.06);
   }
 
   .hero-gradient,
   .sovereign-gradient {
-    background: linear-gradient(135deg, #000a1e 0%, #002147 100%);
+    background: linear-gradient(135deg, #0e7a7c 0%, #252a58 55%, #24436b 100%);
   }
 
   .asymmetric-clip {
@@ -91,7 +92,7 @@
   }
 
   .text-gradient-gold {
-    background: linear-gradient(135deg, #a68440 0%, #2e1f00 100%);
+    background: linear-gradient(135deg, #29ab85 0%, #0e7a7c 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -133,11 +134,11 @@
 
   .bento-card:hover {
     @apply -translate-y-1;
-    box-shadow: 0 24px 48px rgba(0, 10, 30, 0.08);
+    box-shadow: 0 24px 48px rgba(37, 42, 88, 0.1);
   }
 
   .premium-gradient {
-    background: linear-gradient(180deg, #f8f9fa 0%, #edeeef 100%);
+    background: linear-gradient(180deg, #f8f9ff 0%, #e5eeff 100%);
   }
 
   .gold-accent {
@@ -147,7 +148,7 @@
   .gold-border-focus:focus {
     outline: none;
     border-color: var(--cni-tertiary-gold);
-    box-shadow: 0 0 0 2px rgba(233, 193, 118, 0.35);
+    box-shadow: 0 0 0 2px rgba(53, 169, 99, 0.35);
   }
 
   .no-scrollbar {

@@ -9,10 +9,10 @@ type SectionProps = {
 };
 
 const tones: Record<NonNullable<SectionProps["tone"]>, string> = {
-  surface: "bg-[#f8f9fa] text-[#191c1d]",
-  white: "bg-white text-[#191c1d]",
-  low: "bg-[#f3f4f5] text-[#191c1d]",
-  primary: "bg-[#000a1e] text-white",
+  surface: "bg-[var(--background)] text-cni-primary",
+  white: "bg-white text-cni-primary",
+  low: "bg-cni-surface-low text-cni-primary",
+  primary: "bg-cni-primary text-white",
 };
 
 export function Section({
@@ -53,17 +53,17 @@ export function SectionHeader({
     >
       <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
         {eyebrow && (
-          <span className="mb-3 inline-block text-[0.7rem] font-bold uppercase tracking-[0.25em] text-[#3a5f94]">
+          <span className="mb-3 inline-block text-[0.7rem] font-bold uppercase tracking-[0.25em] text-cni-secondary">
             {eyebrow}
           </span>
         )}
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#000a1e] md:text-4xl">
+        <h2 className="text-3xl font-extrabold tracking-tight text-cni-primary md:text-4xl">
           {title}
         </h2>
         {description && (
-          <p className="mt-4 text-base leading-relaxed text-[#44474e]">{description}</p>
+          <p className="mt-4 text-base leading-relaxed text-cni-on-surface-variant">{description}</p>
         )}
-        {align === "center" && <div className="mx-auto mt-6 h-1 w-20 bg-[#e9c176]" />}
+        {align === "center" && <div className="mx-auto mt-6 h-1 w-20 bg-cni-gold" />}
       </div>
       {action}
     </div>

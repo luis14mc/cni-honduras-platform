@@ -77,7 +77,7 @@ export default async function SectoresIndexPage({ params }: { params: Promise<{ 
   const sectors = await loadSectors(locale);
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <div className="-mt-28">
         <PageHero
           eyebrow={c.sectionEyebrow}
@@ -94,7 +94,7 @@ export default async function SectoresIndexPage({ params }: { params: Promise<{ 
           action={
             <Link
               href={getPathById("invertir", locale)!}
-              className="border-b-2 border-[#e9c176] pb-1 text-sm font-bold uppercase tracking-widest text-[#000a1e] hover:text-[#e9c176]"
+              className="border-b-2 border-[#35A963] pb-1 text-sm font-bold uppercase tracking-widest text-[#252A58] hover:text-[#35A963]"
             >
               {locale === "en" ? "Investment overview" : "Vista general de inversión"} →
             </Link>

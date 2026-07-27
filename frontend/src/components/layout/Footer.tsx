@@ -123,24 +123,24 @@ export default function Footer() {
   // Detect preceding section background to blend the wave divider cleanly
   let waveFillColor = "#ffffff"; // default to white
   if (normalized === "/" || normalized === "/en" || normalized === "/es") {
-    waveFillColor = "var(--cni-surface-low)"; // `#f3f4f5`
+    waveFillColor = "var(--cni-surface-low)"; // `#eff4ff`
   } else if (normalized.startsWith("/prensa/") || normalized.startsWith("/en/prensa/") || normalized.startsWith("/es/prensa/")) {
-    waveFillColor = "#e1e3e4"; // prensa details ends with bg-[#e1e3e4]
+    waveFillColor = "#d3e4fe"; // prensa details ends with bg-[#d3e4fe]
   } else if (normalized === "/prensa" || normalized === "/en/prensa" || normalized === "/es/prensa") {
-    waveFillColor = "#f8f9fa"; // prensa list ends with bg-[#f8f9fa]
+    waveFillColor = "#f8f9ff"; // prensa list ends with bg-[#f8f9ff]
   } else if (normalized === "/contacto" || normalized === "/en/contacto" || normalized === "/es/contacto") {
-    waveFillColor = "#f8f9fa"; // contacto page ends with bg-[#f8f9fa]
+    waveFillColor = "#f8f9ff"; // contacto page ends with bg-[#f8f9ff]
   } else if (
     normalized === "/cni" || normalized === "/en/cni" || normalized === "/es/cni" ||
     normalized.startsWith("/cni/inteligencia-de-datos") || normalized.startsWith("/en/cni/inteligencia-de-datos") || normalized.startsWith("/es/cni/inteligencia-de-datos") ||
     normalized.startsWith("/cni/servicios-legales") || normalized.startsWith("/en/cni/servicios-legales") || normalized.startsWith("/es/cni/servicios-legales")
   ) {
-    waveFillColor = "#000a1e"; // ends with primary navy
+    waveFillColor = "#252A58"; // ends with primary navy
   }
 
   return (
     <footer
-      className="relative w-full bg-[#000a1e] text-white pt-24 pb-12 overflow-hidden mt-auto"
+      className="relative w-full bg-[#252A58] text-white pt-24 pb-12 overflow-hidden mt-auto"
       role="contentinfo"
     >
       {/* Wave Divider */}

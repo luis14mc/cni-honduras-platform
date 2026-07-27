@@ -197,7 +197,7 @@ function MobileNavBranch({
         <ChevronDown className={cn("h-4 w-4 shrink-0 transition", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
-        <div className="ml-3 border-l border-[#e9c176]/35 pb-2 pl-3">
+        <div className="ml-3 border-l border-[#35A963]/35 pb-2 pl-3">
           <Link
             href={getNavHref(node, locale)}
             className="block py-2 text-sm text-cni-on-surface-variant/80 hover:text-cni-primary"
@@ -263,13 +263,13 @@ export default function Navbar() {
       className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-lg shadow-black/15"
       role="banner"
     >
-      <div className="flex h-9 items-center justify-end gap-5 border-b border-white/10 bg-[#000a1e] px-4 md:gap-7 md:px-10">
+      <div className="flex h-9 items-center justify-end gap-5 border-b border-white/10 bg-[#252A58] px-4 md:gap-7 md:px-10">
         <nav aria-label={locale === "es" ? "Enlaces rápidos" : "Quick links"} className="flex items-center gap-5 md:gap-7">
           {topBarNodes.map((n) => (
             <Link
               key={n.id}
               href={getNavHref(n, locale)}
-              className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[#e9c176]"
+              className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[#35A963]"
             >
               {getNavLabel(n, locale)}
             </Link>
@@ -280,7 +280,13 @@ export default function Navbar() {
 
       <nav className="bg-white/95 backdrop-blur-lg border-b border-cni-surface-low shadow-sm" aria-label={locale === "es" ? "Menú principal" : "Main menu"}>
         <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 md:px-10">
-          <CniLogo href={homeHref} ariaLabel={t.brandSubtitle} priority variant="dark" />
+          <CniLogo
+            href={homeHref}
+            ariaLabel={t.brandSubtitle}
+            priority
+            variant="dark"
+            imageClassName="al-navbar-logo"
+          />
 
           <ul className="hidden items-center gap-1 lg:flex" role="menubar">
             <li role="none">

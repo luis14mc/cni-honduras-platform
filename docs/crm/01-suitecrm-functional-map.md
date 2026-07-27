@@ -25,13 +25,24 @@ Referencia para integrar los formularios de la plataforma con un CRM tipo **Suit
 - `department`: departamento de interés.
 - `locale`: es / en.
 
-## Integración técnica (a definir en ADR)
-- **API**: SuiteCRM v8 REST (OAuth2) o módulo v4.1 legacy.
-- **Patrón**: backend Django recibe el form → valida (zod en front, serializer en back) → crea Lead vía API CRM.
-- **Idempotencia**: deduplicar por email / identificador.
-- **Errores**: si el CRM falla, persistir el lead localmente y reintentar (cola).
+## Integración técnica (patrón adoptado — ver ADR-0001)
+
+Flujo implementado en infraestructura (E2E pendiente de validación):
+
+```
+Frontend → POST /api/v1/forms/* → Django
+       → WebhookEvent → process_webhook_events → n8n → SuiteCRM
+```
+
+Documentación:
+- [`docs/integrations/django-n8n-suitecrm-flow.md`](../integrations/django-n8n-suitecrm-flow.md)
+- [`crm/docs/03-suitecrm-integration-flow.md`](../../crm/docs/03-suitecrm-integration-flow.md)
+- [`ai-workspace/context/06-crm-context.md`](../../ai-workspace/context/06-crm-context.md)
+
+**Estado 2026-06-19:** postulación de proyecto wired; contacto/asesoría pendientes en frontend.
 
 ## Pendientes
-- [ ] Confirmar versión y endpoint de SuiteCRM.
-- [ ] Definir credenciales/secretos (no en repo).
-- [ ] ADR-0002 con la decisión de integración.
+- [x] Confirmar versión SuiteCRM (8+ local en `crm/`).
+- [ ] Exportar workflow n8n y validar E2E.
+- [ ] ADR-0002 con decisión formal de producción.
+- [ ] Credenciales OAuth SuiteCRM (no en repo).

@@ -18,7 +18,7 @@ export function MapaPageClient({ locale }: { locale: Locale }) {
   return (
     <main className="container mx-auto px-6 py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-extrabold tracking-tight text-[#000a1e]">{t.title}</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight text-[#252A58]">{t.title}</h1>
       </div>
       <HondurasMap />
     </main>

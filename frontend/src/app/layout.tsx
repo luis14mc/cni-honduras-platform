@@ -95,7 +95,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#000a1e",
+  themeColor: "#252A58",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -169,7 +169,7 @@ export default function RootLayout({
         <link rel="alternate" hrefLang="en" href={`${SITE_URL}/en`} />
         <link rel="alternate" hrefLang="x-default" href={SITE_URL} />
       </head>
-      <body className="flex min-h-screen flex-col bg-[#f8f9fa] font-sans text-[#191c1d] antialiased">
+      <body className="theme-architectural-ledger flex min-h-screen flex-col bg-[var(--al-background,#f8f9ff)] font-sans text-[#252a58] antialiased">
         <Script id="ld-government-organization" type="application/ld+json" strategy="beforeInteractive">
           {JSON.stringify(governmentOrganizationJsonLd)}
         </Script>

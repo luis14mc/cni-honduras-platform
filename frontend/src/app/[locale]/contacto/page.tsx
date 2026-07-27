@@ -16,7 +16,7 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
   const c = asesoriaPageCopy[raw as Locale];
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <div className="-mt-28">
         <PageHero
           eyebrow={c.heroEyebrow}
@@ -38,13 +38,13 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
                 <Field id="telefono" label={c.labels.phone} type="tel" />
               </div>
               <div>
-                <label htmlFor="sector" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#44474e]">
+                <label htmlFor="sector" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#0E7A7C]">
                   {c.sectorInterest}
                 </label>
                 <select
                   id="sector"
                   name="sector"
-                  className="w-full rounded-md border border-[#c4c6cf]/40 bg-[#f3f4f5] px-4 py-3 text-sm text-[#000a1e] focus:border-[#3a5f94] focus:outline-none focus:ring-2 focus:ring-[#3a5f94]/30"
+                  className="w-full rounded-md border border-[#dce9ff]/40 bg-[#eff4ff] px-4 py-3 text-sm text-[#252A58] focus:border-[#0E7A7C] focus:outline-none focus:ring-2 focus:ring-[#0E7A7C]/30"
                 >
                   {c.sectors.map((s) => (
                     <option key={s}>
@@ -54,7 +54,7 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
                 </select>
               </div>
               <div>
-                <label htmlFor="mensaje" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#44474e]">
+                <label htmlFor="mensaje" className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#0E7A7C]">
                   {c.labels.message}
                 </label>
                 <textarea
@@ -63,12 +63,12 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
                   rows={5}
                   required
                   placeholder={c.messagePlaceholder}
-                  className="w-full rounded-md border border-[#c4c6cf]/40 bg-[#f3f4f5] px-4 py-3 text-sm text-[#000a1e] focus:border-[#3a5f94] focus:outline-none focus:ring-2 focus:ring-[#3a5f94]/30"
+                  className="w-full rounded-md border border-[#dce9ff]/40 bg-[#eff4ff] px-4 py-3 text-sm text-[#252A58] focus:border-[#0E7A7C] focus:outline-none focus:ring-2 focus:ring-[#0E7A7C]/30"
                 />
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-br from-[#3a5f94] to-[#002147] px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:brightness-110"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-br from-[#0E7A7C] to-[#24436B] px-10 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:brightness-110"
               >
                 {c.submit}
                 <Send className="h-4 w-4" />
@@ -77,30 +77,30 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
           </div>
 
           <aside className="space-y-6 lg:col-span-5">
-            <div className="rounded-xl bg-[#000a1e] p-8 text-white">
+            <div className="rounded-xl bg-[#252A58] p-8 text-white">
               <h3 className="text-xl font-bold">{c.hqTitle}</h3>
               <ul className="mt-6 space-y-4 text-sm text-white/80">
                 <li className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-5 w-5 text-[#e9c176]" />
+                  <MapPin className="mt-0.5 h-5 w-5 text-[#35A963]" />
                   Centro Cívico Gubernamental (CCG), Torre 1, Piso 12. Tegucigalpa, Honduras.
                 </li>
                 <li className="flex items-start gap-3">
-                  <Phone className="mt-0.5 h-5 w-5 text-[#e9c176]" />
+                  <Phone className="mt-0.5 h-5 w-5 text-[#35A963]" />
                   (504) 2242-8955
                 </li>
                 <li className="flex items-start gap-3">
-                  <Mail className="mt-0.5 h-5 w-5 text-[#e9c176]" />
+                  <Mail className="mt-0.5 h-5 w-5 text-[#35A963]" />
                   <a className="hover:underline" href="mailto:info@cni.hn">
                     info@cni.hn
                   </a>
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border-l-4 border-[#e9c176] bg-white p-8 tonal-depth-layering">
-              <h3 className="text-lg font-bold text-[#000a1e]">{c.spsTitle}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{c.spsBody}</p>
-              <p className="mt-4 text-sm text-[#44474e]">
-                <a className="font-bold text-[#3a5f94] hover:underline" href="mailto:oficinasps@cni.hn">
+            <div className="rounded-xl border-l-4 border-[#35A963] bg-white p-8 tonal-depth-layering">
+              <h3 className="text-lg font-bold text-[#252A58]">{c.spsTitle}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{c.spsBody}</p>
+              <p className="mt-4 text-sm text-[#0E7A7C]">
+                <a className="font-bold text-[#0E7A7C] hover:underline" href="mailto:oficinasps@cni.hn">
                   oficinasps@cni.hn
                 </a>
                 <br />
@@ -127,16 +127,16 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#44474e]">
+      <label htmlFor={id} className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-[#0E7A7C]">
         {label}
-        {required && <span className="ml-1 text-[#a68440]">*</span>}
+        {required && <span className="ml-1 text-[#0E7A7C]">*</span>}
       </label>
       <input
         id={id}
         name={id}
         type={type}
         required={required}
-        className="w-full rounded-md border border-[#c4c6cf]/40 bg-[#f3f4f5] px-4 py-3 text-sm text-[#000a1e] focus:border-[#3a5f94] focus:outline-none focus:ring-2 focus:ring-[#3a5f94]/30"
+        className="w-full rounded-md border border-[#dce9ff]/40 bg-[#eff4ff] px-4 py-3 text-sm text-[#252A58] focus:border-[#0E7A7C] focus:outline-none focus:ring-2 focus:ring-[#0E7A7C]/30"
       />
     </div>
   );

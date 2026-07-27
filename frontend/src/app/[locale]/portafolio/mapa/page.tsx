@@ -22,9 +22,9 @@ export default async function MapaPage({ params }: { params: Promise<{ locale: s
   const c = copy[locale];
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#000a1e] text-white">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#252A58] text-white">
       <h1 className="sr-only">{c.title}</h1>
-      <main className="relative flex min-h-[720px] w-full items-center justify-center bg-[#000a1e] px-4 pb-10 pt-32 sm:px-6 lg:px-8">
+      <main className="relative flex min-h-[720px] w-full items-center justify-center bg-[#252A58] px-4 pb-10 pt-32 sm:px-6 lg:px-8">
         <div className="relative mx-auto flex w-full max-w-[1500px] items-center justify-center">
           <HondurasMapDashboardEmbed />
         </div>

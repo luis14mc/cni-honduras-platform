@@ -32,11 +32,11 @@ export function SectorTeaserCard({
   const useIconHeader = !sectorPhotoHeaders[slug];
 
   return (
-    <article className="group relative overflow-hidden rounded-xl bg-[#f3f4f5] tonal-depth-layering transition-all hover:shadow-2xl">
+    <article className="group relative overflow-hidden rounded-xl bg-[#eff4ff] tonal-depth-layering transition-all hover:shadow-2xl">
       {useIconHeader ? (
         <div className="relative flex h-48 items-center justify-center bg-gradient-to-b from-white to-[#eef0f2] px-8">
           <SectorIcon slug={slug} size={SECTOR_ICON_SIZE.header} />
-          <span className="absolute left-4 top-4 inline-flex items-center justify-center rounded bg-[#e9c176] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-[#191c1d]">
+          <span className="absolute left-4 top-4 inline-flex items-center justify-center rounded bg-[#35A963] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-[#252A58]">
             {badge} 0{badgeIndex + 1}
           </span>
         </div>
@@ -49,19 +49,19 @@ export function SectorTeaserCard({
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/80 via-[#000a1e]/20 to-transparent" />
-          <span className="absolute left-4 top-4 inline-flex items-center justify-center rounded bg-[#e9c176] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-[#191c1d]">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/80 via-[#252A58]/20 to-transparent" />
+          <span className="absolute left-4 top-4 inline-flex items-center justify-center rounded bg-[#35A963] px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-widest text-[#252A58]">
             {badge} 0{badgeIndex + 1}
           </span>
         </div>
       )}
       <div className="p-8">
         {!useIconHeader && <SectorIcon slug={slug} size={SECTOR_ICON_SIZE.teaser} className="mb-5" />}
-        <h3 className="text-xl font-bold text-[#000a1e]">{name}</h3>
-        <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{short}</p>
+        <h3 className="text-xl font-bold text-[#252A58]">{name}</h3>
+        <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{short}</p>
         <Link
           href={getSectorHref(locale, slug)}
-          className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition-all group-hover:gap-3 group-hover:text-[#e9c176]"
+          className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#252A58] transition-all group-hover:gap-3 group-hover:text-[#35A963]"
         >
           {viewDetailLabel} <ArrowRight className="h-3.5 w-3.5" />
         </Link>

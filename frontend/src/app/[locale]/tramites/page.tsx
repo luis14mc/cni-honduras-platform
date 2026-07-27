@@ -34,7 +34,7 @@ export default async function TramitesPage({ params }: { params: Promise<{ local
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <Script id="breadcrumb-tramites" type="application/ld+json">
         {JSON.stringify(breadcrumb)}
       </Script>
@@ -54,14 +54,14 @@ export default async function TramitesPage({ params }: { params: Promise<{ local
           {rows.map(({ Icon, title, text, cta }) => (
             <article
               key={title}
-              className="group rounded-xl border border-[#c4c6cf]/30 bg-white p-8 tonal-depth-layering transition-all hover:-translate-y-1"
+              className="group rounded-xl border border-[#dce9ff]/30 bg-white p-8 tonal-depth-layering transition-all hover:-translate-y-1"
             >
-              <Icon className="mb-6 h-10 w-10 text-[#3a5f94]" aria-hidden="true" />
-              <h2 className="text-xl font-bold text-[#000a1e]">{title}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{text}</p>
+              <Icon className="mb-6 h-10 w-10 text-[#0E7A7C]" aria-hidden="true" />
+              <h2 className="text-xl font-bold text-[#252A58]">{title}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{text}</p>
               <Link
                 href={L("/asesoria")}
-                className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#000a1e] transition-all group-hover:gap-3 group-hover:text-[#e9c176]"
+                className="mt-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#252A58] transition-all group-hover:gap-3 group-hover:text-[#35A963]"
                 aria-label={`${cta}: ${title}`}
               >
                 {cta} <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -72,7 +72,7 @@ export default async function TramitesPage({ params }: { params: Promise<{ local
       </Section>
 
       <Section tone="primary" className="relative overflow-hidden">
-        <div className="absolute left-0 top-0 h-full w-1/3 -skew-x-12 -translate-x-20 bg-[#002147] opacity-50" aria-hidden="true" />
+        <div className="absolute left-0 top-0 h-full w-1/3 -skew-x-12 -translate-x-20 bg-[#24436B] opacity-50" aria-hidden="true" />
         <div className="relative z-10 grid grid-cols-1 items-center gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">{c.pdiTitle}</h2>
@@ -83,7 +83,7 @@ export default async function TramitesPage({ params }: { params: Promise<{ local
               href="https://pdihonduras.gob.hn"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e9c176] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
+              className="inline-flex items-center justify-center gap-2 rounded-md bg-[#35A963] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:brightness-95"
               aria-label="Portal Digital de Inversiones de Honduras (abre en nueva pestaña)"
             >
               {c.pdiLink}

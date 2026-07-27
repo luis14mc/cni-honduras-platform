@@ -111,23 +111,23 @@ export default async function ServiciosTecnicosPage({ params }: { params: Promis
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <section className="relative flex min-h-[70vh] items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.servicios.technical} alt="Technical" fill priority sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-[#000a1e]/70" />
+          <div className="absolute inset-0 bg-[#252A58]/70" />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-8 py-24">
           <div className="max-w-2xl">
-            <span className="mb-6 inline-block rounded-sm bg-[#2e1f00] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#e9c176]">
+            <span className="mb-6 inline-block rounded-sm bg-[#0E7A7C] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#35A963]">
               {c.eyebrow}
             </span>
             <h1 className="mb-8 text-5xl font-bold leading-tight tracking-tight text-white md:text-7xl">{c.title}</h1>
-            <p className="mb-10 text-xl leading-relaxed text-[#e1e3e4]/90">{c.description}</p>
+            <p className="mb-10 text-xl leading-relaxed text-[#d3e4fe]/90">{c.description}</p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href={L("/contacto")}
-                className="flex items-center gap-2 rounded-md bg-[#ffdea5] px-8 py-4 font-bold text-[#2e1f00] transition-colors hover:bg-[#e9c176] active:scale-95"
+                className="flex items-center gap-2 rounded-md bg-[#8DC046] px-8 py-4 font-bold text-[#0E7A7C] transition-colors hover:bg-[#35A963] active:scale-95"
               >
                 {c.ctaHero}
                 <MaterialIcon name="arrow_forward" />
@@ -139,16 +139,16 @@ export default async function ServiciosTecnicosPage({ params }: { params: Promis
 
       <section className="mx-auto max-w-7xl px-8 py-32">
         <div className="mb-16">
-          <h2 className="mb-4 text-4xl font-bold text-[#000a1e]">{c.portfolioTitle}</h2>
-          <div className="h-1 w-20 bg-[#e9c176]" />
+          <h2 className="mb-4 text-4xl font-bold text-[#252A58]">{c.portfolioTitle}</h2>
+          <div className="h-1 w-20 bg-[#35A963]" />
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-          <div className="group relative col-span-1 overflow-hidden rounded-xl bg-white p-10 transition-all hover:bg-[#f3f4f5] md:col-span-8">
+          <div className="group relative col-span-1 overflow-hidden rounded-xl bg-white p-10 transition-all hover:bg-[#eff4ff] md:col-span-8">
             <div className="relative z-10">
-              <MaterialIcon name="account_tree" filled className="mb-6 block text-4xl text-[#3a5f94]" />
-              <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{c.services.perfil.title}</h3>
-              <p className="mb-8 max-w-md leading-relaxed text-[#44474e]">{c.services.perfil.text}</p>
-              <Link href={L("/contacto")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#3a5f94] group-hover:text-[#000a1e]">
+              <MaterialIcon name="account_tree" filled className="mb-6 block text-4xl text-[#0E7A7C]" />
+              <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{c.services.perfil.title}</h3>
+              <p className="mb-8 max-w-md leading-relaxed text-[#0E7A7C]">{c.services.perfil.text}</p>
+              <Link href={L("/contacto")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#0E7A7C] group-hover:text-[#252A58]">
                 {c.services.perfil.cta}
                 <MaterialIcon name="north_east" className="text-sm" />
               </Link>
@@ -158,71 +158,71 @@ export default async function ServiciosTecnicosPage({ params }: { params: Promis
             </div>
           </div>
 
-          <div className="col-span-1 flex flex-col justify-between rounded-xl border-b-4 border-[#e9c176] bg-[#002147] p-10 text-[#708ab5] md:col-span-4">
+          <div className="col-span-1 flex flex-col justify-between rounded-xl border-b-4 border-[#35A963] bg-[#24436B] p-10 text-[#b6c2d3] md:col-span-4">
             <div>
-              <MaterialIcon name="payments" className="mb-6 block text-4xl text-[#e9c176]" />
+              <MaterialIcon name="payments" className="mb-6 block text-4xl text-[#35A963]" />
               <h3 className="mb-4 text-2xl font-bold text-white">{c.services.financiera.title}</h3>
               <p className="text-sm leading-relaxed opacity-90">{c.services.financiera.text}</p>
             </div>
-            <Link href={L("/contacto")} className="mt-8 flex items-center gap-2 font-bold text-[#e9c176] transition-transform hover:translate-x-2">
+            <Link href={L("/contacto")} className="mt-8 flex items-center gap-2 font-bold text-[#35A963] transition-transform hover:translate-x-2">
               {c.services.financiera.cta}
               <MaterialIcon name="trending_up" />
             </Link>
           </div>
 
-          <div className="col-span-1 flex flex-col justify-between rounded-xl bg-[#e7e8e9] p-10 md:col-span-4">
+          <div className="col-span-1 flex flex-col justify-between rounded-xl bg-[#dce9ff] p-10 md:col-span-4">
             <div>
-              <MaterialIcon name="gavel" className="mb-6 block text-4xl text-[#000a1e]" />
-              <h3 className="mb-4 text-xl font-bold text-[#000a1e]">{c.services.tramites.title}</h3>
-              <p className="text-sm text-[#44474e]">{c.services.tramites.text}</p>
+              <MaterialIcon name="gavel" className="mb-6 block text-4xl text-[#252A58]" />
+              <h3 className="mb-4 text-xl font-bold text-[#252A58]">{c.services.tramites.title}</h3>
+              <p className="text-sm text-[#0E7A7C]">{c.services.tramites.text}</p>
             </div>
-            <Link href={L("/tramites")} className="mt-8 w-fit border-b border-[#000a1e] text-xs font-bold uppercase text-[#000a1e]">
+            <Link href={L("/tramites")} className="mt-8 w-fit border-b border-[#252A58] text-xs font-bold uppercase text-[#252A58]">
               {c.services.tramites.cta}
             </Link>
           </div>
 
           <div className="group col-span-1 flex flex-col justify-between rounded-xl bg-white p-10 md:col-span-4">
             <div>
-              <MaterialIcon name="campaign" className="mb-6 block text-4xl text-[#3a5f94] transition-transform group-hover:scale-110" />
-              <h3 className="mb-4 text-xl font-bold text-[#000a1e]">{c.services.promocion.title}</h3>
-              <p className="text-sm text-[#44474e]">{c.services.promocion.text}</p>
+              <MaterialIcon name="campaign" className="mb-6 block text-4xl text-[#0E7A7C] transition-transform group-hover:scale-110" />
+              <h3 className="mb-4 text-xl font-bold text-[#252A58]">{c.services.promocion.title}</h3>
+              <p className="text-sm text-[#0E7A7C]">{c.services.promocion.text}</p>
             </div>
-            <Link href={L("/portafolio")} className="mt-8 flex items-center gap-2 font-bold text-[#3a5f94]">
+            <Link href={L("/portafolio")} className="mt-8 flex items-center gap-2 font-bold text-[#0E7A7C]">
               {c.services.promocion.cta}
             </Link>
           </div>
 
           <div className="group col-span-1 flex flex-col justify-between rounded-xl bg-white p-10 md:col-span-4">
             <div>
-              <MaterialIcon name="hub" className="mb-6 block text-4xl text-[#3a5f94] transition-transform group-hover:scale-110" />
-              <h3 className="mb-4 text-xl font-bold text-[#000a1e]">{c.services.red.title}</h3>
-              <p className="text-sm text-[#44474e]">{c.services.red.text}</p>
+              <MaterialIcon name="hub" className="mb-6 block text-4xl text-[#0E7A7C] transition-transform group-hover:scale-110" />
+              <h3 className="mb-4 text-xl font-bold text-[#252A58]">{c.services.red.title}</h3>
+              <p className="text-sm text-[#0E7A7C]">{c.services.red.text}</p>
             </div>
-            <Link href={L("/contacto")} className="mt-8 flex items-center gap-2 font-bold text-[#3a5f94]">
+            <Link href={L("/contacto")} className="mt-8 flex items-center gap-2 font-bold text-[#0E7A7C]">
               {c.services.red.cta}
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="border-y border-[#c4c6cf]/10 bg-[#f3f4f5] py-24">
+      <section className="border-y border-[#dce9ff]/10 bg-[#eff4ff] py-24">
         <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 px-8 lg:grid-cols-2">
           <div className="relative overflow-hidden rounded-2xl shadow-2xl">
             <Image src={designImages.servicios.technicalDoc} alt="Recursos técnicos" width={800} height={400} className="h-[400px] w-full object-cover" unoptimized />
-            <div className="absolute inset-0 flex items-center justify-center bg-[#000a1e]/20">
+            <div className="absolute inset-0 flex items-center justify-center bg-[#252A58]/20">
               <div className="flex items-center gap-4 rounded-xl bg-white/90 p-6 shadow-xl backdrop-blur-md">
-                <MaterialIcon name="picture_as_pdf" className="text-4xl text-[#000a1e]" />
+                <MaterialIcon name="picture_as_pdf" className="text-4xl text-[#252A58]" />
                 <div>
-                  <p className="font-bold text-[#000a1e]">{c.pdfBadge}</p>
-                  <p className="text-xs text-[#44474e]">{c.pdfSize}</p>
+                  <p className="font-bold text-[#252A58]">{c.pdfBadge}</p>
+                  <p className="text-xs text-[#0E7A7C]">{c.pdfSize}</p>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            <h2 className="mb-6 text-3xl font-bold text-[#000a1e]">{c.downloadTitle}</h2>
-            <p className="mb-8 text-lg leading-relaxed text-[#44474e]">{c.downloadDesc}</p>
-            <a href="#" className="inline-flex items-center gap-4 rounded-md bg-[#000a1e] px-10 py-5 font-bold text-white shadow-xl shadow-[#000a1e]/10 transition-all hover:bg-[#002147]">
+            <h2 className="mb-6 text-3xl font-bold text-[#252A58]">{c.downloadTitle}</h2>
+            <p className="mb-8 text-lg leading-relaxed text-[#0E7A7C]">{c.downloadDesc}</p>
+            <a href="#" className="inline-flex items-center gap-4 rounded-md bg-[#252A58] px-10 py-5 font-bold text-white shadow-xl shadow-[#252A58]/10 transition-all hover:bg-[#24436B]">
               {c.downloadButton}
               <MaterialIcon name="download" />
             </a>
@@ -231,20 +231,20 @@ export default async function ServiciosTecnicosPage({ params }: { params: Promis
       </section>
 
       <section className="relative overflow-hidden py-32">
-        <div className="absolute right-0 top-0 hidden h-full w-1/2 translate-x-32 -skew-x-12 bg-[#e7e8e9] lg:block" />
+        <div className="absolute right-0 top-0 hidden h-full w-1/2 translate-x-32 -skew-x-12 bg-[#dce9ff] lg:block" />
         <div className="relative z-10 mx-auto flex max-w-7xl flex-col justify-between gap-12 px-8 lg:flex-row lg:items-center">
           <div className="lg:w-1/2">
-            <h2 className="mb-6 text-4xl font-bold leading-tight text-[#000a1e] md:text-5xl">{c.ctaTitle}</h2>
-            <p className="text-xl text-[#44474e]">{c.ctaText}</p>
+            <h2 className="mb-6 text-4xl font-bold leading-tight text-[#252A58] md:text-5xl">{c.ctaTitle}</h2>
+            <p className="text-xl text-[#0E7A7C]">{c.ctaText}</p>
           </div>
           <div className="flex flex-col gap-4">
             <Link
               href={L("/contacto")}
-              className="rounded-md bg-gradient-to-r from-[#2e1f00] to-[#002147] px-12 py-6 text-center text-lg font-extrabold text-white shadow-2xl transition-transform hover:scale-105"
+              className="rounded-md bg-gradient-to-r from-[#0E7A7C] to-[#24436B] px-12 py-6 text-center text-lg font-extrabold text-white shadow-2xl transition-transform hover:scale-105"
             >
               {c.ctaButton}
             </Link>
-            <p className="text-center text-xs font-bold uppercase tracking-widest text-[#44474e] opacity-70">{c.ctaFootnote}</p>
+            <p className="text-center text-xs font-bold uppercase tracking-widest text-[#0E7A7C] opacity-70">{c.ctaFootnote}</p>
           </div>
         </div>
       </section>

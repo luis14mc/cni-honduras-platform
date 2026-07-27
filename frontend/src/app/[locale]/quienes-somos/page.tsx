@@ -157,26 +157,26 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
-      <header className="relative flex min-h-[760px] items-center overflow-hidden bg-[#000a1e] py-24">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
+      <header className="relative flex min-h-[760px] items-center overflow-hidden bg-[#252A58] py-24">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.cni.heroCity} alt="Honduras" fill priority sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e] via-[#000a1e]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#252A58] via-[#252A58]/80 to-transparent" />
         </div>
         <div className="container relative z-10 mx-auto grid gap-12 px-8 md:grid-cols-2">
           <div className="flex flex-col justify-center">
             <div className="mb-6 flex items-center gap-2">
-              <span className="h-1 w-12 bg-[#ffdea5]" />
-              <span className="text-xs font-bold uppercase tracking-widest text-[#ffdea5]">{c.eyebrow}</span>
+              <span className="h-1 w-12 bg-[#8DC046]" />
+              <span className="text-xs font-bold uppercase tracking-widest text-[#8DC046]">{c.eyebrow}</span>
             </div>
             <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-7xl">
-              {c.titleA} <span className="text-[#e9c176]">{c.titleB}</span>
+              {c.titleA} <span className="text-[#35A963]">{c.titleB}</span>
             </h1>
             <p className="mb-10 max-w-xl text-lg leading-relaxed text-[#d6e3ff]">{c.description}</p>
             <div className="flex flex-wrap gap-4">
               <Link
                 href={L("/invertir")}
-                className="inline-flex items-center gap-2 rounded-md bg-[#ffdea5] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#e9c176]"
+                className="inline-flex items-center gap-2 rounded-md bg-[#8DC046] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#35A963]"
               >
                 {c.ctaExplore}
                 <MaterialIcon name="arrow_forward" />
@@ -191,7 +191,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
           </div>
           <div className="hidden items-center justify-center md:flex">
             <div className="group relative">
-              <div className="absolute -inset-4 bg-[#ffdea5]/20 blur-3xl transition-all group-hover:bg-[#ffdea5]/30" />
+              <div className="absolute -inset-4 bg-[#8DC046]/20 blur-3xl transition-all group-hover:bg-[#8DC046]/30" />
               <Image
                 src={designImages.cni.macaw}
                 alt="Guacamaya"
@@ -207,35 +207,35 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
 
       <section className="relative overflow-hidden bg-white py-24">
         <div className="container mx-auto grid gap-16 px-8 md:grid-cols-2">
-          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#000a1e] bg-[#f8f9fa] p-12 shadow-xl shadow-[#000a1e]/5">
-            <MaterialIcon name="track_changes" filled className="text-4xl text-[#000a1e]" />
-            <h2 className="text-4xl font-bold text-[#000a1e]">{c.mision}</h2>
-            <p className="text-lg italic leading-relaxed text-[#44474e]">{c.misionText}</p>
+          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#252A58] bg-[#f8f9ff] p-12 shadow-xl shadow-[#252A58]/5">
+            <MaterialIcon name="track_changes" filled className="text-4xl text-[#252A58]" />
+            <h2 className="text-4xl font-bold text-[#252A58]">{c.mision}</h2>
+            <p className="text-lg italic leading-relaxed text-[#0E7A7C]">{c.misionText}</p>
           </div>
-          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#3a5f94] bg-[#f8f9fa] p-12 shadow-xl shadow-[#000a1e]/5">
-            <MaterialIcon name="visibility" filled className="text-4xl text-[#3a5f94]" />
-            <h2 className="text-4xl font-bold text-[#000a1e]">{c.vision}</h2>
-            <p className="text-lg leading-relaxed text-[#44474e]">{c.visionText}</p>
+          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#0E7A7C] bg-[#f8f9ff] p-12 shadow-xl shadow-[#252A58]/5">
+            <MaterialIcon name="visibility" filled className="text-4xl text-[#0E7A7C]" />
+            <h2 className="text-4xl font-bold text-[#252A58]">{c.vision}</h2>
+            <p className="text-lg leading-relaxed text-[#0E7A7C]">{c.visionText}</p>
           </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#000a1e] py-24">
+      <section className="relative overflow-hidden bg-[#252A58] py-24">
         <div className="pointer-events-none absolute right-0 top-0 h-full w-1/3 opacity-10">
-          <div className="h-full w-full bg-[radial-gradient(circle_at_center,_#e9c176_0%,_transparent_70%)]" />
+          <div className="h-full w-full bg-[radial-gradient(circle_at_center,_#35A963_0%,_transparent_70%)]" />
         </div>
         <div className="container relative z-10 mx-auto flex max-w-4xl flex-col items-center px-8 text-center">
           <h2 className="mb-8 text-4xl font-extrabold tracking-tight text-white">{c.filosofiaTitle}</h2>
           <p className="text-xl font-light leading-loose text-[#d6e3ff]">{c.filosofiaText}</p>
-          <div className="mt-12 h-1 w-24 rounded-full bg-[#ffdea5]" />
+          <div className="mt-12 h-1 w-24 rounded-full bg-[#8DC046]" />
         </div>
       </section>
 
       <section className="relative bg-white py-32">
         <div className="container mx-auto px-8">
           <div className="mb-16 flex flex-col items-center text-center">
-            <h2 className="mb-4 text-5xl font-black tracking-tighter text-[#000a1e]">{c.rutaTitle}</h2>
-            <p className="max-w-2xl text-[#44474e]">{c.rutaIntro}</p>
+            <h2 className="mb-4 text-5xl font-black tracking-tighter text-[#252A58]">{c.rutaTitle}</h2>
+            <p className="max-w-2xl text-[#0E7A7C]">{c.rutaIntro}</p>
           </div>
           <div className="flex justify-center">
             <div className="relative w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl">
@@ -252,62 +252,62 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
           <div className="mt-20 grid gap-8 md:grid-cols-5">
             {c.rutaSteps.map((s) => (
               <div key={s.n} className="group text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#3a5f94] text-xl font-bold text-white transition-transform group-hover:scale-110">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#0E7A7C] text-xl font-bold text-white transition-transform group-hover:scale-110">
                   {s.n}
                 </div>
-                <h3 className="mb-2 font-bold text-[#000a1e]">{s.title}</h3>
-                <p className="text-xs text-[#44474e]">{s.text}</p>
+                <h3 className="mb-2 font-bold text-[#252A58]">{s.title}</h3>
+                <p className="text-xs text-[#0E7A7C]">{s.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f3f4f5] py-24">
+      <section className="bg-[#eff4ff] py-24">
         <div className="container mx-auto px-8">
           <div className="mb-16">
-            <h2 className="text-4xl font-bold text-[#000a1e]">{c.objetivosTitle}</h2>
-            <div className="mt-4 h-1.5 w-16 bg-[#e9c176]" />
+            <h2 className="text-4xl font-bold text-[#252A58]">{c.objetivosTitle}</h2>
+            <div className="mt-4 h-1.5 w-16 bg-[#35A963]" />
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
-            <div className="group rounded-xl border-b-4 border-[#3a5f94] bg-white p-10 transition-all hover:shadow-2xl md:col-span-3">
-              <MaterialIcon name="info" filled className="mb-6 block text-4xl text-[#3a5f94]" />
-              <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{c.objetivos.informar.title}</h3>
-              <p className="leading-relaxed text-[#44474e]">{c.objetivos.informar.text}</p>
+            <div className="group rounded-xl border-b-4 border-[#0E7A7C] bg-white p-10 transition-all hover:shadow-2xl md:col-span-3">
+              <MaterialIcon name="info" filled className="mb-6 block text-4xl text-[#0E7A7C]" />
+              <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{c.objetivos.informar.title}</h3>
+              <p className="leading-relaxed text-[#0E7A7C]">{c.objetivos.informar.text}</p>
               <Link
                 href={L("/contacto")}
-                className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#3a5f94] transition-all group-hover:gap-4"
+                className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#0E7A7C] transition-all group-hover:gap-4"
               >
                 {c.objetivos.informar.cta}
                 <MaterialIcon name="chevron_right" />
               </Link>
             </div>
-            <div className="group rounded-xl border-b-4 border-[#000a1e] bg-white p-10 transition-all hover:shadow-2xl md:col-span-3">
-              <MaterialIcon name="campaign" filled className="mb-6 block text-4xl text-[#000a1e]" />
-              <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{c.objetivos.promocionar.title}</h3>
-              <p className="leading-relaxed text-[#44474e]">{c.objetivos.promocionar.text}</p>
+            <div className="group rounded-xl border-b-4 border-[#252A58] bg-white p-10 transition-all hover:shadow-2xl md:col-span-3">
+              <MaterialIcon name="campaign" filled className="mb-6 block text-4xl text-[#252A58]" />
+              <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{c.objetivos.promocionar.title}</h3>
+              <p className="leading-relaxed text-[#0E7A7C]">{c.objetivos.promocionar.text}</p>
               <Link
                 href={L("/contacto")}
-                className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#000a1e] transition-all group-hover:gap-4"
+                className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#252A58] transition-all group-hover:gap-4"
               >
                 {c.objetivos.promocionar.cta}
                 <MaterialIcon name="chevron_right" />
               </Link>
             </div>
-            <div className="rounded-xl bg-[#000a1e] p-10 text-white transition-all hover:shadow-2xl md:col-span-2">
-              <MaterialIcon name="handshake" className="mb-6 block text-4xl text-[#ffdea5]" />
+            <div className="rounded-xl bg-[#252A58] p-10 text-white transition-all hover:shadow-2xl md:col-span-2">
+              <MaterialIcon name="handshake" className="mb-6 block text-4xl text-[#8DC046]" />
               <h3 className="mb-4 text-2xl font-bold">{c.objetivos.acompanar.title}</h3>
               <p className="text-sm text-[#d6e3ff]/80">{c.objetivos.acompanar.text}</p>
             </div>
-            <div className="rounded-xl border-b-4 border-[#3a5f94] bg-white p-10 transition-all hover:shadow-2xl md:col-span-2">
-              <MaterialIcon name="hub" className="mb-6 block text-4xl text-[#3a5f94]" />
-              <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{c.objetivos.articular.title}</h3>
-              <p className="text-sm text-[#44474e]">{c.objetivos.articular.text}</p>
+            <div className="rounded-xl border-b-4 border-[#0E7A7C] bg-white p-10 transition-all hover:shadow-2xl md:col-span-2">
+              <MaterialIcon name="hub" className="mb-6 block text-4xl text-[#0E7A7C]" />
+              <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{c.objetivos.articular.title}</h3>
+              <p className="text-sm text-[#0E7A7C]">{c.objetivos.articular.text}</p>
             </div>
-            <div className="rounded-xl border-b-4 border-[#e9c176] bg-white p-10 transition-all hover:shadow-2xl md:col-span-2">
-              <MaterialIcon name="gavel" className="mb-6 block text-4xl text-[#e9c176]" />
-              <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{c.objetivos.incidir.title}</h3>
-              <p className="text-sm text-[#44474e]">{c.objetivos.incidir.text}</p>
+            <div className="rounded-xl border-b-4 border-[#35A963] bg-white p-10 transition-all hover:shadow-2xl md:col-span-2">
+              <MaterialIcon name="gavel" className="mb-6 block text-4xl text-[#35A963]" />
+              <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{c.objetivos.incidir.title}</h3>
+              <p className="text-sm text-[#0E7A7C]">{c.objetivos.incidir.text}</p>
             </div>
           </div>
         </div>
@@ -317,24 +317,24 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
         <div className="container mx-auto px-8">
           <div className="grid gap-12 md:grid-cols-4">
             <div className="flex flex-col gap-4">
-              <h3 className="text-4xl font-black leading-tight text-[#000a1e]">{c.valoresTitle}</h3>
-              <p className="text-[#44474e]">{c.valoresIntro}</p>
+              <h3 className="text-4xl font-black leading-tight text-[#252A58]">{c.valoresTitle}</h3>
+              <p className="text-[#0E7A7C]">{c.valoresIntro}</p>
             </div>
             {c.valores.map((v) => (
               <div
                 key={v.title}
-                className="flex flex-col gap-4 rounded-2xl bg-[#f8f9fa] p-8 shadow-lg transition-transform hover:-translate-y-2"
+                className="flex flex-col gap-4 rounded-2xl bg-[#f8f9ff] p-8 shadow-lg transition-transform hover:-translate-y-2"
               >
-                <MaterialIcon name={v.icon} className="text-3xl text-[#3a5f94]" />
-                <h4 className="text-xl font-bold text-[#000a1e]">{v.title}</h4>
-                <p className="text-sm text-[#44474e]">{v.text}</p>
+                <MaterialIcon name={v.icon} className="text-3xl text-[#0E7A7C]" />
+                <h4 className="text-xl font-bold text-[#252A58]">{v.title}</h4>
+                <p className="text-sm text-[#0E7A7C]">{v.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[#000a1e] py-32">
+      <section className="relative overflow-hidden bg-[#252A58] py-32">
         <div className="container relative z-10 mx-auto px-8">
           <div className="mb-20 text-center">
             <h2 className="mb-4 text-5xl font-extrabold text-white">{c.serviciosTitle}</h2>
@@ -342,12 +342,12 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
           </div>
           <div className="grid gap-8 md:grid-cols-3">
             {c.servicios.map((s, i) => {
-              const colors = ["text-[#ffdea5]", "text-[#9fc2fe]", "text-white"] as const;
+              const colors = ["text-[#8DC046]", "text-[#e5eeff]", "text-white"] as const;
               const accent = colors[i] ?? "text-white";
               return (
                 <div
                   key={s.title}
-                  className="group flex h-full flex-col rounded-2xl border border-white/5 bg-[#002147] p-10 transition-all hover:border-[#ffdea5]/30"
+                  className="group flex h-full flex-col rounded-2xl border border-white/5 bg-[#24436B] p-10 transition-all hover:border-[#8DC046]/30"
                 >
                   <MaterialIcon name={s.icon} className={`mb-8 text-5xl ${accent}`} />
                   <h3 className="mb-6 text-2xl font-bold text-white">{s.title}</h3>
@@ -366,7 +366,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
         </div>
       </section>
 
-      <section className="bg-[#ffdea5] py-24">
+      <section className="bg-[#8DC046] py-24">
         <div className="container mx-auto flex flex-col items-center justify-between gap-8 px-8 md:flex-row">
           <div className="text-center md:text-left">
             <h2 className="mb-2 text-4xl font-extrabold text-[#261900]">{c.ctaTitle}</h2>
@@ -374,7 +374,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
           </div>
           <Link
             href={L("/contacto")}
-            className="rounded-md bg-[#000a1e] px-10 py-5 text-lg font-bold text-white shadow-xl transition-all hover:scale-105 active:scale-95"
+            className="rounded-md bg-[#252A58] px-10 py-5 text-lg font-bold text-white shadow-xl transition-all hover:scale-105 active:scale-95"
           >
             {c.ctaButton}
           </Link>

@@ -1,35 +1,48 @@
 # 05 · API Conventions
 
 ## Base
-- Prefijo versionado: `/api/v1/` (agregador en `config/api_v1.py`). **Usar este para nuevo desarrollo.**
-- Por app bajo v1: `/api/v1/<app>/`
-  - `/api/v1/cms/` · `/api/v1/geo/` · `/api/v1/investment/` · `/api/v1/forms/` · `/api/v1/integrations/`
-- **Legacy (no eliminar)**: `/api/cms/` y `/api/geo/` se mantienen por compatibilidad.
-- Cada app expone un `router` (DRF `DefaultRouter`) o `urlpatterns` en su `api_urls.py`. `investment`, `forms` e `integrations` tienen routers placeholder listos para registrar viewsets.
+- **Prefijo versionado:** `/api/v1/` (`config/api_v1.py`). **Usar siempre para desarrollo nuevo.**
+- Apps bajo v1:
+  - `/api/v1/cms/`
+  - `/api/v1/geo/`
+  - `/api/v1/investment/`
+  - `/api/v1/forms/`
+  - `/api/v1/integrations/`
+- **Legacy (mantener):** `/api/cms/`, `/api/geo/` — mismos routers, sin prefijo v1.
 
-## Patrón de rutas (ejemplo real: geo)
-```
-GET /api/geo/departments/            → DepartmentListView   (lista)
-GET /api/geo/departments/<slug>/     → DepartmentDetailView (detalle por slug)
-```
-- Listas: ruta en plural (`departments/`).
-- Detalle: identificado por **slug** (`<slug:slug>/`), no por id, cuando aplique.
-- Vistas basadas en clases de DRF (`ListView` / `DetailView` style).
+## Frontend
+- `API_BASE_URL` en `frontend/src/lib/api.ts` (default `http://localhost:8000/api/v1`).
+- Paths relativos en servicios: `/geo/departments/`, `/investment/map-summary/`, etc.
 
-## Convenciones recomendadas
-- Respuestas JSON. Serializers DRF por recurso.
-- Nombres de rutas (`name=`) con prefijo de app: `geo-department-list`.
-- Paginación DRF para listas grandes.
-- Datos geográficos: GeoJSON cuando el cliente (Leaflet) lo requiera.
-- Idioma: el contenido bilingüe se resuelve por campos o parámetro; documentar al consolidar CMS.
+## Patrón de rutas (DRF ViewSets)
+```
+GET /api/v1/geo/departments/              → lista
+GET /api/v1/geo/departments/<slug>/       → detalle por slug
+GET /api/v1/geo/municipalities/?department=<slug>&region=<slug>
+GET /api/v1/investment/projects/?sector=&department=&municipality=&stage=&featured=
+GET /api/v1/investment/opportunities/?sector=&department=&region=&status=&featured=
+GET /api/v1/investment/map-summary/       → resumen por departamento (lista)
+POST /api/v1/forms/project-application/   → crea postulación + WebhookEvent
+```
+
+## Convenciones
+- JSON. Serializers DRF por recurso.
+- Listas en plural; detalle por **slug** cuando aplique.
+- Paginación DRF en listas grandes.
+- Geometrías: **GeoJSON** (`type` + `coordinates`), no WKT.
+- Filtros vía query params (`department`, `sector`, `region`, etc.).
 
 ## Errores
-- Usar códigos HTTP estándar (200, 201, 400, 404, 422, 500).
-- Cuerpo de error JSON consistente: `{ "detail": "..." }` (estilo DRF).
+- HTTP estándar (200, 201, 400, 404, 422, 500).
+- Cuerpo: `{ "detail": "..." }` (DRF).
 
 ## CORS / CSRF
-- CORS permitido a `http://localhost:3000` y `http://127.0.0.1:3000` en dev (ver docker-compose).
+- Dev: `localhost:3000`, `127.0.0.1:3000`.
 
-## Pendiente de definir
-- API de `investment`, `media_library`, `users`.
-- Autenticación (token/session) y permisos por rol.
+## Pendiente
+- Auth DRF (token/session) y permisos (`users`).
+- API pública `media_library`.
+- OpenAPI/Swagger (opcional).
+
+## Referencia
+- Roadmap: [`docs/api/01-api-roadmap.md`](../../docs/api/01-api-roadmap.md)

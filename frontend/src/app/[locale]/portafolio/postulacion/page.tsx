@@ -137,27 +137,27 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="hero-gradient relative flex min-h-[70vh] items-center overflow-hidden pt-20">
         <div className="pointer-events-none absolute inset-0 opacity-10">
-          <div className="absolute right-0 top-0 h-full w-full bg-[radial-gradient(circle_at_70%_30%,_#2e1f00_0%,_transparent_50%)]" />
+          <div className="absolute right-0 top-0 h-full w-full bg-[radial-gradient(circle_at_70%_30%,_#0E7A7C_0%,_transparent_50%)]" />
         </div>
         <div className="container relative z-10 mx-auto px-8 py-20">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7">
-              <span className="mb-6 inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#e9c176]">{c.eyebrow}</span>
+              <span className="mb-6 inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#35A963]">{c.eyebrow}</span>
               <h1 className="mb-8 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-7xl">{c.title}</h1>
-              <p className="mb-10 max-w-2xl text-lg leading-relaxed text-[#708ab5] md:text-xl">{c.description}</p>
+              <p className="mb-10 max-w-2xl text-lg leading-relaxed text-[#b6c2d3] md:text-xl">{c.description}</p>
               <div className="flex flex-wrap gap-4">
                 <a
                   href="#formulario"
-                  className="rounded-md bg-[#e9c176] px-8 py-4 text-sm font-extrabold uppercase tracking-wider text-[#110a00] shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
+                  className="rounded-md bg-[#35A963] px-8 py-4 text-sm font-extrabold uppercase tracking-wider text-[#110a00] shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
                 >
                   {c.primaryCta}
                 </a>
                 <Link
                   href={L("/recursos")}
-                  className="flex items-center gap-3 border-b border-white/20 pb-1 font-bold text-white transition-colors hover:border-[#e9c176]"
+                  className="flex items-center gap-3 border-b border-white/20 pb-1 font-bold text-white transition-colors hover:border-[#35A963]"
                 >
                   <MaterialIcon name="description" />
                   {c.secondaryCta}
@@ -166,7 +166,7 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
             </div>
             <div className="flex justify-center lg:col-span-5 lg:justify-end">
               <div className="group relative">
-                <div className="absolute -inset-4 rounded-full bg-[#e9c176]/20 opacity-50 blur-3xl transition-opacity group-hover:opacity-80" />
+                <div className="absolute -inset-4 rounded-full bg-[#35A963]/20 opacity-50 blur-3xl transition-opacity group-hover:opacity-80" />
                 <Image
                   src={designImages.postulacion.macaw}
                   alt="Guacamaya"
@@ -181,41 +181,41 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
         </div>
       </header>
 
-      <section className="bg-[#f8f9fa] px-8 py-24">
+      <section className="bg-[#f8f9ff] px-8 py-24">
         <div className="container mx-auto">
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div className="max-w-2xl">
-              <h2 className="mb-4 text-3xl font-extrabold text-[#000a1e] md:text-4xl">{c.valueTitle}</h2>
-              <p className="leading-relaxed text-[#44474e]">{c.valueSub}</p>
+              <h2 className="mb-4 text-3xl font-extrabold text-[#252A58] md:text-4xl">{c.valueTitle}</h2>
+              <p className="leading-relaxed text-[#0E7A7C]">{c.valueSub}</p>
             </div>
-            <div className="mb-2 h-1 w-24 rounded-full bg-[#2e1f00]" />
+            <div className="mb-2 h-1 w-24 rounded-full bg-[#0E7A7C]" />
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {c.benefits.map((b) => (
-              <div key={b.title} className="group rounded-xl border-t-4 border-transparent bg-white p-10 shadow-sm transition-all duration-300 hover:border-[#000a1e] hover:shadow-xl">
-                <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-full bg-[#e7e8e9] transition-transform group-hover:scale-110">
-                  <MaterialIcon name={b.icon} className="text-3xl text-[#000a1e]" />
+              <div key={b.title} className="group rounded-xl border-t-4 border-transparent bg-white p-10 shadow-sm transition-all duration-300 hover:border-[#252A58] hover:shadow-xl">
+                <div className="mb-8 flex h-14 w-14 items-center justify-center rounded-full bg-[#dce9ff] transition-transform group-hover:scale-110">
+                  <MaterialIcon name={b.icon} className="text-3xl text-[#252A58]" />
                 </div>
-                <h3 className="mb-4 text-lg font-bold text-[#000a1e]">{b.title}</h3>
-                <p className="text-sm leading-relaxed text-[#44474e]">{b.text}</p>
+                <h3 className="mb-4 text-lg font-bold text-[#252A58]">{b.title}</h3>
+                <p className="text-sm leading-relaxed text-[#0E7A7C]">{b.text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="formulario" className="border-y border-[#c4c6cf]/10 bg-[#f3f4f5] px-8 py-24">
+      <section id="formulario" className="border-y border-[#dce9ff]/10 bg-[#eff4ff] px-8 py-24">
         <div className="container mx-auto max-w-5xl">
-          <div className="overflow-hidden rounded-2xl border border-[#c4c6cf]/10 bg-white shadow-2xl">
-            <div className="bg-[#002147] p-8 text-center text-white md:p-12">
+          <div className="overflow-hidden rounded-2xl border border-[#dce9ff]/10 bg-white shadow-2xl">
+            <div className="bg-[#24436B] p-8 text-center text-white md:p-12">
               <h2 className="mb-4 text-3xl font-extrabold">{c.formTitle}</h2>
-              <p className="mx-auto max-w-2xl text-[#708ab5]">{c.formSub}</p>
+              <p className="mx-auto max-w-2xl text-[#b6c2d3]">{c.formSub}</p>
             </div>
             <form className="space-y-12 p-8 md:p-12">
               <div>
                 <div className="mb-8 flex items-center gap-4">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#000a1e] text-sm font-bold text-white">01</span>
-                  <h3 className="text-xl font-bold uppercase tracking-tight text-[#000a1e]">{c.investorSection}</h3>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#252A58] text-sm font-bold text-white">01</span>
+                  <h3 className="text-xl font-bold uppercase tracking-tight text-[#252A58]">{c.investorSection}</h3>
                 </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {[
@@ -227,87 +227,87 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
                     { key: "country", type: "text" },
                   ].map((f) => (
                     <div className="space-y-2" key={f.key}>
-                      <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels[f.key as keyof typeof c.labels]}</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels[f.key as keyof typeof c.labels]}</label>
                       <input
                         type={f.type}
                         placeholder={c.placeholders[f.key as keyof typeof c.placeholders]}
-                        className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e] placeholder:text-[#74777f]/50 focus:outline-none focus:ring-2 focus:ring-[#000a1e]/10"
+                        className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58] placeholder:text-[#b6c2d3]/50 focus:outline-none focus:ring-2 focus:ring-[#252A58]/10"
                       />
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="h-px bg-[#c4c6cf]/20" />
+              <div className="h-px bg-[#dce9ff]/20" />
 
               <div>
                 <div className="mb-8 flex items-center gap-4">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#000a1e] text-sm font-bold text-white">02</span>
-                  <h3 className="text-xl font-bold uppercase tracking-tight text-[#000a1e]">{c.projectSection}</h3>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#252A58] text-sm font-bold text-white">02</span>
+                  <h3 className="text-xl font-bold uppercase tracking-tight text-[#252A58]">{c.projectSection}</h3>
                 </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.projectName}</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.projectName}</label>
                     <input
                       type="text"
                       placeholder={c.placeholders.projectName}
-                      className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e] placeholder:text-[#74777f]/50 focus:outline-none focus:ring-2 focus:ring-[#000a1e]/10"
+                      className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58] placeholder:text-[#b6c2d3]/50 focus:outline-none focus:ring-2 focus:ring-[#252A58]/10"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.sector}</label>
-                    <select className="w-full appearance-none rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e]">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.sector}</label>
+                    <select className="w-full appearance-none rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58]">
                       {c.sectorOptions.map((o) => (
                         <option key={o}>{o}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.presence}</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.presence}</label>
                     <div className="mt-2 flex flex-wrap gap-4">
                       {c.presenceOptions.map((o) => (
                         <label key={o} className="flex cursor-pointer items-center gap-2">
-                          <input type="radio" name="presencia" className="text-[#000a1e] focus:ring-[#000a1e]" />
+                          <input type="radio" name="presencia" className="text-[#252A58] focus:ring-[#252A58]" />
                           <span className="text-sm">{o}</span>
                         </label>
                       ))}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.type}</label>
-                    <select className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e]">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.type}</label>
+                    <select className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58]">
                       {c.typeOptions.map((o) => (
                         <option key={o}>{o}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.amount}</label>
-                    <select className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e]">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.amount}</label>
+                    <select className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58]">
                       {c.amountOptions.map((o) => (
                         <option key={o}>{o}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.description}</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.description}</label>
                     <textarea
                       placeholder={c.placeholders.description}
                       rows={4}
-                      className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e] placeholder:text-[#74777f]/50 focus:outline-none focus:ring-2 focus:ring-[#000a1e]/10"
+                      className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58] placeholder:text-[#b6c2d3]/50 focus:outline-none focus:ring-2 focus:ring-[#252A58]/10"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.feasibility}</label>
-                    <select className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e]">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.feasibility}</label>
+                    <select className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58]">
                       {c.feasibilityOptions.map((o) => (
                         <option key={o}>{o}</option>
                       ))}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#44474e]">{c.labels.stage}</label>
-                    <select className="w-full rounded-md border-none bg-[#f3f4f5] p-4 text-[#000a1e]">
+                    <label className="text-xs font-bold uppercase tracking-wider text-[#0E7A7C]">{c.labels.stage}</label>
+                    <select className="w-full rounded-md border-none bg-[#eff4ff] p-4 text-[#252A58]">
                       {c.stageOptions.map((o) => (
                         <option key={o}>{o}</option>
                       ))}
@@ -316,17 +316,17 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
                 </div>
               </div>
 
-              <div className="rounded-lg border-l-4 border-[#2e1f00] bg-[#f3f4f5] p-6">
+              <div className="rounded-lg border-l-4 border-[#0E7A7C] bg-[#eff4ff] p-6">
                 <label className="flex cursor-pointer gap-4">
-                  <input type="checkbox" className="mt-1 rounded text-[#000a1e] focus:ring-[#000a1e]" />
-                  <p className="text-xs leading-relaxed text-[#44474e]">{c.privacyText}</p>
+                  <input type="checkbox" className="mt-1 rounded text-[#252A58] focus:ring-[#252A58]" />
+                  <p className="text-xs leading-relaxed text-[#0E7A7C]">{c.privacyText}</p>
                 </label>
               </div>
 
               <div className="flex justify-center pt-6">
                 <button
                   type="submit"
-                  className="rounded-md bg-[#000a1e] px-12 py-5 text-sm font-extrabold uppercase tracking-widest text-white shadow-xl shadow-[#000a1e]/20 transition-all hover:-translate-y-0.5 hover:bg-[#002147]"
+                  className="rounded-md bg-[#252A58] px-12 py-5 text-sm font-extrabold uppercase tracking-widest text-white shadow-xl shadow-[#252A58]/20 transition-all hover:-translate-y-0.5 hover:bg-[#24436B]"
                 >
                   {c.submit}
                 </button>
@@ -338,11 +338,11 @@ export default async function PostulacionPage({ params }: { params: Promise<{ lo
 
       <section className="bg-white px-8 py-24">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-4xl font-extrabold text-[#000a1e]">{c.ctaTitle}</h2>
-          <p className="mb-10 text-lg text-[#44474e]">{c.ctaText}</p>
+          <h2 className="mb-6 text-4xl font-extrabold text-[#252A58]">{c.ctaTitle}</h2>
+          <p className="mb-10 text-lg text-[#0E7A7C]">{c.ctaText}</p>
           <Link
             href={L("/contacto")}
-            className="inline-flex items-center gap-4 rounded-md bg-[#2e1f00] px-10 py-5 text-lg font-bold text-[#ffdea5] transition-colors hover:bg-[#110a00]"
+            className="inline-flex items-center gap-4 rounded-md bg-[#0E7A7C] px-10 py-5 text-lg font-bold text-[#8DC046] transition-colors hover:bg-[#110a00]"
           >
             {c.ctaButton}
             <MaterialIcon name="arrow_forward" />

@@ -81,7 +81,7 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <section className="relative flex h-[500px] items-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.recursos.hero} alt="Recursos" fill priority sizes="100vw" className="object-cover" />
@@ -93,21 +93,21 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
             <p className="mb-10 text-lg font-light leading-relaxed text-[#d6e3ff]">{c.description}</p>
             <div className="relative max-w-2xl">
               <input
-                className="h-16 w-full rounded-lg border-none bg-white pl-14 pr-6 text-[#000a1e] shadow-xl transition-all focus:ring-2 focus:ring-[#e9c176]"
+                className="h-16 w-full rounded-lg border-none bg-white pl-14 pr-6 text-[#252A58] shadow-xl transition-all focus:ring-2 focus:ring-[#35A963]"
                 placeholder={c.searchPlaceholder}
                 type="text"
               />
-              <MaterialIcon name="search" className="absolute left-5 top-1/2 -translate-y-1/2 text-[#000a1e]/50" />
+              <MaterialIcon name="search" className="absolute left-5 top-1/2 -translate-y-1/2 text-[#252A58]/50" />
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f8f9fa] px-8 py-24">
+      <section className="bg-[#f8f9ff] px-8 py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16">
-            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#708ab5]">{c.categoriesEyebrow}</span>
-            <h2 className="mt-2 text-4xl font-extrabold text-[#000a1e]">{c.categoriesTitle}</h2>
+            <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b6c2d3]">{c.categoriesEyebrow}</span>
+            <h2 className="mt-2 text-4xl font-extrabold text-[#252A58]">{c.categoriesTitle}</h2>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {c.categories.map((cat) => (
@@ -115,14 +115,14 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
                 key={cat.title}
                 className="group flex h-full flex-col rounded-xl bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
               >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg bg-[#002147]">
-                  <MaterialIcon name={cat.icon} className="text-3xl text-[#e9c176]" />
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-lg bg-[#24436B]">
+                  <MaterialIcon name={cat.icon} className="text-3xl text-[#35A963]" />
                 </div>
-                <h3 className="mb-4 text-2xl font-bold text-[#000a1e]">{cat.title}</h3>
-                <p className="mb-8 grow text-[#44474e]">{cat.text}</p>
+                <h3 className="mb-4 text-2xl font-bold text-[#252A58]">{cat.title}</h3>
+                <p className="mb-8 grow text-[#0E7A7C]">{cat.text}</p>
                 <Link
                   href={cat.href ? L(cat.href) : "#"}
-                  className="inline-flex items-center font-bold text-[#000a1e] transition-colors group-hover:text-[#3a5f94]"
+                  className="inline-flex items-center font-bold text-[#252A58] transition-colors group-hover:text-[#0E7A7C]"
                 >
                   {cat.cta}
                   <MaterialIcon name="arrow_forward" className="ml-2 transition-transform group-hover:translate-x-1" />
@@ -133,16 +133,16 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
         </div>
       </section>
 
-      <section className="bg-[#f3f4f5] px-8 py-24">
+      <section className="bg-[#eff4ff] px-8 py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 flex flex-col items-end justify-between gap-6 md:flex-row">
             <div>
-              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#708ab5]">{c.highlightsEyebrow}</span>
-              <h2 className="mt-2 text-4xl font-extrabold text-[#000a1e]">{c.highlightsTitle}</h2>
+              <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b6c2d3]">{c.highlightsEyebrow}</span>
+              <h2 className="mt-2 text-4xl font-extrabold text-[#252A58]">{c.highlightsTitle}</h2>
             </div>
             <button
               type="button"
-              className="flex items-center rounded-md bg-[#000a1e] px-8 py-3 font-bold text-white transition-all hover:bg-[#002147]"
+              className="flex items-center rounded-md bg-[#252A58] px-8 py-3 font-bold text-white transition-all hover:bg-[#24436B]"
             >
               {c.viewAll}
               <MaterialIcon name="open_in_new" className="ml-2" />
@@ -151,20 +151,20 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
           <div className="flex flex-col space-y-6">
             {c.highlights.map((h) => (
               <div key={h.title} className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row">
-                <div className="flex h-48 w-full shrink-0 flex-col items-center justify-center bg-[#002147] p-6 text-center md:w-64">
-                  <MaterialIcon name={h.icon} className="mb-2 text-5xl text-[#e9c176]" />
+                <div className="flex h-48 w-full shrink-0 flex-col items-center justify-center bg-[#24436B] p-6 text-center md:w-64">
+                  <MaterialIcon name={h.icon} className="mb-2 text-5xl text-[#35A963]" />
                   <span className="text-xs font-bold uppercase tracking-widest text-white">{h.tag}</span>
                 </div>
                 <div className="flex flex-grow flex-col items-center justify-between gap-6 p-8 md:flex-row">
                   <div>
-                    <h4 className="mb-2 text-xl font-bold text-[#000a1e]">{h.title}</h4>
-                    <p className="max-w-xl text-[#44474e]">{h.desc}</p>
+                    <h4 className="mb-2 text-xl font-bold text-[#252A58]">{h.title}</h4>
+                    <p className="max-w-xl text-[#0E7A7C]">{h.desc}</p>
                   </div>
                   <div className="flex shrink-0 gap-4">
-                    <button type="button" className="flex items-center rounded-md border border-[#c4c6cf] px-5 py-2 font-semibold text-[#000a1e] transition-colors hover:bg-[#e7e8e9]">
+                    <button type="button" className="flex items-center rounded-md border border-[#dce9ff] px-5 py-2 font-semibold text-[#252A58] transition-colors hover:bg-[#dce9ff]">
                       <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
                     </button>
-                    <button type="button" className="flex items-center rounded-md bg-[#000a1e] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90">
+                    <button type="button" className="flex items-center rounded-md bg-[#252A58] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90">
                       <MaterialIcon name="download" className="mr-2 text-xl" /> {c.download}
                     </button>
                   </div>
@@ -178,7 +178,7 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
       <section className="relative overflow-hidden px-8 py-24">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.recursos.cta} alt="CTA" fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-[#000a1e]/90" />
+          <div className="absolute inset-0 bg-[#252A58]/90" />
         </div>
         <div className="relative z-10 mx-auto max-w-5xl text-center">
           <h2 className="mb-8 text-4xl font-extrabold tracking-tight text-white md:text-5xl">{c.ctaTitle}</h2>
@@ -186,13 +186,13 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
           <div className="flex flex-col justify-center gap-6 sm:flex-row">
             <Link
               href={L("/contacto")}
-              className="rounded-md bg-[#e9c176] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-[#261900] shadow-2xl transition-transform duration-150 hover:scale-105"
+              className="rounded-md bg-[#35A963] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-[#261900] shadow-2xl transition-transform duration-150 hover:scale-105"
             >
               {c.ctaPrimary}
             </Link>
             <Link
               href={L("/contacto")}
-              className="rounded-md border-2 border-[#d6e3ff] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-white transition-all hover:bg-[#d6e3ff] hover:text-[#000a1e]"
+              className="rounded-md border-2 border-[#d6e3ff] px-10 py-5 text-sm font-extrabold uppercase tracking-widest text-white transition-all hover:bg-[#d6e3ff] hover:text-[#252A58]"
             >
               {c.ctaSecondary}
             </Link>

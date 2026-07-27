@@ -25,7 +25,7 @@ const DEFAULT_ZOOM = 7;
 const CNI_BLUE = "#334E88";
 const CNI_GREEN = "#32B372";
 const CNI_SKY = "#5fb3d9";
-const CNI_GOLD = "#ffdea5";
+const CNI_GOLD = "#8DC046";
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
   [12.6, -90.4],
   [17.0, -82.4],
@@ -237,8 +237,8 @@ export default function HondurasMap() {
 
   return (
     <div className="space-y-4 bg-[#001a33]/80 p-4 text-white sm:p-5 lg:p-6">
-      <div className="rounded-2xl border border-white/10 bg-[#002147]/70 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur">
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#ffdea5]">
+      <div className="rounded-2xl border border-white/10 bg-[#24436B]/70 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.28)] backdrop-blur">
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-[#8DC046]">
           Filtrar por sector
         </p>
         <div className="flex flex-wrap gap-2">
@@ -247,8 +247,8 @@ export default function HondurasMap() {
             onClick={() => setActiveSectorSlug("all")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition active:scale-95 ${
               activeSectorSlug === "all"
-                ? "bg-[#ffdea5] text-[#110a00] shadow-[0_0_24px_rgba(255,222,165,0.22)]"
-                : "border border-white/10 bg-white/5 text-[#d5e3ff] hover:border-[#ffdea5]/40 hover:text-white"
+                ? "bg-[#8DC046] text-[#110a00] shadow-[0_0_24px_rgba(255,222,165,0.22)]"
+                : "border border-white/10 bg-white/5 text-[#d5e3ff] hover:border-[#8DC046]/40 hover:text-white"
             }`}
           >
             Todos
@@ -263,8 +263,8 @@ export default function HondurasMap() {
                 onClick={() => setActiveSectorSlug(sector.slug)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition active:scale-95 ${
                   isActive
-                    ? "text-[#000a1e] shadow-[0_0_24px_rgba(50,179,114,0.26)]"
-                    : "border border-white/10 bg-white/5 text-[#d5e3ff] hover:border-[#ffdea5]/40 hover:text-white"
+                    ? "text-[#252A58] shadow-[0_0_24px_rgba(50,179,114,0.26)]"
+                    : "border border-white/10 bg-white/5 text-[#d5e3ff] hover:border-[#8DC046]/40 hover:text-white"
                 }`}
                 style={isActive ? { backgroundColor: chipColor || CNI_GREEN } : undefined}
               >
@@ -273,7 +273,7 @@ export default function HondurasMap() {
             );
           })}
           {loadState === "ready" && sectorOptions.length === 0 ? (
-            <span className="text-sm text-[#708ab5]">Sin sectores en el resumen territorial.</span>
+            <span className="text-sm text-[#b6c2d3]">Sin sectores en el resumen territorial.</span>
           ) : null}
         </div>
         <p className="mt-3 text-xs font-medium text-[#d5e3ff]/65">
@@ -284,11 +284,11 @@ export default function HondurasMap() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#000a1e] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#252A58] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(95,179,217,0.24),transparent_30%),linear-gradient(135deg,rgba(0,33,71,0.72),rgba(0,10,30,0.95))]" />
           {loadState === "loading" ? (
             <div className="relative flex min-h-[620px] items-center justify-center lg:min-h-[680px]">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ffdea5]">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#8DC046]">
                 Cargando mapa
               </p>
             </div>
@@ -316,8 +316,8 @@ export default function HondurasMap() {
               scrollWheelZoom
               zoomControl={false}
               attributionControl={false}
-              className="relative z-10 h-full w-full bg-[#000a1e]"
-              style={{ minHeight: "680px", background: "#000a1e" }}
+              className="relative z-10 h-full w-full bg-[#252A58]"
+              style={{ minHeight: "680px", background: "#252A58" }}
             >
               <FitBounds data={departments} />
 
@@ -358,10 +358,10 @@ export default function HondurasMap() {
           )}
         </div>
 
-        <aside className="rounded-[1.5rem] border border-white/10 bg-[#002147]/75 p-5 shadow-2xl backdrop-blur-2xl">
+        <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B]/75 p-5 shadow-2xl backdrop-blur-2xl">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#ffdea5]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8DC046]">
                 {selected ? "Departamento seleccionado" : "Resumen nacional"}
               </p>
               <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
@@ -376,7 +376,7 @@ export default function HondurasMap() {
             {selected ? (
               <button
                 type="button"
-                className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-sm font-semibold text-[#d5e3ff] hover:border-[#ffdea5]/40 hover:text-white"
+                className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-sm font-semibold text-[#d5e3ff] hover:border-[#8DC046]/40 hover:text-white"
                 onClick={() => setSelected(null)}
               >
                 Limpiar
@@ -447,7 +447,7 @@ function DepartmentSummaryPanel({
       ) : null}
 
       {!summary || !hasActivity ? (
-        <p className="rounded-xl border border-white/10 bg-[#000a1e]/40 p-4 text-sm text-[#d5e3ff]/70">
+        <p className="rounded-xl border border-white/10 bg-[#252A58]/40 p-4 text-sm text-[#d5e3ff]/70">
           Sin proyectos u oportunidades públicas registradas todavía.
         </p>
       ) : (
@@ -469,14 +469,14 @@ function DepartmentSummaryPanel({
 
           {summary.sectors.length > 0 ? (
             <div>
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#708ab5]">
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#b6c2d3]">
                 Sectores relacionados
               </p>
               <ul className="flex flex-wrap gap-2">
                 {summary.sectors.map((sector) => (
                   <li
                     key={sector.slug}
-                    className="rounded-full px-3 py-1 text-xs font-semibold text-[#000a1e] shadow-[0_0_18px_rgba(50,179,114,0.2)]"
+                    className="rounded-full px-3 py-1 text-xs font-semibold text-[#252A58] shadow-[0_0_18px_rgba(50,179,114,0.2)]"
                     style={{ backgroundColor: sector.color_hex || CNI_GREEN }}
                   >
                     {sector.name}
@@ -527,7 +527,7 @@ function NationalSummaryPanel({
         />
       </dl>
 
-      <p className="rounded-xl border border-white/10 bg-[#000a1e]/40 p-4 text-sm leading-relaxed text-[#d5e3ff]/70">
+      <p className="rounded-xl border border-white/10 bg-[#252A58]/40 p-4 text-sm leading-relaxed text-[#d5e3ff]/70">
         Selecciona un departamento para ver el detalle territorial.
       </p>
     </div>
@@ -544,8 +544,8 @@ function SummaryStat({
   className?: string;
 }) {
   return (
-    <div className={`rounded-xl border border-white/10 bg-[#000a1e]/40 p-3 ${className}`}>
-      <dt className="text-xs font-bold uppercase tracking-[0.14em] text-[#708ab5]">{label}</dt>
+    <div className={`rounded-xl border border-white/10 bg-[#252A58]/40 p-3 ${className}`}>
+      <dt className="text-xs font-bold uppercase tracking-[0.14em] text-[#b6c2d3]">{label}</dt>
       <dd className="mt-1 text-base font-extrabold text-white">{value}</dd>
     </div>
   );
@@ -578,10 +578,10 @@ function FitBounds({ data }: { data: DepartmentFeatureCollection | null }) {
 
 function MapLegend() {
   return (
-    <div className="flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[#002147]/70 px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur">
+    <div className="flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[#24436B]/70 px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur">
       <LegendItem color="bg-[#32B372]" label="Con inversión" />
       <LegendItem color="bg-[#334E88]/80" label="Sin datos públicos" />
-      <LegendItem color="bg-[#ffdea5]" label="Seleccionado" />
+      <LegendItem color="bg-[#8DC046]" label="Seleccionado" />
       <LegendItem color="bg-[#334E88]/25" label="Atenuado por filtro" />
     </div>
   );

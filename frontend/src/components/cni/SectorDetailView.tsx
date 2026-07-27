@@ -65,14 +65,14 @@ export function SectorDetailView({
   const hasSuccessStories = successStories.length > 0;
 
   const borderClass = (i: number, wide?: boolean) => {
-    if (wide) return "border-l-4 border-[#3a5f94] md:col-span-2";
-    if (i === 0) return "border-l-4 border-[#000a1e]";
-    return "border-l-4 border-[#e9c176]";
+    if (wide) return "border-l-4 border-[#0E7A7C] md:col-span-2";
+    if (i === 0) return "border-l-4 border-[#252A58]";
+    return "border-l-4 border-[#35A963]";
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9fa]">
-      <header className="relative -mt-28 flex min-h-[min(819px,100dvh)] flex-col justify-center overflow-hidden bg-[#000a1e] pb-16 pt-36 md:pb-24 md:pt-28">
+    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
+      <header className="relative -mt-28 flex min-h-[min(819px,100dvh)] flex-col justify-center overflow-hidden bg-[#252A58] pb-16 pt-36 md:pb-24 md:pt-28">
         <div className="absolute inset-0">
           <Image
             src={sector.image}
@@ -82,22 +82,22 @@ export function SectorDetailView({
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e] via-[#000a1e]/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#252A58] via-[#252A58]/80 to-transparent" />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-10">
           <Link
             href={L("/invertir/sectores")}
-            className="mb-8 inline-block text-xs font-bold uppercase tracking-widest text-[#e9c176] transition hover:text-white"
+            className="mb-8 inline-block text-xs font-bold uppercase tracking-widest text-[#35A963] transition hover:text-white"
           >
             {x.backToSectors}
           </Link>
-          <span className="mb-4 inline-flex items-center gap-3 rounded-full border border-[#e9c176]/35 bg-[#2e1f00]/40 px-4 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-[#e9c176] backdrop-blur">
+          <span className="mb-4 inline-flex items-center gap-3 rounded-full border border-[#35A963]/35 bg-[#0E7A7C]/40 px-4 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.22em] text-[#35A963] backdrop-blur">
             <SectorIcon slug={slug} size={24} />
             {x.heroBadge}
           </span>
           <h1 className="max-w-4xl text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
             {x.heroTitleBefore}{" "}
-            <span className="text-[#e9c176]">{x.heroTitleAccent}</span>
+            <span className="text-[#35A963]">{x.heroTitleAccent}</span>
             {x.heroTitleAfter ? ` ${x.heroTitleAfter}` : ""}
           </h1>
           <p className="mt-6 max-w-2xl text-lg font-light leading-relaxed text-white/85 md:text-xl">{sector.short}</p>
@@ -105,9 +105,9 @@ export function SectorDetailView({
             {x.stats.map((s) => (
               <div
                 key={s.label}
-                className="rounded-xl border-l-4 border-[#e9c176] bg-[#000a1e]/40 p-6 backdrop-blur-md"
+                className="rounded-xl border-l-4 border-[#35A963] bg-[#252A58]/40 p-6 backdrop-blur-md"
               >
-                <p className="text-sm font-medium uppercase tracking-wider text-[#708ab5]">{s.label}</p>
+                <p className="text-sm font-medium uppercase tracking-wider text-[#b6c2d3]">{s.label}</p>
                 <p className="font-headline text-4xl font-extrabold text-white">{s.value}</p>
               </div>
             ))}
@@ -115,7 +115,7 @@ export function SectorDetailView({
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               href={L("/contacto")}
-              className="inline-flex items-center gap-2 rounded-md bg-[#e9c176] px-8 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
+              className="inline-flex items-center gap-2 rounded-md bg-[#35A963] px-8 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:brightness-95"
             >
               {inv.ctaAdvisor}
               <ArrowRight className="h-4 w-4" />
@@ -133,8 +133,8 @@ export function SectorDetailView({
       <Section tone="surface">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
-            <h2 className="text-3xl font-extrabold tracking-tight text-[#000a1e] md:text-4xl">{x.valueTitle}</h2>
-            <p className="mt-4 text-base leading-relaxed text-[#44474e]">{x.valueLead}</p>
+            <h2 className="text-3xl font-extrabold tracking-tight text-[#252A58] md:text-4xl">{x.valueTitle}</h2>
+            <p className="mt-4 text-base leading-relaxed text-[#0E7A7C]">{x.valueLead}</p>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:col-span-8">
             {x.advantages.map((a, i) => (
@@ -142,8 +142,8 @@ export function SectorDetailView({
                 key={a.title}
                 className={`rounded-xl bg-white p-8 tonal-depth-layering ${borderClass(i, a.wide)}`}
               >
-                <h3 className="text-lg font-bold text-[#000a1e]">{a.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{a.text}</p>
+                <h3 className="text-lg font-bold text-[#252A58]">{a.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{a.text}</p>
               </article>
             ))}
           </div>
@@ -153,7 +153,7 @@ export function SectorDetailView({
       <Section tone="low" className="border-y border-black/5">
         <SectionHeader eyebrow={x.analysisEyebrow} title={x.analysisTitle} description={x.analysisIntro} />
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#e7e8e9] lg:col-span-5">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#dce9ff] lg:col-span-5">
             <Image
               src={sector.image}
               alt={sector.name}
@@ -161,17 +161,17 @@ export function SectorDetailView({
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 40vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#000a1e]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/70 to-transparent" />
           </div>
           <div className="lg:col-span-7">
-            <p className="text-base leading-relaxed text-[#44474e]">{sector.fullText}</p>
+            <p className="text-base leading-relaxed text-[#0E7A7C]">{sector.fullText}</p>
             <ul className="mt-8 grid gap-3 sm:grid-cols-2">
               {sector.highlights.map((h) => (
                 <li
                   key={h}
-                  className="flex items-center gap-3 rounded-lg border border-[#c4c6cf]/30 bg-white px-4 py-3 text-sm font-medium text-[#000a1e]"
+                  className="flex items-center gap-3 rounded-lg border border-[#dce9ff]/30 bg-white px-4 py-3 text-sm font-medium text-[#252A58]"
                 >
-                  <Check className="h-4 w-4 shrink-0 text-[#3a5f94]" />
+                  <Check className="h-4 w-4 shrink-0 text-[#0E7A7C]" />
                   {h}
                 </li>
               ))}
@@ -195,30 +195,30 @@ export function SectorDetailView({
             {opportunities.map((opportunity) => (
               <article
                 key={opportunity.slug}
-                className="rounded-xl border border-[#c4c6cf]/30 bg-[#f8f9fa] p-7 tonal-depth-layering"
+                className="rounded-xl border border-[#dce9ff]/30 bg-[#f8f9ff] p-7 tonal-depth-layering"
               >
-                <p className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                   {opportunity.status}
                 </p>
-                <h3 className="mt-3 text-lg font-bold text-[#000a1e]">{opportunity.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">
+                <h3 className="mt-3 text-lg font-bold text-[#252A58]">{opportunity.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">
                   {opportunity.summary || opportunity.description}
                 </p>
                 <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/10 pt-5 text-sm">
                   {opportunity.estimated_investment && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Investment" : "Inversión"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{opportunity.estimated_investment}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{opportunity.estimated_investment}</dd>
                     </div>
                   )}
                   {opportunity.estimated_jobs !== null && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Jobs" : "Empleos"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{opportunity.estimated_jobs}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{opportunity.estimated_jobs}</dd>
                     </div>
                   )}
                 </dl>
@@ -243,30 +243,30 @@ export function SectorDetailView({
             {projects.map((project) => (
               <article
                 key={project.slug}
-                className="rounded-xl border border-[#c4c6cf]/30 bg-white p-7 tonal-depth-layering"
+                className="rounded-xl border border-[#dce9ff]/30 bg-white p-7 tonal-depth-layering"
               >
-                <p className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                   {formatProjectStage(locale, project.project_stage)}
                 </p>
-                <h3 className="mt-3 text-lg font-bold text-[#000a1e]">{project.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">
+                <h3 className="mt-3 text-lg font-bold text-[#252A58]">{project.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">
                   {project.summary || project.description}
                 </p>
                 <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/10 pt-5 text-sm">
                   {project.investment_amount && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Investment" : "Inversión"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{project.investment_amount}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{project.investment_amount}</dd>
                     </div>
                   )}
                   {project.estimated_jobs !== null && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Jobs" : "Empleos"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{project.estimated_jobs}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{project.estimated_jobs}</dd>
                     </div>
                   )}
                 </dl>
@@ -291,38 +291,38 @@ export function SectorDetailView({
             {successStories.map((story) => (
               <article
                 key={story.slug}
-                className="rounded-xl border border-[#c4c6cf]/30 bg-[#f8f9fa] p-7 tonal-depth-layering"
+                className="rounded-xl border border-[#dce9ff]/30 bg-[#f8f9ff] p-7 tonal-depth-layering"
               >
                 {story.company_name && (
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#3a5f94]">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
                     {story.company_name}
                   </p>
                 )}
-                <h3 className="mt-3 text-lg font-bold text-[#000a1e]">{story.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#44474e]">{story.summary}</p>
+                <h3 className="mt-3 text-lg font-bold text-[#252A58]">{story.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{story.summary}</p>
                 <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/10 pt-5 text-sm">
                   {story.country_origin && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Origin" : "Origen"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{story.country_origin}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{story.country_origin}</dd>
                     </div>
                   )}
                   {story.investment_amount && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Investment" : "Inversión"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{story.investment_amount}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{story.investment_amount}</dd>
                     </div>
                   )}
                   {story.jobs_generated !== null && (
                     <div>
-                      <dt className="text-xs font-bold uppercase tracking-widest text-[#708ab5]">
+                      <dt className="text-xs font-bold uppercase tracking-widest text-[#b6c2d3]">
                         {locale === "en" ? "Jobs" : "Empleos"}
                       </dt>
-                      <dd className="mt-1 font-bold text-[#000a1e]">{story.jobs_generated}</dd>
+                      <dd className="mt-1 font-bold text-[#252A58]">{story.jobs_generated}</dd>
                     </div>
                   )}
                 </dl>
@@ -332,13 +332,13 @@ export function SectorDetailView({
         </Section>
       )}
 
-      <section className="relative overflow-hidden bg-[#000a1e] py-20 text-white">
-        <div className="absolute right-0 top-0 h-full w-1/2 -skew-x-12 translate-x-24 bg-[#002147] opacity-45" />
+      <section className="relative overflow-hidden bg-[#252A58] py-20 text-white">
+        <div className="absolute right-0 top-0 h-full w-1/2 -skew-x-12 translate-x-24 bg-[#24436B] opacity-45" />
         <div className="relative z-10 mx-auto flex max-w-screen-2xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center md:px-10">
           <p className="max-w-xl text-lg text-white/75">{inv.ctaBody}</p>
           <Link
             href={L("/contacto")}
-            className="inline-flex items-center gap-2 rounded-md bg-[#e9c176] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#191c1d] transition hover:brightness-95"
+            className="inline-flex items-center gap-2 rounded-md bg-[#35A963] px-10 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:brightness-95"
           >
             {inv.ctaAdvisory}
             <ArrowRight className="h-4 w-4" />

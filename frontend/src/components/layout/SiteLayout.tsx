@@ -18,7 +18,7 @@ export function SiteLayout({ locale, children }: Props) {
       <HtmlLang locale={locale} />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-[#3a5f94] focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-[#0E7A7C] focus:px-4 focus:py-2 focus:text-white"
       >
         {skip}
       </a>

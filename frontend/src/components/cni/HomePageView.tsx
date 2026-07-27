@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
@@ -8,6 +8,9 @@ import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
+import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
+import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
+import { cn } from "@/src/lib/utils";
 
 type Props = {
   locale: Locale;
@@ -53,6 +56,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
   const visibleNews = latestNews.slice(0, 3);
+  const shell = ledgerHomeShell();
 
   // 1. Slider interactivo "¿Por qué Honduras?"
   const [whyHondurasIndex, setWhyHondurasIndex] = useState(0);
@@ -88,91 +92,13 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
   ];
 
   // Datos para los gráficos dinámicos interactivos reales (JSON de la solicitud)
-  const IED_DATA = {
-    labels: ["2020", "2021", "2022", "2023", "2024", "2025"],
-    datasets: [
-      {
-        label: "Total",
-        data: [418.6, 738.7, 822.6, 1076, 993.9], // 5 valores
-        color: "#E97131",
-        backgroundColor: "rgba(233, 113, 49, 0.8)"
-      },
-      {
-        label: locale === "es" ? "I Semestre" : "1st Semester",
-        data: [289.6, 366.8, 459.9, 492.5, 470.1, 500.4], // 6 valores
-        color: "#135F82",
-        backgroundColor: "rgba(19, 95, 130, 0.8)"
-      }
-    ]
-  };
+  const ledgerCharts = useMemo(() => ledgerChartPalette(locale), [locale]);
 
-  const PIB_DATA = {
-    labels: ["2024", "2025", "2026", "2027", "2028", "2029"],
-    datasets: [
-      {
-        label: "Honduras",
-        data: [3.6, 3.5, 3.7, 3.8, 3.85, 3.85],
-        color: "#35A8E0"
-      },
-      {
-        label: "Costa Rica",
-        data: [4.0, 3.5, 3.5, 3.5, 3.49, 3.45],
-        color: "#252A58"
-      },
-      {
-        label: "El Salvador",
-        data: [3.0, 3.0, 2.8, 2.8, 2.8, 2.8],
-        color: "#25A966"
-      },
-      {
-        label: "Guatemala",
-        data: [3.41, 3.6, 3.7, 3.75, 3.75, 3.75],
-        color: "#E76F51"
-      }
-    ]
-  };
+  const IED_DATA = ledgerCharts.ied;
 
-  const CLIMA_DATA = {
-    labels: ["2022", "2023", "2024"],
-    datasets: [
-      {
-        label: "Panamá",
-        data: [35, 27, 39],
-        color: "#2A9D8F",
-        backgroundColor: "rgba(42, 157, 143, 0.8)"
-      },
-      {
-        label: "Guatemala",
-        data: [36, 37, 44],
-        color: "#E76F51",
-        backgroundColor: "rgba(231, 111, 81, 0.8)"
-      },
-      {
-        label: "El Salvador",
-        data: [44, 44, 50],
-        color: "#F4A261",
-        backgroundColor: "rgba(244, 162, 97, 0.8)"
-      },
-      {
-        label: "Costa Rica",
-        data: [45, 45, 51],
-        color: "#25A966",
-        backgroundColor: "rgba(37, 169, 102, 0.8)"
-      },
-      {
-        label: "Nicaragua",
-        data: [18, 26, 53],
-        color: "#252A58",
-        backgroundColor: "rgba(37, 42, 88, 0.8)"
-      },
-      {
-        label: "Honduras",
-        data: [47, 47, 60],
-        color: "#35A8E0",
-        backgroundColor: "rgba(53, 168, 224, 0.8)"
-      }
-    ]
-  };
+  const PIB_DATA = ledgerCharts.pib;
+
+  const CLIMA_DATA = ledgerCharts.clima;
 
   // Datos para los sectores en el grid asimétrico
   const sectorsData = [
@@ -303,10 +229,14 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-white overflow-hidden">
+    <div className={cn("flex flex-1 flex-col overflow-hidden", shell.root)}>
 
       {/* 1. Animated Hero */}
-      <section className="relative h-[85vh] flex items-center overflow-hidden bg-cni-primary -mt-[5.25rem] pt-[5.25rem]">
+      <section
+        className={cn(
+          "relative flex items-center overflow-hidden bg-cni-primary -mt-[5.25rem] pt-[5.25rem] h-screen min-h-[100vh]",
+        )}
+      >
         <div className="absolute inset-0 z-0">
           {heroImages.map((src, idx) => (
             <div key={idx} className="hero-slide absolute inset-0">
@@ -631,7 +561,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
               <div
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: "radial-gradient(circle at 2px 2px, rgba(233, 193, 118, 0.2) 1px, transparent 0)",
+                  backgroundImage: shell.dotGrid,
                   backgroundSize: "32px 32px"
                 }}
               ></div>
@@ -664,7 +594,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
                         <span className="text-5xl font-display font-extrabold text-cni-gold">
                           {dCopy[activeChart].value}
                         </span>
-                        <span className="material-symbols-outlined text-green-400 text-sm">trending_up</span>
+                        <span className="material-symbols-outlined text-sm text-cni-gold al-accent-metric">trending_up</span>
                       </div>
                     </div>
 
@@ -1114,7 +1044,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: "radial-gradient(circle at 2px 2px, rgba(233, 193, 118, 0.1) 1px, transparent 0)",
+              backgroundImage: shell.dotGridSubtle,
               backgroundSize: "40px 40px"
             }}
           ></div>
@@ -1178,7 +1108,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
                       
                       {/* Front */}
                       <div className="flip-card-front bg-white/5 p-6 md:p-8 border border-white/10 rounded-xl flex flex-col items-center justify-center text-center">
-                        <span className="material-symbols-outlined text-cni-gold text-5xl md:text-6xl mb-6">
+                        <span className="material-symbols-outlined text-5xl md:text-6xl mb-6 text-white">
                           {stat.icon}
                         </span>
                         <span className="font-display text-3xl md:text-4xl font-extrabold text-white mb-3">
@@ -1316,12 +1246,15 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
       </section>
 
       {/* 9. Two-Level Partners Carousel */}
-      <section className="py-24 bg-cni-surface-low overflow-hidden border-y border-cni-surface-low/50">
+      <section className="py-24 overflow-hidden border-y relative al-allies-carousel bg-cni-primary border-transparent">
+        <div className="al-allies-mesh absolute inset-0 pointer-events-none" aria-hidden />
+
+        <div className="relative z-10 al-allies-inner">
           <div className="text-center mb-20 flex flex-col items-center">
-            <h2 className="text-cni-primary font-display text-3xl md:text-4xl font-extrabold tracking-tight uppercase">
+            <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight uppercase text-white">
               {locale === "es" ? "Nuestros Aliados Estratégicos" : "Our Strategic Allies"}
             </h2>
-            <div className="h-1.5 w-24 bg-cni-gold mt-6"></div>
+            <div className="h-1.5 w-24 bg-cni-gold mt-6" />
           </div>
 
         <div className="space-y-16">
@@ -1330,7 +1263,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
             {/* Group 1 */}
             <div className="flex shrink-0 animate-marquee items-center gap-24 pr-24">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex items-center justify-center w-56 h-28 select-none">
+                <div key={idx} className="relative flex items-center justify-center w-56 h-28 select-none al-allies-logo">
                   <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain" />
                 </div>
               ))}
@@ -1338,7 +1271,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
             {/* Group 2 (Clone) */}
             <div aria-hidden="true" className="flex shrink-0 animate-marquee items-center gap-24 pr-24">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-56 h-28 select-none">
+                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-56 h-28 select-none al-allies-logo">
                   <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain" />
                 </div>
               ))}
@@ -1350,7 +1283,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
             {/* Group 1 */}
             <div className="flex shrink-0 animate-marquee-reverse items-center gap-24 pr-24">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex items-center justify-center w-48 h-24 select-none">
+                <div key={idx} className="relative flex items-center justify-center w-48 h-24 select-none al-allies-logo">
                   <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain" />
                 </div>
               ))}
@@ -1358,12 +1291,13 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
             {/* Group 2 (Clone) */}
             <div aria-hidden="true" className="flex shrink-0 animate-marquee-reverse items-center gap-24 pr-24">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-48 h-24 select-none">
+                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-48 h-24 select-none al-allies-logo">
                   <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain" />
                 </div>
               ))}
             </div>
           </div>
+        </div>
         </div>
       </section>
 

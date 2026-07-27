@@ -1,0 +1,266 @@
+/**
+ * Architectural Ledger — remapeo de color únicamente.
+ * Estructura, tipografía, sombras y animaciones = mismas clases que sovereign.
+ * Aptos (font-display) + Montserrat (font-body) vía globals.css — sin overrides.
+ */
+
+.theme-architectural-ledger {
+  --al-button: #252a58;
+  --al-navy: #24436b;
+  --al-green-sea: #29ab85;
+  --al-green-deep: #0e7a7c;
+  --al-green-mid: #35a963;
+  --al-green-lime: #8dc046;
+  --al-mist: #b6c2d3;
+  --al-sky: #00adee;
+
+  /* aliases usados en reglas existentes */
+  --al-teal: var(--al-green-sea);
+  --al-teal-deep: var(--al-green-deep);
+  --al-teal-bright: var(--al-green-mid);
+  --al-green-light: var(--al-green-mid);
+
+  --al-background: #f8f9ff;
+  --al-gradient-navy: linear-gradient(135deg, #252a58 0%, #24436b 100%);
+  --al-gradient-institutional: linear-gradient(135deg, #0e7a7c 0%, #252a58 55%, #24436b 100%);
+  --al-gradient-hero: linear-gradient(120deg, #29ab85 0%, #0e7a7c 38%, #252a58 72%, #24436b 100%);
+  --al-gradient-line: linear-gradient(90deg, #0e7a7c 0%, #29ab85 50%, #8dc046 100%);
+
+  --background: var(--al-background);
+  --foreground: #252a58;
+  --cni-primary: var(--al-button);
+  --cni-primary-container: var(--al-navy);
+  --cni-secondary: var(--al-green-deep);
+  --cni-secondary-container: #e5eeff;
+  --cni-tertiary-gold: var(--al-green-mid);
+  --cni-tertiary-fixed: var(--al-green-lime);
+  --cni-tertiary-container: var(--al-green-deep);
+  --cni-on-tertiary-container: var(--al-green-sea);
+  --cni-on-primary-container: var(--al-mist);
+  --cni-surface-lowest: #ffffff;
+  --cni-surface-low: #eff4ff;
+  --cni-surface-container: #e5eeff;
+  --cni-surface-high: #dce9ff;
+  --cni-surface-highest: #d3e4fe;
+  --cni-on-surface: #252a58;
+  --cni-on-surface-variant: #0e7a7c;
+  --cni-outline: var(--al-mist);
+  --cni-outline-variant: #dce9ff;
+
+  background: var(--al-background);
+  color: #252a58;
+}
+
+/* Superficies */
+.theme-architectural-ledger .bg-white {
+  background-color: #ffffff !important;
+}
+
+.theme-architectural-ledger .bg-cni-surface-low {
+  background-color: #eff4ff !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary {
+  background: var(--al-gradient-institutional) !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary.h-screen {
+  background: #252a58 !important;
+}
+
+/* Hero — fotos limpias, degradado apenas perceptible (solo base para legibilidad del texto) */
+.theme-architectural-ledger section.bg-cni-primary.h-screen .hero-slide img {
+  opacity: 0.94 !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary.h-screen .bg-gradient-to-t.from-cni-primary {
+  background: linear-gradient(
+    to top,
+    rgba(37, 42, 88, 0.22) 0%,
+    rgba(14, 122, 124, 0.05) 22%,
+    transparent 48%
+  ) !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary.h-screen h1 {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);
+}
+
+.theme-architectural-ledger section.bg-cni-primary.h-screen p {
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Acentos en zonas oscuras — mist por defecto */
+.theme-architectural-ledger section.bg-cni-primary .text-cni-gold,
+.theme-architectural-ledger .bg-cni-primary .text-cni-gold {
+  color: var(--al-mist);
+}
+
+/* Hero “INVERTIR, CRECER Y VIVIR” + “Honduras” en cifras — verde oscuro */
+.theme-architectural-ledger section.bg-cni-primary h1 .text-cni-gold,
+.theme-architectural-ledger section.bg-cni-primary h2 > span.text-cni-gold {
+  color: var(--al-teal) !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary h3.text-cni-gold {
+  color: var(--al-mist) !important;
+}
+
+.theme-architectural-ledger section.bg-cni-primary .text-5xl.text-cni-gold {
+  color: var(--al-green-lime) !important;
+}
+
+/* Acentos texto — secciones claras */
+.theme-architectural-ledger .bg-white .text-cni-gold,
+.theme-architectural-ledger section.bg-white .text-cni-gold {
+  color: var(--al-teal);
+}
+
+.theme-architectural-ledger .bg-white .text-xs.text-cni-gold,
+.theme-architectural-ledger section.bg-white .text-\[10px\].text-cni-gold,
+.theme-architectural-ledger section.bg-white .text-\[11px\].text-cni-gold {
+  color: var(--al-green-light);
+}
+
+/* Botones pill — azul oscuro + blanco; preservar hovers originales */
+.theme-architectural-ledger .inline-flex.bg-cni-gold.text-cni-primary,
+.theme-architectural-ledger a .inline-flex.bg-cni-gold.text-cni-primary {
+  background-color: var(--al-button) !important;
+  color: #ffffff !important;
+}
+
+.theme-architectural-ledger .inline-flex.bg-cni-gold.text-cni-primary .material-symbols-outlined {
+  color: #ffffff !important;
+}
+
+.theme-architectural-ledger .group:hover .group-hover\:bg-white {
+  background-color: #ffffff !important;
+  color: var(--al-button) !important;
+}
+
+.theme-architectural-ledger .group:hover .group-hover\:bg-white .material-symbols-outlined {
+  color: var(--al-button) !important;
+}
+
+.theme-architectural-ledger .group:hover .group-hover\:bg-cni-gold.group-hover\:text-cni-primary {
+  background-color: var(--al-button) !important;
+  color: #ffffff !important;
+}
+
+.theme-architectural-ledger .hover\:bg-cni-gold:hover {
+  background-color: var(--al-button) !important;
+  color: #ffffff !important;
+}
+
+/* Líneas, dots, barras */
+.theme-architectural-ledger .h-1\.5.bg-cni-gold,
+.theme-architectural-ledger .h-1\.5.w-24.bg-cni-gold,
+.theme-architectural-ledger .h-1\.5.w-28.bg-cni-gold {
+  background: var(--al-gradient-line) !important;
+}
+
+.theme-architectural-ledger .h-1.bg-cni-gold {
+  background-color: var(--al-green-light) !important;
+}
+
+.theme-architectural-ledger .border-cni-gold,
+.theme-architectural-ledger [class*="border-cni-gold"] {
+  border-color: color-mix(in srgb, var(--al-green-light) 50%, transparent) !important;
+}
+
+.theme-architectural-ledger .border-b-4.border-cni-gold {
+  border-bottom-color: var(--al-green-light) !important;
+}
+
+/* Badges pequeños */
+.theme-architectural-ledger .inline-block.bg-cni-gold,
+.theme-architectural-ledger span.inline-block.px-3.py-1.bg-cni-gold {
+  background-color: var(--al-green-light) !important;
+  color: #ffffff !important;
+}
+
+/* Callouts */
+.theme-architectural-ledger div.bg-cni-gold,
+.theme-architectural-ledger .absolute.bg-cni-gold {
+  background-color: var(--al-button) !important;
+  color: #ffffff !important;
+}
+
+/* Flip cards — mantener efecto, solo color */
+.theme-architectural-ledger .flip-card-back.bg-cni-gold {
+  background-color: var(--al-green-deep) !important;
+  color: #ffffff !important;
+}
+
+.theme-architectural-ledger .flip-card-back.bg-cni-gold p {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+/* Hovers interactivos */
+.theme-architectural-ledger .hover\:text-cni-gold:hover,
+.theme-architectural-ledger .group-hover\:text-cni-gold.group:hover .group-hover\:text-cni-gold {
+  color: var(--al-green-lime) !important;
+}
+
+.theme-architectural-ledger .group-hover\:bg-cni-gold\/20.group:hover .group-hover\:bg-cni-gold\/20 {
+  background-color: color-mix(in srgb, var(--al-green-light) 18%, transparent) !important;
+}
+
+.theme-architectural-ledger .group-hover\:bg-cni-gold\/30.group:hover .group-hover\:bg-cni-gold\/30 {
+  background-color: color-mix(in srgb, var(--al-green-sea) 22%, transparent) !important;
+}
+
+.theme-architectural-ledger .text-cni-gold\/30 {
+  color: color-mix(in srgb, var(--al-mist) 50%, transparent) !important;
+}
+
+.theme-architectural-ledger .from-cni-gold\/20 {
+  --tw-gradient-from: color-mix(in srgb, var(--al-green-sea) 28%, transparent) !important;
+}
+
+.theme-architectural-ledger .to-cni-primary\/40 {
+  --tw-gradient-to: color-mix(in srgb, var(--al-button) 50%, transparent) !important;
+}
+
+.theme-architectural-ledger .al-accent-metric {
+  color: var(--al-green-mid) !important;
+}
+
+.theme-architectural-ledger section {
+  scroll-margin-top: 5.25rem;
+}
+
+/* Carrusel de aliados — azul principal + profundidad verde */
+.theme-architectural-ledger .al-allies-carousel {
+  background: linear-gradient(135deg, #252a58 0%, #0e7a7c 100%) !important;
+}
+
+.theme-architectural-ledger .al-allies-mesh {
+  opacity: 1;
+  background-image:
+    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.14) 1px, transparent 0),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 28px 28px, 56px 56px, 56px 56px;
+}
+
+.theme-architectural-ledger .al-allies-logo img {
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+  transition: opacity 0.3s ease;
+}
+
+.theme-architectural-ledger .al-allies-logo:hover img {
+  opacity: 1;
+}
+
+/* Iconos flotantes (Honduras en cifras) — blanco */
+.theme-architectural-ledger section.bg-cni-primary .flip-card-front .material-symbols-outlined {
+  color: #ffffff !important;
+}
+
+/* Navbar — logo CNI monocromo azul oscuro (#252A58) */
+.al-navbar-logo {
+  filter: brightness(0) saturate(100%) invert(14%) sepia(42%) saturate(1834%) hue-rotate(207deg)
+    brightness(94%) contrast(92%);
+}

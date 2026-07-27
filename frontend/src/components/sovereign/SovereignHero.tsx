@@ -25,7 +25,13 @@ export function SovereignHero({
           className="w-full h-full bg-cover bg-center"
           style={{ backgroundImage: `url('${imageUrl}')` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/65 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(37, 42, 88, 0.35) 0%, rgba(14, 122, 124, 0.12) 45%, transparent 72%)",
+          }}
+        />
       </div>
 
       <div className="relative z-10 w-full">
@@ -35,7 +41,7 @@ export function SovereignHero({
               <span
                 className={cn(
                   "inline-block py-1 px-3 mb-6",
-                  "bg-[#2e1f00]/35 text-[#e9c176]",
+                  "bg-[#0E7A7C]/35 text-[#35A963]",
                   "text-[11px] font-black uppercase tracking-[0.18em] rounded",
                 )}
               >
@@ -45,7 +51,7 @@ export function SovereignHero({
 
             <h1 className="text-white font-extrabold tracking-tighter leading-none text-5xl md:text-7xl">
               {title}{" "}
-              {accent ? <span className="text-[#e9c176]">{accent}</span> : null}
+              {accent ? <span className="text-[#35A963]">{accent}</span> : null}
             </h1>
 
             {description ? (
