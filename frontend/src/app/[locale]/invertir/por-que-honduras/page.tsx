@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { designImages } from "@/src/lib/designAssets";
-import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import { SectorIcon } from "@/src/components/cni/SectorIcon";
-import type { SectorSlug } from "@/src/data/investmentSectors";
+import { GcbiBusinessEaseChart } from "@/src/components/cni/GcbiBusinessEaseChart";
+import { InvestorRouteSection } from "@/src/components/cni/InvestorRouteSection";
+import { PageHero } from "@/src/components/cni/PageHero";
+import { layout, type as t } from "@/src/lib/typography";
+import { cn } from "@/src/lib/utils";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 
@@ -17,161 +18,277 @@ const copy = {
     eyebrow: "Destino de Inversión Elite",
     title: "¿Por qué invertir en Honduras?",
     description:
-      "El centro logístico y estratégico de las Américas. Una plataforma soberana diseñada para el crecimiento exponencial de capital institucional.",
-    ctaPrimary: "Descargar Reporte País",
-    ctaSecondary: "Contactar Consultor",
+      "El centro logístico y estratégico de las Américas. Una plataforma diseñada para el crecimiento de capital institucional en Centroamérica.",
     metrics: [
-      { value: "2.5h", label: "Vuelo a USA" },
-      { value: "100%", label: "Exención Fiscal" },
-      { value: "#1", label: "Puerto en CA" },
-      { value: "65%", label: "Población Joven" },
-    ],
-    partnersTitle: "Instituciones y Alianzas Estratégicas",
-    partners: ["CNI", "INVEST-H", "SEDESOL", "BANHPROVI", "AMDC"],
-    locationTitle: "Ubicación Estratégica: El 'Sovereign Gateway'",
-    locationText:
-      "Honduras se posiciona como el puente natural entre océanos y mercados. Nuestra proximidad geográfica con los Estados Unidos y el acceso dual al Atlántico y Pacífico nos convierte en el eje logístico indiscutible del hemisferio.",
-    locationBullets: [
-      "Conectividad marítima global vía Puerto Cortés.",
-      "Acceso inmediato al mercado del CAFTA-DR.",
-    ],
-    infraTitle: "Infraestructura y Logística de Clase Mundial",
-    infraIntro:
-      "Inversiones masivas en conectividad vial, puertos automatizados y una matriz energética renovable.",
-    infraLink: "Ver Plan Nacional 2030",
-    portTitle: "Puerto Cortés",
-    portText:
-      "El puerto más profundo y eficiente de Centroamérica, certificado con CSI y megapuerto por el DHS de EE.UU.",
-    energyTitle: "Matriz Renovable",
-    energyText:
-      "Honduras lidera la región con más del 60% de su energía proveniente de fuentes renovables (solar, eólica e hidroeléctrica).",
-    energyCapacity: "Capacidad Instalada",
-    zonesTitle: "Zonas Industriales",
-    zonesText:
-      "Parques eco-industriales con beneficios de Zona Libre que facilitan operaciones de manufactura avanzada y servicios.",
-    roadTitle: "Canal Seco",
-    roadText:
-      "Corredor logístico interoceánico de 391 km que conecta el Atlántico y el Pacífico en menos de 5 horas.",
-    talentTitle: "Capital Humano: El Motor de la Innovación",
-    talentText:
-      "Contamos con una fuerza laboral vibrante y joven. Con más de 10,000 graduados universitarios anuales y una de las tasas de bilingüismo más altas de la región, Honduras es el hub ideal para servicios globales y manufactura avanzada.",
-    talentBadge: "Bilingüe",
-    talentBadgeSub: "Talento Altamente Calificado",
-    talentStats: [
-      { value: "24 años", label: "Edad Media" },
-      { value: "100+", label: "Institutos Técnicos" },
-    ],
-    casosTitle: "Casos de Éxito y Confianza",
-    casos: [
       {
-        icon: "eco",
-        sectorSlug: "energia",
-        title: "Energía Sostenible",
-        company: "SolarGen Corp",
-        quote: "“La agilidad en los permisos y la infraestructura existente nos permitió conectar nuestra planta en tiempo récord.”",
-        statValue: "150 MW",
-        statLabel: "Capacidad Generada",
+        value: "#1",
+        label: "Exportación de arneses a EE.UU.",
+        detail: "USD 4,212.7 M en manufactura (nov. 2024)",
       },
       {
-        icon: "precision_manufacturing",
-        sectorSlug: "manufactura",
-        title: "Manufactura",
-        company: "Global AeroParts",
-        quote: "“Encontramos talento técnico de alta precisión que compite directamente con mercados asiáticos y europeos.”",
-        statValue: "2,500+",
-        statLabel: "Nuevos Empleos",
+        value: "78.6%",
+        label: "Movimiento portuario nacional",
+        detail: "Puerto Cortés · 12,548 TM en 2024",
       },
       {
-        icon: "savings",
-        title: "Servicios Compartidos",
-        company: "FinTech Solutions",
-        quote: "“El bilingüismo en Honduras es excepcional. Operamos nuestro hub regional desde aquí con total eficiencia.”",
-        statValue: "95%",
-        statLabel: "Eficiencia Operativa",
+        value: "#1",
+        label: "Dominio del inglés en CA",
+        detail: "Índice EF EPI 2024 · 824 centros bilingües",
       },
     ],
-    routeTitle: "Ruta de Inversión",
-    routeCta: "Iniciar Proceso de Inversión",
+    growthTitle: "Invierta en el país de mayor crecimiento en Centroamérica",
+    growthLead:
+      "Honduras registró inversiones para un total de 1.729 millones de dólares en 2023, ocho veces más que el año anterior,",
+    growthBody:
+      "con lo que se convirtió en el principal destino de estos anuncios en Centroamérica.",
+    growthSource: "Fuente: CEPAL",
+    infraSectionTitle: "Infraestructura que impulsa tu negocio",
+    infra: [
+      {
+        icon: "flight",
+        title: "Conectividad aérea",
+        highlight: "4",
+        highlightLabel: "Aeropuertos internacionales",
+        bullets: [
+          "Palmerola (Comayagua): hub internacional del centro del país",
+          "Ramón Villeda Morales (SPS): mayor conectividad con EE.UU., México y Centroamérica",
+          "Golosón (La Ceiba): acceso al litoral atlántico",
+          "Juan Manuel Gálvez (Roatán): enlace turístico y comercial del Caribe",
+        ],
+      },
+      {
+        icon: "anchor",
+        title: "Puertos estratégicos",
+        highlight: "8",
+        highlightLabel: "Instalaciones portuarias (6 con conexión internacional)",
+        bullets: [
+          "1 millón TEUs de capacidad anual",
+          "Certificaciones internacionales",
+          "Aduana integrada con EE.UU.",
+        ],
+      },
+      {
+        icon: "domain",
+        title: "Parques industriales",
+        highlight: "220+",
+        highlightLabel: "Empresas operando en 43 parques industriales (ZOLI)",
+        bullets: [] as string[],
+      },
+    ],
+    humanCapitalTitle: "Capital humano",
+    humanCapitalIntro: "Una fuerza laboral joven, calificada y competitiva.",
+    humanCapital: [
+      {
+        icon: "groups",
+        title: "Demografía dinámica",
+        bullets: [
+          "9.9 M de habitantes, 31 años de promedio",
+          "71% en edad laboral",
+          "56% económicamente activa de la PET",
+          "2010 – 2045: duración del bono demográfico",
+        ],
+      },
+      {
+        icon: "school",
+        title: "Talento humano",
+        bullets: [
+          "+101,400 graduados universitarios",
+          "899,000 egresados en educación extracurricular",
+          "21 instituciones de educación superior",
+        ],
+      },
+      {
+        icon: "translate",
+        title: "Ventaja lingüística",
+        bullets: [
+          "#1 en dominio del inglés en Centroamérica",
+          "#3 en América Latina",
+          "Fuerza laboral bilingüe en crecimiento",
+        ],
+      },
+    ],
+    businessEaseTitle: "Facilidad para hacer negocios",
+    businessEaseDescription:
+      "Honduras es el país más confiable para hacer negocios en Centroamérica según el índice de Complejidad Corporativa (GCBI) 2025, publicado en el 12.º informe anual de TMF Group.",
+    businessEaseSource: "Elaboración propia con datos de TMF Group, 2025.",
+    routeTitlePrefix: "Te guiamos a través de la",
+    routeTitleHighlight: "Ruta del Inversionista",
+    routeEyebrow: "CNI · Acompañamiento institucional",
+    routeSteps: [
+      {
+        n: 1,
+        label: "Punto de partida",
+        labelPosition: "below" as const,
+        icon: "cni",
+        color: "#29AB85",
+      },
+      {
+        n: 2,
+        label: "KICK OFF: reunión inicial",
+        labelPosition: "above" as const,
+        icon: "groups",
+        color: "#0E7A7C",
+      },
+      {
+        n: 3,
+        label: "Pitch de inversiones oportunidades por sector",
+        labelPosition: "below" as const,
+        icon: "trending_up",
+        color: "#1E88A8",
+      },
+      {
+        n: 4,
+        label: "Instalación de la inversión",
+        labelPosition: "above" as const,
+        icon: "payments",
+        color: "#24436B",
+      },
+      {
+        n: 5,
+        label: "Aftercare",
+        labelPosition: "below" as const,
+        icon: "volunteer_activism",
+        color: "#252A58",
+      },
+    ],
   },
   en: {
     eyebrow: "Elite Investment Destination",
     title: "Why invest in Honduras?",
     description:
-      "The strategic logistics center of the Americas. A sovereign platform designed for the exponential growth of institutional capital.",
-    ctaPrimary: "Download Country Report",
-    ctaSecondary: "Contact Consultant",
+      "The strategic logistics hub of the Americas. A platform designed for institutional capital growth in Central America.",
     metrics: [
-      { value: "2.5h", label: "Flight to USA" },
-      { value: "100%", label: "Tax Exemption" },
-      { value: "#1", label: "CA Port" },
-      { value: "65%", label: "Young Population" },
-    ],
-    partnersTitle: "Strategic Institutions and Alliances",
-    partners: ["CNI", "INVEST-H", "SEDESOL", "BANHPROVI", "AMDC"],
-    locationTitle: "Strategic Location: The 'Sovereign Gateway'",
-    locationText:
-      "Honduras positions itself as the natural bridge between oceans and markets. Our geographic proximity to the United States and dual access to the Atlantic and Pacific make us the undisputed logistics hub of the hemisphere.",
-    locationBullets: [
-      "Global maritime connectivity via Puerto Cortés.",
-      "Immediate access to the CAFTA-DR market.",
-    ],
-    infraTitle: "World-Class Infrastructure and Logistics",
-    infraIntro:
-      "Massive investments in road connectivity, automated ports and a renewable energy matrix.",
-    infraLink: "View 2030 National Plan",
-    portTitle: "Puerto Cortés",
-    portText:
-      "The deepest and most efficient port in Central America, certified by CSI and a mega-port by the US DHS.",
-    energyTitle: "Renewable Matrix",
-    energyText:
-      "Honduras leads the region with over 60% of its energy from renewable sources (solar, wind and hydro).",
-    energyCapacity: "Installed Capacity",
-    zonesTitle: "Industrial Zones",
-    zonesText:
-      "Eco-industrial parks with Free Zone benefits that facilitate advanced manufacturing and services operations.",
-    roadTitle: "Dry Canal",
-    roadText:
-      "391 km inter-oceanic logistics corridor connecting the Atlantic and Pacific in less than 5 hours.",
-    talentTitle: "Human Capital: The Innovation Engine",
-    talentText:
-      "We have a vibrant and young workforce. With more than 10,000 annual university graduates and one of the highest bilingual rates in the region, Honduras is the ideal hub for global services and advanced manufacturing.",
-    talentBadge: "Bilingual",
-    talentBadgeSub: "Highly Qualified Talent",
-    talentStats: [
-      { value: "24 yrs", label: "Median Age" },
-      { value: "100+", label: "Technical Institutes" },
-    ],
-    casosTitle: "Success Stories and Trust",
-    casos: [
       {
-        icon: "eco",
-        sectorSlug: "energia",
-        title: "Sustainable Energy",
-        company: "SolarGen Corp",
-        quote: "“Permit agility and existing infrastructure let us connect our plant in record time.”",
-        statValue: "150 MW",
-        statLabel: "Generated Capacity",
+        value: "#1",
+        label: "Wire harness exports to the U.S.",
+        detail: "USD 4,212.7 M in manufacturing (Nov 2024)",
       },
       {
-        icon: "precision_manufacturing",
-        sectorSlug: "manufactura",
-        title: "Manufacturing",
-        company: "Global AeroParts",
-        quote: "“We found high-precision technical talent that directly competes with Asian and European markets.”",
-        statValue: "2,500+",
-        statLabel: "New Jobs",
+        value: "78.6%",
+        label: "National port throughput",
+        detail: "Puerto Cortés · 12,548 TM in 2024",
       },
       {
-        icon: "savings",
-        title: "Shared Services",
-        company: "FinTech Solutions",
-        quote: "“Bilingualism in Honduras is exceptional. We run our regional hub from here with total efficiency.”",
-        statValue: "95%",
-        statLabel: "Operational Efficiency",
+        value: "#1",
+        label: "English proficiency in CA",
+        detail: "EF EPI Index 2024 · 824 bilingual centers",
       },
     ],
-    routeTitle: "Investment Route",
-    routeCta: "Start Investment Process",
+    growthTitle: "Invest in Central America's fastest-growing country",
+    growthLead:
+      "Honduras recorded USD 1.729 billion in new investment announcements in 2023, eight times more than the previous year,",
+    growthBody:
+      "making it the leading destination for these announcements in Central America.",
+    growthSource: "Source: ECLAC (CEPAL)",
+    infraSectionTitle: "Infrastructure that powers your business",
+    infra: [
+      {
+        icon: "flight",
+        title: "Air connectivity",
+        highlight: "4",
+        highlightLabel: "International airports",
+        bullets: [
+          "Palmerola (Comayagua): international hub for the central region",
+          "Ramón Villeda Morales (SPS): top connectivity to the U.S., Mexico, and Central America",
+          "Golosón (La Ceiba): access to the Atlantic coast",
+          "Juan Manuel Gálvez (Roatán): tourism and trade gateway to the Caribbean",
+        ],
+      },
+      {
+        icon: "anchor",
+        title: "Strategic ports",
+        highlight: "8",
+        highlightLabel: "Port facilities (6 with international connections)",
+        bullets: [
+          "1 million TEUs of annual capacity",
+          "International certifications",
+          "Integrated customs with the U.S.",
+        ],
+      },
+      {
+        icon: "domain",
+        title: "Industrial parks",
+        highlight: "220+",
+        highlightLabel: "Companies operating in 43 industrial parks (ZOLI)",
+        bullets: [] as string[],
+      },
+    ],
+    humanCapitalTitle: "Human capital",
+    humanCapitalIntro: "A young, skilled, and competitive workforce.",
+    humanCapital: [
+      {
+        icon: "groups",
+        title: "Dynamic demographics",
+        bullets: [
+          "9.9 M inhabitants, 31-year average age",
+          "71% of working age",
+          "56% economically active within the working-age population",
+          "2010 – 2045: demographic dividend window",
+        ],
+      },
+      {
+        icon: "school",
+        title: "Human talent",
+        bullets: [
+          "+101,400 university graduates",
+          "899,000 graduates from extracurricular education",
+          "21 higher-education institutions",
+        ],
+      },
+      {
+        icon: "translate",
+        title: "Linguistic advantage",
+        bullets: [
+          "#1 in English proficiency in Central America",
+          "#3 in Latin America",
+          "Growing bilingual workforce",
+        ],
+      },
+    ],
+    businessEaseTitle: "Ease of doing business",
+    businessEaseDescription:
+      "Honduras is the most reliable country for doing business in Central America according to the Global Complexity Business Index (GCBI) 2025, published in TMF Group's 12th annual report.",
+    businessEaseSource: "Own elaboration with data from TMF Group, 2025.",
+    routeTitlePrefix: "We guide you through the",
+    routeTitleHighlight: "Investor Journey",
+    routeEyebrow: "CNI · Institutional support",
+    routeSteps: [
+      {
+        n: 1,
+        label: "Starting point",
+        labelPosition: "below" as const,
+        icon: "cni",
+        color: "#29AB85",
+      },
+      {
+        n: 2,
+        label: "KICK OFF: initial meeting",
+        labelPosition: "above" as const,
+        icon: "groups",
+        color: "#0E7A7C",
+      },
+      {
+        n: 3,
+        label: "Investment pitch: sector opportunities",
+        labelPosition: "below" as const,
+        icon: "trending_up",
+        color: "#1E88A8",
+      },
+      {
+        n: 4,
+        label: "Investment installation",
+        labelPosition: "above" as const,
+        icon: "payments",
+        color: "#24436B",
+      },
+      {
+        n: 5,
+        label: "Aftercare",
+        labelPosition: "below" as const,
+        icon: "volunteer_activism",
+        color: "#252A58",
+      },
+    ],
   },
 } as const;
 
@@ -180,221 +297,241 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = copy[locale];
-  const L = (p: string) => resolveHref(locale, p);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
-      <section className="relative flex h-[870px] items-center overflow-hidden bg-[#24436B]">
-        <div className="absolute inset-0 z-0">
-          <Image src={designImages.porQue.hero} alt="Honduras costa" fill priority sizes="100vw" className="object-cover opacity-60" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-[#252A58] via-[#252A58]/40 to-transparent" />
-        </div>
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-8">
-          <div className="max-w-3xl">
-            <span className="mb-6 inline-block rounded-sm bg-[#8DC046] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#261900]">
-              {c.eyebrow}
-            </span>
-            <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tighter text-white md:text-7xl">
-              {c.title}
-            </h1>
-            <p className="mb-10 max-w-2xl text-xl font-medium leading-relaxed text-[#b6c2d3] md:text-2xl">
-              {c.description}
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button
-                type="button"
-                className="rounded-md border border-white/10 bg-gradient-to-r from-[#252A58] to-[#24436B] px-8 py-4 font-bold text-white duration-200 ease-in-out hover:scale-95"
-              >
-                {c.ctaPrimary}
-              </button>
-              <Link
-                href={L("/contacto")}
-                className="rounded-md bg-[#d3e4fe] px-8 py-4 font-bold text-[#252A58] transition-all hover:bg-white"
-              >
-                {c.ctaSecondary}
-              </Link>
-            </div>
+      <PageHero
+        eyebrow={c.eyebrow}
+        title={c.title}
+        description={c.description}
+        imageSrc={designImages.porQue.hero}
+        imageAlt={locale === "es" ? "Costa de Honduras" : "Honduras coastline"}
+        heightClass="min-h-[520px] md:min-h-[600px]"
+      />
+
+      <section className="relative z-20 -mt-16">
+        <div className={cn(layout.container)}>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {c.metrics.map((m) => (
+              <div key={m.label} className="rounded-xl bg-white p-8 shadow-xl">
+                <div className={cn("mb-2", t.metricValue)}>{m.value}</div>
+                <div className={t.metricLabel}>{m.label}</div>
+                <p className={cn("mt-3", t.bodySm)}>{m.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="relative z-20 mx-auto -mt-16 w-full max-w-7xl px-8">
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-          {c.metrics.map((m) => (
-            <div key={m.label} className="rounded-xl bg-white p-8 shadow-xl">
-              <div className="mb-2 text-4xl font-black text-[#252A58]">{m.value}</div>
-              <div className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">{m.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-[#f8f9ff] py-12">
-        <div className="mx-auto max-w-7xl px-8">
-          <p className="mb-8 text-center text-xs font-bold uppercase tracking-[0.2em] text-[#0E7A7C]">
-            {c.partnersTitle}
+      <section className={cn("bg-white", layout.section)}>
+        <div className={cn(layout.containerNarrow, "text-center")}>
+          <h2 className={t.h2}>{c.growthTitle}</h2>
+          <div className={cn("mx-auto mt-4", t.sectionRule)} />
+          <p className={cn("mt-8", t.lead)}>
+            {c.growthLead}{" "}
+            <span className="font-semibold text-cni-primary">{c.growthBody}</span>
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-12 opacity-60 grayscale transition-all duration-500 hover:grayscale-0">
-            {c.partners.map((p) => (
-              <div key={p} className="text-xl font-bold text-[#252A58]">{p}</div>
-            ))}
-          </div>
+          <p className={cn("mt-6", t.caption)}>{c.growthSource}</p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-8 py-24">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <h2 className="mb-8 text-4xl font-extrabold tracking-tight text-[#252A58]">{c.locationTitle}</h2>
-            <p className="mb-6 text-lg leading-relaxed text-[#0E7A7C]">{c.locationText}</p>
-            <ul className="space-y-4">
-              {c.locationBullets.map((b) => (
-                <li key={b} className="flex items-start space-x-4">
-                  <MaterialIcon name="check_circle" filled className="text-[#35A963]" />
-                  <span className="font-medium text-[#252A58]">{b}</span>
-                </li>
-              ))}
-            </ul>
+      <section className={cn("bg-[#eff4ff]", layout.section)}>
+        <div className={layout.container}>
+          <div className="mb-12 max-w-2xl">
+            <h2 className={t.h2}>{c.infraSectionTitle}</h2>
+            <div className={cn("mt-4", t.sectionRule)} />
           </div>
-          <div className="lg:col-span-7">
-            <div className="relative aspect-video overflow-hidden rounded-xl bg-[#eff4ff] shadow-2xl">
-              <Image src={designImages.porQue.map} alt="Mapa logístico" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="bg-[#eff4ff] py-24">
-        <div className="mx-auto max-w-7xl px-8">
-          <div className="mb-12 flex flex-col items-end justify-between md:flex-row">
-            <div className="max-w-2xl">
-              <h2 className="mb-4 text-4xl font-extrabold tracking-tight text-[#252A58]">{c.infraTitle}</h2>
-              <p className="text-lg text-[#0E7A7C]">{c.infraIntro}</p>
-            </div>
-            <a href="#" className="mt-6 border-b-2 border-[#252A58] pb-1 font-bold text-[#252A58] md:mt-0">
-              {c.infraLink}
-            </a>
-          </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="group relative aspect-video overflow-hidden rounded-xl shadow-lg md:col-span-2">
-              <Image src={designImages.porQue.port} alt="Puerto Cortés" fill sizes="(min-width:768px) 66vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/90 via-[#252A58]/20 to-transparent" />
-              <div className="absolute bottom-0 p-8">
-                <h3 className="mb-2 text-2xl font-bold text-white">{c.portTitle}</h3>
-                <p className="max-w-md text-[#b6c2d3]">{c.portText}</p>
+            <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-lg md:col-span-2">
+              <div className="group relative aspect-[21/9] min-h-[200px] overflow-hidden">
+                <Image
+                  src={designImages.porQue.port}
+                  alt={locale === "es" ? "Puertos estratégicos de Honduras" : "Strategic ports of Honduras"}
+                  fill
+                  sizes="(min-width:768px) 66vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
               </div>
-            </div>
-            <div className="flex flex-col justify-between rounded-xl bg-white p-8 shadow-lg">
-              <div>
-                <MaterialIcon name="bolt" className="mb-6 text-4xl text-[#252A58]" />
-                <h3 className="mb-4 text-xl font-bold text-[#252A58]">{c.energyTitle}</h3>
-                <p className="text-sm leading-relaxed text-[#0E7A7C]">{c.energyText}</p>
-              </div>
-              <div className="mt-8 border-t border-[#e5eeff] pt-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">{c.energyCapacity}</span>
-                  <span className="font-black text-[#252A58]">2.8 GW</span>
-                </div>
-              </div>
-            </div>
-            <div className="rounded-xl bg-[#252A58] p-8 text-white shadow-lg">
-              <h3 className="mb-6 text-xl font-bold">{c.zonesTitle}</h3>
-              <p className="mb-8 text-sm leading-relaxed text-[#b6c2d3]">{c.zonesText}</p>
-              <div className="space-y-4">
-                <div className="rounded-lg bg-[#24436B]/50 p-4">
-                  <div className="text-lg font-bold text-[#35A963]">ZOLI</div>
-                  <div className="text-xs uppercase tracking-widest opacity-70">{locale === "es" ? "Régimen de Zona Libre" : "Free Zone Regime"}</div>
-                </div>
-                <div className="rounded-lg bg-[#24436B]/50 p-4">
-                  <div className="text-lg font-bold text-[#35A963]">RIT</div>
-                  <div className="text-xs uppercase tracking-widest opacity-70">{locale === "es" ? "Régimen de Importación Temporal" : "Temporary Import Regime"}</div>
-                </div>
-              </div>
-            </div>
-            <div className="group relative aspect-[21/9] overflow-hidden rounded-xl shadow-lg md:col-span-2">
-              <Image src={designImages.porQue.road} alt="Canal Seco" fill sizes="(min-width:768px) 66vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#252A58]/80 via-[#252A58]/20 to-transparent" />
-              <div className="absolute inset-y-0 left-0 flex max-w-md flex-col justify-center p-8">
-                <h3 className="mb-2 text-2xl font-bold text-white">{c.roadTitle}</h3>
-                <p className="text-[#b6c2d3]">{c.roadText}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-8 py-24">
-        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
-          <div className="order-2 lg:order-1">
-            <div className="relative">
-              <div className="absolute -left-4 -top-4 h-32 w-32 rounded-full bg-[#8DC046]/30 blur-3xl" />
-              <Image src={designImages.porQue.talent} alt="Talento" width={720} height={540} className="relative z-10 w-full rounded-xl shadow-2xl" unoptimized />
-              <div className="absolute -bottom-6 -right-6 z-20 hidden rounded-lg border border-[#e5eeff] bg-white p-6 shadow-xl md:block">
-                <div className="text-3xl font-black text-[#252A58]">{c.talentBadge}</div>
-                <div className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">{c.talentBadgeSub}</div>
-              </div>
-            </div>
-          </div>
-          <div className="order-1 lg:order-2">
-            <h2 className="mb-8 text-4xl font-extrabold tracking-tight text-[#252A58]">{c.talentTitle}</h2>
-            <p className="mb-8 text-lg leading-relaxed text-[#0E7A7C]">{c.talentText}</p>
-            <div className="grid grid-cols-2 gap-8">
-              {c.talentStats.map((s) => (
-                <div key={s.label}>
-                  <h4 className="mb-1 text-2xl font-black text-[#252A58]">{s.value}</h4>
-                  <p className="text-xs font-bold uppercase tracking-[0.1em] text-[#0E7A7C]">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#d3e4fe] py-24">
-        <div className="mx-auto max-w-7xl px-8">
-          <h2 className="mb-16 text-center text-4xl font-extrabold tracking-tight text-[#252A58]">
-            {c.casosTitle}
-          </h2>
-          <div className="mb-24 grid grid-cols-1 gap-8 md:grid-cols-3">
-            {c.casos.map((cs) => (
-              <div key={cs.title} className="rounded-xl border-t-4 border-[#35A963] bg-white p-8 shadow-lg">
-                <div className="mb-6 flex items-center">
-                  {"sectorSlug" in cs && cs.sectorSlug ? (
-                    <SectorIcon slug={cs.sectorSlug as SectorSlug} size={36} />
-                  ) : (
-                    <MaterialIcon name={cs.icon} className="text-4xl text-[#252A58]" />
-                  )}
-                  <div className="ml-4">
-                    <h3 className="text-xl font-extrabold text-[#252A58]">{cs.title}</h3>
-                    <p className="text-sm font-bold text-[#0E7A7C]">{cs.company}</p>
+              <div className="p-8">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#252A58] text-[#29AB85]">
+                    <MaterialIcon name="anchor" className="text-2xl" />
                   </div>
+                  <h3 className={t.h3}>{c.infra[1].title}</h3>
                 </div>
-                <p className="mb-6 italic text-[#0E7A7C]">{cs.quote}</p>
-                <div className="border-t border-[#e5eeff] pt-6">
-                  <div className="text-2xl font-black text-[#252A58]">{cs.statValue}</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">{cs.statLabel}</div>
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className={cn(t.metricValue, "text-[#29AB85]")}>{c.infra[1].highlight}</span>
+                  <span className={cn(t.bodySm, "font-semibold text-cni-on-surface-variant")}>{c.infra[1].highlightLabel}</span>
+                </div>
+                <ul className="mt-6 space-y-3 border-t border-[#e5eeff] pt-6">
+                  {c.infra[1].bullets.map((bullet) => (
+                    <li key={bullet} className={cn("flex items-start gap-3", t.bodySm)}>
+                      <MaterialIcon name="check_circle" filled className="mt-0.5 shrink-0 text-[#35A963]" />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="rounded-xl bg-[#252A58] p-8 text-white shadow-lg">
+              <MaterialIcon name="domain" className="mb-6 text-4xl text-[#29AB85]" />
+              <h3 className={cn("mb-4", t.h3Card, "text-white")}>{c.infra[2].title}</h3>
+              <div className={cn(t.metricValue, "text-[#35A963]")}>{c.infra[2].highlight}</div>
+              <p className={cn("mt-3", t.bodySm, "text-[#b6c2d3]")}>{c.infra[2].highlightLabel}</p>
+              <div className="mt-8 rounded-lg bg-[#24436B]/50 p-4">
+                <div className="text-lg font-bold text-[#35A963]">ZOLI</div>
+                <div className="text-xs uppercase tracking-widest opacity-70">
+                  {locale === "es" ? "Régimen de Zona Libre" : "Free Zone Regime"}
                 </div>
               </div>
-            ))}
-          </div>
-          <div>
-            <h2 className="mb-12 text-center text-4xl font-extrabold tracking-tight text-[#252A58]">
-              {c.routeTitle}
-            </h2>
-            <div className="overflow-hidden rounded-2xl bg-white p-4 shadow-2xl">
-              <Image src={designImages.porQue.investor} alt="Ruta del Inversionista" width={1400} height={400} className="h-auto w-full" unoptimized />
             </div>
-            <div className="mt-12 text-center">
-              <Link
-                href={L("/postulacion")}
-                className="inline-block rounded-md bg-[#252A58] px-10 py-4 font-bold text-white shadow-lg transition-all hover:bg-[#24436B]"
-              >
-                {c.routeCta}
-              </Link>
+
+            <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-lg md:col-span-3 md:flex-row">
+              <div className="flex flex-1 flex-col p-8 md:py-10">
+                <div className="mb-4 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#252A58] text-[#29AB85]">
+                    <MaterialIcon name="flight" className="text-2xl" />
+                  </div>
+                  <h3 className={t.h3}>{c.infra[0].title}</h3>
+                </div>
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className={cn(t.metricValue, "text-[#29AB85]")}>{c.infra[0].highlight}</span>
+                  <span className={cn(t.bodySm, "font-semibold text-cni-on-surface-variant")}>{c.infra[0].highlightLabel}</span>
+                </div>
+                <ul className="mt-6 grid gap-3 border-t border-[#e5eeff] pt-6 sm:grid-cols-2">
+                  {c.infra[0].bullets.map((bullet) => (
+                    <li key={bullet} className={cn("flex items-start gap-3", t.bodySm)}>
+                      <MaterialIcon name="check_circle" filled className="mt-0.5 shrink-0 text-[#35A963]" />
+                      {bullet}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="group relative min-h-[220px] w-full shrink-0 overflow-hidden md:min-h-0 md:w-[38%] lg:w-[34%]">
+                <Image
+                  src={designImages.porQue.map}
+                  alt={locale === "es" ? "Conectividad aérea en Honduras" : "Air connectivity in Honduras"}
+                  fill
+                  sizes="(min-width:768px) 38vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col overflow-hidden rounded-xl bg-white shadow-lg md:col-span-3 md:flex-row">
+              <div className="flex flex-1 flex-col justify-center p-8 md:py-10">
+                <p className={t.eyebrow}>
+                  {locale === "es" ? "Red logística integrada" : "Integrated logistics network"}
+                </p>
+                <p className={cn("mt-3 max-w-2xl", t.lead)}>
+                  {locale === "es"
+                    ? "Aeropuertos, puertos certificados y parques industriales conectados para mover mercancías con eficiencia regional."
+                    : "Airports, certified ports, and industrial parks connected to move goods with regional efficiency."}
+                </p>
+              </div>
+              <div className="group relative min-h-[220px] w-full shrink-0 overflow-hidden md:min-h-0 md:w-[38%] lg:w-[34%]">
+                <Image
+                  src={designImages.porQue.road}
+                  alt={locale === "es" ? "Corredor logístico hondureño" : "Honduran logistics corridor"}
+                  fill
+                  sizes="(min-width:768px) 38vw, 100vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      <section className={layout.section}>
+        <div className={layout.container}>
+          <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-2">
+            <div className="relative lg:sticky lg:top-32">
+              <div className="absolute -left-4 -top-4 h-32 w-32 rounded-full bg-[#8DC046]/30 blur-3xl" />
+              <div className="relative overflow-hidden rounded-xl shadow-2xl">
+                <Image
+                  src={designImages.porQue.talent}
+                  alt={locale === "es" ? "Capital humano en Honduras" : "Human capital in Honduras"}
+                  width={720}
+                  height={540}
+                  className="relative z-10 w-full object-cover"
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#252A58]/50 via-transparent to-transparent" />
+              </div>
+              <div className="absolute -bottom-6 -right-4 z-20 rounded-lg border border-[#e5eeff] bg-white p-5 shadow-xl md:-right-6">
+                <div className={t.metricValue}>#1</div>
+                <div className={t.metricLabel}>{locale === "es" ? "Inglés en CA" : "English in CA"}</div>
+              </div>
+              <div className="absolute -left-4 top-8 z-20 hidden rounded-lg border border-[#e5eeff] bg-white p-5 shadow-xl md:block">
+                <div className={t.metricValue}>31</div>
+                <div className={t.metricLabel}>{locale === "es" ? "Años promedio" : "Average age"}</div>
+              </div>
+            </div>
+
+            <div>
+              <h2 className={t.h2}>{c.humanCapitalTitle}</h2>
+              <div className={cn("mt-4", t.sectionRule)} />
+              <p className={cn("mt-6", t.lead)}>{c.humanCapitalIntro}</p>
+
+              <div className="mt-10 space-y-6">
+                {c.humanCapital.map((block) => (
+                  <article
+                    key={block.title}
+                    className="overflow-hidden rounded-xl border border-[#252A58]/10 bg-white shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="flex shrink-0 items-center justify-center bg-[#252A58] px-6 py-5 sm:w-28 sm:flex-col sm:py-8">
+                        <MaterialIcon name={block.icon} className="text-3xl text-[#29AB85]" />
+                      </div>
+                      <div className="p-6 sm:p-7">
+                        <h3 className={t.h3Card}>{block.title}</h3>
+                        <ul className="mt-4 space-y-2.5">
+                          {block.bullets.map((bullet) => (
+                            <li key={bullet} className={cn("flex items-start gap-3", t.bodySm)}>
+                              <MaterialIcon name="check_circle" filled className="mt-0.5 shrink-0 text-[#35A963]" />
+                              {bullet}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={cn("relative overflow-hidden bg-[#252A58]", layout.section)}>
+        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.22]" aria-hidden />
+
+        <div className={cn(layout.container, "relative z-10 max-w-5xl")}>
+          <header className="text-center md:text-left">
+            <p className={t.eyebrowOnDark}>GCBI Index 2025 · TMF Group</p>
+            <h2 className={cn("mt-3", t.h2OnDark)}>{c.businessEaseTitle}</h2>
+            <p className={cn("mt-4 text-white/75", t.bodySm)}>{c.businessEaseDescription}</p>
+          </header>
+
+          <div className="mt-6">
+            <GcbiBusinessEaseChart locale={locale} />
+          </div>
+
+          <p className={cn("mt-4 text-center md:text-left", t.captionOnDark)}>
+            {c.businessEaseSource}
+          </p>
+        </div>
+      </section>
+
+      <InvestorRouteSection
+        eyebrow={c.routeEyebrow}
+        titlePrefix={c.routeTitlePrefix}
+        titleHighlight={c.routeTitleHighlight}
+        steps={c.routeSteps}
+      />
     </div>
   );
 }

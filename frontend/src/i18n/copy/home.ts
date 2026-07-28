@@ -20,6 +20,7 @@ export type HomeCopy = {
     maquila: { label: string; value: string; hint: string };
   };
   enlacesRapidos: {
+    sectionEyebrow: string;
     sectionTitle: string;
     guia: string;
     memoria: string;
@@ -30,6 +31,13 @@ export type HomeCopy = {
     title: string;
     cta: string;
     items: ReadonlyArray<{ quote: string; name: string; role: string; initials: string }>;
+  };
+  facilidadesMigratorias: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    cta: string;
+    logoAlt: string;
   };
   postulacion: {
     eyebrow: string;
@@ -173,6 +181,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       },
     },
     enlacesRapidos: {
+      sectionEyebrow: "Recursos institucionales",
       sectionTitle: "Enlaces de Interés",
       guia: "Guía Invierte en Honduras",
       memoria: "Memoria Institucional",
@@ -198,6 +207,14 @@ export const homeCopy: Record<Locale, HomeCopy> = {
           initials: "DD",
         },
       ],
+    },
+    facilidadesMigratorias: {
+      eyebrow: "Despacho de Promoción de Inversiones",
+      title: "Facilidades Migratorias",
+      description:
+        "Residencia, visas de trabajo y trámites migratorios para inversionistas, ejecutivos y personal clave vinculado a proyectos en Honduras.",
+      cta: "Ver facilidades migratorias",
+      logoAlt: "Escudo y logotipo del Despacho de Promoción de Inversiones de Honduras",
     },
     postulacion: {
       eyebrow: "Ventanilla de proyectos",
@@ -378,8 +395,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     prensa: {
       eyebrow: "Prensa",
       title: "CNI al día",
-      description: "Noticias, eventos y comunicados oficiales del Consejo Nacional de Inversiones.",
-      cta: "Ver sala de prensa →",
+      description: "Las últimas noticias, eventos y comunicados del Consejo Nacional de Inversiones.",
+      cta: "Ver sala de prensa",
       readMore: "Leer más",
       items: [
         {
@@ -491,6 +508,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       },
     },
     enlacesRapidos: {
+      sectionEyebrow: "Institutional resources",
       sectionTitle: "Links of Interest",
       guia: "Invest in Honduras Guide",
       memoria: "Institutional Report",
@@ -516,6 +534,14 @@ export const homeCopy: Record<Locale, HomeCopy> = {
           initials: "DD",
         },
       ],
+    },
+    facilidadesMigratorias: {
+      eyebrow: "Investment Promotion Office",
+      title: "Migratory Facilities",
+      description:
+        "Residency, work visas, and immigration procedures for investors, executives, and key personnel linked to projects in Honduras.",
+      cta: "View migratory facilities",
+      logoAlt: "Coat of arms and logo of the Honduras Investment Promotion Office",
     },
     postulacion: {
       eyebrow: "Project Desk",
@@ -696,9 +722,9 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     },
     prensa: {
       eyebrow: "Press",
-      title: "CNI newsroom",
-      description: "News, events, and official releases from the National Investment Council.",
-      cta: "Go to press room →",
+      title: "CNI al día",
+      description: "The latest news, events, and communiqués from the National Investment Council.",
+      cta: "View press room",
       readMore: "Read more",
       items: [
         {

@@ -12,7 +12,9 @@ export const generateMetadata = makeGenerateMetadata(PAGE_SEO.home);
 async function loadLatestNews(): Promise<NewsArticle[]> {
   try {
     const news = await getNews();
-    return news.slice(0, 3);
+    return [...news]
+      .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+      .slice(0, 3);
   } catch {
     return [];
   }

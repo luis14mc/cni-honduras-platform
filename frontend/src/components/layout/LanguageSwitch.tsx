@@ -13,17 +13,20 @@ export function LanguageSwitch() {
   const hrefEn = getMirrorPath(pathname, "en");
   const labels = layoutCopy[locale].language;
 
+  const activeClass = "bg-[#32B372] text-white";
+  const inactiveClass = "text-white/70 hover:text-white";
+
   return (
     <div
-      className="flex items-center rounded border border-white/15 bg-white/5 p-0.5"
+      className="flex items-center rounded-md border border-white/15 bg-white/5 p-0.5"
       role="group"
       aria-label={labels.aria}
     >
       <Link
         href={hrefEs}
         className={cn(
-          "rounded px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest transition",
-          locale === "es" ? "bg-[#35A963] text-white" : "text-white/70 hover:text-white",
+          "rounded px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-widest transition",
+          locale === "es" ? activeClass : inactiveClass,
         )}
         hrefLang="es"
       >
@@ -32,8 +35,8 @@ export function LanguageSwitch() {
       <Link
         href={hrefEn}
         className={cn(
-          "rounded px-2 py-1 text-[0.65rem] font-bold uppercase tracking-widest transition",
-          locale === "en" ? "bg-[#35A963] text-white" : "text-white/70 hover:text-white",
+          "rounded px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-widest transition",
+          locale === "en" ? activeClass : inactiveClass,
         )}
         hrefLang="en"
       >

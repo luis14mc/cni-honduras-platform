@@ -19,6 +19,10 @@ import {
 } from "@/src/config/siteNavigation";
 import { LanguageSwitch } from "@/src/components/layout/LanguageSwitch";
 import { CniLogo } from "@/src/components/layout/CniLogo";
+import { mainNavLinkClass } from "@/src/components/layout/layoutBrand";
+
+const dropdownItemClass =
+  "block px-4 py-2.5 text-sm font-medium text-[#64748B] transition-colors hover:bg-slate-50 hover:text-[#32B372]";
 
 function NavLinkItem({
   node,
@@ -33,9 +37,7 @@ function NavLinkItem({
 }) {
   const href = getNavHref(node, locale);
   const label = getNavLabel(node, locale);
-  const base =
-    className ??
-    "block px-4 py-2.5 text-sm font-medium leading-snug text-cni-on-surface-variant hover:bg-cni-surface-low hover:text-cni-primary transition-colors";
+  const base = className ?? dropdownItemClass;
 
   if (node.external) {
     return (
@@ -77,27 +79,30 @@ function DesktopDropdownPanel({
   const children = node.children ?? [];
   const hasNestedFlyout = children.some((c) => c.children?.length);
   const flyoutNode = children.find((c) => c.id === flyoutOpenId && c.children?.length);
+  const showOverview = !node.hideDropdownOverview;
 
   return (
     <div
       role="menu"
       className={cn(
-        "rounded-md border border-cni-surface-high bg-white shadow-2xl",
-        hasNestedFlyout ? "flex max-h-[min(70vh,520px)] max-w-[min(100vw-2rem,44rem)] overflow-hidden" : "min-w-[16rem] py-2",
+        "overflow-hidden rounded-xl border border-slate-100 bg-white shadow-[0_8px_30px_rgba(37,42,88,0.08)]",
+        hasNestedFlyout ? "flex max-h-[min(70vh,520px)] max-w-[min(100vw-2rem,44rem)]" : "min-w-[17rem] py-1.5",
       )}
       onMouseLeave={() => setFlyoutOpenId(null)}
     >
-      <ul className={cn("shrink-0 overflow-y-auto py-2", hasNestedFlyout ? "min-w-[16rem]" : "w-full")}>
-        <li role="none">
-          <Link
-            role="menuitem"
-            href={href}
-            className="block border-b border-cni-surface-low px-4 py-2.5 text-sm font-semibold text-cni-primary hover:bg-cni-surface-low transition-colors"
-            onClick={onClose}
-          >
-            {label}
-          </Link>
-        </li>
+      <ul className={cn("shrink-0 overflow-y-auto py-1.5", hasNestedFlyout ? "min-w-[17rem]" : "w-full")}>
+        {showOverview ? (
+          <li role="none">
+            <Link
+              role="menuitem"
+              href={href}
+              className="block border-b border-slate-100 px-4 py-2.5 text-sm font-semibold text-[#252A58] transition-colors hover:bg-slate-50 hover:text-[#32B372]"
+              onClick={onClose}
+            >
+              {label}
+            </Link>
+          </li>
+        ) : null}
         {children.map((child) => {
           const hasChildren = Boolean(child.children?.length);
           const isFlyoutOpen = flyoutOpenId === child.id;
@@ -118,14 +123,14 @@ function DesktopDropdownPanel({
                 className={cn(
                   "flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-left text-sm font-medium leading-snug transition-colors select-none",
                   isFlyoutOpen
-                    ? "bg-cni-surface-low text-cni-primary font-semibold"
-                    : "text-cni-on-surface-variant hover:bg-cni-surface-low hover:text-cni-primary",
+                    ? "bg-slate-50 font-semibold text-[#252A58]"
+                    : "text-[#64748B] hover:bg-slate-50 hover:text-[#32B372]",
                 )}
                 onMouseEnter={() => setFlyoutOpenId(child.id)}
                 onFocus={() => setFlyoutOpenId(child.id)}
               >
                 {getNavLabel(child, locale)}
-                <ChevronRight className="h-4 w-4 shrink-0 opacity-80" aria-hidden />
+                <ChevronRight className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
               </button>
             </li>
           );
@@ -133,12 +138,12 @@ function DesktopDropdownPanel({
       </ul>
 
       {flyoutNode && (
-        <div className="min-w-[12rem] flex-1 overflow-y-auto border-l border-cni-surface-low py-2 md:min-w-[14rem]">
+        <div className="min-w-[12rem] flex-1 overflow-y-auto border-l border-slate-100 py-1.5 md:min-w-[14rem]">
           <NavLinkItem
             node={flyoutNode}
             locale={locale}
             onNavigate={onClose}
-            className="block px-4 py-2.5 text-sm font-semibold text-cni-primary hover:bg-cni-surface-low"
+            className="block px-4 py-2.5 text-sm font-semibold text-[#252A58] hover:bg-slate-50 hover:text-[#32B372]"
           />
           {flyoutNode.children!.map((grandchild) => (
             <NavLinkItem key={grandchild.id} node={grandchild} locale={locale} onNavigate={onClose} />
@@ -170,7 +175,7 @@ function MobileNavBranch({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
+          className="block py-2.5 text-sm text-[#64748B] hover:text-[#32B372]"
           onClick={onNavigate}
         >
           {label}
@@ -179,7 +184,11 @@ function MobileNavBranch({
       );
     }
     return (
-      <Link href={href} className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary" onClick={onNavigate}>
+      <Link
+        href={href}
+        className="block py-2.5 text-sm text-[#64748B] hover:text-[#32B372]"
+        onClick={onNavigate}
+      >
         {label}
       </Link>
     );
@@ -189,7 +198,7 @@ function MobileNavBranch({
     <div>
       <button
         type="button"
-        className="flex w-full items-center justify-between py-2 text-left text-sm font-medium text-cni-on-surface-variant hover:text-cni-primary"
+        className="flex w-full items-center justify-between py-2.5 text-left text-sm font-medium text-[#334E88] hover:text-[#32B372]"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -197,10 +206,10 @@ function MobileNavBranch({
         <ChevronDown className={cn("h-4 w-4 shrink-0 transition", open && "rotate-180")} aria-hidden />
       </button>
       {open && (
-        <div className="ml-3 border-l border-[#35A963]/35 pb-2 pl-3">
+        <div className="ml-3 border-l border-[#32B372]/25 pb-2 pl-3">
           <Link
             href={getNavHref(node, locale)}
-            className="block py-2 text-sm text-cni-on-surface-variant/80 hover:text-cni-primary"
+            className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
             onClick={onNavigate}
           >
             {getNavLabel(node, locale)}
@@ -258,18 +267,17 @@ export default function Navbar() {
   }, [openDropdownId]);
 
   return (
-    <header
-      ref={navRef}
-      className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-lg shadow-black/15"
-      role="banner"
-    >
-      <div className="flex h-9 items-center justify-end gap-5 border-b border-white/10 bg-[#252A58] px-4 md:gap-7 md:px-10">
-        <nav aria-label={locale === "es" ? "Enlaces rápidos" : "Quick links"} className="flex items-center gap-5 md:gap-7">
+    <header ref={navRef} className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-sm" role="banner">
+      <div className="flex h-9 items-center justify-end gap-6 border-b border-white/10 bg-[#252A58] px-4 md:gap-8 md:px-10">
+        <nav
+          aria-label={locale === "es" ? "Enlaces rápidos" : "Quick links"}
+          className="flex items-center gap-6 md:gap-8"
+        >
           {topBarNodes.map((n) => (
             <Link
               key={n.id}
               href={getNavHref(n, locale)}
-              className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition hover:text-[#35A963]"
+              className="text-[0.68rem] font-medium uppercase tracking-[0.16em] text-white/65 transition-colors hover:text-white"
             >
               {getNavLabel(n, locale)}
             </Link>
@@ -278,8 +286,11 @@ export default function Navbar() {
         <LanguageSwitch />
       </div>
 
-      <nav className="bg-white/95 backdrop-blur-lg border-b border-cni-surface-low shadow-sm" aria-label={locale === "es" ? "Menú principal" : "Main menu"}>
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-4 py-3 md:px-10">
+      <nav
+        className="border-b border-slate-100 bg-white"
+        aria-label={locale === "es" ? "Menú principal" : "Main menu"}
+      >
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-6 px-4 py-1 md:px-10">
           <CniLogo
             href={homeHref}
             ariaLabel={t.brandSubtitle}
@@ -288,17 +299,12 @@ export default function Navbar() {
             imageClassName="al-navbar-logo"
           />
 
-          <ul className="hidden items-center gap-1 lg:flex" role="menubar">
+          <ul className="hidden items-center lg:flex" role="menubar">
             <li role="none">
               <Link
                 role="menuitem"
                 href={homeHref}
-                className={cn(
-                  "px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
-                  pathIsActive(pathname, homeHref)
-                    ? "text-cni-primary border-cni-gold"
-                    : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
-                )}
+                className={mainNavLinkClass(pathIsActive(pathname, homeHref))}
               >
                 {t.home}
               </Link>
@@ -309,20 +315,12 @@ export default function Navbar() {
               const isOpen = openDropdownId === node.id;
               const href = getNavHref(node, locale);
               const label = getNavLabel(node, locale);
+              const isActive = pathIsActive(pathname, href);
 
               if (!hasChildren) {
                 return (
                   <li key={node.id} role="none">
-                    <Link
-                      role="menuitem"
-                      href={href}
-                      className={cn(
-                        "px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
-                        pathIsActive(pathname, href)
-                          ? "text-cni-primary border-cni-gold"
-                          : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
-                      )}
-                    >
+                    <Link role="menuitem" href={href} className={mainNavLinkClass(isActive)}>
                       {label}
                     </Link>
                   </li>
@@ -331,7 +329,6 @@ export default function Navbar() {
 
               return (
                 <li key={node.id} role="none" className="relative">
-                  {/* Wrapper único: botón + panel comparten hover zone (sin gap muerto) */}
                   <div
                     className="relative"
                     onMouseEnter={() => setOpenDropdownId(node.id)}
@@ -342,12 +339,7 @@ export default function Navbar() {
                       role="menuitem"
                       aria-expanded={isOpen}
                       aria-haspopup="true"
-                      className={cn(
-                        "flex items-center gap-1 px-3 py-2 text-xs font-bold uppercase tracking-widest transition border-b-2 pb-1",
-                        isOpen || pathIsActive(pathname, href)
-                          ? "text-cni-primary border-cni-gold"
-                          : "text-cni-on-surface-variant border-transparent hover:text-cni-primary hover:border-cni-gold/40",
-                      )}
+                      className={mainNavLinkClass(isActive, isOpen)}
                       onClick={() => {
                         setOpenDropdownId((cur) => (cur === node.id ? null : node.id));
                         setFlyoutOpenId(null);
@@ -355,13 +347,13 @@ export default function Navbar() {
                     >
                       {label}
                       <ChevronDown
-                        className={cn("h-3.5 w-3.5 transition", isOpen && "rotate-180")}
+                        className={cn("h-3.5 w-3.5 opacity-70 transition-transform", isOpen && "rotate-180")}
                         aria-hidden
                       />
                     </button>
 
                     {isOpen && (
-                      <div className="absolute left-0 top-full z-50 pt-1">
+                      <div className="absolute left-0 top-full z-50 pt-2">
                         <DesktopDropdownPanel
                           node={node}
                           locale={locale}
@@ -379,7 +371,7 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="rounded-lg p-2 text-cni-primary lg:hidden"
+            className="rounded-lg p-2 text-[#252A58] transition-colors hover:bg-slate-50 lg:hidden"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? t.closeMenu : t.openMenu}
             onClick={() => setMobileOpen((o) => !o)}
@@ -390,7 +382,7 @@ export default function Navbar() {
 
         {mobileOpen && (
           <div
-            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-cni-surface-low bg-white px-4 py-4 lg:hidden shadow-lg"
+            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-slate-100 bg-white px-4 py-5 lg:hidden"
             aria-label={locale === "es" ? "Menú móvil" : "Mobile menu"}
           >
             <div className="mb-4 flex justify-end">
@@ -398,25 +390,30 @@ export default function Navbar() {
             </div>
             <Link
               href={homeHref}
-              className="block py-2 text-sm font-bold uppercase tracking-wide text-cni-primary"
+              className={cn(
+                "block py-3 text-sm font-semibold text-[#252A58]",
+                pathIsActive(pathname, homeHref) && "text-[#32B372]",
+              )}
               onClick={() => setMobileOpen(false)}
             >
               {t.home}
             </Link>
             {siteNavigation.map((node) => (
-              <div key={node.id} className="border-t border-cni-surface-low py-3">
+              <div key={node.id} className="border-t border-slate-100 py-4">
                 {node.children?.length ? (
                   <>
-                    <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-cni-gold-dark">
+                    <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[#64748B]">
                       {getNavLabel(node, locale)}
                     </p>
-                    <Link
-                      href={getNavHref(node, locale)}
-                      className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
-                      onClick={() => setMobileOpen(false)}
-                    >
-                      {locale === "es" ? "Vista general" : "Overview"}
-                    </Link>
+                    {!node.hideDropdownOverview ? (
+                      <Link
+                        href={getNavHref(node, locale)}
+                        className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {locale === "es" ? "Vista general" : "Overview"}
+                      </Link>
+                    ) : null}
                     {node.children.map((child) => (
                       <MobileNavBranch
                         key={child.id}
@@ -429,7 +426,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={getNavHref(node, locale)}
-                    className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
+                    className="block py-2 text-sm font-semibold text-[#334E88] hover:text-[#32B372]"
                     onClick={() => setMobileOpen(false)}
                   >
                     {getNavLabel(node, locale)}
@@ -438,15 +435,15 @@ export default function Navbar() {
               </div>
             ))}
 
-            <div className="mt-2 border-t border-cni-surface-low py-3">
-              <p className="mb-2 text-[0.65rem] font-bold uppercase tracking-widest text-cni-gold-dark">
+            <div className="mt-2 border-t border-slate-100 py-4">
+              <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[#64748B]">
                 {locale === "es" ? "Enlaces rápidos" : "Quick links"}
               </p>
               {topBarNodes.map((n) => (
                 <Link
                   key={n.id}
                   href={getNavHref(n, locale)}
-                  className="block py-2 text-sm text-cni-on-surface-variant hover:text-cni-primary"
+                  className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
                   onClick={() => setMobileOpen(false)}
                 >
                   {getNavLabel(n, locale)}

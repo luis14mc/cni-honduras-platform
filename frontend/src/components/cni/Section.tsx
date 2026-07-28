@@ -1,4 +1,5 @@
 import { cn } from "@/src/lib/utils";
+import { type as t, layout } from "@/src/lib/typography";
 
 type SectionProps = {
   children: React.ReactNode;
@@ -23,8 +24,8 @@ export function Section({
   tone = "surface",
 }: SectionProps) {
   return (
-    <section id={id} className={cn("py-20 md:py-24", tones[tone], className)}>
-      <div className={cn("mx-auto max-w-screen-2xl px-6 md:px-10", containerClassName)}>
+    <section id={id} className={cn(layout.section, tones[tone], className)}>
+      <div className={cn(layout.container, containerClassName)}>
         {children}
       </div>
     </section>
@@ -53,17 +54,13 @@ export function SectionHeader({
     >
       <div className={cn("max-w-2xl", align === "center" && "mx-auto")}>
         {eyebrow && (
-          <span className="mb-3 inline-block text-[0.7rem] font-bold uppercase tracking-[0.25em] text-cni-secondary">
+          <span className={cn("mb-3 inline-block", t.eyebrow, "text-cni-secondary")}>
             {eyebrow}
           </span>
         )}
-        <h2 className="text-3xl font-extrabold tracking-tight text-cni-primary md:text-4xl">
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-4 text-base leading-relaxed text-cni-on-surface-variant">{description}</p>
-        )}
-        {align === "center" && <div className="mx-auto mt-6 h-1 w-20 bg-cni-gold" />}
+        <h2 className={t.h2}>{title}</h2>
+        {description && <p className={cn("mt-4", t.lead)}>{description}</p>}
+        {align === "center" && <div className={cn("mx-auto mt-6", t.sectionRule)} />}
       </div>
       {action}
     </div>

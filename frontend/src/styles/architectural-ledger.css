@@ -230,33 +230,305 @@
   scroll-margin-top: 5.25rem;
 }
 
-/* Carrusel de aliados — azul principal + profundidad verde */
+/* Carrusel de aliados — fondo oscuro suave + logos destacados */
 .theme-architectural-ledger .al-allies-carousel {
-  background: linear-gradient(135deg, #252a58 0%, #0e7a7c 100%) !important;
+  background: linear-gradient(165deg, #1a1f3d 0%, #222847 48%, #252a58 100%) !important;
+}
+
+.theme-architectural-ledger .al-allies-vignette {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 50%, transparent 45%, rgba(0, 0, 0, 0.18) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.12) 100%);
 }
 
 .theme-architectural-ledger .al-allies-mesh {
-  opacity: 1;
+  opacity: 0.45;
   background-image:
-    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.14) 1px, transparent 0),
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.08) 1px, transparent 0),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 28px 28px, 56px 56px, 56px 56px;
 }
 
+.theme-architectural-ledger .al-allies-track {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.theme-architectural-ledger .al-allies-logo {
+  padding: 0.75rem 1.25rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
 .theme-architectural-ledger .al-allies-logo img {
-  filter: brightness(0) invert(1);
-  opacity: 0.92;
-  transition: opacity 0.3s ease;
+  filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(255, 255, 255, 0.35));
+  opacity: 1;
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.theme-architectural-ledger .al-allies-logo:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: scale(1.04);
 }
 
 .theme-architectural-ledger .al-allies-logo:hover img {
-  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 22px rgba(255, 255, 255, 0.55));
 }
 
 /* Iconos flotantes (Honduras en cifras) — blanco */
 .theme-architectural-ledger section.bg-cni-primary .flip-card-front .material-symbols-outlined {
   color: #ffffff !important;
+}
+
+/* Honduras en cifras — fondo moderno con profundidad y luz ambiental */
+.theme-architectural-ledger .al-figures-bg {
+  background: linear-gradient(155deg, #252a58 0%, #1e2348 38%, #24436b 100%);
+  overflow: hidden;
+}
+
+.theme-architectural-ledger .al-figures-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(72px);
+  will-change: transform;
+}
+
+.theme-architectural-ledger .al-figures-orb--teal {
+  width: min(52vw, 520px);
+  height: min(52vw, 520px);
+  top: -18%;
+  right: -6%;
+  background: rgba(14, 122, 124, 0.55);
+  animation: al-figures-float-a 18s ease-in-out infinite alternate;
+}
+
+.theme-architectural-ledger .al-figures-orb--green {
+  width: min(42vw, 400px);
+  height: min(42vw, 400px);
+  bottom: -12%;
+  left: -8%;
+  background: rgba(41, 171, 133, 0.42);
+  animation: al-figures-float-b 22s ease-in-out infinite alternate;
+}
+
+.theme-architectural-ledger .al-figures-orb--accent {
+  width: min(28vw, 260px);
+  height: min(28vw, 260px);
+  top: 42%;
+  left: 38%;
+  background: rgba(141, 192, 70, 0.18);
+  animation: al-figures-float-c 16s ease-in-out infinite alternate;
+}
+
+.theme-architectural-ledger .al-figures-shine {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 12% -5%, rgba(41, 171, 133, 0.2) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 45% at 92% 105%, rgba(14, 122, 124, 0.16) 0%, transparent 52%),
+    radial-gradient(circle at 68% 32%, rgba(255, 255, 255, 0.04) 0%, transparent 38%);
+}
+
+.theme-architectural-ledger .al-figures-beam {
+  position: absolute;
+  inset: -40%;
+  background: conic-gradient(
+    from 225deg at 58% 42%,
+    transparent 0deg,
+    rgba(41, 171, 133, 0.07) 28deg,
+    transparent 56deg,
+    rgba(14, 122, 124, 0.05) 120deg,
+    transparent 160deg
+  );
+  animation: al-figures-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes al-figures-float-a {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-2%, 3%) scale(1.06); }
+}
+
+@keyframes al-figures-float-b {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(3%, -2%) scale(1.05); }
+}
+
+@keyframes al-figures-float-c {
+  from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-2%, -2%) scale(1.08); }
+}
+
+@keyframes al-figures-drift {
+  from { transform: rotate(0deg); opacity: 0.85; }
+  to { transform: rotate(6deg); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-architectural-ledger .al-figures-orb,
+  .theme-architectural-ledger .al-figures-beam {
+    animation: none;
+  }
+}
+
+/* Sectores estratégicos — tarjetas */
+.theme-architectural-ledger .al-sector-card:focus-visible {
+  outline: 2px solid var(--sector-accent, #35a963);
+  outline-offset: 3px;
+}
+
+.theme-architectural-ledger .al-sector-card:hover {
+  box-shadow:
+    0 16px 40px rgba(37, 42, 88, 0.1),
+    0 0 0 1px color-mix(in srgb, var(--sector-accent, #35a963) 28%, transparent);
+}
+
+/* Socio estratégico — panel lateral */
+.theme-architectural-ledger .al-partner-panel-glow {
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(41, 171, 133, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(141, 192, 70, 0.12) 0%, transparent 50%);
+}
+
+.theme-architectural-ledger .al-partner-benefit::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(180deg, #29ab85 0%, #0e7a7c 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.theme-architectural-ledger .al-partner-benefit:hover::before {
+  opacity: 1;
+}
+
+.theme-architectural-ledger .al-success-featured:focus-visible,
+.theme-architectural-ledger .al-success-card:focus-visible {
+  outline: 2px solid #35a963;
+  outline-offset: 3px;
+}
+
+/* Enlaces de interés — franja editorial */
+.theme-architectural-ledger .al-interest-hex {
+  clip-path: polygon(50% 0%, 92% 18%, 92% 82%, 50% 100%, 8% 82%, 8% 18%);
+}
+
+.theme-architectural-ledger .al-interest-hex::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 92% 18%, 92% 82%, 50% 100%, 8% 82%, 8% 18%);
+  border: 1px solid rgba(37, 42, 88, 0.14);
+  transition: border-color 0.3s ease;
+  pointer-events: none;
+}
+
+.theme-architectural-ledger .al-interest-link:hover .al-interest-hex::after {
+  border-color: color-mix(in srgb, var(--interest-accent) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-architectural-ledger .al-interest-link,
+  .theme-architectural-ledger .al-interest-hex {
+    transition: none !important;
+  }
+}
+
+.theme-architectural-ledger .al-instagram-embed-wrap blockquote.instagram-media {
+  margin: 0 auto !important;
+  min-width: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 18px !important;
+}
+
+.theme-architectural-ledger .al-migratory-map-plot {
+  touch-action: none;
+}
+
+.theme-architectural-ledger .al-migratory-map-plot .js-plotly-plot,
+.theme-architectural-ledger .al-migratory-map-plot .plot-container,
+.theme-architectural-ledger .al-migratory-map-plot .svg-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Footer — guacamaya CTA */
+.footer-guacamaya-float {
+  animation: footer-macaw-float 5s ease-in-out infinite;
+}
+
+.footer-guacamaya-banner:hover .footer-guacamaya-float {
+  animation-play-state: paused;
+}
+
+@keyframes footer-macaw-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-guacamaya-float {
+    animation: none;
+  }
+}
+
+/* Footer — corte diagonal + malla técnica */
+.site-footer {
+  padding-top: 4.75rem;
+  clip-path: polygon(0 3rem, 100% 0, 100% 100%, 0 100%);
+  background: #252a58;
+}
+
+@media (min-width: 768px) {
+  .site-footer {
+    padding-top: 5.25rem;
+    clip-path: polygon(0 3.5rem, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+.site-footer-gradient {
+  background: linear-gradient(155deg, #1a1f3d 0%, #252a58 48%, #1e2348 100%);
+}
+
+.site-footer-mesh {
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(41, 171, 133, 0.26) 1px, transparent 0),
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(rgba(14, 122, 124, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 122, 124, 0.07) 1px, transparent 1px);
+  background-size: 20px 20px, 40px 40px, 40px 40px, 80px 80px, 80px 80px;
+}
+
+.site-footer-diagonal-slash {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(50, 179, 114, 0.08) 42%,
+    rgba(50, 179, 114, 0.22) 50%,
+    rgba(50, 179, 114, 0.08) 58%,
+    transparent 100%
+  );
+  height: 3.5rem;
+  top: 0;
+  bottom: auto;
+  mask-image: linear-gradient(115deg, black 40%, transparent 41%);
+  -webkit-mask-image: linear-gradient(115deg, black 40%, transparent 41%);
 }
 
 /* Navbar — logo CNI monocromo azul oscuro (#252A58) */

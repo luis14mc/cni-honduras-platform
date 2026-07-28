@@ -292,6 +292,18 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Centralized directory of government links and digital tools for company formation and administrative project procedures.",
     },
   },
+  "facilidades-migratorias": {
+    canonical: "/facilidades-migratorias",
+    enMirror: "/en/migratory-facilities",
+    title: {
+      es: "Facilidades Migratorias · Despacho de Promoción de Inversiones",
+      en: "Migratory Facilities · Investment Promotion Office",
+    },
+    description: {
+      es: "Facilidad migratoria en materia de inversión: documentos, comunicado oficial, información general y mapa de acceso para inversionistas en Honduras.",
+      en: "Investment-related migratory facility: documents, official announcement, general information, and investor entry access map for Honduras.",
+    },
+  },
   "quienes-somos": {
     canonical: "/quienes-somos",
     enMirror: "/en/about-us",

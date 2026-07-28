@@ -11,6 +11,8 @@ export type SiteNavNode = {
   label: LocalizedString;
   path: LocalizedString;
   external?: boolean;
+  /** Si es true, el dropdown no muestra el enlace de vista general del ítem padre. */
+  hideDropdownOverview?: boolean;
   children?: SiteNavNode[];
 };
 

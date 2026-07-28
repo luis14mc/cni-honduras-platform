@@ -102,10 +102,20 @@ export const ledgerChartStops = {
   greenLime: "#8DC046",
   mist: "#B6C2D3",
   sky: "#00ADEE",
+  /** Colores con contraste sobre fondo azul oscuro (#252A58) — sin navy en barras/líneas */
+  onDark: {
+    sea: "#29AB85",
+    sky: "#00ADEE",
+    lime: "#8DC046",
+    mid: "#35A963",
+    mist: "#B6C2D3",
+    light: "#E8F5FF",
+  },
 } as const;
 
 export function ledgerChartPalette(locale: "es" | "en") {
   const c = ledgerChartStops;
+  const d = c.onDark;
   return {
     ied: {
       labels: ["2020", "2021", "2022", "2023", "2024", "2025"],
@@ -113,35 +123,35 @@ export function ledgerChartPalette(locale: "es" | "en") {
         {
           label: "Total",
           data: [418.6, 738.7, 822.6, 1076, 993.9],
-          color: c.greenSea,
-          backgroundColor: "rgba(41, 171, 133, 0.82)",
+          color: d.sea,
+          backgroundColor: "rgba(41, 171, 133, 0.92)",
         },
         {
           label: locale === "es" ? "I Semestre" : "1st Semester",
           data: [289.6, 366.8, 459.9, 492.5, 470.1, 500.4],
-          color: c.buttonNavy,
-          backgroundColor: "rgba(37, 42, 88, 0.88)",
+          color: d.sky,
+          backgroundColor: "rgba(0, 173, 238, 0.88)",
         },
       ],
     },
     pib: {
       labels: ["2024", "2025", "2026", "2027", "2028", "2029"],
       datasets: [
-        { label: "Honduras", data: [3.6, 3.5, 3.7, 3.8, 3.85, 3.85], color: c.greenMid },
-        { label: "Costa Rica", data: [4.0, 3.5, 3.5, 3.5, 3.49, 3.45], color: c.greenSea },
-        { label: "El Salvador", data: [3.0, 3.0, 2.8, 2.8, 2.8, 2.8], color: c.mist },
-        { label: "Guatemala", data: [3.41, 3.6, 3.7, 3.75, 3.75, 3.75], color: c.navy },
+        { label: "Honduras", data: [3.6, 3.5, 3.7, 3.8, 3.85, 3.85], color: d.lime },
+        { label: "Costa Rica", data: [4.0, 3.5, 3.5, 3.5, 3.49, 3.45], color: d.sea },
+        { label: "El Salvador", data: [3.0, 3.0, 2.8, 2.8, 2.8, 2.8], color: d.sky },
+        { label: "Guatemala", data: [3.41, 3.6, 3.7, 3.75, 3.75, 3.75], color: d.mist },
       ],
     },
     clima: {
       labels: ["2022", "2023", "2024"],
       datasets: [
-        { label: "Panamá", data: [35, 27, 39], color: c.greenDeep, backgroundColor: "rgba(14, 122, 124, 0.78)" },
-        { label: "Guatemala", data: [36, 37, 44], color: c.navy, backgroundColor: "rgba(36, 67, 107, 0.82)" },
-        { label: "El Salvador", data: [44, 44, 50], color: c.mist, backgroundColor: "rgba(182, 194, 211, 0.85)" },
-        { label: "Costa Rica", data: [45, 45, 51], color: c.greenSea, backgroundColor: "rgba(41, 171, 133, 0.72)" },
-        { label: "Nicaragua", data: [18, 26, 53], color: c.buttonNavy, backgroundColor: "rgba(37, 42, 88, 0.88)" },
-        { label: "Honduras", data: [47, 47, 60], color: c.greenLime, backgroundColor: "rgba(141, 192, 70, 0.78)" },
+        { label: "Panamá", data: [35, 27, 39], color: d.light, backgroundColor: "rgba(232, 245, 255, 0.88)" },
+        { label: "Guatemala", data: [36, 37, 44], color: d.mid, backgroundColor: "rgba(53, 169, 99, 0.88)" },
+        { label: "El Salvador", data: [44, 44, 50], color: d.mist, backgroundColor: "rgba(182, 194, 211, 0.92)" },
+        { label: "Costa Rica", data: [45, 45, 51], color: d.sea, backgroundColor: "rgba(41, 171, 133, 0.88)" },
+        { label: "Nicaragua", data: [18, 26, 53], color: d.sky, backgroundColor: "rgba(0, 173, 238, 0.88)" },
+        { label: "Honduras", data: [47, 47, 60], color: d.lime, backgroundColor: "rgba(141, 192, 70, 0.92)" },
       ],
     },
   };

@@ -13,6 +13,7 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/cni/technical-services": "/cni/servicios-tecnicos",
     "/cni/data-intelligence": "/cni/inteligencia-de-datos",
     "/procedures": "/tramites",
+    "/migratory-facilities": "/facilidades-migratorias",
     "/advisory": "/asesoria",
     "/invest": "/invertir",
     "/invest/why-honduras": "/invertir/por-que-honduras",
@@ -70,10 +71,12 @@ function buildMaps() {
   // Top-bar additions (no están en el menú principal pero son rutas públicas):
   es.set("/asesoria", "/es/asesoria");
   es.set("/tramites", "/es/tramites");
+  es.set("/facilidades-migratorias", "/es/facilidades-migratorias");
   es.set("/prensa", "/es/prensa");
   es.set("/postulacion", "/es/postulacion");
   en.set("/en/advisory", "/en/asesoria");
   en.set("/en/procedures", "/en/tramites");
+  en.set("/en/migratory-facilities", "/en/facilidades-migratorias");
   en.set("/en/news", "/en/prensa");
   en.set("/en/application", "/en/postulacion");
   // Categorías de recursos

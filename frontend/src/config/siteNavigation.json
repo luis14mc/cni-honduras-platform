@@ -3,16 +3,17 @@
     "id": "invertir",
     "label": { "es": "Invertir en Honduras", "en": "Invest in Honduras" },
     "path": { "es": "/invertir", "en": "/en/invest" },
+    "hideDropdownOverview": true,
     "children": [
-      {
-        "id": "invertir-sectores",
-        "label": { "es": "Sectores de Inversión", "en": "Investment Sectors" },
-        "path": { "es": "/invertir/sectores", "en": "/en/invest/sectors" }
-      },
       {
         "id": "invertir-por-que-honduras",
         "label": { "es": "¿Por qué Honduras?", "en": "Why Honduras?" },
         "path": { "es": "/invertir/por-que-honduras", "en": "/en/invest/why-honduras" }
+      },
+      {
+        "id": "invertir-sectores",
+        "label": { "es": "Sectores de Inversión", "en": "Investment Sectors" },
+        "path": { "es": "/invertir/sectores", "en": "/en/invest/sectors" }
       }
     ]
   },
@@ -70,10 +71,5 @@
     "id": "recursos",
     "label": { "es": "Recursos", "en": "Resources" },
     "path": { "es": "/recursos", "en": "/en/resources" }
-  },
-  {
-    "id": "prensa",
-    "label": { "es": "Prensa", "en": "News" },
-    "path": { "es": "/prensa", "en": "/en/news" }
   }
 ]

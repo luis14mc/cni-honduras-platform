@@ -19,9 +19,9 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
     <div className="flex flex-1 flex-col bg-[#f8f9ff]">
       <div className="-mt-28">
         <PageHero
-          eyebrow={c.heroEyebrow}
-          title={c.heroTitle}
-          description={c.heroDescription}
+          eyebrow={c.formEyebrow}
+          title={`${c.welcomeTitlePrefix} ${c.welcomeTitleHighlight}${c.welcomeTitleSuffix ? ` ${c.welcomeTitleSuffix}` : ""}`}
+          description={c.welcomeDescription}
           heightClass="min-h-[420px] md:min-h-[460px]"
         />
       </div>
@@ -82,16 +82,18 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
               <ul className="mt-6 space-y-4 text-sm text-white/80">
                 <li className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-5 w-5 text-[#35A963]" />
-                  Centro Cívico Gubernamental (CCG), Torre 1, Piso 12. Tegucigalpa, Honduras.
+                  {c.hqAddress}
                 </li>
                 <li className="flex items-start gap-3">
                   <Phone className="mt-0.5 h-5 w-5 text-[#35A963]" />
-                  (504) 2242-8955
+                  <a className="hover:underline" href={c.contactOptions.phone.href}>
+                    {c.hqPhone}
+                  </a>
                 </li>
                 <li className="flex items-start gap-3">
                   <Mail className="mt-0.5 h-5 w-5 text-[#35A963]" />
-                  <a className="hover:underline" href="mailto:info@cni.hn">
-                    info@cni.hn
+                  <a className="hover:underline" href={`mailto:${c.hqEmail}`}>
+                    {c.hqEmail}
                   </a>
                 </li>
               </ul>
@@ -100,11 +102,11 @@ export default async function AsesoriaPage({ params }: { params: Promise<{ local
               <h3 className="text-lg font-bold text-[#252A58]">{c.spsTitle}</h3>
               <p className="mt-3 text-sm leading-relaxed text-[#0E7A7C]">{c.spsBody}</p>
               <p className="mt-4 text-sm text-[#0E7A7C]">
-                <a className="font-bold text-[#0E7A7C] hover:underline" href="mailto:oficinasps@cni.hn">
-                  oficinasps@cni.hn
+                <a className="font-bold text-[#0E7A7C] hover:underline" href={`mailto:${c.spsEmail}`}>
+                  {c.spsEmail}
                 </a>
                 <br />
-                (504) 2561-6100 ext. 109
+                {c.spsPhone}
               </p>
             </div>
           </aside>

@@ -10,7 +10,12 @@ import { getSectorHref, withLocale } from "@/src/i18n/path";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
+import { designImages } from "@/src/lib/designAssets";
+import { sectorIconAssets } from "@/src/lib/sectorIcons";
+import { slugify } from "@/src/lib/slugify";
 import { cn } from "@/src/lib/utils";
+import { type as t } from "@/src/lib/typography";
+import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection";
 
 type Props = {
   locale: Locale;
@@ -50,6 +55,20 @@ function formatNewsDate(locale: Locale, value: string): string {
 
 function newsImage(article: NewsArticle, index: number): string {
   return article.featured_image?.file || newsFallbackImages[index % newsFallbackImages.length]!;
+}
+
+function statValueSize(value: string): string {
+  const len = value.length;
+  if (len > 28) return "text-lg md:text-xl";
+  if (len > 18) return "text-xl md:text-2xl";
+  return "text-2xl md:text-3xl";
+}
+
+function statBackTextSize(text: string): string {
+  const len = text.length;
+  if (len > 180) return "text-xs md:text-[13px] leading-snug";
+  if (len > 120) return "text-[13px] md:text-sm leading-snug";
+  return "text-sm md:text-[15px] leading-relaxed";
 }
 
 export function HomePageView({ locale, latestNews = [] }: Props) {
@@ -100,87 +119,126 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
 
   const CLIMA_DATA = ledgerCharts.clima;
 
-  // Datos para los sectores en el grid asimétrico
+  // Sectores estratégicos — paleta distintiva por sector
   const sectorsData = [
     {
       slug: "agroindustria",
-      iconImg: "/img/sectores/Agroindustria.png",
-      hexColor: "#93c01f",
+      iconSrc: sectorIconAssets.agroindustria.src,
+      accent: "#93C01F",
       name: locale === "es" ? "Agroindustria" : "Agroindustry",
-      desc: locale === "es" ? "Liderazgo regional consolidado en café, banano y productos de alto valor no tradicionales." : "Consolidated regional leadership in coffee, bananas, and high-value non-traditional products.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDfKbgE8A8NbJ8h1rDyiVxDkYDQxMRRY572tw1594bk6VAQ4HRBKuC62ZRhuOBl_e0KHD3h_PwWCnwGgtlmjXUwsG6MlZxxO864V-X7rJ_UeamN8rox4q5v7NN061MJ80kxYCIAJETPyPsLj-CixaPdkhwaQEvHOU1O22Rke0c3XbIQenob0BprQpEY2l6bPfAPzo0mN4jvL6zuZ6vL_BICpoVIvaKPN40Z-Mmq-SYGAVkiIeOgQTsf-uGwwoNpm92PWXZBoZhBZ6E",
+      desc:
+        locale === "es"
+          ? "Liderazgo regional consolidado en café, banano y productos de alto valor no tradicionales."
+          : "Consolidated regional leadership in coffee, bananas, and high-value non-traditional products.",
+      img: designImages.sectors.agroindustria,
       href: getSectorHref(locale, "agroindustria"),
-      span: "md:col-span-4",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
     },
     {
       slug: "manufactura",
-      iconImg: "/img/sectores/Manufactura 1.png",
-      hexColor: "#7c25a8",
+      iconSrc: sectorIconAssets.manufactura.src,
+      accent: "#7C25A8",
       name: locale === "es" ? "Manufactura" : "Manufacturing",
-      desc: locale === "es" ? "Hub logístico estratégico para textiles técnicos y autopartes con acceso preferencial a Norteamérica." : "Strategic logistics hub for technical textiles and auto parts with preferential access to North America.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAqlhU_RbYvkxBlYzAj4-JtinsyOxfbNJWy3dijV5GdOD--pP85WIxoiQ7Sk0Q-lRYx5sMe7kzQ9jIcHdOVm2s-dmhYYOGr1LHnyFIi9Jph5IoX_fNsF4hHqhdugIzWl9t7eGGor3MD99NX2QA6-mO-uxN97DKeH2m9pItMpoZlymNvIiga0_Uokz5xO5dN_fospS89vsPMohMijrLWO6LVrvX4k3OiF6ww07a2JJFkhX614J_rk3IE27CvkIR0gvbFmNDamGonIFU",
+      desc:
+        locale === "es"
+          ? "Hub logístico estratégico para textiles técnicos y autopartes con acceso preferencial a Norteamérica."
+          : "Strategic logistics hub for technical textiles and auto parts with preferential access to North America.",
+      img: designImages.sectors.manufactura,
       href: getSectorHref(locale, "manufactura"),
-      span: "md:col-span-8",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
     },
     {
       slug: "energia",
-      iconImg: "/img/sectores/Energía 1.png",
-      hexColor: "#f7bf06",
+      iconSrc: sectorIconAssets.energia.src,
+      accent: "#F7BF06",
       name: locale === "es" ? "Energía" : "Energy",
-      desc: locale === "es" ? "Incentivos para el desarrollo de proyectos solares, eólicos e hidroeléctricos a gran escala." : "Incentives for the development of large-scale solar, wind, and hydroelectric projects.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBLeOzKajqhalcfmd6t0Y77JjpvOtSrf8GYtNoa1CmbRNU-2Bmb9r3b8WtDxgdqzqxgFVTx2alVdlODmHzJRFPV1Y6vbXur2hOW04cz2rJ18JZd7p5MQ6odd2LPu4Im4wNpf9tZnzqCfOx8he0sbEL40H4C76j8Q75kScs2XBCc0gDFvCCNFYk0hvHyXvokqDNf0gIxiSvzZSN2Y-5Y54CrtlZGrroOP1YQGuZCnOU7cOqHqjQjG81R1DGb0KBM5QDqxHw5qmDt3Lg",
+      desc:
+        locale === "es"
+          ? "Incentivos para el desarrollo de proyectos solares, eólicos e hidroeléctricos a gran escala."
+          : "Incentives for the development of large-scale solar, wind, and hydroelectric projects.",
+      img: designImages.sectors.energia,
       href: getSectorHref(locale, "energia"),
-      span: "md:col-span-6",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
     },
     {
       slug: "logistica",
-      iconImg: "/img/sectores/Logística 1.png",
-      hexColor: "#2eb29c",
+      iconSrc: "/img/sectores/Logística 1.png",
+      accent: "#2EB29C",
       name: locale === "es" ? "Logística y Transporte" : "Logistics and Transport",
-      desc: locale === "es" ? "Conectividad multimodal y servicios de valor agregado para el comercio global eficiente." : "Multimodal connectivity and value-added services for efficient global trade.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDfKbgE8A8NbJ8h1rDyiVxDkYDQxMRRY572tw1594bk6VAQ4HRBKuC62ZRhuOBl_e0KHD3h_PwWCnwGgtlmjXUwsG6MlZxxO864V-X7rJ_UeamN8rox4q5v7NN061MJ80kxYCIAJETPyPsLj-CixaPdkhwaQEvHOU1O22Rke0c3XbIQenob0BprQpEY2l6bPfAPzo0mN4jvL6zuZ6vL_BICpoVIvaKPN40Z-Mmq-SYGAVkiIeOgQTsf-uGwwoNpm92PWXZBoZhBZ6E",
+      desc:
+        locale === "es"
+          ? "Conectividad multimodal y servicios de valor agregado para el comercio global eficiente."
+          : "Multimodal connectivity and value-added services for efficient global trade.",
+      img: "/images/hero/home/logistica.webp",
       href: L("/invertir"),
-      span: "md:col-span-6",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
     },
     {
       slug: "turismo",
-      iconImg: "/img/sectores/Turismo 1.png",
-      hexColor: "#57d0e1",
+      iconSrc: sectorIconAssets.turismo.src,
+      accent: "#57D0E1",
       name: locale === "es" ? "Turismo" : "Tourism",
-      desc: locale === "es" ? "Destino de clase mundial para ecoturismo, arqueología y playas vírgenes con incentivos fiscales." : "World-class destination for ecotourism, archaeology, and pristine beaches with fiscal incentives.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuClUWl0qeuPq74UIDN7WdqhNWQZ3ys4DM8pasJvHdmhRDvW2LaCBpG2FyhwAIrsrzEJZmAK1iRDdo5LOB6TFICf8xocqQVKF7eh6UcCIMIWrExqWEzTdOBksyWftmlaPKu-v1uKjc9Lkh66WjJ_DwEQkgVp8aq7DTCOwfyfTMTFqcRW93tPYuCSvkjvSZKGZ_iuEVfkHBzi4Jv1097p_gHEkE71LuJYh2tun2mFLxnOopKgAak9giyVWxsZiO18yH6wmwXeGKLTTOU",
+      desc:
+        locale === "es"
+          ? "Destino de clase mundial para ecoturismo, arqueología y playas vírgenes con incentivos fiscales."
+          : "World-class destination for ecotourism, archaeology, and pristine beaches with fiscal incentives.",
+      img: designImages.sectors.turismo,
       href: getSectorHref(locale, "turismo"),
-      span: "md:col-span-8",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
     },
     {
       slug: "infraestructura",
-      iconImg: "/img/sectores/Infraestructura 1.png",
-      hexColor: "#f98639",
+      iconSrc: sectorIconAssets.infraestructura.src,
+      accent: "#F98639",
       name: locale === "es" ? "Infraestructura" : "Infrastructure",
-      desc: locale === "es" ? "Desarrollo de corredores interoceánicos, modernización portuaria y zonas de empleo especial." : "Development of interoceanic corridors, port modernization, and special employment zones.",
-      img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBF8ZnKL1oGbIFyqRVDjKbMM7vGT9G5E8IQSy6cIT0XyfYcvPf6xVBrCGc-cC-SBjsKsEGHqZyv3bMMIllRBKgCYd3hVUWJSaeK457yBQTtbPvqynP6GnS8V_8kjSvrDwIMfruvXsjc7Q7w0qJB5bm8BztCpIjpzTsIePU8pRbYspK8SWFSCYZDKA_9PJ1_yyxAU9L44HCMYUbsTDTk-9nxeL0LN-TOzm66VlFRlICgduYUdioeesg1c-gXR9S2SZI-jKqyFulHCd4",
+      desc:
+        locale === "es"
+          ? "Desarrollo de corredores interoceánicos, modernización portuaria y zonas de empleo especial."
+          : "Development of interoceanic corridors, port modernization, and special employment zones.",
+      img: designImages.sectors.infraestructura,
       href: getSectorHref(locale, "infraestructura"),
-      span: "md:col-span-4",
-      bgClass: "bg-white hover:bg-cni-surface-low transition-colors duration-500",
-      textColor: "text-cni-primary",
-      isDark: false
-    }
+    },
   ];
+
+  const partnerBenefits =
+    locale === "es"
+      ? [
+          { icon: "diversity_3", title: "Acompañamiento Integral" },
+          { icon: "person_pin_circle", title: "Punto de Contacto Único" },
+          { icon: "manage_search", title: "Información Actualizada" },
+          { icon: "cases", title: "Portafolio Exclusivo" },
+          { icon: "assured_workload", title: "Respaldo Gubernamental" },
+          { icon: "hub", title: "Conexiones Estratégicas" },
+        ]
+      : [
+          { icon: "diversity_3", title: "End-to-End Support" },
+          { icon: "person_pin_circle", title: "Single Point of Contact" },
+          { icon: "manage_search", title: "Up-to-Date Information" },
+          { icon: "cases", title: "Exclusive Portfolio" },
+          { icon: "assured_workload", title: "Government Backing" },
+          { icon: "hub", title: "Strategic Connections" },
+        ];
+
+  const testimonialsCopy = hc.testimonials ?? {
+    title: locale === "es" ? "Casos de Éxito" : "Success Stories",
+    cta: locale === "es" ? "Ver todos los casos" : "View all cases",
+    items: [],
+  };
+
+  const testimonialMeta = [
+    {
+      photo: designImages.casos.sinclair,
+      company: "Sinclair",
+      caseTitle: "Sinclair",
+    },
+    {
+      photo: designImages.casos.kimpton,
+      company: "Kimpton Grand Hotel",
+      caseTitle: "Kimpton Grand Hotel",
+    },
+  ] as const;
+
+  const testimonialCards = testimonialsCopy.items.map((item, index) => ({
+    ...item,
+    ...testimonialMeta[index],
+  }));
+
+  const caseHref = (title: string) => L(`/portafolio/casos/${slugify(title)}`);
 
   // Obtener copias específicas para mayor legibilidad
   const dCopy = hc.graficosDashboard ?? {
@@ -213,6 +271,8 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
       source: "Elaboración propia con datos de TMF group, 2025.",
     }
   };
+
+  const prensaCopy = hc.prensa;
 
   const actionCards = hc.actionCards ?? {
     investTitle: "Invertir en Honduras",
@@ -254,14 +314,10 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
 
         <div className="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
-          <h1 className="text-white text-6xl md:text-[60px] lg:text-[80px] font-display font-extrabold tracking-tighter leading-[0.9] mb-10 uppercase">
+          <h1 className={cn(t.heroTitle, "text-white uppercase leading-[0.9] tracking-tighter")}>
             {hc.hero.titleLine1} <br />
             <span className="text-cni-gold">{hc.hero.titleGrow}</span>
           </h1>
-          <p className="text-white/60 text-lg md:text-xl font-body font-light leading-relaxed mb-12 max-w-2xl">
-            {hc.hero.subtitle}
-          </p>
-
         </div>
       </section>
 
@@ -296,7 +352,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
             <p className="font-body text-sm max-w-sm leading-relaxed mb-8 text-white/70">
               {actionCards.investDesc}
             </p>
-            <span className="inline-flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full bg-cni-gold text-cni-primary group-hover:bg-white group-hover:scale-105 transition-all duration-500 shadow-md">
+            <span className="inline-flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full bg-white text-cni-primary group-hover:bg-white/90 group-hover:scale-105 transition-all duration-500 shadow-md">
               {actionCards.moreInfo}
               <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
             </span>
@@ -323,18 +379,53 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
       </section>
 
-      {/* 3. Project Submission */}
+      {/* 3. Facilidades Migratorias */}
+      <section className="border-y border-cni-primary/8 bg-[#f8f9ff] py-14 md:py-16">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 px-8 md:flex-row md:items-center md:gap-14">
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-cni-primary px-8 py-7 shadow-lg shadow-cni-primary/15 md:px-10 md:py-8">
+            <Image
+              src="/home_index/imagenes/despacho_logo.png"
+              alt={hc.facilidadesMigratorias.logoAlt}
+              width={220}
+              height={280}
+              className="h-auto w-[9.5rem] object-contain md:w-[11rem]"
+              priority={false}
+            />
+          </div>
+
+          <div className="flex-1 text-center md:text-left">
+            <p className={cn("mb-3", t.eyebrow)}>
+              {hc.facilidadesMigratorias.eyebrow}
+            </p>
+            <h2 className={t.h2Upper}>
+              {hc.facilidadesMigratorias.title}
+            </h2>
+            <p className={cn("mx-auto mt-4 max-w-xl md:mx-0", t.lead, "text-cni-primary/70")}>
+              {hc.facilidadesMigratorias.description}
+            </p>
+            <Link
+              href={L("/facilidades-migratorias")}
+              className="mt-8 inline-flex items-center gap-3 bg-cni-primary px-8 py-3.5 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition-all hover:bg-[#29AB85] hover:shadow-lg hover:shadow-[#29AB85]/20"
+            >
+              {hc.facilidadesMigratorias.cta}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Project Submission */}
       <section className="py-28 px-8 bg-white">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-20">
           <div className="lg:w-1/2">
-            <h2 className="text-cni-primary font-display text-5xl font-extrabold tracking-tight uppercase mb-8 leading-[1.1]">
+            <h2 className={cn(t.h2Upper, "mb-8 leading-[1.1]")}>
               {locale === "es" ? (
                 <>¿TIENES UN PROYECTO <br /><span className="text-cni-gold">DE INVERSIÓN?</span></>
               ) : (
                 <>Project <br /><span className="text-cni-gold">Submission</span></>
               )}
             </h2>
-            <p className="text-on-surface-variant font-body text-lg mb-10 leading-relaxed">
+            <p className={cn(t.lead, "mb-10")}>
               {hc.postulacion.description}
             </p>
             <Link
@@ -368,38 +459,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
       </section>
 
-      {/* 4. Quick Access Grid */}
-      <section className="py-16 bg-cni-surface-low border-y border-cni-surface-low/50">
-        <div className="max-w-screen-2xl mx-auto px-8">
-          <h2 className="text-cni-primary font-display text-4xl font-extrabold text-center uppercase tracking-tight mb-12">
-            {hc.enlacesRapidos.sectionTitle}
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "menu_book", title: hc.enlacesRapidos.guia, href: "https://online.flippingbook.com/view/972979540/", target: "_blank" },
-              { icon: "import_contacts", title: hc.enlacesRapidos.memoria, href: "https://online.flippingbook.com/view/975450084/", target: "_blank" },
-              { icon: "language", title: hc.enlacesRapidos.portal, href: "https://pdihonduras.gob.hn/consulta", target: "_blank" },
-              { icon: "query_stats", title: hc.enlacesRapidos.estudios, href: "/recursos/estudios", target: "_self" }
-            ].map((item, i) => (
-              <Link
-                key={i}
-                href={item.href.startsWith("http") ? item.href : L(item.href)}
-                target={item.target}
-                className="group flex flex-col items-center justify-center text-center bg-white hover:bg-cni-primary border border-cni-primary/10 rounded-2xl p-8 transition-all duration-300 shadow-sm hover:shadow-2xl hover:-translate-y-1"
-              >
-                <div className="w-16 h-16 mb-4 bg-cni-primary/5 group-hover:bg-cni-gold/20 rounded-full flex items-center justify-center transition-colors">
-                  <span className="material-symbols-outlined text-cni-primary group-hover:text-cni-gold text-3xl transition-colors">
-                    {item.icon}
-                  </span>
-                </div>
-                <h3 className="font-headline font-bold text-cni-primary group-hover:text-white text-sm uppercase tracking-wide leading-tight transition-colors">
-                  {item.title}
-                </h3>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <InterestLinksSection locale={locale} />
 
       {/* 5. Why Honduras Slider */}
       <section className="py-32 bg-cni-primary text-white overflow-hidden">
@@ -498,10 +558,10 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
 
           <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
             <div className="max-w-xl">
-              <p className="font-headline text-xs font-extrabold uppercase tracking-[0.4em] text-cni-gold mb-4">
+              <p className={cn("mb-4", t.eyebrow, "text-cni-gold tracking-[0.4em]")}>
                 {dCopy.eyebrow}
               </p>
-              <h2 className="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight uppercase leading-tight mb-6">
+              <h2 className={cn(t.h2Upper, "mb-6 leading-tight")}>
                 {locale === "es" ? (
                   <>Comparativa <span className="text-cni-gold">Regional</span></>
                 ) : (
@@ -577,7 +637,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
                     <span className="inline-block px-3 py-1 bg-cni-gold text-cni-primary font-headline font-extrabold text-[9px] uppercase tracking-widest mb-6 rounded-full">
                       {dCopy[activeChart].label}
                     </span>
-                    <h3 className="font-display text-3xl font-extrabold text-white uppercase leading-none mb-6">
+                    <h3 className={cn(t.h2OnDark, "uppercase leading-none mb-6")}>
                       {dCopy[activeChart].title}
                     </h3>
                     <p className="text-white/60 font-body text-sm leading-relaxed">
@@ -1039,95 +1099,119 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
       </section>
 
       {/* 7. Honduras in Figures */}
-      <section className="relative py-32 bg-cni-primary overflow-hidden">
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: shell.dotGridSubtle,
-              backgroundSize: "40px 40px"
-            }}
-          ></div>
+      <section className="relative py-24 md:py-32 bg-cni-primary overflow-hidden">
+        <div className="al-figures-bg absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="al-figures-orb al-figures-orb--teal" />
+          <div className="al-figures-orb al-figures-orb--green" />
+          <div className="al-figures-orb al-figures-orb--accent" />
+          <div className="al-figures-shine" />
+          <div className="al-figures-beam" />
         </div>
 
         <div className="max-w-screen-2xl mx-auto px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
 
-            <div className="lg:col-span-4">
-              <div className="border-l border-white/20 pl-8">
-                <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter uppercase text-white leading-tight">
-                  <span className="text-cni-gold block mb-2">Honduras</span>
+            <div className="lg:col-span-4 lg:sticky lg:top-28">
+              <div className="border-l border-white/20 pl-6 md:pl-8">
+                <h2 className={cn(t.h2Upper, "text-white leading-[1.05] lg:text-[3.25rem]")}>
+                  <span className="text-cni-gold block mb-1">Honduras</span>
                   {locale === "es" ? "en cifras" : "in figures"}
                 </h2>
-                <div className="h-1.5 w-24 bg-cni-gold mt-8"></div>
+                <div className="h-1 w-20 bg-cni-gold mt-6" />
               </div>
             </div>
 
             <div className="lg:col-span-8">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {[
-                  { 
-                    value: "112,777", 
-                    label: "Km² de Extensión Territorial", 
-                    icon: "map",
-                    backText: "Honduras se destaca como el segundo país más grande de Centroamérica, ofreciendo una ubicación estratégica, vastos recursos naturales y un entorno ideal para la inversión."
+                  {
+                    value: "112,777",
+                    label: "Km² de Extensión Territorial",
+                    iconSrc: "/home_index/iconos-cifras/extension-1.svg",
+                    backText:
+                      "Honduras se destaca como el segundo país más grande de Centroamérica, ofreciendo una ubicación estratégica, vastos recursos naturales y un entorno ideal para la inversión.",
                   },
-                  { 
-                    value: "Más de 9.89 M", 
-                    label: "de Habitantes. fuerza laboral joven y dinámica", 
-                    icon: "groups",
-                    backText: "Honduras cuenta con una fuerza laboral joven y dinámica, con una edad promedio de 31 años y 7.0 millones de personas en edad de trabajar, lista para impulsar el crecimiento empresarial."
+                  {
+                    value: "Más de 9.89 M",
+                    label: "de Habitantes. fuerza laboral joven y dinámica",
+                    iconSrc: "/home_index/iconos-cifras/ubicacion-1.svg",
+                    backText:
+                      "Honduras cuenta con una fuerza laboral joven y dinámica, con una edad promedio de 31 años y 7.0 millones de personas en edad de trabajar, lista para impulsar el crecimiento empresarial.",
                   },
-                  { 
-                    value: "Más de 108,250 Egresados", 
-                    label: "En educación superior(2021 - 2024)", 
-                    icon: "school",
-                    backText: "Con 21 instituciones de educación superior, Honduras forma talento diversificado en ciencias sociales (28 %), ciencias administrativas (20 %), ingenierías y TIC (15 %), y en ciencias de la salud (8 %), además de otras áreas, posgrados y técnicos altamente capacitados."
+                  {
+                    value: "Más de 108,250 Egresados",
+                    label: "En educación superior(2021 - 2024)",
+                    iconSrc: "/home_index/iconos-cifras/educacion-1.svg",
+                    backText:
+                      "Con 21 instituciones de educación superior, Honduras forma talento diversificado en ciencias sociales (28 %), ciencias administrativas (20 %), ingenierías y TIC (15 %), y en ciencias de la salud (8 %), además de otras áreas, posgrados y técnicos altamente capacitados.",
                   },
-                  { 
-                    value: "Más del 58.6%", 
-                    label: "de la energía proviene de fuentes renovables", 
-                    icon: "energy_savings_leaf",
-                    backText: "Honduras cuenta con una matriz diversificada que incluye 10 tipos de energéticos para la generación eléctrica."
+                  {
+                    value: "Más del 58.6%",
+                    label: "de la energía proviene de fuentes renovables",
+                    iconSrc: "/home_index/iconos-cifras/energia-1.svg",
+                    backText:
+                      "Honduras cuenta con una matriz diversificada que incluye 10 tipos de energéticos para la generación eléctrica.",
                   },
-                  { 
-                    value: "En 2024 el 35.3%", 
-                    label: "de las exportaciones totales correspondieron a productos textiles", 
-                    icon: "category",
-                    backText: "Honduras cuenta con una matriz diversificada que incluye 10 tipos de energéticos para la generación eléctrica."
+                  {
+                    value: "En 2024 el 35.3%",
+                    label: "de las exportaciones totales correspondieron a productos textiles",
+                    iconSrc: "/home_index/iconos-cifras/textiles-1.svg",
+                    backText:
+                      "Honduras cuenta con una matriz diversificada que incluye 10 tipos de energéticos para la generación eléctrica.",
                   },
-                  { 
-                    value: "11 tratados de Libre Comercio", 
-                    label: "que abarcan 45 naciones", 
-                    icon: "directions_boat",
-                    backText: "Honduras exporta más de 3,200 productos al año a más de 120 países en todo el mundo, respaldado por 11 tratados de libre comercio que abarcan más de 45 naciones, facilitando el acceso a mercados globales estratégicos."
-                  }
+                  {
+                    value: "11 tratados de Libre Comercio",
+                    label: "que abarcan 45 naciones",
+                    iconSrc: "/home_index/iconos-cifras/aviones-1.svg",
+                    backText:
+                      "Honduras exporta más de 3,200 productos al año a más de 120 países en todo el mundo, respaldado por 11 tratados de libre comercio que abarcan más de 45 naciones, facilitando el acceso a mercados globales estratégicos.",
+                  },
                 ].map((stat, i) => (
-                  <div key={i} className="flip-card w-full h-[300px] md:h-[340px]">
-                    <div className="flip-card-inner shadow-xl rounded-xl">
-                      
+                  <div key={i} className="flip-card w-full aspect-square">
+                    <div className="flip-card-inner h-full shadow-xl rounded-xl">
+
                       {/* Front */}
-                      <div className="flip-card-front bg-white/5 p-6 md:p-8 border border-white/10 rounded-xl flex flex-col items-center justify-center text-center">
-                        <span className="material-symbols-outlined text-5xl md:text-6xl mb-6 text-white">
-                          {stat.icon}
-                        </span>
-                        <span className="font-display text-3xl md:text-4xl font-extrabold text-white mb-3">
-                          {stat.value}
-                        </span>
-                        <p className="font-headline text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/60 px-2">
+                      <div className="flip-card-front bg-white/[0.04] backdrop-blur-[2px] p-5 md:p-7 border border-white/10 rounded-xl flex flex-col items-center justify-center text-center">
+                        <Image
+                          src={stat.iconSrc}
+                          alt=""
+                          aria-hidden
+                          width={56}
+                          height={56}
+                          className="mb-4 h-11 w-auto md:h-12 object-contain shrink-0"
+                        />
+                        <div className="flex min-h-[3.25rem] md:min-h-[3.75rem] items-center justify-center mb-2 px-1">
+                          <span
+                            className={cn(
+                              "font-display font-extrabold text-white text-balance leading-tight",
+                              statValueSize(stat.value),
+                            )}
+                          >
+                            {stat.value}
+                          </span>
+                        </div>
+                        <p className="font-headline text-[11px] md:text-xs font-semibold uppercase tracking-wide text-white/65 leading-snug px-1">
                           {stat.label}
                         </p>
                       </div>
 
                       {/* Back */}
-                      <div className="flip-card-back bg-cni-gold p-8 md:p-10 rounded-xl flex flex-col items-center justify-center text-center overflow-hidden">
-                        {/* Background Watermark Icon */}
-                        <span className="material-symbols-outlined absolute inset-0 m-auto flex items-center justify-center text-[120px] text-cni-primary/10 pointer-events-none select-none z-0">
-                          {stat.icon}
-                        </span>
-                        
-                        {/* Content */}
-                        <p className="font-body text-cni-primary font-medium text-sm md:text-[15px] leading-relaxed relative z-10 px-2">
+                      <div className="flip-card-back bg-cni-gold p-5 md:p-7 rounded-xl flex flex-col items-center justify-center text-center overflow-hidden relative">
+                        <Image
+                          src={stat.iconSrc}
+                          alt=""
+                          aria-hidden
+                          width={128}
+                          height={128}
+                          className="pointer-events-none absolute inset-0 m-auto h-24 w-auto opacity-[0.12] select-none md:h-28"
+                        />
+
+                        <p
+                          className={cn(
+                            "font-body text-cni-primary font-medium text-balance relative z-10 px-1",
+                            statBackTextSize(stat.backText),
+                          )}
+                        >
                           {stat.backText}
                         </p>
                       </div>
@@ -1142,157 +1226,204 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
       </section>
 
-      {/* 8. Sectors Grid (Asymmetric Navigation) */}
-      <section className="py-32 px-8 bg-white">
-        <div className="max-w-screen-2xl mx-auto">
-
-          <div className="mb-20 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      {/* 8. Sectores Estratégicos */}
+      <section className="py-24 md:py-28 bg-cni-surface-low">
+        <div className="max-w-screen-2xl mx-auto px-8">
+          <div className="mb-12 md:mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
-              <h2 className="text-cni-primary font-display text-4xl font-extrabold tracking-tight uppercase mb-4">
+              <h2 className={cn(t.h2Upper, "leading-tight")}>
                 {locale === "es" ? "Sectores Estratégicos" : "Strategic Sectors"}
               </h2>
-              <div className="h-1.5 w-28 bg-cni-gold"></div>
+              <div className="h-1 w-20 bg-cni-gold mt-4" />
             </div>
             <Link
               href={L("/invertir")}
-              className="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.2em] border-b-2 border-cni-gold/30 pb-2 hover:border-cni-gold transition-all"
+              className="inline-flex items-center gap-2 font-headline text-[11px] font-extrabold uppercase tracking-[0.15em] text-cni-primary transition-colors hover:text-cni-gold"
             >
               {locale === "es" ? "Ver todos los sectores" : "View all sectors"}
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-1 h-auto bg-cni-surface-low p-1">
-            {sectorsData.map((s) => (
-              <div
-                key={s.slug}
-                className={`relative overflow-hidden p-12 flex flex-col justify-end min-h-[350px] group ${s.span} ${s.bgClass} ${s.textColor}`}
-                style={{ 
-                  borderBottom: `4px solid ${s.hexColor}`,
-                  '--sector-color': s.hexColor 
-                } as React.CSSProperties}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sectorsData.map((sector) => (
+              <Link
+                key={sector.slug}
+                href={sector.href}
+                className="al-sector-card group relative flex min-h-[340px] flex-col overflow-hidden rounded-2xl bg-white p-7 md:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                style={{
+                  boxShadow: "0 4px 24px rgba(37, 42, 88, 0.06)",
+                  ["--sector-accent" as string]: sector.accent,
+                }}
               >
-                {/* Background Image on Hover */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 md:group-hover:opacity-30 transition-all duration-700 pointer-events-none">
-                  <Image
-                    alt={s.name}
-                    className="object-cover scale-110 group-hover:scale-100 transition-transform duration-1000"
-                    src={s.img}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                <div
+                  className="absolute left-0 top-8 bottom-8 w-1.5 rounded-r-full transition-all duration-300 group-hover:top-6 group-hover:bottom-6 group-hover:w-2"
+                  style={{ backgroundColor: sector.accent }}
+                  aria-hidden
+                />
+
+                <div
+                  className="absolute inset-x-0 top-0 h-1 opacity-80"
+                  style={{ backgroundColor: sector.accent }}
+                  aria-hidden
+                />
+
+                <div
+                  className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-[0.08]"
+                  aria-hidden
+                >
+                  <Image src={sector.img} alt="" fill sizes="33vw" className="object-cover" />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: `linear-gradient(135deg, ${sector.accent}33 0%, transparent 55%)` }}
                   />
                 </div>
 
-                <div className="relative w-16 h-16 mb-8 group-hover:-translate-y-2 transition-transform duration-300 z-10">
-                  <Image src={s.iconImg} alt={s.name} fill className="object-contain" />
+                <div className="relative flex flex-1 flex-col pl-4">
+                  <div
+                    className="mb-6 flex h-[100px] w-[100px] md:h-[112px] md:w-[112px] items-center justify-center rounded-2xl border-2 transition-transform duration-300 group-hover:scale-105"
+                    style={{
+                      backgroundColor: `${sector.accent}18`,
+                      borderColor: `${sector.accent}40`,
+                    }}
+                  >
+                    <Image
+                      src={sector.iconSrc}
+                      alt=""
+                      width={88}
+                      height={88}
+                      className="h-[76px] w-[76px] md:h-[88px] md:w-[88px] object-contain"
+                    />
+                  </div>
+
+                  <h3
+                    className="font-display text-lg font-extrabold uppercase tracking-tight"
+                    style={{ color: sector.accent }}
+                  >
+                    {sector.name}
+                  </h3>
+
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-cni-primary/70 line-clamp-4">
+                    {sector.desc}
+                  </p>
+
+                  <span
+                    className="mt-6 inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-[0.14em] transition-all duration-300 group-hover:gap-3"
+                    style={{ color: sector.accent }}
+                  >
+                    {locale === "es" ? "Ver detalles" : "View details"}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
                 </div>
-
-                <h3 
-                  className="font-display text-2xl font-extrabold uppercase mb-3 relative z-10 drop-shadow-sm text-[var(--sector-color)] group-hover:text-cni-primary transition-colors duration-500"
-                >
-                  {s.name}
-                </h3>
-
-                <p className={`font-body text-sm mb-8 leading-relaxed max-w-lg relative z-10 ${s.isDark ? "text-white/70" : "text-cni-on-surface-variant"}`}>
-                  {s.desc}
-                </p>
-
-                <Link
-                  href={s.href}
-                  style={{ color: s.hexColor }}
-                  className="font-headline font-extrabold text-[11px] uppercase tracking-[0.15em] flex items-center gap-3 group-hover:gap-5 transition-all relative z-10 hover:brightness-110"
-                >
-                  {locale === "es" ? "Ver Detalles" : "View Details"}
-                  <span className="material-symbols-outlined text-[16px]">north_east</span>
-                </Link>
-              </div>
+              </Link>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* 8.5. Socio Estratégico (Color Matched Layout) */}
-      <section className="py-32 bg-cni-surface-low border-y border-cni-surface-low/50">
+      {/* 8.5. Socio Estratégico */}
+      <section className="py-24 md:py-28 bg-white overflow-hidden">
         <div className="max-w-screen-2xl mx-auto px-8">
-          
-          <div className="text-center mb-20 flex flex-col items-center">
-            <h2 className="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
-              Tu socio estratégico para <span className="text-cni-secondary">invertir y crecer</span> en Honduras
-            </h2>
-            <div className="h-1.5 w-24 bg-cni-gold"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { icon: 'diversity_3', title: 'Acompañamiento Integral', desc: 'Asesoría de principio a fin para asegurar que tu inversión despegue sin fricciones en el mercado hondureño.' },
-              { icon: 'person_pin_circle', title: 'Punto de Contacto Único', desc: 'Centralizamos tus trámites y consultas para brindar una respuesta ágil y directa a tus necesidades.' },
-              { icon: 'manage_search', title: 'Información Actualizada', desc: 'Inteligencia de negocios y datos macroeconómicos precisos para apoyar decisiones estratégicas.' },
-              { icon: 'cases', title: 'Portafolio Exclusivo', desc: 'Acceso a proyectos de inversión de alto impacto y rentabilidad en sectores priorizados.' },
-              { icon: 'assured_workload', title: 'Respaldo Gubernamental', desc: 'Garantía institucional para la seguridad jurídica y protección de tus inversiones.' },
-              { icon: 'hub', title: 'Conexiones Estratégicas', desc: 'Networking de alto nivel y vinculación con actores clave del sector público y privado.' },
-            ].map((item, idx) => (
-              <div key={idx} className="bg-white rounded-[24px] p-10 flex flex-col items-start gap-6 border border-cni-primary/5 hover:border-cni-gold/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
-                <div className="w-16 h-16 rounded-full bg-cni-surface-low flex items-center justify-center shadow-sm text-cni-primary group-hover:bg-cni-primary group-hover:text-cni-gold transition-colors duration-300">
-                  <span className="material-symbols-outlined text-3xl">{item.icon}</span>
-                </div>
-                <div>
-                  <h3 className="font-headline text-xl font-extrabold text-cni-primary mb-3">{item.title}</h3>
-                  <p className="font-body text-sm text-cni-on-surface-variant leading-relaxed">{item.desc}</p>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            <div className="lg:col-span-4 lg:sticky lg:top-28">
+              <div className="al-partner-panel relative overflow-hidden rounded-2xl bg-gradient-to-br from-cni-primary via-[#1e2348] to-cni-primary-container p-8 md:p-10 text-white">
+                <div className="al-partner-panel-glow pointer-events-none absolute inset-0" aria-hidden />
+                <h2 className={cn(t.h2OnDark, "leading-[1.1]")}>
+                  {locale === "es" ? (
+                    <>
+                      CNI tu socio estratégico para{" "}
+                      <span className="text-[#29AB85]">invertir y crecer</span> en Honduras
+                    </>
+                  ) : (
+                    <>
+                      CNI your strategic partner to{" "}
+                      <span className="text-[#29AB85]">invest and grow</span> in Honduras
+                    </>
+                  )}
+                </h2>
+                <div className="relative h-1 w-16 bg-cni-gold mt-6" />
+                <Link
+                  href={L("/cni")}
+                  className="relative mt-8 inline-flex items-center gap-2 font-headline text-[11px] font-extrabold uppercase tracking-[0.15em] text-white transition-colors hover:text-[#29AB85]"
+                >
+                  {locale === "es" ? "Conocer la CNI" : "About CNI"}
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
-            ))}
+            </div>
+
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+              {partnerBenefits.map((item, idx) => (
+                <div
+                  key={item.title}
+                  className="al-partner-benefit group relative flex items-center gap-4 overflow-hidden rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-5 md:p-6 transition-all duration-300 hover:border-[#29AB85]/30 hover:shadow-lg hover:shadow-cni-primary/5"
+                >
+                  <span className="pointer-events-none absolute -right-1 -top-2 font-display text-6xl font-extrabold leading-none text-cni-primary/[0.04] transition-colors group-hover:text-[#29AB85]/10">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-cni-primary shadow-sm ring-1 ring-cni-primary/8 transition-colors duration-300 group-hover:bg-cni-primary group-hover:text-[#29AB85]">
+                    <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
+                  </div>
+
+                  <div className="relative min-w-0 flex-1">
+                    <p className="mb-1 font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-cni-secondary">
+                      {String(idx + 1).padStart(2, "0")}
+                    </p>
+                    <h3 className="font-headline text-base font-extrabold text-cni-primary">{item.title}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* 9. Two-Level Partners Carousel */}
-      <section className="py-24 overflow-hidden border-y relative al-allies-carousel bg-cni-primary border-transparent">
+      <section className="py-28 md:py-32 overflow-hidden border-y relative al-allies-carousel border-transparent">
         <div className="al-allies-mesh absolute inset-0 pointer-events-none" aria-hidden />
+        <div className="al-allies-vignette pointer-events-none absolute inset-0" aria-hidden />
 
         <div className="relative z-10 al-allies-inner">
-          <div className="text-center mb-20 flex flex-col items-center">
-            <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight uppercase text-white">
+          <div className="text-center mb-16 md:mb-20 flex flex-col items-center px-8">
+            <h2 className={cn(t.h2Upper, "text-white")}>
               {locale === "es" ? "Nuestros Aliados Estratégicos" : "Our Strategic Allies"}
             </h2>
             <div className="h-1.5 w-24 bg-cni-gold mt-6" />
           </div>
 
-        <div className="space-y-16">
+        <div className="space-y-12 md:space-y-14">
           {/* Row 1 */}
-          <div className="flex overflow-hidden">
-            {/* Group 1 */}
-            <div className="flex shrink-0 animate-marquee items-center gap-24 pr-24">
+          <div className="al-allies-track flex overflow-hidden">
+            <div className="flex shrink-0 animate-marquee items-center gap-16 md:gap-20 pr-16 md:pr-20">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex items-center justify-center w-56 h-28 select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain" />
+                <div key={idx} className="relative flex h-36 w-72 md:h-44 md:w-[22rem] shrink-0 items-center justify-center select-none al-allies-logo">
+                  <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain p-2" sizes="352px" />
                 </div>
               ))}
             </div>
-            {/* Group 2 (Clone) */}
-            <div aria-hidden="true" className="flex shrink-0 animate-marquee items-center gap-24 pr-24">
+            <div aria-hidden="true" className="flex shrink-0 animate-marquee items-center gap-16 md:gap-20 pr-16 md:pr-20">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-56 h-28 select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain" />
+                <div key={`rep-${idx}`} className="relative flex h-36 w-72 md:h-44 md:w-[22rem] shrink-0 items-center justify-center select-none al-allies-logo">
+                  <Image src={src} alt="" fill className="object-contain p-2" sizes="352px" />
                 </div>
               ))}
             </div>
           </div>
 
           {/* Row 2 */}
-          <div className="flex overflow-hidden">
-            {/* Group 1 */}
-            <div className="flex shrink-0 animate-marquee-reverse items-center gap-24 pr-24">
+          <div className="al-allies-track flex overflow-hidden">
+            <div className="flex shrink-0 animate-marquee-reverse items-center gap-16 md:gap-20 pr-16 md:pr-20">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex items-center justify-center w-48 h-24 select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain" />
+                <div key={idx} className="relative flex h-32 w-64 md:h-40 md:w-80 shrink-0 items-center justify-center select-none al-allies-logo">
+                  <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain p-2" sizes="320px" />
                 </div>
               ))}
             </div>
-            {/* Group 2 (Clone) */}
-            <div aria-hidden="true" className="flex shrink-0 animate-marquee-reverse items-center gap-24 pr-24">
+            <div aria-hidden="true" className="flex shrink-0 animate-marquee-reverse items-center gap-16 md:gap-20 pr-16 md:pr-20">
               {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex items-center justify-center w-48 h-24 select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain" />
+                <div key={`rep-${idx}`} className="relative flex h-32 w-64 md:h-40 md:w-80 shrink-0 items-center justify-center select-none al-allies-logo">
+                  <Image src={src} alt="" fill className="object-contain p-2" sizes="320px" />
                 </div>
               ))}
             </div>
@@ -1301,129 +1432,155 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
       </section>
 
-      {/* 10. Casos de Éxito (Success Stories Carousel) */}
-      <section className="py-32 bg-white overflow-hidden border-t border-cni-surface-low/50">
-        <div className="max-w-screen-2xl mx-auto px-8">
-          
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20 gap-8">
-            <div>
-              <h2 className="text-cni-primary font-display text-4xl font-extrabold tracking-tight uppercase mb-4">
-                {locale === "es" ? "Casos de Éxito" : "Success Stories"}
-              </h2>
-              <div className="h-1.5 w-24 bg-cni-gold"></div>
-            </div>
+      {/* 10. Casos de Éxito — testimonios compactos */}
+      <section className="py-14 md:py-16 bg-white border-t border-cni-primary/5">
+        <div className="max-w-screen-xl mx-auto px-8">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h2 className={t.h2Upper}>
+              {testimonialsCopy.title}
+            </h2>
             <Link
-              href={L("/casos-de-exito")}
-              className="text-cni-primary font-headline font-extrabold text-[11px] uppercase tracking-[0.2em] border-b-2 border-cni-gold/30 pb-2 hover:border-cni-gold transition-all flex items-center gap-2"
+              href={L("/portafolio/casos")}
+              className="inline-flex items-center gap-2 font-headline text-[10px] font-extrabold uppercase tracking-[0.14em] text-cni-primary/70 transition-colors hover:text-cni-gold"
             >
-              {locale === "es" ? "Ver todos los casos" : "View all cases"}
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              {testimonialsCopy.cta}
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-8 pb-12 no-scrollbar">
-            {[1, 2, 3].map((item) => (
-              <div
-                key={item}
-                className="min-w-[340px] md:min-w-0 md:flex-1 shrink-0 snap-center bg-cni-surface-low p-10 rounded-[24px] flex flex-col justify-between border border-cni-primary/5 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+            {testimonialCards.map((card) => (
+              <Link
+                key={card.name}
+                href={caseHref(card.caseTitle)}
+                className="al-success-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-5 md:p-6 transition-colors hover:border-cni-gold/25 hover:bg-white"
               >
-                <div>
-                  {/* Company Logo Placeholder */}
-                  <div className="relative w-32 h-10 mb-8 opacity-60 grayscale">
-                    <img src="/logo.png" alt="Company Logo" className="w-full h-full object-contain object-left" />
-                  </div>
-                  
-                  {/* Quote */}
-                  <p className="font-display text-lg md:text-[22px] font-light italic text-cni-primary leading-[1.6] mb-12">
-                    &quot;La ubicación estratégica de Honduras y el acompañamiento constante del CNI fueron fundamentales para establecer nuestra planta de operaciones en tiempo récord.&quot;
-                  </p>
-                </div>
+                <p className="font-body text-sm leading-relaxed text-cni-primary/80 italic line-clamp-4">
+                  &ldquo;{card.quote}&rdquo;
+                </p>
 
-                <div className="mt-auto border-t border-cni-primary/10 pt-8">
-                  {/* Person Info & Photo */}
-                  <div className="flex items-center gap-5 mb-8">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0 border-2 border-cni-gold shadow-sm">
-                      <img src={`https://i.pravatar.cc/150?img=${item * 11}`} alt="Persona" className="w-full h-full object-cover" />
+                <div className="mt-5 flex items-center justify-between gap-4 border-t border-cni-primary/8 pt-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
+                      <Image
+                        src={card.photo}
+                        alt={card.name}
+                        fill
+                        sizes="44px"
+                        className="object-cover"
+                      />
                     </div>
-                    <div>
-                      <p className="font-headline font-extrabold text-cni-primary text-[12px] uppercase tracking-[0.15em] mb-1">
-                        Nombre del Inversor
+                    <div className="min-w-0">
+                      <p className="truncate font-headline text-xs font-extrabold uppercase tracking-wide text-cni-primary">
+                        {card.name}
                       </p>
-                      <p className="font-body text-[11px] text-cni-primary/60 uppercase tracking-widest font-medium">
-                        Cargo en la Empresa
-                      </p>
+                      <p className="truncate text-[11px] text-cni-primary/55">{card.role}</p>
                     </div>
                   </div>
 
-                  {/* View Case Button */}
-                  <Link
-                    href={L(`/casos-de-exito/caso-${item}`)}
-                    className="inline-flex items-center justify-center w-full py-4 bg-white text-cni-primary border border-cni-primary/10 rounded-xl font-headline font-extrabold text-[10px] uppercase tracking-[0.2em] hover:bg-cni-primary hover:text-white transition-all group"
+                  <div
+                    className="flex h-9 max-w-[7.5rem] shrink-0 items-center justify-end md:max-w-[8.5rem]"
+                    aria-label={card.company}
                   >
-                    {locale === "es" ? "Ver caso completo" : "View full case"}
-                    <span className="material-symbols-outlined text-[14px] ml-3 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                  </Link>
+                    <span className="text-right font-display text-[11px] font-extrabold uppercase leading-tight tracking-wide text-cni-primary/75">
+                      {card.company}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
-          
         </div>
       </section>
 
-      {visibleNews.length > 0 && (
-        <section className="py-32 px-8 bg-white border-t border-cni-surface-low/50">
-          <div className="max-w-screen-xl mx-auto">
-            <div className="text-center mb-16 flex flex-col items-center">
-              <h2 className="text-cni-primary font-display text-4xl md:text-5xl font-extrabold tracking-tight mb-2 uppercase">
-                {locale === "es" ? "CNI al día" : "CNI News"}
+      {/* 11. CNI al día — últimas noticias */}
+      <section className="py-14 md:py-20 bg-cni-surface-low border-t border-cni-primary/5">
+        <div className="max-w-screen-2xl mx-auto px-8">
+          <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-5">
+            <div className="max-w-2xl">
+              <p className={cn(t.eyebrow, "mb-2 text-cni-secondary tracking-[0.25em]")}>
+                {prensaCopy.eyebrow}
+              </p>
+              <h2 className={cn(t.h2Upper, "leading-tight")}>
+                {prensaCopy.title}
               </h2>
-              <h3 className="text-cni-secondary font-display text-2xl md:text-3xl font-bold">
-                {locale === "es" ? "Consejo Nacional de Inversiones Honduras" : "National Investment Council Honduras"}
-              </h3>
-              <div className="h-1.5 w-24 bg-cni-gold mt-6"></div>
+              <p className="mt-2 font-body text-sm leading-relaxed text-cni-primary/65">
+                {prensaCopy.description}
+              </p>
             </div>
+            <Link
+              href={L("/prensa")}
+              className="inline-flex shrink-0 items-center gap-2 rounded-full border border-cni-primary/12 bg-white px-5 py-2.5 font-headline text-[10px] font-extrabold uppercase tracking-[0.14em] text-cni-primary shadow-sm transition-all hover:border-cni-gold/40 hover:text-cni-gold"
+            >
+              {locale === "es" ? "Sala de prensa" : "Press room"}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {visibleNews.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
               {visibleNews.map((article, idx) => (
                 <Link
                   key={article.slug}
                   href={L(`/prensa/${article.slug}`)}
-                  className="group flex h-full flex-col overflow-hidden rounded-[24px] bg-cni-surface-low border border-cni-primary/5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+                  className="group flex h-full flex-col overflow-hidden rounded-xl bg-white border border-cni-primary/8 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cni-gold/25 hover:shadow-md"
                 >
-                  <div className="relative h-56 overflow-hidden bg-cni-primary">
-                    <img
+                  <div className="relative h-44 overflow-hidden bg-cni-primary">
+                    <Image
                       src={newsImage(article, idx)}
-                      alt={article.title}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={article.featured_image?.alt_text || article.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-cni-primary/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" aria-hidden />
                   </div>
-                  <div className="flex flex-1 flex-col p-8">
-                    <div className="mb-5 flex flex-wrap items-center gap-3">
-                      <span className="text-[10px] font-headline font-extrabold uppercase tracking-[0.18em] text-cni-secondary">
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-cni-surface-low px-2.5 py-0.5 font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-cni-secondary">
                         {newsCategoryLabels[locale][article.category]}
                       </span>
-                      <span className="text-[11px] font-body text-cni-primary/50">
+                      <time
+                        dateTime={article.published_at}
+                        className="text-[11px] font-body text-cni-primary/50"
+                      >
                         {formatNewsDate(locale, article.published_at)}
-                      </span>
+                      </time>
                     </div>
-                    <h4 className="font-headline text-xl font-extrabold leading-tight text-cni-primary group-hover:text-cni-secondary transition-colors">
+                    <h3 className="font-headline text-base md:text-lg font-extrabold leading-snug text-cni-primary line-clamp-2 group-hover:text-cni-secondary transition-colors">
                       {article.title}
-                    </h4>
-                    <p className="mt-4 line-clamp-3 font-body text-sm leading-relaxed text-cni-on-surface-variant">
-                      {article.summary}
-                    </p>
-                    <span className="mt-8 inline-flex items-center gap-3 font-headline text-[10px] font-extrabold uppercase tracking-[0.18em] text-cni-primary">
-                      {locale === "es" ? "Leer noticia" : "Read news"}
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                    </h3>
+                    {article.summary ? (
+                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-cni-primary/60">
+                        {article.summary}
+                      </p>
+                    ) : null}
+                    <span className="mt-4 inline-flex items-center gap-2 font-headline text-[10px] font-extrabold uppercase tracking-[0.14em] text-cni-gold">
+                      {prensaCopy.readMore}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
                     </span>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : (
+            <div className="rounded-xl border border-dashed border-cni-primary/15 bg-white px-6 py-12 text-center">
+              <p className="font-body text-sm text-cni-primary/60">
+                {locale === "es"
+                  ? "Próximamente publicaremos noticias y comunicados oficiales."
+                  : "Official news and press releases will be published soon."}
+              </p>
+              <Link
+                href={L("/prensa")}
+                className="mt-4 inline-flex items-center gap-2 font-headline text-[10px] font-extrabold uppercase tracking-[0.14em] text-cni-primary hover:text-cni-gold"
+              >
+                {prensaCopy.cta}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
 
     </div>
   );
