@@ -4,79 +4,219 @@ import { getSectors } from "@/src/data/investmentSectors";
 
 export type { SectorCopy } from "@/src/data/investmentSectors";
 
+export type SectorAccentPalette = {
+  /** Acento principal del sector (badge, líneas, hovers). */
+  accent: string;
+  /** Fondo translúcido para contenedores de icono. */
+  soft: string;
+  /** Borde translúcido para contenedores. */
+  border: string;
+};
+
+export const SECTOR_ACCENTS: Record<string, SectorAccentPalette> = {
+  agroindustria: { accent: "#93C01F", soft: "rgba(147, 192, 31, 0.10)", border: "rgba(147, 192, 31, 0.35)" },
+  manufactura: { accent: "#7C25A8", soft: "rgba(124, 37, 168, 0.10)", border: "rgba(124, 37, 168, 0.35)" },
+  energia: { accent: "#F7BF06", soft: "rgba(247, 191, 6, 0.10)", border: "rgba(247, 191, 6, 0.40)" },
+  turismo: { accent: "#57D0E1", soft: "rgba(87, 208, 225, 0.10)", border: "rgba(87, 208, 225, 0.35)" },
+  infraestructura: { accent: "#F98639", soft: "rgba(249, 134, 57, 0.10)", border: "rgba(249, 134, 57, 0.35)" },
+  logistica: { accent: "#2EB29C", soft: "rgba(46, 178, 156, 0.10)", border: "rgba(46, 178, 156, 0.35)" },
+};
+
+export type SectoresIndexCopy = {
+  heroEyebrow: string;
+  heroTitleBefore: string;
+  heroTitleAccent: string;
+  heroTitleAfter: string;
+  heroDescription: string;
+  heroImageAlt: string;
+  heroChips: ReadonlyArray<string>;
+  linkWhyHonduras: string;
+  catalogEyebrow: string;
+  catalogTitleBefore: string;
+  catalogTitleAccent: string;
+  catalogDescription: string;
+  cardEyebrow: string;
+  cardCta: string;
+  cardStatsLabel: string;
+  whyEyebrow: string;
+  whyTitleBefore: string;
+  whyTitleAccent: string;
+  whyDescription: string;
+  whyItems: ReadonlyArray<{ title: string; text: string }>;
+  statsEyebrow: string;
+  statsTitleBefore: string;
+  statsTitleAccent: string;
+  statsDescription: string;
+  stats: ReadonlyArray<{ value: string; label: string; hint: string }>;
+  ctaTitle: string;
+  ctaBody: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+};
+
+const SECTORES_INDEX: Record<Locale, SectoresIndexCopy> = {
+  es: {
+    heroEyebrow: "Catálogo Estratégico Nacional",
+    heroTitleBefore: "Sectores para",
+    heroTitleAccent: "invertir en Honduras",
+    heroTitleAfter: "",
+    heroDescription:
+      "Seis motores priorizados por el Consejo Nacional de Inversiones, con marco legal LPPI/ZOLI, inteligencia de datos sectorial y acompañamiento institucional gratuito.",
+    heroImageAlt: "Panorama de sectores productivos en Honduras",
+    heroChips: ["LPPI · ZOLI", "Marco soberano", "Acompañamiento CNI", "Dato abierto"],
+    linkWhyHonduras: "¿Por qué Honduras?",
+    catalogEyebrow: "01 · Seis motores económicos",
+    catalogTitleBefore: "Sectores",
+    catalogTitleAccent: "Estratégicos",
+    catalogDescription:
+      "Explore cada uno de los seis motores priorizados por el CNI y visite la página del sector de su interés para conocer indicadores clave, ventajas competitivas, encaje legal bajo LPPI/ZOLI y proyectos activos listos para invertir.",
+    cardEyebrow: "Ficha sectorial",
+    cardCta: "Ver sector",
+    cardStatsLabel: "Indicador clave",
+    whyEyebrow: "02 · Por qué estos sectores",
+    whyTitleBefore: "Una tesis de inversión,",
+    whyTitleAccent: "sólida y verificable.",
+    whyDescription:
+      "Los sectores priorizados por el CNI están seleccionados por su capacidad real de atraer capital, generar empleo de calidad y dinamizar exportaciones.",
+    whyItems: [
+      {
+        title: "Encaje con la matriz productiva",
+        text: "Cada sector aprovecha activos naturales, logísticos o talento ya disponibles en el país, reduciendo el CAPEX de entrada y el riesgo operativo.",
+      },
+      {
+        title: "Marco legal LPPI y ZOLI",
+        text: "Incentivos fiscales, estabilidad jurídica y regímenes de zonas libres que protegen la inversión durante todo el ciclo de vida del proyecto.",
+      },
+      {
+        title: "Acompañamiento institucional",
+        text: "Asesoría legal, técnica y de inteligencia de datos sin costo, brindada por el equipo del CNI en cada hito de la Ruta del Inversionista.",
+      },
+    ],
+    statsEyebrow: "03 · Marco macro Honduras",
+    statsTitleBefore: "El entorno que",
+    statsTitleAccent: "sostiene la inversión.",
+    statsDescription:
+      "Indicadores verificables que sustentan la tesis de inversión y la priorización sectorial del CNI.",
+    stats: [
+      { value: "$993.9M", label: "IED recibida (2024)", hint: "Balanza de pagos · BCH" },
+      { value: "78.6%", label: "Movimiento portuario", hint: "Puerto Cortés · ENP" },
+      { value: "11", label: "Tratados de Libre Comercio", hint: "Acceso a 45+ naciones" },
+      { value: "58.6%", label: "Matriz energética limpia", hint: "Solar, eólica e hidro" },
+      { value: "+9.89M", label: "Habitantes · bono demográfico", hint: "Edad promedio 31 años" },
+    ],
+    ctaTitle: "¿Listo para activar su tesis de inversión en Honduras?",
+    ctaBody:
+      "Conecte con oficiales de inversión del CNI para evaluar prefactibilidad, encaje legal y acceso al portafolio Ready-to-Invest.",
+    ctaPrimary: "Solicitar asesoría",
+    ctaSecondary: "Descargar guía del inversionista",
+  },
+  en: {
+    heroEyebrow: "National strategic catalog",
+    heroTitleBefore: "Sectors to",
+    heroTitleAccent: "invest in Honduras",
+    heroTitleAfter: "",
+    heroDescription:
+      "Six priority engines curated by the National Investment Council, with LPPI/ZOLI legal frameworks, sector data intelligence, and free institutional support.",
+    heroImageAlt: "Panorama of productive sectors in Honduras",
+    heroChips: ["LPPI · ZOLI", "Sovereign framework", "CNI accompaniment", "Open data"],
+    linkWhyHonduras: "Why Honduras?",
+    catalogEyebrow: "01 · Six economic engines",
+    catalogTitleBefore: "Strategic",
+    catalogTitleAccent: "Sectors",
+    catalogDescription:
+      "Explore each of the six priority engines curated by CNI and visit the sector page of your interest to discover key indicators, competitive advantages, LPPI/ZOLI legal fit, and active projects ready to invest.",
+    cardEyebrow: "Sector brief",
+    cardCta: "View sector",
+    cardStatsLabel: "Key indicator",
+    whyEyebrow: "02 · Why these sectors",
+    whyTitleBefore: "An investment thesis,",
+    whyTitleAccent: "solid and verifiable.",
+    whyDescription:
+      "The sectors prioritized by CNI are selected for their real capacity to attract capital, generate quality jobs, and boost exports.",
+    whyItems: [
+      {
+        title: "Fit with the productive matrix",
+        text: "Each sector leverages natural, logistics, or talent assets already available in the country, lowering entry CAPEX and operational risk.",
+      },
+      {
+        title: "LPPI and ZOLI legal framework",
+        text: "Fiscal incentives, legal certainty, and free-zone regimes that protect the investment throughout the project lifecycle.",
+      },
+      {
+        title: "Institutional accompaniment",
+        text: "Free legal, technical, and data-intelligence advisory delivered by the CNI team at every milestone of the Investor Journey.",
+      },
+    ],
+    statsEyebrow: "03 · Honduras macro framework",
+    statsTitleBefore: "The environment that",
+    statsTitleAccent: "supports investment.",
+    statsDescription:
+      "Verifiable indicators underpinning the investment thesis and CNI sector prioritization.",
+    stats: [
+      { value: "$993.9M", label: "FDI received (2024)", hint: "Balance of payments · BCH" },
+      { value: "78.6%", label: "Port throughput", hint: "Puerto Cortés · ENP" },
+      { value: "11", label: "Free Trade Agreements", hint: "Access to 45+ nations" },
+      { value: "58.6%", label: "Clean energy matrix", hint: "Solar, wind and hydro" },
+      { value: "+9.89M", label: "Inhabitants · demographic dividend", hint: "Average age 31 years" },
+    ],
+    ctaTitle: "Ready to activate your investment thesis in Honduras?",
+    ctaBody:
+      "Connect with CNI investment officers to evaluate pre-feasibility, legal fit, and access to the Ready-to-Invest portfolio.",
+    ctaPrimary: "Request advisory",
+    ctaSecondary: "Download investor guide",
+  },
+};
+
 export const invertirPageCopy: Record<
   Locale,
-  {
-    heroEyebrow: string;
-    heroTitleBefore: string;
-    heroTitleAccent: string;
-    heroTitleAfter: string;
-    heroDescription: string;
-    heroImageAlt: string;
+  SectoresIndexCopy & {
     stickySector: string;
-    sectionEyebrow: string;
-    sectionTitle: string;
-    sectionDescription: string;
-    sectorBadge: string;
-    viewDetail: string;
     ctaAdvisor: string;
     ctaGuide: string;
-    ctaTitle: string;
-    ctaBody: string;
     ctaAdvisory: string;
     ctaCni: string;
-    linkWhyHonduras: string;
+    /** @deprecated use catalogEyebrow */
+    sectionEyebrow: string;
+    /** @deprecated use catalogTitleBefore + catalogTitleAccent */
+    sectionTitle: string;
+    /** @deprecated use catalogDescription */
+    sectionDescription: string;
+    /** @deprecated use cardEyebrow */
+    sectorBadge: string;
+    /** @deprecated use cardCta */
+    viewDetail: string;
     sectors: ReadonlyArray<SectorCopy>;
   }
 > = {
   es: {
-    heroEyebrow: "Marco Nacional de Inversión",
-    heroTitleBefore: "Sectores",
-    heroTitleAccent: "Estratégicos",
-    heroTitleAfter: "de Inversión",
-    heroDescription:
-      "Aprovechando la ventaja geográfica única de Honduras y un marco económico estable para ofrecer oportunidades de alto rendimiento en cinco industrias prioritarias.",
-    heroImageAlt: "Paisaje industrial y agrícola",
+    ...SECTORES_INDEX.es,
     stickySector: "Sector",
-    sectionEyebrow: "Cinco motores de la economía hondureña",
-    sectionTitle: "Sectores Estratégicos",
-    sectionDescription:
-      "Cada sector es respaldado por el CNI bajo los regímenes LPPI y ZOLI, con servicios legales, técnicos y de inteligencia de datos sin costo para el inversionista.",
-    sectorBadge: "Sector",
-    viewDetail: "Ver detalle",
     ctaAdvisor: "Conversar con un asesor",
     ctaGuide: "Descargar guía",
-    ctaTitle: "¿Listo para activar su tesis de inversión en Honduras?",
-    ctaBody:
-      "Nuestros asesores institucionales atienden solicitudes específicas: análisis de prefactibilidad, marco legal, visitas in situ y conexión con el ecosistema público-privado.",
     ctaAdvisory: "Asesoría gratuita",
     ctaCni: "Servicios del CNI",
-    linkWhyHonduras: "¿Por qué Honduras?",
+    sectionEyebrow: SECTORES_INDEX.es.catalogEyebrow,
+    sectionTitle: `${SECTORES_INDEX.es.catalogTitleBefore} ${SECTORES_INDEX.es.catalogTitleAccent}`,
+    sectionDescription: SECTORES_INDEX.es.catalogDescription,
+    sectorBadge: SECTORES_INDEX.es.cardEyebrow,
+    viewDetail: SECTORES_INDEX.es.cardCta,
     sectors: getSectors("es"),
   },
   en: {
-    heroEyebrow: "National investment framework",
-    heroTitleBefore: "Strategic",
-    heroTitleAccent: "investment",
-    heroTitleAfter: "sectors",
-    heroDescription:
-      "Leveraging Honduras’ unique geography and a stable economic framework to deliver high-return opportunities across five priority industries.",
-    heroImageAlt: "Industrial and agricultural landscape",
+    ...SECTORES_INDEX.en,
     stickySector: "Sector",
-    sectionEyebrow: "Five engines of the Honduran economy",
-    sectionTitle: "Strategic sectors",
-    sectorBadge: "Sector",
-    sectionDescription:
-      "Each sector is backed by the CNI under LPPI and ZOLI regimes with legal, technical, and data intelligence services at no cost to the investor.",
-    viewDetail: "View details",
     ctaAdvisor: "Talk to an advisor",
     ctaGuide: "Download guide",
-    ctaTitle: "Ready to activate your investment thesis in Honduras?",
-    ctaBody:
-      "Our institutional advisors handle specific requests: pre-feasibility analysis, legal framework, site visits, and connections across the public-private ecosystem.",
     ctaAdvisory: "Free advisory",
     ctaCni: "CNI services",
-    linkWhyHonduras: "Why Honduras?",
+    sectionEyebrow: SECTORES_INDEX.en.catalogEyebrow,
+    sectionTitle: `${SECTORES_INDEX.en.catalogTitleBefore} ${SECTORES_INDEX.en.catalogTitleAccent}`,
+    sectionDescription: SECTORES_INDEX.en.catalogDescription,
+    sectorBadge: SECTORES_INDEX.en.cardEyebrow,
+    viewDetail: SECTORES_INDEX.en.cardCta,
     sectors: getSectors("en"),
   },
 };
+
+/** Acceso al subconjunto de copy usado por la ruta /invertir/sectores (catálogo). */
+export const sectoresIndexCopy = SECTORES_INDEX;

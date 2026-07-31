@@ -239,7 +239,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         "Turismo",
         "Energía",
         "Infraestructura",
-        "BPO / servicios",
+        "Logística y Transporte",
         "Otro",
       ],
       submit: "Enviar postulación",
@@ -355,7 +355,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     sectores: {
       title: "Sectores Estratégicos",
       description:
-        "Cinco motores priorizados por el CNI para canalizar capital extranjero con respaldo legal LPPI y ZOLI.",
+        "Seis motores priorizados por el CNI para canalizar capital extranjero con respaldo legal LPPI y ZOLI.",
       cta: "Ficha sectorial completa →",
       teasers: [
         { name: "Agroindustria", tagline: "Café, cacao y tabaco premium." },
@@ -363,6 +363,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         { name: "Turismo", tagline: "Islas de la Bahía y arqueología Maya." },
         { name: "Energía", tagline: "Solar, eólica e hidroeléctrica." },
         { name: "Infraestructura", tagline: "Puertos, carreteras y conectividad." },
+        { name: "Logística y Transporte", tagline: "Nodo multimodal continental." },
       ],
       more: "Saber más",
     },
@@ -566,7 +567,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         "Tourism",
         "Energy",
         "Infrastructure",
-        "BPO / services",
+        "Logistics and transport",
         "Other",
       ],
       submit: "Send application",
@@ -683,7 +684,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     sectores: {
       title: "Strategic sectors",
       description:
-        "Five priority engines promoted by the CNI to channel foreign capital with LPPI and ZOLI legal backing.",
+        "Six priority engines promoted by the CNI to channel foreign capital with LPPI and ZOLI legal backing.",
       cta: "Full sector brief →",
       teasers: [
         { name: "Agroindustry", tagline: "Coffee, cocoa, and premium tobacco." },
@@ -691,6 +692,7 @@ export const homeCopy: Record<Locale, HomeCopy> = {
         { name: "Tourism", tagline: "Bay Islands and Maya archaeology." },
         { name: "Energy", tagline: "Solar, wind, and hydro." },
         { name: "Infrastructure", tagline: "Ports, roads, and connectivity." },
+        { name: "Logistics and Transport", tagline: "Continental multimodal hub." },
       ],
       more: "Learn more",
     },

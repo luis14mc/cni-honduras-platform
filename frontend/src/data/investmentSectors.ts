@@ -8,6 +8,7 @@ const IMG = {
   tour: designImages.sectors.turismo,
   ene: designImages.sectors.energia,
   infra: designImages.sectors.infraestructura,
+  log: designImages.sectors.logistica,
 } as const;
 
 export type SectorCopy = {
@@ -19,7 +20,7 @@ export type SectorCopy = {
   image: string;
 };
 
-export const SECTOR_SLUGS = ["agroindustria", "manufactura", "turismo", "energia", "infraestructura"] as const;
+export const SECTOR_SLUGS = ["agroindustria", "manufactura", "turismo", "energia", "infraestructura", "logistica"] as const;
 export type SectorSlug = (typeof SECTOR_SLUGS)[number];
 
 export function isSectorSlug(value: string): value is SectorSlug {
@@ -34,6 +35,7 @@ export const SECTOR_DISPLAY_NAMES: Record<Locale, Record<SectorSlug, string>> = 
     turismo: "Turismo",
     energia: "Energía",
     infraestructura: "Infraestructura",
+    logistica: "Logística y Transporte",
   },
   en: {
     agroindustria: "Agroindustry",
@@ -41,6 +43,7 @@ export const SECTOR_DISPLAY_NAMES: Record<Locale, Record<SectorSlug, string>> = 
     turismo: "Tourism",
     energia: "Energy",
     infraestructura: "Infrastructure",
+    logistica: "Logistics and Transport",
   },
 };
 
@@ -94,6 +97,15 @@ const esSectores: ReadonlyArray<SectorCopy> = [
     highlights: ["Puerto Cortés", "Corredor logístico", "Zonas francas", "Energía y conectividad"],
     image: IMG.infra,
   },
+  {
+    slug: "logistica",
+    name: SECTOR_DISPLAY_NAMES.es.logistica,
+    short: "Conectividad multimodal y servicios de valor agregado para el comercio global.",
+    fullText:
+      "Honduras opera como nodo logístico estratégico del continente: dos costas, puertos de aguas profundas, corredores secos y servicios de valor agregado que enlazan la producción regional con los mercados de Norteamérica y Europa.",
+    highlights: ["Puerto Cortés (Caribe)", "Corredor Pacífico", "Nodos ZOLI", "Servicios 3PL"],
+    image: IMG.log,
+  },
 ];
 
 const enSectores: ReadonlyArray<SectorCopy> = [
@@ -141,6 +153,15 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Ports, roads, energy, and logistics zones linking productive investment to global markets under LPPI and public-private partnerships.",
     highlights: ["Puerto Cortés", "Logistics corridor", "Free zones", "Energy & connectivity"],
     image: IMG.infra,
+  },
+  {
+    slug: "logistica",
+    name: SECTOR_DISPLAY_NAMES.en.logistica,
+    short: "Multimodal connectivity and value-added services for global trade.",
+    fullText:
+      "Honduras operates as a strategic continental logistics hub: two coasts, deep-water ports, dry corridors and value-added services linking regional production with the North American and European markets.",
+    highlights: ["Puerto Cortés (Caribbean)", "Pacific corridor", "ZOLI nodes", "3PL services"],
+    image: IMG.log,
   },
 ];
 

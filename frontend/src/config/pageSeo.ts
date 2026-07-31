@@ -47,8 +47,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Invest in Honduras · Strategic Sectors and Competitive Advantages",
     },
     description: {
-      es: "Conozca los cinco sectores estratégicos de inversión en Honduras: agroindustria premium, manufactura textil nearshoring, turismo sustentable, energía renovable y BPO multilingüe.",
-      en: "Discover Honduras's five strategic investment sectors: premium agroindustry, nearshoring textile manufacturing, sustainable tourism, renewable energy and multilingual BPO.",
+      es: "Conozca los seis sectores estratégicos de inversión en Honduras: agroindustria, manufactura, turismo, energía renovable, infraestructura y logística y transporte.",
+      en: "Discover Honduras's six strategic investment sectors: agroindustry, manufacturing, tourism, renewable energy, infrastructure, and logistics and transport.",
     },
     keywords: [
       "Sectores Honduras",
@@ -80,8 +80,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Investment Sectors in Honduras · Strategic Catalog",
     },
     description: {
-      es: "Explore el catálogo completo de sectores priorizados por el CNI: agroindustria, manufactura, turismo, energía renovable e infraestructura, con métricas y casos de éxito.",
-      en: "Explore the complete catalog of CNI-prioritized sectors: agroindustry, manufacturing, tourism, renewable energy and infrastructure, with metrics and success stories.",
+      es: "Explore el catálogo completo de los seis sectores priorizados por el CNI: agroindustria, manufactura, turismo, energía renovable, infraestructura y logística y transporte, con métricas y casos de éxito.",
+      en: "Explore the complete catalog of six CNI-prioritized sectors: agroindustry, manufacturing, tourism, renewable energy, infrastructure, and logistics and transport, with metrics and success stories.",
     },
   },
   crecer: {

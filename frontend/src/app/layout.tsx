@@ -69,7 +69,7 @@ export const metadata: Metadata = {
     siteName: "CNI Honduras",
     title: "CNI Honduras · Consejo Nacional de Inversiones",
     description:
-      "Promovemos y protegemos la Inversión Extranjera Directa en Honduras. Sectores estratégicos: agroindustria, manufactura, turismo, energía renovable e infraestructura.",
+      "Promovemos y protegemos la Inversión Extranjera Directa en Honduras. Sectores estratégicos: agroindustria, manufactura, turismo, energía renovable, infraestructura y logística y transporte.",
     url: "/",
   },
   twitter: {

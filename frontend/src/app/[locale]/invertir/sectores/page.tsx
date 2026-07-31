@@ -1,18 +1,12 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { PageHero } from "@/src/components/cni/PageHero";
-import { Section, SectionHeader } from "@/src/components/cni/Section";
-import { SectorTeaserCard } from "@/src/components/cni/SectorTeaserCard";
+import { SectoresPageView } from "@/src/components/cni/SectoresPageView";
 import {
   getSectors as getStaticSectors,
   isSectorSlug,
   type SectorCopy,
-  type SectorSlug,
 } from "@/src/data/investmentSectors";
-import { isLocale } from "@/src/i18n/config";
-import type { Locale } from "@/src/i18n/config";
-import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
-import { getPathById } from "@/src/config/siteNavigation";
+import { isLocale, type Locale } from "@/src/i18n/config";
+import { sectoresIndexCopy } from "@/src/i18n/copy/invertirPage";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getSectors as getApiSectors } from "@/src/services/investment";
@@ -26,17 +20,24 @@ type SectorCardData = SectorCopy & {
 
 async function loadSectors(locale: Locale): Promise<ReadonlyArray<SectorCardData>> {
   const fallbackSectors = getStaticSectors(locale);
+  const fallbackBySlug = new Map(fallbackSectors.map((sector) => [sector.slug, sector]));
+  const fallbackOrder = new Map(fallbackSectors.map((sector, index) => [sector.slug, index]));
 
   try {
     const apiSectors = await getApiSectors();
-    if (apiSectors.length === 0) return fallbackSectors;
 
-    const fallbackBySlug = new Map(fallbackSectors.map((sector) => [sector.slug, sector]));
-    const fallbackOrder = new Map(fallbackSectors.map((sector, index) => [sector.slug, index]));
+    // Merge API con fallback: API gana en campos editables; los slugs que NO
+    // estén en la API conservan su ficha estática para no perder sectores canónicos.
+    const apiBySlug = new Map<string, Sector>();
+    for (const sector of apiSectors) apiBySlug.set(sector.slug, sector);
 
-    const mergedSectors = apiSectors
-      .map((sector): SectorCardData | null => mergeApiSector(sector, fallbackBySlug))
-      .filter((sector): sector is SectorCardData => sector !== null)
+    const mergedSectors = fallbackSectors
+      .map((fallback): SectorCardData => {
+        const api = apiBySlug.get(fallback.slug);
+        if (!api) return { ...fallback };
+        if (!isSectorSlug(api.slug)) return { ...fallback };
+        return mergeApiSector(api, fallbackBySlug) ?? { ...fallback };
+      })
       .sort((a, b) => {
         const orderA = a.order ?? fallbackOrder.get(a.slug) ?? 0;
         const orderB = b.order ?? fallbackOrder.get(b.slug) ?? 0;
@@ -73,49 +74,8 @@ export default async function SectoresIndexPage({ params }: { params: Promise<{ 
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
-  const c = invertirPageCopy[locale];
+  const copy = sectoresIndexCopy[locale];
   const sectors = await loadSectors(locale);
 
-  return (
-    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
-      <div className="-mt-28">
-        <PageHero
-          eyebrow={c.sectionEyebrow}
-          title={c.sectionTitle}
-          description={c.sectionDescription}
-          heightClass="min-h-[420px] md:min-h-[480px]"
-        />
-      </div>
-      <Section tone="white">
-        <SectionHeader
-          eyebrow={c.heroEyebrow}
-          title={c.heroTitleBefore + " " + c.heroTitleAccent}
-          description={c.heroDescription}
-          action={
-            <Link
-              href={getPathById("invertir", locale)!}
-              className="border-b-2 border-[#35A963] pb-1 text-sm font-bold uppercase tracking-widest text-[#252A58] hover:text-[#35A963]"
-            >
-              {locale === "en" ? "Investment overview" : "Vista general de inversión"} →
-            </Link>
-          }
-        />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sectors.map((sector, idx) => (
-            <SectorTeaserCard
-              key={sector.slug}
-              locale={locale}
-              slug={sector.slug as SectorSlug}
-              name={sector.name}
-              short={sector.short}
-              image={sector.image}
-              badge={c.sectorBadge}
-              badgeIndex={idx}
-              viewDetailLabel={c.viewDetail}
-            />
-          ))}
-        </div>
-      </Section>
-    </div>
-  );
+  return <SectoresPageView locale={locale} copy={copy} sectors={sectors} />;
 }

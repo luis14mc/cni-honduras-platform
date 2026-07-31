@@ -351,6 +351,74 @@ const DETAIL: Record<SectorSlug, Record<Locale, SectorPageExtra>> = {
       backToSectors: "← All sectors",
     },
   },
+  logistica: {
+    es: {
+      heroBadge: "Nodo logístico continental",
+      heroTitleBefore: "Logística y Transporte:",
+      heroTitleAccent: "Dos costas,",
+      heroTitleAfter: "un solo corredor.",
+      stats: [
+        { value: "78.6%", label: "Movimiento portuario nacional" },
+        { value: "48h", label: "Ventana a mercados EE.UU." },
+        { value: "2", label: "Costos · Atlántico y Pacífico" },
+      ],
+      valueTitle: "Conectividad multimodal de clase mundial",
+      valueLead:
+        "Honduras opera como puente logístico entre los océanos, integrando puertos de aguas profundas, corredores secos, nodos ZOLI y servicios de valor agregado para el comercio regional.",
+      advantages: [
+        {
+          title: "Puerto Cortés",
+          text: "Principal puerto del Caribe Centroamericano con capacidad de expansión, dragado profundo y servicios 24/7.",
+        },
+        {
+          title: "Corredor Pacífico",
+          text: "Acceso terrestre a puertos del Pacífico y conexión logística con Centroamérica y México.",
+        },
+        {
+          title: "Servicios 3PL y ZOLI",
+          text: "Nodos de distribución, empaque, etiquetado y consolidación bajo regímenes aduaneros preferenciales.",
+          wide: true,
+        },
+      ],
+      analysisEyebrow: "Operaciones",
+      analysisTitle: "Cadena de suministro nearshoring",
+      analysisIntro: "Optimización de inventarios, tiempos puerto-a-puerta y servicios de valor agregado para marcas globales.",
+      backToSectors: "← Todos los sectores",
+    },
+    en: {
+      heroBadge: "Continental logistics hub",
+      heroTitleBefore: "Logistics & Transport:",
+      heroTitleAccent: "Two coasts,",
+      heroTitleAfter: "one corridor.",
+      stats: [
+        { value: "78.6%", label: "National port throughput" },
+        { value: "48h", label: "Window to U.S. markets" },
+        { value: "2", label: "Coasts · Atlantic & Pacific" },
+      ],
+      valueTitle: "World-class multimodal connectivity",
+      valueLead:
+        "Honduras operates as a logistics bridge between oceans, integrating deep-water ports, dry corridors, ZOLI nodes and value-added services for regional trade.",
+      advantages: [
+        {
+          title: "Puerto Cortés",
+          text: "Central America's leading Caribbean port with expansion capacity, deep dredging and 24/7 services.",
+        },
+        {
+          title: "Pacific corridor",
+          text: "Land access to Pacific ports and logistical connection across Central America and Mexico.",
+        },
+        {
+          title: "3PL services and ZOLI",
+          text: "Distribution, packaging, labeling and consolidation hubs under preferential customs regimes.",
+          wide: true,
+        },
+      ],
+      analysisEyebrow: "Operations",
+      analysisTitle: "Nearshoring supply chain",
+      analysisIntro: "Inventory optimization, port-to-door transit times, and value-added services for global brands.",
+      backToSectors: "← All sectors",
+    },
+  },
 };
 
 export function getSectorPageExtra(slug: SectorSlug, locale: Locale): SectorPageExtra {

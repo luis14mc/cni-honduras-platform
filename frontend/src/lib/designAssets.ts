@@ -36,6 +36,8 @@ export const designImages = {
       "https://lh3.googleusercontent.com/aida/ADBb0uiVvDD_5X4aAq6ldncZ7oxvaVNIhK2ylDI2mwdG5ZR82JZT6PdcZNf_ZPBgSGNqFQwa5HaumTkq4Yv_fWXM15eg9kEpPseU5XyNMJY7yVrC0bMqVh90Sig3kd4xX5ggvcudbjDoZ8dT-l78Av54v7jKds3loytZC1AqmcuFUwshL2z9kq2I7R6NLE3dGHK44eiYDb4hVw8u66R1i1gxnfHCVyrbG9ZnuTANkDfeLLc8_weOPfgbVtE2HT5y",
     infraestructura:
       "https://lh3.googleusercontent.com/aida/ADBb0ui7nETWh-bpAJkFeMV-Uww_D1faj8jmh5sBWrEAYLjifONxDK_CqDcQIcI3xDqYmO1qzTFp6OklIsjrJkO_zJowJlgvAOuuyrq3JQcql-5vW4iy2B0mPYjq3rbjHhsdjUf_j8irk6HxnJoFYG8D7yf8fCHKWhYbbBZYWyyDVWtOjJdbTRmQLD_9jWMB9Z3vUYo16RxnNtUcagZzjfOJYQmmKGjrkix63p1vXjUwH7RjAdIg7SSR-Ii10Gq7",
+    logistica:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDP94any0hrG8wYlaUsUans1s0ua-sWIyUY_xyZUL36DUdHA6mLRh_iT9wyaOiApwFlkCyuu_i49fbvrGSLBTEf7hNUuACHdk1kfyEEmI9HNH_oUyFzIND9s83i9GLA5QIfMRNVIokDvTCRBCePgVMSC2-rYyv03WC1GmxzTUqsfibGusvG6Lixvydt3d7uGK4wlsCTwzd1zXDFu_0n3lNptWXGQvQjSpq40T9bPHMxIUsC6oqAzJuKlsUiJmuS2btlJlbTYxCr66YD",
   },
   vivir: {
     hero:
