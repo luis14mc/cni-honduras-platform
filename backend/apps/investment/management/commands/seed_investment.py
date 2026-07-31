@@ -73,6 +73,18 @@ SECTORS = [
         "color_hex": "#546E7A",
         "order": 5,
     },
+    {
+        "name": "Logística y Transporte",
+        "slug": "logistica",
+        "short_description": "Conectividad multimodal y servicios de valor agregado.",
+        "description": (
+            "Honduras opera como nodo logístico estratégico del continente con dos costas, "
+            "puertos de aguas profundas, corredores secos y servicios 3PL bajo regímenes "
+            "ZOLI que enlazan la producción regional con Norteamérica y Europa."
+        ),
+        "color_hex": "#2EB29C",
+        "order": 6,
+    },
 ]
 
 OPPORTUNITIES = [

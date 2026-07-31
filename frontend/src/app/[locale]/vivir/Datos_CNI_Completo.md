@@ -23,7 +23,7 @@ Home (Ruta: /)
 
 Invertir en Honduras (Dropdown)
 
-Sectores de Inversión (Agroindustria, Manufactura, Turismo, Energía, BPO)
+Sectores de Inversión (Agroindustria, Manufactura, Turismo, Energía, Infraestructura, Logística y Transporte)
 
 Crecer en Honduras (Dropdown)
 
@@ -75,7 +75,9 @@ Turismo Sustentable: Desarrollo costero, Islas de la Bahía (Roatán), barreras 
 
 Energía Renovable: Matriz energética con más del 60% de generación limpia. Proyectos solares fotovoltaicos, eólicos e hidroeléctricos.
 
-BPO / Call Centers: Fuerza laboral joven, con inglés neutro y alta adaptabilidad para centros de servicios globales.
+Infraestructura: Puertos, carreteras, energía y zonas logísticas que articulan la inversión productiva con los mercados globales bajo marco LPPI y alianzas público-privadas.
+
+Logística y Transporte: Conectividad multimodal y servicios de valor agregado para el comercio global, con dos costas (Atlántico y Pacífico) y nodos ZOLI.
 
 PÁGINA: CRECER EN HONDURAS (/crecer)
 
