@@ -1,4 +1,7 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
+
+from apps.cms.admin import EditorialAdminMixin
 
 from .models import (
     InvestmentOpportunity,
@@ -9,7 +12,7 @@ from .models import (
 
 
 @admin.register(Sector)
-class SectorAdmin(admin.ModelAdmin):
+class SectorAdmin(TranslationAdmin):
     list_display = ("name", "slug", "is_featured", "is_active", "order", "updated_at")
     list_filter = ("is_featured", "is_active")
     search_fields = ("name", "slug", "description", "short_description")
@@ -62,19 +65,27 @@ class InvestmentProjectAdmin(admin.ModelAdmin):
 
 
 @admin.register(SuccessStory)
-class SuccessStoryAdmin(admin.ModelAdmin):
-    list_display = ("title", "company_name", "sector", "is_public", "is_featured", "updated_at")
-    list_filter = ("is_public", "is_featured", "sector")
+class SuccessStoryAdmin(EditorialAdminMixin, TranslationAdmin):
+    list_display = (
+        "title",
+        "company_name",
+        "sector",
+        "status",
+        "is_featured",
+        "order",
+        "updated_at",
+    )
+    list_filter = ("status", "is_featured", "sector")
     search_fields = ("title", "slug", "company_name", "summary", "content")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ("sector",)
+    autocomplete_fields = ("sector", "logo")
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "company_name", "country_origin")}),
-        ("Contenido", {"fields": ("summary", "content", "image")}),
-        ("Clasificación", {"fields": ("sector",)}),
+        (None, {"fields": ("title", "slug", "company_name", "country_origin", "status", "published_at")}),
+        ("Contenido", {"fields": ("summary", "content", "image", "logo")}),
+        ("Testimonial", {"fields": ("testimonial_quote", "testimonial_author")}),
+        ("Clasificación", {"fields": ("sector", "order", "is_featured")}),
         ("Datos", {"fields": ("investment_amount", "jobs_generated")}),
-        ("Visibilidad", {"fields": ("is_public", "is_featured")}),
-        ("Metadatos", {"fields": ("created_at", "updated_at")}),
+        ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )

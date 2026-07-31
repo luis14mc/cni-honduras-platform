@@ -6,3 +6,7 @@ class CmsConfig(AppConfig):
     name = "apps.cms"
     label = "cms"
     verbose_name = "CMS"
+
+    def ready(self):
+        from . import translation  # noqa: F401
+

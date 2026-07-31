@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.core.api import LocalizedViewSetMixin
 from apps.geo.models import Department
 
 from .filters import apply_slug_filter, parse_bool_param
@@ -18,7 +19,7 @@ from .serializers import (
 )
 
 
-class SectorViewSet(viewsets.ReadOnlyModelViewSet):
+class SectorViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = SectorSerializer
     lookup_field = "slug"
 
@@ -75,19 +76,22 @@ class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-class SuccessStoryViewSet(viewsets.ReadOnlyModelViewSet):
+class SuccessStoryViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = SuccessStorySerializer
     lookup_field = "slug"
 
     def get_queryset(self):
         queryset = (
-            SuccessStory.objects.select_related("sector")
-            .filter(is_public=True)
+            SuccessStory.objects.published()
+            .select_related("sector", "logo")
             .order_by(*SuccessStory._meta.ordering)
         )
         sector_slug = self.request.query_params.get("sector")
         if sector_slug:
             queryset = queryset.filter(sector__slug=sector_slug)
+        featured = parse_bool_param(self.request.query_params.get("featured"))
+        if featured is not None:
+            queryset = queryset.filter(is_featured=featured)
         return queryset
 
 

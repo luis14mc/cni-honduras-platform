@@ -1,3 +1,19 @@
+import type { Locale } from "@/src/i18n/config";
+
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+export function unwrapPage<T>(payload: PaginatedResponse<T> | T[]): T[] {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+  return payload.results ?? [];
+}
+
 const DEFAULT_API_BASE_URL = "http://localhost:8000/api/v1";
 
 export const API_BASE_URL = (
@@ -21,14 +37,24 @@ function joinApiPath(base: string, path: string): string {
   return `${base}${normalizedPath}`;
 }
 
-export async function apiGet<T>(path: string): Promise<T> {
-  const url = joinApiPath(API_BASE_URL, path);
+function withLang(path: string, locale?: Locale): string {
+  if (!locale) return path;
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}lang=${encodeURIComponent(locale)}`;
+}
+
+export type FetchOptions = RequestInit & { locale?: Locale };
+
+export async function apiGet<T>(path: string, options: FetchOptions = {}): Promise<T> {
+  const { locale, ...init } = options;
+  const url = joinApiPath(API_BASE_URL, withLang(path, locale));
 
   let response: Response;
   try {
     response = await fetch(url, {
       method: "GET",
       headers: { Accept: "application/json" },
+      ...init,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Network error";
@@ -59,6 +85,14 @@ export async function apiGet<T>(path: string): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+export async function apiGetList<T>(
+  path: string,
+  options: FetchOptions = {},
+): Promise<T[]> {
+  const payload = await apiGet<PaginatedResponse<T> | T[]>(path, options);
+  return unwrapPage(payload);
 }
 
 export async function apiPost<TResponse, TPayload = unknown>(

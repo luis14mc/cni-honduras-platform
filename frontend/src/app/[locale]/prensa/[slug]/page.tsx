@@ -46,9 +46,9 @@ const categoryLabels: Record<Locale, Record<NewsCategory, string>> = {
   },
 };
 
-async function loadArticle(slug: string): Promise<NewsArticle | null> {
+async function loadArticle(slug: string, locale: Locale): Promise<NewsArticle | null> {
   try {
-    return await getNewsArticle(slug);
+    return await getNewsArticle(slug, { locale });
   } catch {
     return null;
   }
@@ -83,7 +83,7 @@ export default async function PrensaArticlePage({
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const article = await loadArticle(slug);
+  const article = await loadArticle(slug, locale);
   if (!article) notFound();
 
   const body = paragraphs(article.content);

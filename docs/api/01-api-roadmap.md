@@ -25,13 +25,28 @@ Estado y plan de la API REST (Django + DRF). **Base preferida:** `/api/v1/`.
 | Casos de éxito | GET | `/success-stories/` | Filtro sector |
 | **Map summary** | GET | `/map-summary/` | Agregado por departamento |
 
-## Implementado — `/api/v1/cms/`
+## Implementado — `/api/v1/cms/` (actualizado 2026-07-31)
 
 | Recurso | Método | Ruta | Notas |
 |---------|--------|------|-------|
-| Páginas | GET | `/pages/` | |
-| Noticias | GET | `/news/` | Usado en home/prensa |
-| Documentos | GET | `/documents/` | |
+| Páginas | GET | `/pages/` | Paginado, `?lang=` |
+| Noticias | GET | `/news/` | Paginado, `?category=`, `?featured=`, `?lang=` |
+| Documentos | GET | `/documents/` | Paginado, `?category=`, `?featured=`, slug lookup, `?lang=` |
+| Enlaces institucionales | GET | `/institutional-links/` | `?section=`, `?lang=` |
+| Banners | GET | `/banners/` | `?placement=`, ventana temporal, `?lang=` |
+
+## CMS bilingüe
+
+- [x] django-modeltranslation (`_es` / `_en`) en News, Page, Document, SuccessStory, Sector, links, banners.
+- [x] Fallback ES vía `MODELTRANSLATION_FALLBACK_LANGUAGES`.
+- [x] Slug único compartido entre idiomas.
+
+## Seguridad base
+
+- [x] Paginación DRF (20 ítems).
+- [x] Throttle anónimo 120/min; forms 10/min.
+- [x] Integrations API: `IsAdminUser`.
+- [x] Grupos Editor / Publicador con permiso `cms.can_publish`.
 
 ## Implementado — `/api/v1/forms/`
 

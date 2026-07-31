@@ -6,3 +6,7 @@ class InvestmentConfig(AppConfig):
     name = "apps.investment"
     label = "investment"
     verbose_name = "Inversión"
+
+    def ready(self):
+        from . import translation  # noqa: F401
+

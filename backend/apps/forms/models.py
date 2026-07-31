@@ -95,6 +95,14 @@ class ResourceDownloadLead(BaseSubmission):
     resource_name = models.CharField(
         max_length=255, blank=True, default="", verbose_name="Recurso solicitado"
     )
+    document = models.ForeignKey(
+        "cms.Document",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="download_leads",
+        verbose_name="Documento",
+    )
     details = models.TextField(blank=True, default="", verbose_name="Detalles")
 
     class Meta(BaseSubmission.Meta):

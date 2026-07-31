@@ -1,14 +1,8 @@
 from rest_framework import serializers
 
-from apps.media_library.models import MediaAsset
+from apps.media_library.serializers import MediaAssetLiteSerializer
 
-from .models import Document, News, Page
-
-
-class MediaAssetLiteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MediaAsset
-        fields = ("id", "title", "file", "alt_text", "caption", "media_type", "created_at")
+from .models import Document, InstitutionalLink, News, Page, SiteBanner
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -57,6 +51,8 @@ class NewsSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
+    cover_image = MediaAssetLiteSerializer(read_only=True)
+
     class Meta:
         model = Document
         fields = (
@@ -66,8 +62,52 @@ class DocumentSerializer(serializers.ModelSerializer):
             "file",
             "description",
             "category",
-            "is_public",
+            "is_featured",
+            "order",
+            "cover_image",
+            "file_type",
+            "file_size_bytes",
+            "published_at",
             "created_at",
             "updated_at",
         )
 
+
+class InstitutionalLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstitutionalLink
+        fields = (
+            "id",
+            "section",
+            "title",
+            "description",
+            "url",
+            "is_external",
+            "icon",
+            "accent_color",
+            "order",
+        )
+
+
+class SiteBannerSerializer(serializers.ModelSerializer):
+    image = MediaAssetLiteSerializer(read_only=True)
+
+    class Meta:
+        model = SiteBanner
+        fields = (
+            "id",
+            "placement",
+            "title",
+            "body",
+            "cta_label",
+            "starts_at",
+            "ends_at",
+            "priority",
+            "link_url",
+            "link_external",
+            "dismissible",
+            "background_color",
+            "text_color",
+            "image",
+            "published_at",
+        )

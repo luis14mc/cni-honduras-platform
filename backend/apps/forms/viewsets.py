@@ -4,6 +4,7 @@ from decimal import Decimal
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 
+from apps.forms.throttles import FormsRateThrottle
 from apps.integrations.models import WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED, WEBHOOK_SOURCE_WEBSITE, WebhookEvent
 
 from .models import AdvisoryRequest, ContactSubmission, ProjectApplication, ResourceDownloadLead
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 class PublicCreateViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = (AllowAny,)
+    throttle_classes = (FormsRateThrottle,)
 
 
 def build_project_application_webhook_payload(submission: ProjectApplication) -> dict:

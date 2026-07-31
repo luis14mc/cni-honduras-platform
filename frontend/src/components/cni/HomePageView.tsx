@@ -7,11 +7,13 @@ import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
-import type { NewsArticle, NewsCategory } from "@/src/types/cms";
+import type { NewsArticle, NewsCategory, InstitutionalLink } from "@/src/types/cms";
+import type { Sector, SuccessStory } from "@/src/types/investment";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
 import { designImages } from "@/src/lib/designAssets";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
+import { getSectorDisplayName, type SectorSlug } from "@/src/data/investmentSectors";
 import { slugify } from "@/src/lib/slugify";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
@@ -22,6 +24,9 @@ import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection"
 type Props = {
   locale: Locale;
   latestNews?: NewsArticle[];
+  featuredStories?: SuccessStory[];
+  apiSectors?: Sector[];
+  interestLinks?: InstitutionalLink[];
 };
 
 const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
@@ -73,7 +78,13 @@ function statBackTextSize(text: string): string {
   return "text-sm md:text-[15px] leading-relaxed";
 }
 
-export function HomePageView({ locale, latestNews = [] }: Props) {
+export function HomePageView({
+  locale,
+  latestNews = [],
+  featuredStories = [],
+  apiSectors = [],
+  interestLinks = [],
+}: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
   const visibleNews = latestNews.slice(0, 3);
@@ -121,81 +132,62 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
 
   const CLIMA_DATA = ledgerCharts.clima;
 
-  // Sectores estratégicos — paleta distintiva por sector
-  const sectorsData = [
-    {
-      slug: "agroindustria",
-      iconSrc: sectorIconAssets.agroindustria.src,
-      accent: "#93C01F",
-      name: locale === "es" ? "Agroindustria" : "Agroindustry",
-      desc:
-        locale === "es"
-          ? "Liderazgo regional consolidado en café, banano y productos de alto valor no tradicionales."
-          : "Consolidated regional leadership in coffee, bananas, and high-value non-traditional products.",
-      img: designImages.sectors.agroindustria,
-      href: getSectorHref(locale, "agroindustria"),
-    },
-    {
-      slug: "manufactura",
-      iconSrc: sectorIconAssets.manufactura.src,
-      accent: "#7C25A8",
-      name: locale === "es" ? "Manufactura" : "Manufacturing",
-      desc:
-        locale === "es"
-          ? "Hub logístico estratégico para textiles técnicos y autopartes con acceso preferencial a Norteamérica."
-          : "Strategic logistics hub for technical textiles and auto parts with preferential access to North America.",
-      img: designImages.sectors.manufactura,
-      href: getSectorHref(locale, "manufactura"),
-    },
-    {
-      slug: "energia",
-      iconSrc: sectorIconAssets.energia.src,
-      accent: "#F7BF06",
-      name: locale === "es" ? "Energía" : "Energy",
-      desc:
-        locale === "es"
-          ? "Incentivos para el desarrollo de proyectos solares, eólicos e hidroeléctricos a gran escala."
-          : "Incentives for the development of large-scale solar, wind, and hydroelectric projects.",
-      img: designImages.sectors.energia,
-      href: getSectorHref(locale, "energia"),
-    },
-    {
-      slug: "logistica",
-      iconSrc: sectorIconAssets.logistica.src,
-      accent: "#2EB29C",
-      name: locale === "es" ? "Logística y Transporte" : "Logistics and Transport",
-      desc:
-        locale === "es"
-          ? "Conectividad multimodal y servicios de valor agregado para el comercio global eficiente."
-          : "Multimodal connectivity and value-added services for efficient global trade.",
-      img: designImages.sectors.logistica,
-      href: getSectorHref(locale, "logistica"),
-    },
-    {
-      slug: "turismo",
-      iconSrc: sectorIconAssets.turismo.src,
-      accent: "#57D0E1",
-      name: locale === "es" ? "Turismo" : "Tourism",
-      desc:
-        locale === "es"
-          ? "Destino de clase mundial para ecoturismo, arqueología y playas vírgenes con incentivos fiscales."
-          : "World-class destination for ecotourism, archaeology, and pristine beaches with fiscal incentives.",
-      img: designImages.sectors.turismo,
-      href: getSectorHref(locale, "turismo"),
-    },
-    {
-      slug: "infraestructura",
-      iconSrc: sectorIconAssets.infraestructura.src,
-      accent: "#F98639",
-      name: locale === "es" ? "Infraestructura" : "Infrastructure",
-      desc:
-        locale === "es"
-          ? "Desarrollo de corredores interoceánicos, modernización portuaria y zonas de empleo especial."
-          : "Development of interoceanic corridors, port modernization, and special employment zones.",
-      img: designImages.sectors.infraestructura,
-      href: getSectorHref(locale, "infraestructura"),
-    },
-  ];
+  const sectorsData = useMemo(() => {
+    const staticSectors = [
+      {
+        slug: "agroindustria",
+        iconSrc: sectorIconAssets.agroindustria.src,
+        accent: "#93C01F",
+        img: designImages.sectors.agroindustria,
+      },
+      {
+        slug: "manufactura",
+        iconSrc: sectorIconAssets.manufactura.src,
+        accent: "#7C25A8",
+        img: designImages.sectors.manufactura,
+      },
+      {
+        slug: "energia",
+        iconSrc: sectorIconAssets.energia.src,
+        accent: "#F7BF06",
+        img: designImages.sectors.energia,
+      },
+      {
+        slug: "logistica",
+        iconSrc: sectorIconAssets.logistica.src,
+        accent: "#2EB29C",
+        img: designImages.sectors.logistica,
+      },
+      {
+        slug: "turismo",
+        iconSrc: sectorIconAssets.turismo.src,
+        accent: "#57D0E1",
+        img: designImages.sectors.turismo,
+      },
+      {
+        slug: "infraestructura",
+        iconSrc: sectorIconAssets.infraestructura.src,
+        accent: "#F98639",
+        img: designImages.sectors.infraestructura,
+      },
+    ];
+
+    return staticSectors.map((base) => {
+      const fromApi = apiSectors.find((sector) => sector.slug === base.slug);
+      const slug = base.slug as SectorSlug;
+      return {
+        ...base,
+        name: fromApi?.name ?? getSectorDisplayName(locale, slug),
+        desc:
+          fromApi?.short_description ||
+          fromApi?.description ||
+          (locale === "es"
+            ? "Sector estratégico para la inversión en Honduras."
+            : "Strategic sector for investment in Honduras."),
+        href: getSectorHref(locale, base.slug),
+      };
+    });
+  }, [apiSectors, locale]);
 
   const partnerBenefits =
     locale === "es"
@@ -233,12 +225,27 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
     },
   ] as const;
 
-  const testimonialCards = testimonialsCopy.items.map((item, index) => ({
-    ...item,
-    ...testimonialMeta[index],
-  }));
+  const testimonialCards =
+    featuredStories.length > 0
+      ? featuredStories.slice(0, 2).map((story, index) => ({
+          name: story.testimonial_author || story.company_name || story.title,
+          role: story.company_name,
+          quote: story.testimonial_quote || story.summary,
+          caseTitle: story.title,
+          photo: story.image || designImages.casos.sinclair,
+          logo: story.logo?.file || homeSuccessStoryAssets[index]?.logo || designImages.casos.sinclair,
+          logoAlt: story.title,
+        }))
+      : testimonialsCopy.items.map((item, index) => ({
+          ...item,
+          ...testimonialMeta[index],
+        }));
 
-  const caseHref = (title: string) => L(`/portafolio/casos/${slugify(title)}`);
+  const caseHref = (title: string) => {
+    const fromApi = featuredStories.find((story) => story.title === title);
+    if (fromApi) return L(`/portafolio/casos/${fromApi.slug}`);
+    return L(`/portafolio/casos/${slugify(title)}`);
+  };
 
   // Obtener copias específicas para mayor legibilidad
   const dCopy = hc.graficosDashboard ?? {
@@ -459,7 +466,7 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
         </div>
       </section>
 
-      <InterestLinksSection locale={locale} />
+      <InterestLinksSection locale={locale} links={interestLinks} />
 
       {/* 5. Why Honduras Slider */}
       <section className="py-32 bg-cni-primary text-white overflow-hidden">

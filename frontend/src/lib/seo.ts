@@ -35,7 +35,7 @@ export function buildMetadata(seo: PageSeo, locale: Locale): Metadata {
     keywords: seo.keywords,
     alternates: {
       canonical,
-      languages: { es: seo.canonical, en: seo.enMirror },
+      languages: { es: seo.canonical, en: seo.enMirror, "x-default": seo.canonical },
     },
     openGraph: {
       title,
@@ -49,6 +49,34 @@ export function buildMetadata(seo: PageSeo, locale: Locale): Metadata {
       title,
       description,
       images: seo.ogImage ? [seo.ogImage] : undefined,
+    },
+  };
+}
+
+export function buildDetailMetadata(options: {
+  locale: Locale;
+  slugPath: string;
+  title: string;
+  description?: string;
+  image?: string | null;
+}): Metadata {
+  const { locale, slugPath, title, description, image } = options;
+  const esPath = slugPath.startsWith("/") ? slugPath : `/${slugPath}`;
+  const enPath = `/en${esPath}`;
+
+  return {
+    title,
+    description: description ?? title,
+    alternates: {
+      canonical: locale === "es" ? esPath : enPath,
+      languages: { es: esPath, en: enPath, "x-default": esPath },
+    },
+    openGraph: {
+      title,
+      description: description ?? title,
+      url: locale === "es" ? esPath : enPath,
+      type: "article",
+      images: image ? [{ url: image, alt: title }] : undefined,
     },
   };
 }

@@ -3,10 +3,12 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Navbar from "@/src/components/layout/Navbar";
 import Footer from "@/src/components/layout/Footer";
+import { SiteBannerBar } from "@/src/components/layout/SiteBannerBar";
 import { HtmlLang } from "@/src/components/layout/HtmlLang";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
+import { getSiteBanners, getInstitutionalLinks } from "@/src/services/cms";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ locale: string }> },
@@ -32,6 +34,20 @@ export default async function LocaleLayout({
   const locale = raw as Locale;
   const skip = layoutCopy[locale].skipToContent;
 
+  let banners = [];
+  try {
+    banners = await getSiteBanners("site_top", { locale });
+  } catch {
+    banners = [];
+  }
+
+  let footerLinks = [];
+  try {
+    footerLinks = await getInstitutionalLinks("footer_external", { locale });
+  } catch {
+    footerLinks = [];
+  }
+
   return (
     <>
       <HtmlLang locale={locale} />
@@ -41,11 +57,12 @@ export default async function LocaleLayout({
       >
         {skip}
       </a>
+      <SiteBannerBar locale={locale} banners={banners} />
       <Navbar />
       <main id="main-content" className="flex flex-1 flex-col pt-[5.25rem]">
         {children}
       </main>
-      <Footer />
+      <Footer externalLinks={footerLinks} />
     </>
   );
 }

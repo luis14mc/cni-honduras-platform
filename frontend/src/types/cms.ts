@@ -26,3 +26,56 @@ export interface NewsArticle {
   seo_title: string;
   seo_description: string;
 }
+
+export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "estudios";
+
+export interface CmsDocument {
+  id: number;
+  title: string;
+  slug: string;
+  file: string;
+  description: string;
+  category: DocumentCategory;
+  is_featured: boolean;
+  order: number;
+  cover_image: MediaAssetLite | null;
+  file_type: string;
+  file_size_bytes: number | null;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type LinkSection = "home_interest" | "footer_external" | "tramites" | "top_bar";
+
+export interface InstitutionalLink {
+  id: number;
+  section: LinkSection;
+  title: string;
+  description: string;
+  url: string;
+  is_external: boolean;
+  icon: string;
+  accent_color: string;
+  order: number;
+}
+
+export type BannerPlacement = "site_top" | "home_hero" | "footer";
+
+export interface SiteBanner {
+  id: number;
+  placement: BannerPlacement;
+  title: string;
+  body: string;
+  cta_label: string;
+  starts_at: string | null;
+  ends_at: string | null;
+  priority: number;
+  link_url: string;
+  link_external: boolean;
+  dismissible: boolean;
+  background_color: string;
+  text_color: string;
+  image: MediaAssetLite | null;
+  published_at: string;
+}

@@ -5,20 +5,28 @@ import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { designImages } from "@/src/lib/designAssets";
 import {
-  getResourceCategoryUi,
-  type ResourceCategory,
-} from "@/src/data/resourceCategories";
+  resourceCategoryUi,
+  type ResourceCategoryMeta,
+} from "@/src/data/resourceCategoryMeta";
+import type { CmsDocument } from "@/src/types/cms";
 
 type Props = {
   locale: Locale;
-  category: ResourceCategory;
+  category: ResourceCategoryMeta;
+  documents: CmsDocument[];
 };
 
-export function ResourcesCategoryView({ locale, category }: Props) {
-  const ui = getResourceCategoryUi(locale);
+function formatFileSize(bytes: number | null): string {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+export function ResourcesCategoryView({ locale, category, documents }: Props) {
+  const ui = resourceCategoryUi[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const docs = category.docs[locale];
-  const master = category.master[locale];
+  const featured = documents.filter((doc) => doc.is_featured);
+  const regular = documents.filter((doc) => !doc.is_featured);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
@@ -50,7 +58,9 @@ export function ResourcesCategoryView({ locale, category }: Props) {
             <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-white md:text-6xl">
               {category.title[locale]}
             </h1>
-            <p className="max-w-xl text-xl leading-relaxed text-white/80">{category.description[locale]}</p>
+            <p className="max-w-xl text-xl leading-relaxed text-white/80">
+              {category.description[locale]}
+            </p>
           </div>
         </div>
       </header>
@@ -61,83 +71,52 @@ export function ResourcesCategoryView({ locale, category }: Props) {
             <span className="text-sm font-semibold uppercase tracking-widest text-[#0E7A7C]">
               {ui.directoryEyebrow}
             </span>
-            <h2 className="text-4xl font-bold text-[#252A58]">{category.directoryTitle[locale]}</h2>
-          </div>
-          <div className="flex w-full max-w-xs items-center gap-3 rounded-xl bg-[#dce9ff] px-4 py-3 md:w-80">
-            <MaterialIcon name="search" className="text-[#b6c2d3]" />
-            <input
-              type="search"
-              placeholder={ui.search}
-              aria-label={ui.search}
-              className="w-full border-none bg-transparent text-sm font-medium focus:outline-none focus:ring-0"
-            />
+            <h2 className="text-4xl font-bold text-[#252A58]">
+              {category.directoryTitle[locale]}
+            </h2>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {docs.map((d) => (
-            <article
-              key={d.title}
-              className={`group flex flex-col justify-between rounded-xl bg-white p-8 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] ${d.featured ? "border-t-4 border-[#35A963]" : ""}`}
-            >
-              <div>
-                <div
-                  className={`mb-6 flex h-12 w-12 items-center justify-center rounded-lg ${d.featured ? "bg-[#0E7A7C] text-[#35A963]" : "bg-[#24436B] text-[#35A963]"}`}
-                >
-                  <MaterialIcon name={d.icon} filled className="text-3xl" />
+        {documents.length === 0 ? (
+          <div className="rounded-xl bg-white p-10 text-center text-lg text-[#0E7A7C] shadow-sm">
+            {ui.empty}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {[...featured, ...regular].map((doc) => (
+              <article
+                key={doc.id}
+                className={`group flex flex-col justify-between rounded-xl bg-white p-8 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] ${doc.is_featured ? "border-t-4 border-[#35A963]" : ""}`}
+              >
+                <div>
+                  <div
+                    className={`mb-6 flex h-12 w-12 items-center justify-center rounded-lg ${doc.is_featured ? "bg-[#0E7A7C] text-[#35A963]" : "bg-[#24436B] text-[#35A963]"}`}
+                  >
+                    <MaterialIcon name="description" filled className="text-3xl" />
+                  </div>
+                  <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{doc.title}</h3>
+                  <p className="mb-4 leading-relaxed text-[#0E7A7C]">{doc.description}</p>
+                  {doc.file_type && (
+                    <p className="text-xs font-semibold uppercase tracking-widest text-[#b6c2d3]">
+                      {doc.file_type.toUpperCase()}
+                      {doc.file_size_bytes ? ` · ${formatFileSize(doc.file_size_bytes)}` : ""}
+                    </p>
+                  )}
                 </div>
-                <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{d.title}</h3>
-                <p className="mb-8 leading-relaxed text-[#0E7A7C]">{d.text}</p>
-              </div>
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  className="flex-1 rounded-lg bg-[#252A58] py-3 text-sm font-bold text-white transition-transform active:scale-95"
-                  aria-label={`${ui.download}: ${d.title}`}
-                >
-                  {ui.download}
-                </button>
-                <button
-                  type="button"
-                  className="flex-1 rounded-lg bg-[#dce9ff] py-3 text-sm font-bold text-[#252A58] transition-all hover:bg-[#d3e4fe]"
-                  aria-label={`${ui.view}: ${d.title}`}
-                >
-                  {ui.view}
-                </button>
-              </div>
-            </article>
-          ))}
-
-          <article className="relative col-span-1 flex flex-col items-center gap-12 overflow-hidden rounded-xl bg-[#24436B] p-12 md:flex-row lg:col-span-3">
-            <div className="absolute -mr-20 -mt-20 right-0 top-0 h-64 w-64 rounded-full bg-[#35A963]/10 blur-3xl" aria-hidden />
-            <div className="relative z-10 flex-1">
-              <span className="mb-4 block text-xs font-bold uppercase tracking-widest text-[#35A963]">
-                {master.tag}
-              </span>
-              <h3 className="mb-4 text-3xl font-bold text-white md:text-4xl">{master.title}</h3>
-              <p className="mb-8 max-w-2xl text-lg leading-relaxed text-[#b6c2d3]">{master.text}</p>
-              <div className="flex flex-wrap gap-4">
-                <button
-                  type="button"
-                  className="rounded-lg bg-[#35A963] px-8 py-4 font-bold text-[#0E7A7C] transition-all hover:brightness-110 active:scale-95"
-                >
-                  {master.primary}
-                </button>
-                <button
-                  type="button"
-                  className="rounded-lg border border-[#b6c2d3]/30 px-8 py-4 font-bold text-white transition-all hover:bg-[#b6c2d3]/10"
-                >
-                  {master.secondary}
-                </button>
-              </div>
-            </div>
-            <div className="relative z-10 hidden md:block" aria-hidden>
-              <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-md">
-                <MaterialIcon name="book_4" filled className="text-[120px] text-[#35A963]" />
-              </div>
-            </div>
-          </article>
-        </div>
+                <div className="mt-8 flex gap-4">
+                  <a
+                    href={doc.file}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-1 items-center justify-center rounded-lg bg-[#252A58] py-3 text-sm font-bold text-white transition-transform active:scale-95"
+                  >
+                    {ui.download}
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="bg-[#e5eeff] px-8 py-24">

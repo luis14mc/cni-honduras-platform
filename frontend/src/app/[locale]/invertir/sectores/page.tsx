@@ -24,7 +24,7 @@ async function loadSectors(locale: Locale): Promise<ReadonlyArray<SectorCardData
   const fallbackOrder = new Map(fallbackSectors.map((sector, index) => [sector.slug, index]));
 
   try {
-    const apiSectors = await getApiSectors();
+    const apiSectors = await getApiSectors({ locale });
 
     // Merge API con fallback: API gana en campos editables; los slugs que NO
     // estén en la API conservan su ficha estática para no perder sectores canónicos.

@@ -6,6 +6,7 @@ import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { withLocale } from "@/src/i18n/path";
 import { InterestLinkIcon, type InterestLinkIconId } from "@/src/components/cni/InterestLinkIcons";
+import type { InstitutionalLink } from "@/src/types/cms";
 
 type InterestLink = {
   id: InterestLinkIconId;
@@ -15,7 +16,7 @@ type InterestLink = {
   accent: string;
 };
 
-function buildLinks(locale: Locale): InterestLink[] {
+function buildFallbackLinks(locale: Locale): InterestLink[] {
   const copy = homeCopy[locale].enlacesRapidos;
 
   return [
@@ -50,13 +51,24 @@ function buildLinks(locale: Locale): InterestLink[] {
   ];
 }
 
+function mapApiLinks(links: InstitutionalLink[]): InterestLink[] {
+  return links.map((link) => ({
+    id: (link.icon as InterestLinkIconId) || "guia",
+    title: link.title,
+    href: link.url,
+    external: link.is_external,
+    accent: link.accent_color || "#29AB85",
+  }));
+}
+
 type Props = {
   locale: Locale;
+  links?: InstitutionalLink[];
 };
 
-export function InterestLinksSection({ locale }: Props) {
+export function InterestLinksSection({ locale, links = [] }: Props) {
   const copy = homeCopy[locale].enlacesRapidos;
-  const links = buildLinks(locale);
+  const resolvedLinks = links.length > 0 ? mapApiLinks(links) : buildFallbackLinks(locale);
 
   return (
     <section
@@ -78,7 +90,7 @@ export function InterestLinksSection({ locale }: Props) {
           </header>
 
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-1 lg:items-start lg:justify-end lg:gap-0 lg:divide-x lg:divide-cni-primary/10">
-            {links.map((item) => (
+            {resolvedLinks.map((item) => (
               <li key={item.id} className="lg:min-w-0 lg:flex-1 lg:px-6 lg:first:pl-0 lg:last:pr-0">
                 <Link
                   href={item.href}

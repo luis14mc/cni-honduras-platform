@@ -18,6 +18,7 @@ services:
       dockerfile: ../docker/backend/Dockerfile
     volumes:
       - ./backend:/app
+      - cni_media:/app/media
     ports:
       - "8000:8000"
     environment:
@@ -46,3 +47,4 @@ services:
 
 volumes:
   postgres_data:
+  cni_media:

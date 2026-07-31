@@ -32,6 +32,7 @@ ALLOWED_HOSTS = env.list(
 ENABLE_GIS = env.bool("DJANGO_ENABLE_GIS", default=True)
 
 INSTALLED_APPS = [
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -105,7 +106,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="es-hn")
+LANGUAGE_CODE = env("DJANGO_LANGUAGE_CODE", default="es")
+LANGUAGES = [("es", "Español"), ("en", "English")]
+MODELTRANSLATION_DEFAULT_LANGUAGE = "es"
+MODELTRANSLATION_FALLBACK_LANGUAGES = ("es",)
 TIME_ZONE = env("DJANGO_TIME_ZONE", default="America/Tegucigalpa")
 USE_I18N = True
 USE_TZ = True
@@ -153,6 +157,15 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.FormParser",
         "rest_framework.parsers.MultiPartParser",
     ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "120/min",
+        "forms": "10/min",
+    },
 }
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

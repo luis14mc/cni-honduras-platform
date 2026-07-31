@@ -66,9 +66,9 @@ const categoryLabels: Record<Locale, Record<NewsCategory, string>> = {
   },
 };
 
-async function loadNews(): Promise<NewsArticle[]> {
+async function loadNews(locale: Locale): Promise<NewsArticle[]> {
   try {
-    return await getNews();
+    return await getNews({ locale });
   } catch {
     return [];
   }
@@ -92,7 +92,7 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const articles = await loadNews();
+  const articles = await loadNews(locale);
   const featured = articles.find((article) => article.is_featured) ?? articles[0];
   const archive = featured ? articles.filter((article) => article.slug !== featured.slug) : articles;
 

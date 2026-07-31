@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
 
+from apps.cms.models import EditorialModel
+from apps.media_library.models import MediaAsset
+
 
 class TimeStampedModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -165,7 +168,7 @@ class InvestmentProject(TimeStampedModel):
         super().save(*args, **kwargs)
 
 
-class SuccessStory(TimeStampedModel):
+class SuccessStory(EditorialModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=275, unique=True, db_index=True)
     company_name = models.CharField(max_length=200, blank=True, default="")
@@ -179,16 +182,25 @@ class SuccessStory(TimeStampedModel):
     summary = models.TextField(blank=True, default="")
     content = models.TextField(blank=True, default="")
     image = models.FileField(upload_to="success_stories/%Y/%m/", null=True, blank=True)
+    logo = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="success_story_logos",
+    )
     country_origin = models.CharField(max_length=120, blank=True, default="")
     investment_amount = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True
     )
     jobs_generated = models.PositiveIntegerField(null=True, blank=True)
-    is_public = models.BooleanField(default=True, db_index=True)
+    testimonial_quote = models.TextField(blank=True, default="")
+    testimonial_author = models.CharField(max_length=200, blank=True, default="")
     is_featured = models.BooleanField(default=False, db_index=True)
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("-created_at", "-id")
+        ordering = ("order", "-published_at", "-created_at", "-id")
         verbose_name = "Caso de éxito"
         verbose_name_plural = "Casos de éxito"
 

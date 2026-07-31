@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from apps.cms.models import Document
+
 from .models import AdvisoryRequest, ContactSubmission, ProjectApplication, ResourceDownloadLead
 
 
@@ -89,6 +91,13 @@ class AdvisoryRequestSerializer(SubmissionSerializerMixin, serializers.ModelSeri
 
 
 class ResourceDownloadLeadSerializer(SubmissionSerializerMixin, serializers.ModelSerializer):
+    document_id = serializers.PrimaryKeyRelatedField(
+        source="document",
+        queryset=Document.objects.all(),
+        required=False,
+        allow_null=True,
+    )
+
     class Meta:
         model = ResourceDownloadLead
         fields = (
@@ -99,6 +108,7 @@ class ResourceDownloadLeadSerializer(SubmissionSerializerMixin, serializers.Mode
             "company",
             "country",
             "resource_name",
+            "document_id",
             "details",
             "source",
             "status",

@@ -110,9 +110,15 @@ export interface SuccessStory {
   summary: string;
   content: string;
   image: string | null;
+  logo: import("@/src/types/cms").MediaAssetLite | null;
   country_origin: string;
   investment_amount: string | null;
   jobs_generated: number | null;
-  is_public: boolean;
+  testimonial_quote: string;
+  testimonial_author: string;
   is_featured: boolean;
+  order: number;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
 }

@@ -108,11 +108,23 @@ const footerTranslations: Record<Locale, FooterCopy> = {
   },
 };
 
-export default function Footer() {
+import type { InstitutionalLink } from "@/src/types/cms";
+
+type FooterExternalLink = { label: string; href: string };
+
+type FooterProps = {
+  externalLinks?: InstitutionalLink[];
+};
+
+export default function Footer({ externalLinks = [] }: FooterProps) {
   const pathname = usePathname();
   const locale = getLocaleFromPathname(pathname ?? "") as Locale;
   const L = (p: string) => resolveHref(locale, p);
   const ft = footerTranslations[locale];
+  const resolvedExternalLinks: FooterExternalLink[] =
+    externalLinks.length > 0
+      ? externalLinks.map((link) => ({ label: link.title, href: link.url }))
+      : ft.externalLinks;
 
   return (
     <footer className="site-footer relative mt-auto w-full overflow-hidden pb-10 text-white" role="contentinfo">
@@ -142,7 +154,7 @@ export default function Footer() {
           <FooterLinkColumn
             id="footer-external"
             title={ft.externalTitle}
-            links={ft.externalLinks}
+            links={resolvedExternalLinks}
             resolveHref={L}
             external
             columns={2}

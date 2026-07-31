@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.geo.models import Department
 from apps.geo.serializers import CNIRegionSerializer, DepartmentLiteSerializer, MunicipalitySerializer
+from apps.media_library.serializers import MediaAssetLiteSerializer
 
 from .models import InvestmentOpportunity, InvestmentProject, Sector, SuccessStory
 
@@ -88,6 +89,7 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
 
 class SuccessStorySerializer(serializers.ModelSerializer):
     sector = SectorLiteSerializer(read_only=True)
+    logo = MediaAssetLiteSerializer(read_only=True)
 
     class Meta:
         model = SuccessStory
@@ -100,11 +102,15 @@ class SuccessStorySerializer(serializers.ModelSerializer):
             "summary",
             "content",
             "image",
+            "logo",
             "country_origin",
             "investment_amount",
             "jobs_generated",
-            "is_public",
+            "testimonial_quote",
+            "testimonial_author",
             "is_featured",
+            "order",
+            "published_at",
             "created_at",
             "updated_at",
         )
