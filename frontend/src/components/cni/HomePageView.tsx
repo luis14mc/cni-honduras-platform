@@ -15,6 +15,8 @@ import { sectorIconAssets } from "@/src/lib/sectorIcons";
 import { slugify } from "@/src/lib/slugify";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
+import { homeSuccessStoryAssets } from "@/src/data/successStoriesHome";
+import { strategicAlliesLevel1, strategicAlliesLevel2, strategicAllyLogoSize } from "@/src/data/strategicAllies";
 import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection";
 
 type Props = {
@@ -159,15 +161,15 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
     },
     {
       slug: "logistica",
-      iconSrc: "/img/sectores/Logística 1.png",
+      iconSrc: sectorIconAssets.logistica.src,
       accent: "#2EB29C",
       name: locale === "es" ? "Logística y Transporte" : "Logistics and Transport",
       desc:
         locale === "es"
           ? "Conectividad multimodal y servicios de valor agregado para el comercio global eficiente."
           : "Multimodal connectivity and value-added services for efficient global trade.",
-      img: "/images/hero/home/logistica.webp",
-      href: L("/invertir"),
+      img: designImages.sectors.logistica,
+      href: getSectorHref(locale, "logistica"),
     },
     {
       slug: "turismo",
@@ -223,13 +225,11 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
   const testimonialMeta = [
     {
       photo: designImages.casos.sinclair,
-      company: "Sinclair",
-      caseTitle: "Sinclair",
+      ...homeSuccessStoryAssets[0],
     },
     {
       photo: designImages.casos.kimpton,
-      company: "Kimpton Grand Hotel",
-      caseTitle: "Kimpton Grand Hotel",
+      ...homeSuccessStoryAssets[1],
     },
   ] as const;
 
@@ -1393,37 +1393,65 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
           </div>
 
         <div className="space-y-12 md:space-y-14">
-          {/* Row 1 */}
+          {/* Row 1 — aliados nivel 1 (230×130 px uniformes) */}
           <div className="al-allies-track flex overflow-hidden">
-            <div className="flex shrink-0 animate-marquee items-center gap-16 md:gap-20 pr-16 md:pr-20">
-              {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex h-36 w-72 md:h-44 md:w-[22rem] shrink-0 items-center justify-center select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 1 - ${idx + 1}`} fill className="object-contain p-2" sizes="352px" />
+            <div className="flex shrink-0 animate-marquee items-center gap-12 md:gap-16 pr-12 md:pr-16">
+              {strategicAlliesLevel1.map((ally) => (
+                <div key={ally.src} className="shrink-0 select-none al-allies-logo al-allies-logo--level1">
+                  <Image
+                    src={ally.src}
+                    alt={ally.name}
+                    width={strategicAllyLogoSize.width}
+                    height={strategicAllyLogoSize.height}
+                    className="al-allies-logo-img h-[130px] w-[230px] object-contain md:h-[156px] md:w-[276px]"
+                    sizes="276px"
+                  />
                 </div>
               ))}
             </div>
-            <div aria-hidden="true" className="flex shrink-0 animate-marquee items-center gap-16 md:gap-20 pr-16 md:pr-20">
-              {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_1/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex h-36 w-72 md:h-44 md:w-[22rem] shrink-0 items-center justify-center select-none al-allies-logo">
-                  <Image src={src} alt="" fill className="object-contain p-2" sizes="352px" />
+            <div aria-hidden="true" className="flex shrink-0 animate-marquee items-center gap-12 md:gap-16 pr-12 md:pr-16">
+              {strategicAlliesLevel1.map((ally) => (
+                <div key={`rep-${ally.src}`} className="shrink-0 select-none al-allies-logo al-allies-logo--level1">
+                  <Image
+                    src={ally.src}
+                    alt=""
+                    width={strategicAllyLogoSize.width}
+                    height={strategicAllyLogoSize.height}
+                    className="al-allies-logo-img h-[130px] w-[230px] object-contain md:h-[156px] md:w-[276px]"
+                    sizes="276px"
+                  />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Row 2 */}
+          {/* Row 2 — aliados nivel 2 (230×130 px uniformes) */}
           <div className="al-allies-track flex overflow-hidden">
-            <div className="flex shrink-0 animate-marquee-reverse items-center gap-16 md:gap-20 pr-16 md:pr-20">
-              {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={idx} className="relative flex h-32 w-64 md:h-40 md:w-80 shrink-0 items-center justify-center select-none al-allies-logo">
-                  <Image src={src} alt={`Aliado Nivel 2 - ${idx + 1}`} fill className="object-contain p-2" sizes="320px" />
+            <div className="flex shrink-0 animate-marquee-reverse items-center gap-12 md:gap-16 pr-12 md:pr-16">
+              {strategicAlliesLevel2.map((ally) => (
+                <div key={ally.src} className="shrink-0 select-none al-allies-logo al-allies-logo--level1">
+                  <Image
+                    src={ally.src}
+                    alt={ally.name}
+                    width={strategicAllyLogoSize.width}
+                    height={strategicAllyLogoSize.height}
+                    className="al-allies-logo-img h-[130px] w-[230px] object-contain md:h-[156px] md:w-[276px]"
+                    sizes="276px"
+                  />
                 </div>
               ))}
             </div>
-            <div aria-hidden="true" className="flex shrink-0 animate-marquee-reverse items-center gap-16 md:gap-20 pr-16 md:pr-20">
-              {Array.from({ length: 13 }, (_, i) => `/img/aliados/nivel_2/${i + 1}.png`).map((src, idx) => (
-                <div key={`rep-${idx}`} className="relative flex h-32 w-64 md:h-40 md:w-80 shrink-0 items-center justify-center select-none al-allies-logo">
-                  <Image src={src} alt="" fill className="object-contain p-2" sizes="320px" />
+            <div aria-hidden="true" className="flex shrink-0 animate-marquee-reverse items-center gap-12 md:gap-16 pr-12 md:pr-16">
+              {strategicAlliesLevel2.map((ally) => (
+                <div key={`rep-${ally.src}`} className="shrink-0 select-none al-allies-logo al-allies-logo--level1">
+                  <Image
+                    src={ally.src}
+                    alt=""
+                    width={strategicAllyLogoSize.width}
+                    height={strategicAllyLogoSize.height}
+                    className="al-allies-logo-img h-[130px] w-[230px] object-contain md:h-[156px] md:w-[276px]"
+                    sizes="276px"
+                  />
                 </div>
               ))}
             </div>
@@ -1455,36 +1483,36 @@ export function HomePageView({ locale, latestNews = [] }: Props) {
                 href={caseHref(card.caseTitle)}
                 className="al-success-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-5 md:p-6 transition-colors hover:border-cni-gold/25 hover:bg-white"
               >
+                <div className="al-success-logo mb-5 flex h-16 w-full items-center justify-center rounded-lg border border-cni-primary/10 bg-white px-4 py-3 md:h-[4.5rem]">
+                  <Image
+                    src={card.logo}
+                    alt={card.logoAlt}
+                    width={180}
+                    height={56}
+                    className="h-10 w-auto max-h-full max-w-full object-contain md:h-12"
+                    sizes="180px"
+                  />
+                </div>
+
                 <p className="font-body text-sm leading-relaxed text-cni-primary/80 italic line-clamp-4">
                   &ldquo;{card.quote}&rdquo;
                 </p>
 
-                <div className="mt-5 flex items-center justify-between gap-4 border-t border-cni-primary/8 pt-4">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
-                      <Image
-                        src={card.photo}
-                        alt={card.name}
-                        fill
-                        sizes="44px"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate font-headline text-xs font-extrabold uppercase tracking-wide text-cni-primary">
-                        {card.name}
-                      </p>
-                      <p className="truncate text-[11px] text-cni-primary/55">{card.role}</p>
-                    </div>
+                <div className="mt-5 flex items-center gap-3 border-t border-cni-primary/8 pt-4">
+                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
+                    <Image
+                      src={card.photo}
+                      alt={card.name}
+                      fill
+                      sizes="44px"
+                      className="object-cover"
+                    />
                   </div>
-
-                  <div
-                    className="flex h-9 max-w-[7.5rem] shrink-0 items-center justify-end md:max-w-[8.5rem]"
-                    aria-label={card.company}
-                  >
-                    <span className="text-right font-display text-[11px] font-extrabold uppercase leading-tight tracking-wide text-cni-primary/75">
-                      {card.company}
-                    </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-headline text-xs font-extrabold uppercase tracking-wide text-cni-primary">
+                      {card.name}
+                    </p>
+                    <p className="truncate text-[11px] text-cni-primary/55">{card.role}</p>
                   </div>
                 </div>
               </Link>
