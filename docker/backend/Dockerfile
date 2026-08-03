@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY requirements/ requirements/
+COPY backend/requirements/ requirements/
 RUN pip install --no-cache-dir -r requirements/prod.txt
 
-COPY . .
+COPY backend/ .
 
 # Run entrypoint or gunicorn in production
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
