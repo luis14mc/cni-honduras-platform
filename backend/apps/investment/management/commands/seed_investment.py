@@ -1,7 +1,9 @@
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
+from apps.cms.models import PublishStatus
 from apps.geo.models import CNIRegion, Department
 from apps.investment.models import (
     InvestmentOpportunity,
@@ -370,7 +372,8 @@ class Command(BaseCommand):
                 "country_origin": data["country_origin"],
                 "investment_amount": data.get("investment_amount"),
                 "jobs_generated": data.get("jobs_generated"),
-                "is_public": True,
+                "status": PublishStatus.PUBLISHED,
+                "published_at": timezone.now(),
                 "is_featured": True,
             }
             obj, was_created = SuccessStory.objects.update_or_create(
@@ -396,6 +399,6 @@ class Command(BaseCommand):
                 f"  Proyectos:      creados={projects_created} actualizados={projects_updated} "
                 f"total_publicos={InvestmentProject.objects.filter(is_public=True).count()}\n"
                 f"  Casos de éxito: creados={stories_created} actualizados={stories_updated} "
-                f"total_publicos={SuccessStory.objects.filter(is_public=True).count()}"
+                f"total_publicados={SuccessStory.objects.filter(status=PublishStatus.PUBLISHED).count()}"
             )
         )
