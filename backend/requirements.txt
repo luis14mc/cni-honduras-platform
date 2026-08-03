@@ -1,2 +1,4 @@
-# Prefer: pip install -r requirements/dev.txt (local) or requirements/prod.txt (Docker/production).
--r requirements/dev.txt
+# Production/staging dependencies (Vercel).
+# Local development: pip install -r requirements/dev.txt
+-r requirements/base.txt
+gunicorn>=21.2.0
