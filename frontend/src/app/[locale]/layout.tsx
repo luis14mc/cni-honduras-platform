@@ -9,6 +9,7 @@ import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
 import { getSiteBanners, getInstitutionalLinks } from "@/src/services/cms";
+import type { InstitutionalLink, SiteBanner } from "@/src/types/cms";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ locale: string }> },
@@ -34,14 +35,14 @@ export default async function LocaleLayout({
   const locale = raw as Locale;
   const skip = layoutCopy[locale].skipToContent;
 
-  let banners = [];
+  let banners: SiteBanner[] = [];
   try {
     banners = await getSiteBanners("site_top", { locale });
   } catch {
     banners = [];
   }
 
-  let footerLinks = [];
+  let footerLinks: InstitutionalLink[] = [];
   try {
     footerLinks = await getInstitutionalLinks("footer_external", { locale });
   } catch {

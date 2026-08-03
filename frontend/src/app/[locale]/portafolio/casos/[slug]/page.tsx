@@ -6,6 +6,7 @@ import { designImages } from "@/src/lib/designAssets";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { getSuccessStory, getSuccessStories } from "@/src/services/investment";
+import type { SuccessStory } from "@/src/types/investment";
 import { buildDetailMetadata } from "@/src/lib/seo";
 
 const copy = {
@@ -73,7 +74,7 @@ export default async function CasoDetallePage({
     notFound();
   }
 
-  let related = [];
+  let related: SuccessStory[] = [];
   try {
     const all = await getSuccessStories({ locale });
     related = all.filter((item) => item.slug !== slug).slice(0, 2);
