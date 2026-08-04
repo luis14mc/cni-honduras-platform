@@ -46,6 +46,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       apiSectors={sectorsResult.data}
       sectorsStatus={sectorsResult.status}
       interestLinks={linksResult.data}
+      interestLinksStatus={linksResult.status}
     />
   );
 }
