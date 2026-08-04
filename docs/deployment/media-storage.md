@@ -16,8 +16,9 @@ Django Admin / API upload
         │     └── FileSystemStorage → backend/media/
         │
         └── Render / staging / prod (USE_S3_STORAGE=true)
-              └── S3Storage → bucket/prefix media/
-                    └── URL pública HTTPS (bucket o custom domain)
+              ├── Escritura/API → AWS_S3_ENDPOINT_URL (boto3)
+              └── Lectura pública → AWS_S3_CUSTOM_DOMAIN (HTTPS)
+                    └── Objetos bajo prefijo media/
 
 Static files (collectstatic) → STORAGES["staticfiles"] → filesystem (sin cambios en S1-T6)
 ```
@@ -39,8 +40,9 @@ Static files (collectstatic) → STORAGES["staticfiles"] → filesystem (sin cam
 | `AWS_ACCESS_KEY_ID` | Access key del proveedor |
 | `AWS_SECRET_ACCESS_KEY` | Secret key |
 | `AWS_STORAGE_BUCKET_NAME` | Nombre del bucket |
-| `AWS_S3_ENDPOINT_URL` | Endpoint S3-compatible (HTTPS) |
+| `AWS_S3_ENDPOINT_URL` | Endpoint **S3 API** para boto3 (escritura/lectura autenticada) |
 | `AWS_S3_REGION_NAME` | Región (`auto` suele funcionar en R2) |
+| `AWS_S3_CUSTOM_DOMAIN` | Dominio **público de lectura** (requerido en R2 con URLs sin firma) |
 
 ### Comportamiento recomendado
 
@@ -48,9 +50,22 @@ Static files (collectstatic) → STORAGES["staticfiles"] → filesystem (sin cam
 |----------|---------|-------------|
 | `AWS_QUERYSTRING_AUTH` | `false` | URLs públicas sin firma temporal |
 | `AWS_S3_FILE_OVERWRITE` | `false` | Evita sobrescribir archivos con el mismo nombre |
-| `AWS_S3_CUSTOM_DOMAIN` | (vacío) | Dominio público opcional (CDN/custom domain) |
 | `AWS_S3_ADDRESSING_STYLE` | (vacío) | `path` recomendado para R2/minio |
 | `AWS_DEFAULT_ACL` | (vacío) | Dejar vacío en R2; no usar ACLs incompatibles |
+
+### Endpoint S3 vs dominio público
+
+| Uso | Variable | Ejemplo |
+|-----|----------|---------|
+| **Escritura / API boto3** | `AWS_S3_ENDPOINT_URL` | `https://<account-id>.r2.cloudflarestorage.com` |
+| **Lectura pública (URLs en API)** | `AWS_S3_CUSTOM_DOMAIN` | `pub-xxxxx.r2.dev` o `media.example.com` |
+
+**No usar** `AWS_S3_ENDPOINT_URL` como base de `MEDIA_URL` en Cloudflare R2 cuando
+`AWS_QUERYSTRING_AUTH=false`: ese endpoint es privado de API y los archivos no serán
+accesibles públicamente.
+
+En proveedores S3 cuyo endpoint **sí** sirve lectura pública directa, el backend puede
+derivar `MEDIA_URL` desde endpoint + bucket. R2 **no** entra en ese caso.
 
 ### Desarrollo local (sin S3)
 
@@ -74,6 +89,13 @@ Si falta alguna variable requerida, Django **falla al arrancar** con un mensaje 
 
 ## Cloudflare R2 (orientativo)
 
+R2 separa el **endpoint S3 privado** del **dominio público de lectura**. Con
+`AWS_QUERYSTRING_AUTH=false` (recomendado para media institucional pública), **debes**
+definir `AWS_S3_CUSTOM_DOMAIN` con:
+
+- el dominio público `*.r2.dev` asignado al bucket en el panel de R2, **o**
+- un dominio personalizado configurado en Cloudflare.
+
 Valores de ejemplo (sustituir por los de tu cuenta):
 
 ```env
@@ -87,16 +109,19 @@ AWS_S3_ADDRESSING_STYLE=path
 AWS_QUERYSTRING_AUTH=false
 AWS_S3_FILE_OVERWRITE=false
 AWS_DEFAULT_ACL=
-# Opcional:
-# AWS_S3_CUSTOM_DOMAIN=media.example.com
+AWS_S3_CUSTOM_DOMAIN=<pub-xxxxx.r2.dev-or-media.example.com>
 ```
+
+Si falta `AWS_S3_CUSTOM_DOMAIN` con endpoint R2 y URLs sin firma, Django **falla al
+arrancar** con un mensaje claro (sin exponer credenciales).
 
 En R2:
 
 1. Crear bucket.
 2. Crear API token con permiso de lectura/escritura sobre ese bucket.
-3. Configurar **Public access** o custom domain según política de seguridad.
-4. Si usas custom domain, apuntar DNS y definir `AWS_S3_CUSTOM_DOMAIN`.
+3. Habilitar acceso público y copiar el dominio `r2.dev`, **o** configurar custom domain.
+4. Definir `AWS_S3_CUSTOM_DOMAIN` con ese dominio público (no el endpoint API).
+5. Definir `AWS_S3_ENDPOINT_URL` solo para la API S3 de escritura.
 
 ## Render
 

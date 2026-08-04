@@ -12,6 +12,7 @@ from config.settings.storage import (
     configure_media_storage,
     resolve_media_url,
     use_s3_storage,
+    validate_s3_public_read_domain,
     validate_s3_storage_env,
 )
 
@@ -101,12 +102,75 @@ class StorageSettingsUnitTests(SimpleTestCase):
             "AWS_STORAGE_BUCKET_NAME": "bucket",
             "AWS_S3_ENDPOINT_URL": "https://example.r2.cloudflarestorage.com",
             "AWS_S3_REGION_NAME": "auto",
+            "AWS_QUERYSTRING_AUTH": "false",
         }
         with patch.dict(os.environ, s3_env, clear=False):
             self.assertEqual(
                 resolve_media_url(env, media_url="/media/"),
                 "https://media.example.com/",
             )
+
+    def test_r2_public_urls_require_custom_domain_when_unsigned(self):
+        env = Env()
+        r2_env = {
+            "USE_S3_STORAGE": "true",
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_STORAGE_BUCKET_NAME": "example-bucket",
+            "AWS_S3_ENDPOINT_URL": "https://account123.r2.cloudflarestorage.com",
+            "AWS_S3_REGION_NAME": "auto",
+            "AWS_QUERYSTRING_AUTH": "false",
+        }
+        with patch.dict(os.environ, r2_env, clear=False):
+            with self.assertRaises(ImproperlyConfigured) as exc:
+                validate_s3_public_read_domain(env)
+
+        message = str(exc.exception)
+        self.assertIn("AWS_S3_CUSTOM_DOMAIN", message)
+        self.assertIn("AWS_S3_ENDPOINT_URL", message)
+        self.assertNotIn("test-secret", message)
+        self.assertNotIn("test-key", message)
+
+    def test_r2_with_r2_dev_domain_builds_storage_and_media_url(self):
+        env = Env()
+        r2_env = {
+            "USE_S3_STORAGE": "true",
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_STORAGE_BUCKET_NAME": "example-bucket",
+            "AWS_S3_ENDPOINT_URL": "https://account123.r2.cloudflarestorage.com",
+            "AWS_S3_REGION_NAME": "auto",
+            "AWS_S3_CUSTOM_DOMAIN": "pub-example.r2.dev",
+            "AWS_QUERYSTRING_AUTH": "false",
+            "AWS_S3_FILE_OVERWRITE": "false",
+        }
+        with patch.dict(os.environ, r2_env, clear=False):
+            storages = build_storages(env, media_root=Path("/tmp/media"), media_url="/media/")
+            media_url = resolve_media_url(env, media_url="/media/")
+
+        self.assertEqual(storages["default"]["OPTIONS"]["location"], "media")
+        self.assertEqual(storages["default"]["OPTIONS"]["custom_domain"], "pub-example.r2.dev")
+        self.assertEqual(
+            storages["default"]["OPTIONS"]["endpoint_url"],
+            "https://account123.r2.cloudflarestorage.com",
+        )
+        self.assertEqual(media_url, "https://pub-example.r2.dev/")
+
+    def test_non_r2_provider_can_use_public_endpoint_without_custom_domain(self):
+        env = Env()
+        s3_env = {
+            "USE_S3_STORAGE": "true",
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_STORAGE_BUCKET_NAME": "public-bucket",
+            "AWS_S3_ENDPOINT_URL": "https://s3.example.com",
+            "AWS_S3_REGION_NAME": "us-east-1",
+            "AWS_QUERYSTRING_AUTH": "false",
+        }
+        with patch.dict(os.environ, s3_env, clear=False):
+            media_url = resolve_media_url(env, media_url="/media/")
+
+        self.assertEqual(media_url, "https://s3.example.com/public-bucket/media/")
 
     def test_all_required_env_names_documented(self):
         self.assertEqual(len(S3_REQUIRED_ENV_VARS), 5)
