@@ -1,0 +1,5 @@
+# Default reviewers for pull requests
+/backend/ @luis14mc
+/frontend/ @luis14mc
+/docker/ @luis14mc
+/.github/ @luis14mc
