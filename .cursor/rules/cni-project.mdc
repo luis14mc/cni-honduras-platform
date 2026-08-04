@@ -1,0 +1,76 @@
+---
+description: Reglas obligatorias para agentes implementadores en CNI Honduras Platform
+alwaysApply: true
+---
+
+# CNI — Agente implementador (Cursor)
+
+Repositorio: `luis14mc/cni-honduras-platform`  
+Rama de integración: `master` (alimenta testing en Vercel + Render). **No usar staging.**
+
+## Proceso obligatorio
+
+1. `git checkout master`
+2. `git pull origin master`
+3. `git checkout -b <tipo>/<descripcion>` (ej. `feat/S1-T5-enlaces-institucionales`)
+4. **Auditar** código existente antes de modificar
+5. Implementar **solamente** el alcance acordado
+6. Ejecutar validaciones (backend + frontend según aplique)
+7. Revisar `git diff` completo
+8. Commit convencional (`feat(cms):`, `fix(frontend):`, etc.)
+9. `git push -u origin HEAD`
+10. Crear PR hacia `master` con template completo
+11. **No hacer merge**
+
+## Antes de implementar — reportar al humano
+
+- Estado actual
+- Archivos esperados
+- Riesgos
+- Migraciones previstas (sí/no)
+- Endpoints afectados
+
+## Después de implementar — reportar al humano
+
+- Archivos modificados
+- Pruebas ejecutadas
+- Migraciones (ninguna inesperada)
+- Deuda técnica
+- **URL del PR**
+
+## Reglas duras
+
+- Nunca trabajar ni pushear en `master`
+- Una tarea funcional por rama
+- No duplicar modelos (`investment.Sector`, `investment.SuccessStory`, `cms.News`, `cms.Document`)
+- No hardcodear URLs (`https://api-test.cni.hn`, etc.)
+- No subir `.env` ni secretos
+- Mantener ES/EN (`?lang=`, modeltranslation)
+- No mocks como contenido real (empty ≠ error)
+- No eliminar API legacy sin autorización
+- No migraciones innecesarias
+- No merge automático
+
+## Validaciones
+
+**Backend** (`backend/`):
+
+```bash
+DJANGO_SETTINGS_MODULE=config.settings.development python manage.py check
+python manage.py makemigrations --check
+python manage.py test
+```
+
+**Frontend** (`frontend/`):
+
+```bash
+pnpm lint
+pnpm run build
+```
+
+## Referencias
+
+- `AGENTS.md` — reglas globales
+- `CLAUDE.md` — rol del auditor
+- `docs/development/agent-workflow.md` — flujo completo
+- `.github/pull_request_template.md` — template de PR
