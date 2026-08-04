@@ -125,6 +125,13 @@ STATICFILES_DIRS = [_static_dir] if _static_dir.is_dir() else []
 MEDIA_URL = env("DJANGO_MEDIA_URL", default="/media/")
 MEDIA_ROOT = BASE_DIR / env.path("DJANGO_MEDIA_ROOT_REL", default="media")
 
+from config.settings.storage import configure_media_storage  # noqa: E402
+
+_media_storage = configure_media_storage(env, BASE_DIR)
+STORAGES = _media_storage["STORAGES"]
+MEDIA_ROOT = _media_storage["MEDIA_ROOT"]
+MEDIA_URL = _media_storage["MEDIA_URL"]
+
 # GeoDjango on Windows/OSGeo: set DLL paths (optional — Linux/Docker normally find GDAL/GEOS in PATH).
 _gdal_lib = env.str("DJANGO_GDAL_LIBRARY_PATH", default="").strip()
 if _gdal_lib:
