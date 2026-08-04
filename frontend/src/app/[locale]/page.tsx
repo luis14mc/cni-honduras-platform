@@ -7,65 +7,45 @@ import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getNews, getInstitutionalLinks } from "@/src/services/cms";
 import { getSuccessStories, getSectors } from "@/src/services/investment";
 import type { NewsArticle } from "@/src/types/cms";
-import type { SuccessStory } from "@/src/types/investment";
-import type { Sector } from "@/src/types/investment";
+import type { SuccessStory, Sector } from "@/src/types/investment";
+import type { InstitutionalLink } from "@/src/types/cms";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.home);
-
-async function loadLatestNews(locale: Locale): Promise<NewsArticle[]> {
-  try {
-    const news = await getNews({ locale });
-    return [...news]
-      .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-      .slice(0, 3);
-  } catch {
-    return [];
-  }
-}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
 
-  const [latestNews, featuredStories, sectors, interestLinks] = await Promise.all([
-    loadLatestNews(locale),
-    loadFeaturedStories(locale),
-    loadSectors(locale),
-    loadInterestLinks(locale),
+  const [newsResult, storiesResult, sectorsResult, linksResult] = await Promise.all([
+    loadAsyncData(async () => {
+      const news = await getNews({ locale });
+      return [...news]
+        .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+        .slice(0, 3);
+    }, [] as NewsArticle[]),
+    loadAsyncData(
+      () => getSuccessStories({ featured: true, locale }),
+      [] as SuccessStory[],
+    ),
+    loadAsyncData(() => getSectors({ locale }), [] as Sector[]),
+    loadAsyncData(
+      () => getInstitutionalLinks("home_interest", { locale }),
+      [] as InstitutionalLink[],
+    ),
   ]);
 
   return (
     <HomePageView
       locale={locale}
-      latestNews={latestNews}
-      featuredStories={featuredStories}
-      apiSectors={sectors}
-      interestLinks={interestLinks}
+      latestNews={newsResult.data}
+      latestNewsStatus={newsResult.status}
+      featuredStories={storiesResult.data}
+      featuredStoriesStatus={storiesResult.status}
+      apiSectors={sectorsResult.data}
+      sectorsStatus={sectorsResult.status}
+      interestLinks={linksResult.data}
     />
   );
-}
-
-async function loadFeaturedStories(locale: Locale): Promise<SuccessStory[]> {
-  try {
-    return await getSuccessStories({ featured: true, locale });
-  } catch {
-    return [];
-  }
-}
-
-async function loadSectors(locale: Locale): Promise<Sector[]> {
-  try {
-    return await getSectors({ locale });
-  } catch {
-    return [];
-  }
-}
-
-async function loadInterestLinks(locale: Locale) {
-  try {
-    return await getInstitutionalLinks("home_interest", { locale });
-  } catch {
-    return [];
-  }
 }

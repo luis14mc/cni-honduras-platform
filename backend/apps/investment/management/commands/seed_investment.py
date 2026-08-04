@@ -18,71 +18,111 @@ from apps.investment.models import (
 SECTORS = [
     {
         "name": "Agroindustria",
+        "name_en": "Agribusiness",
         "slug": "agroindustria",
         "short_description": "Transformación y exportación de productos agrícolas.",
+        "short_description_en": "Agricultural processing and export value chains.",
         "description": (
             "Honduras ofrece ventajas comparativas en cultivos tropicales, "
             "procesamiento de alimentos y cadenas de valor agroexportadoras "
             "con acceso a mercados regionales e internacionales."
+        ),
+        "description_en": (
+            "Honduras offers comparative advantages in tropical crops, "
+            "food processing and agro-export value chains with access to "
+            "regional and international markets."
         ),
         "color_hex": "#2E7D32",
         "order": 1,
     },
     {
         "name": "Turismo",
+        "name_en": "Tourism",
         "slug": "turismo",
         "short_description": "Destinos naturales, culturales y de negocios.",
+        "short_description_en": "Natural, cultural and business destinations.",
         "description": (
             "El sector turístico combina islas del Caribe, patrimonio maya, "
             "ecoturismo y eventos corporativos, con oportunidades en hotelería, "
             "operadores y servicios complementarios."
+        ),
+        "description_en": (
+            "The tourism sector combines Caribbean islands, Maya heritage, "
+            "ecotourism and corporate events, with opportunities in hospitality, "
+            "operators and complementary services."
         ),
         "color_hex": "#0077B6",
         "order": 2,
     },
     {
         "name": "Energía",
+        "name_en": "Energy",
         "slug": "energia",
         "short_description": "Generación renovable y eficiencia energética.",
+        "short_description_en": "Renewable generation and energy efficiency.",
         "description": (
             "Proyectos de energía solar, eólica e hidroeléctrica, junto con "
             "soluciones de almacenamiento y modernización de redes, impulsan "
             "la transición energética del país."
+        ),
+        "description_en": (
+            "Solar, wind and hydroelectric projects, together with storage "
+            "solutions and grid modernization, drive the country's energy "
+            "transition."
         ),
         "color_hex": "#F9A825",
         "order": 3,
     },
     {
         "name": "Manufactura",
+        "name_en": "Manufacturing",
         "slug": "manufactura",
         "short_description": "Industria liviana, textil y ensamble.",
+        "short_description_en": "Light industry, textiles and assembly.",
         "description": (
             "La manufactura aprovecha proximidad logística, mano de obra "
             "competitiva y tratados comerciales para exportación de bienes "
             "industriales y componentes."
+        ),
+        "description_en": (
+            "Manufacturing leverages logistics proximity, competitive labor "
+            "and trade agreements to export industrial goods and components."
         ),
         "color_hex": "#5E35B1",
         "order": 4,
     },
     {
         "name": "Infraestructura",
+        "name_en": "Infrastructure",
         "slug": "infraestructura",
         "short_description": "Obras públicas, logística y conectividad.",
+        "short_description_en": "Public works, logistics and connectivity.",
         "description": (
             "Inversión en carreteras, puertos, aeropuertos, parques industriales "
             "y telecomunicaciones para mejorar la competitividad territorial."
+        ),
+        "description_en": (
+            "Investment in roads, ports, airports, industrial parks and "
+            "telecommunications to strengthen territorial competitiveness."
         ),
         "color_hex": "#546E7A",
         "order": 5,
     },
     {
         "name": "Logística y Transporte",
+        "name_en": "Logistics and Transport",
         "slug": "logistica",
         "short_description": "Conectividad multimodal y servicios de valor agregado.",
+        "short_description_en": "Multimodal connectivity and value-added services.",
         "description": (
             "Honduras opera como nodo logístico estratégico del continente con dos costas, "
             "puertos de aguas profundas, corredores secos y servicios 3PL bajo regímenes "
             "ZOLI que enlazan la producción regional con Norteamérica y Europa."
+        ),
+        "description_en": (
+            "Honduras operates as a strategic continental logistics hub with two coasts, "
+            "deep-water ports, dry corridors and 3PL services under ZOLI regimes that "
+            "link regional production with North America and Europe."
         ),
         "color_hex": "#2EB29C",
         "order": 6,
@@ -278,8 +318,11 @@ class Command(BaseCommand):
         for data in SECTORS:
             defaults = {
                 "name": data["name"],
+                "name_en": data["name_en"],
                 "short_description": data["short_description"],
+                "short_description_en": data["short_description_en"],
                 "description": data["description"],
+                "description_en": data["description_en"],
                 "color_hex": data["color_hex"],
                 "is_featured": True,
                 "is_active": True,

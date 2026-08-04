@@ -13,19 +13,21 @@ import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
 import { designImages } from "@/src/lib/designAssets";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
-import { getSectorDisplayName, type SectorSlug } from "@/src/data/investmentSectors";
-import { slugify } from "@/src/lib/slugify";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
-import { homeSuccessStoryAssets } from "@/src/data/successStoriesHome";
 import { strategicAlliesLevel1, strategicAlliesLevel2, strategicAllyLogoSize } from "@/src/data/strategicAllies";
 import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection";
+
+type LoadStatus = "ok" | "error";
 
 type Props = {
   locale: Locale;
   latestNews?: NewsArticle[];
+  latestNewsStatus?: LoadStatus;
   featuredStories?: SuccessStory[];
+  featuredStoriesStatus?: LoadStatus;
   apiSectors?: Sector[];
+  sectorsStatus?: LoadStatus;
   interestLinks?: InstitutionalLink[];
 };
 
@@ -81,8 +83,11 @@ function statBackTextSize(text: string): string {
 export function HomePageView({
   locale,
   latestNews = [],
+  latestNewsStatus = "ok",
   featuredStories = [],
+  featuredStoriesStatus = "ok",
   apiSectors = [],
+  sectorsStatus = "ok",
   interestLinks = [],
 }: Props) {
   const hc = homeCopy[locale];
@@ -133,61 +138,60 @@ export function HomePageView({
   const CLIMA_DATA = ledgerCharts.clima;
 
   const sectorsData = useMemo(() => {
-    const staticSectors = [
-      {
-        slug: "agroindustria",
+    if (sectorsStatus !== "ok" || apiSectors.length === 0) return [];
+
+    const visualBySlug: Record<
+      string,
+      { iconSrc: string; accent: string; img: string }
+    > = {
+      agroindustria: {
         iconSrc: sectorIconAssets.agroindustria.src,
         accent: "#93C01F",
         img: designImages.sectors.agroindustria,
       },
-      {
-        slug: "manufactura",
+      manufactura: {
         iconSrc: sectorIconAssets.manufactura.src,
         accent: "#7C25A8",
         img: designImages.sectors.manufactura,
       },
-      {
-        slug: "energia",
+      energia: {
         iconSrc: sectorIconAssets.energia.src,
         accent: "#F7BF06",
         img: designImages.sectors.energia,
       },
-      {
-        slug: "logistica",
+      logistica: {
         iconSrc: sectorIconAssets.logistica.src,
         accent: "#2EB29C",
         img: designImages.sectors.logistica,
       },
-      {
-        slug: "turismo",
+      turismo: {
         iconSrc: sectorIconAssets.turismo.src,
         accent: "#57D0E1",
         img: designImages.sectors.turismo,
       },
-      {
-        slug: "infraestructura",
+      infraestructura: {
         iconSrc: sectorIconAssets.infraestructura.src,
         accent: "#F98639",
         img: designImages.sectors.infraestructura,
       },
-    ];
+    };
 
-    return staticSectors.map((base) => {
-      const fromApi = apiSectors.find((sector) => sector.slug === base.slug);
-      const slug = base.slug as SectorSlug;
-      return {
-        ...base,
-        name: fromApi?.name ?? getSectorDisplayName(locale, slug),
-        desc:
-          fromApi?.short_description ||
-          fromApi?.description ||
-          (locale === "es"
-            ? "Sector estratégico para la inversión en Honduras."
-            : "Strategic sector for investment in Honduras."),
-        href: getSectorHref(locale, base.slug),
-      };
-    });
-  }, [apiSectors, locale]);
+    return [...apiSectors]
+      .filter((sector) => sector.is_active)
+      .sort((a, b) => a.order - b.order)
+      .map((sector) => {
+        const visual = visualBySlug[sector.slug];
+        return {
+          slug: sector.slug,
+          iconSrc: visual?.iconSrc ?? sectorIconAssets.agroindustria.src,
+          accent: sector.color_hex || visual?.accent || "#252A58",
+          img: sector.image || visual?.img || designImages.sectors.agroindustria,
+          name: sector.name,
+          desc: sector.short_description || sector.description || "",
+          href: getSectorHref(locale, sector.slug),
+        };
+      });
+  }, [apiSectors, locale, sectorsStatus]);
 
   const partnerBenefits =
     locale === "es"
@@ -211,41 +215,31 @@ export function HomePageView({
   const testimonialsCopy = hc.testimonials ?? {
     title: locale === "es" ? "Casos de Éxito" : "Success Stories",
     cta: locale === "es" ? "Ver todos los casos" : "View all cases",
-    items: [],
+    empty:
+      locale === "es"
+        ? "Próximamente publicaremos casos de éxito destacados."
+        : "Featured success stories will be published here soon.",
+    error:
+      locale === "es"
+        ? "No pudimos cargar los casos de éxito. Intente de nuevo más tarde."
+        : "We could not load success stories right now. Please try again later.",
   };
 
-  const testimonialMeta = [
-    {
-      photo: designImages.casos.sinclair,
-      ...homeSuccessStoryAssets[0],
-    },
-    {
-      photo: designImages.casos.kimpton,
-      ...homeSuccessStoryAssets[1],
-    },
-  ] as const;
-
   const testimonialCards =
-    featuredStories.length > 0
-      ? featuredStories.slice(0, 2).map((story, index) => ({
+    featuredStoriesStatus === "ok"
+      ? featuredStories.slice(0, 2).map((story) => ({
+          slug: story.slug,
           name: story.testimonial_author || story.company_name || story.title,
           role: story.company_name,
           quote: story.testimonial_quote || story.summary,
           caseTitle: story.title,
           photo: story.image || designImages.casos.sinclair,
-          logo: story.logo?.file || homeSuccessStoryAssets[index]?.logo || designImages.casos.sinclair,
+          logo: story.logo?.file || designImages.casos.sinclair,
           logoAlt: story.title,
         }))
-      : testimonialsCopy.items.map((item, index) => ({
-          ...item,
-          ...testimonialMeta[index],
-        }));
+      : [];
 
-  const caseHref = (title: string) => {
-    const fromApi = featuredStories.find((story) => story.title === title);
-    if (fromApi) return L(`/portafolio/casos/${fromApi.slug}`);
-    return L(`/portafolio/casos/${slugify(title)}`);
-  };
+  const caseHref = (slug: string) => L(`/portafolio/casos/${slug}`);
 
   // Obtener copias específicas para mayor legibilidad
   const dCopy = hc.graficosDashboard ?? {
@@ -1253,7 +1247,23 @@ export function HomePageView({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sectorsData.map((sector) => (
+            {sectorsStatus === "error" ? (
+              <div
+                role="alert"
+                className="sm:col-span-2 lg:col-span-3 rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800"
+              >
+                {locale === "es"
+                  ? "No pudimos cargar los sectores. Intente de nuevo más tarde."
+                  : "We could not load sectors right now. Please try again later."}
+              </div>
+            ) : sectorsData.length === 0 ? (
+              <div className="sm:col-span-2 lg:col-span-3 rounded-xl border border-dashed border-cni-primary/15 bg-white px-6 py-12 text-center text-sm text-cni-primary/60">
+                {locale === "es"
+                  ? "Próximamente publicaremos los sectores priorizados."
+                  : "Priority sectors will be published here soon."}
+              </div>
+            ) : (
+              sectorsData.map((sector) => (
               <Link
                 key={sector.slug}
                 href={sector.href}
@@ -1323,7 +1333,8 @@ export function HomePageView({
                   </span>
                 </div>
               </Link>
-            ))}
+            ))
+            )}
           </div>
         </div>
       </section>
@@ -1484,10 +1495,22 @@ export function HomePageView({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-            {testimonialCards.map((card) => (
+            {featuredStoriesStatus === "error" ? (
+              <div
+                role="alert"
+                className="md:col-span-2 rounded-xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-800"
+              >
+                {testimonialsCopy.error}
+              </div>
+            ) : testimonialCards.length === 0 ? (
+              <div className="md:col-span-2 rounded-xl border border-dashed border-cni-primary/15 bg-[#f8f9ff] px-6 py-10 text-center text-sm text-cni-primary/60">
+                {testimonialsCopy.empty}
+              </div>
+            ) : (
+              testimonialCards.map((card) => (
               <Link
-                key={card.name}
-                href={caseHref(card.caseTitle)}
+                key={card.slug}
+                href={caseHref(card.slug)}
                 className="al-success-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-5 md:p-6 transition-colors hover:border-cni-gold/25 hover:bg-white"
               >
                 <div className="al-success-logo mb-5 flex h-16 w-full items-center justify-center rounded-lg border border-cni-primary/10 bg-white px-4 py-3 md:h-[4.5rem]">
@@ -1523,7 +1546,8 @@ export function HomePageView({
                   </div>
                 </div>
               </Link>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -1552,7 +1576,14 @@ export function HomePageView({
             </Link>
           </div>
 
-          {visibleNews.length > 0 ? (
+          {latestNewsStatus === "error" ? (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800"
+            >
+              {prensaCopy.error}
+            </div>
+          ) : visibleNews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
               {visibleNews.map((article, idx) => (
                 <Link
@@ -1600,11 +1631,7 @@ export function HomePageView({
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-cni-primary/15 bg-white px-6 py-12 text-center">
-              <p className="font-body text-sm text-cni-primary/60">
-                {locale === "es"
-                  ? "Próximamente publicaremos noticias y comunicados oficiales."
-                  : "Official news and press releases will be published soon."}
-              </p>
+              <p className="font-body text-sm text-cni-primary/60">{prensaCopy.empty}</p>
               <Link
                 href={L("/prensa")}
                 className="mt-4 inline-flex items-center gap-2 font-headline text-[10px] font-extrabold uppercase tracking-[0.14em] text-cni-primary hover:text-cni-gold"

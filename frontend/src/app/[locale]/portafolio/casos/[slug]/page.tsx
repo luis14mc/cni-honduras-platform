@@ -128,6 +128,26 @@ export default async function CasoDetallePage({
               <dd className="mt-1">{story.sector.name}</dd>
             </div>
           )}
+          {story.investment_amount != null && story.investment_amount !== "" && (
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.investment}</dt>
+              <dd className="mt-1">
+                {new Intl.NumberFormat(locale === "en" ? "en-US" : "es-HN", {
+                  style: "currency",
+                  currency: "USD",
+                  maximumFractionDigits: 0,
+                }).format(Number(story.investment_amount))}
+              </dd>
+            </div>
+          )}
+          {story.jobs_generated != null && (
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.jobs}</dt>
+              <dd className="mt-1">
+                {new Intl.NumberFormat(locale === "en" ? "en-US" : "es-HN").format(story.jobs_generated)}
+              </dd>
+            </div>
+          )}
         </dl>
 
         {story.testimonial_quote && (

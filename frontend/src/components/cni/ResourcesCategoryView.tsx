@@ -14,6 +14,7 @@ type Props = {
   locale: Locale;
   category: ResourceCategoryMeta;
   documents: CmsDocument[];
+  loadStatus?: "ok" | "error";
 };
 
 function formatFileSize(bytes: number | null): string {
@@ -22,7 +23,12 @@ function formatFileSize(bytes: number | null): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function ResourcesCategoryView({ locale, category, documents }: Props) {
+export function ResourcesCategoryView({
+  locale,
+  category,
+  documents,
+  loadStatus = "ok",
+}: Props) {
   const ui = resourceCategoryUi[locale];
   const L = (p: string) => resolveHref(locale, p);
   const featured = documents.filter((doc) => doc.is_featured);
@@ -77,7 +83,14 @@ export function ResourcesCategoryView({ locale, category, documents }: Props) {
           </div>
         </div>
 
-        {documents.length === 0 ? (
+        {loadStatus === "error" ? (
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-white p-10 text-center text-lg text-red-800 shadow-sm"
+          >
+            {ui.error}
+          </div>
+        ) : documents.length === 0 ? (
           <div className="rounded-xl bg-white p-10 text-center text-lg text-[#0E7A7C] shadow-sm">
             {ui.empty}
           </div>
@@ -90,9 +103,19 @@ export function ResourcesCategoryView({ locale, category, documents }: Props) {
               >
                 <div>
                   <div
-                    className={`mb-6 flex h-12 w-12 items-center justify-center rounded-lg ${doc.is_featured ? "bg-[#0E7A7C] text-[#35A963]" : "bg-[#24436B] text-[#35A963]"}`}
+                    className={`mb-6 overflow-hidden rounded-lg ${doc.is_featured ? "bg-[#0E7A7C]" : "bg-[#24436B]"}`}
                   >
-                    <MaterialIcon name="description" filled className="text-3xl" />
+                    {doc.cover_image?.file ? (
+                      <img
+                        src={doc.cover_image.file}
+                        alt={doc.cover_image.alt_text || doc.title}
+                        className="h-40 w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-40 w-full items-center justify-center text-[#35A963]">
+                        <MaterialIcon name="description" filled className="text-5xl" />
+                      </div>
+                    )}
                   </div>
                   <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{doc.title}</h3>
                   <p className="mb-4 leading-relaxed text-[#0E7A7C]">{doc.description}</p>

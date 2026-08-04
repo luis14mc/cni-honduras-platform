@@ -9,6 +9,7 @@ import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getNews } from "@/src/services/cms";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.prensa);
 
@@ -21,6 +22,8 @@ const copy = {
     featuredTitle: "Noticia destacada",
     archiveTitle: "Noticias y comunicados",
     empty: "Próximamente publicaremos noticias y comunicados oficiales del CNI.",
+    error:
+      "No pudimos cargar las noticias en este momento. Intente de nuevo más tarde.",
     readArticle: "Explorar",
     newsletterTitle: "Siga el pulso de la inversión en Honduras",
     newsletterDesc:
@@ -37,7 +40,8 @@ const copy = {
       "Stay informed about the latest news, events and communiqués from the National Investment Council (CNI). Transparency and strategic vision for Honduras's development.",
     featuredTitle: "Featured news",
     archiveTitle: "News and communiqués",
-    empty: "Próximamente publicaremos noticias y comunicados oficiales del CNI.",
+    empty: "Official CNI news and press releases will be published here soon.",
+    error: "We could not load the news right now. Please try again later.",
     readArticle: "Explore",
     newsletterTitle: "Follow the pulse of investment in Honduras",
     newsletterDesc:
@@ -66,14 +70,6 @@ const categoryLabels: Record<Locale, Record<NewsCategory, string>> = {
   },
 };
 
-async function loadNews(locale: Locale): Promise<NewsArticle[]> {
-  try {
-    return await getNews({ locale });
-  } catch {
-    return [];
-  }
-}
-
 function formatDate(locale: Locale, value: string): string {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "es-HN", {
     day: "2-digit",
@@ -92,7 +88,8 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const articles = await loadNews(locale);
+  const newsResult = await loadAsyncData(() => getNews({ locale }), [] as NewsArticle[]);
+  const articles = newsResult.data;
   const featured = articles.find((article) => article.is_featured) ?? articles[0];
   const archive = featured ? articles.filter((article) => article.slug !== featured.slug) : articles;
 
@@ -164,7 +161,14 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
       <section id="archive" className="bg-[#eff4ff] px-8 py-24">
         <div className="mx-auto max-w-7xl">
           <h2 className="mb-12 text-4xl font-extrabold tracking-tight text-[#252A58]">{c.archiveTitle}</h2>
-          {articles.length === 0 ? (
+          {newsResult.status === "error" ? (
+            <div
+              role="alert"
+              className="rounded-xl border border-red-200 bg-white p-10 text-center text-lg font-medium text-red-800 shadow-md"
+            >
+              {c.error}
+            </div>
+          ) : articles.length === 0 ? (
             <div className="rounded-xl bg-white p-10 text-center text-lg font-medium text-[#0E7A7C] shadow-md">
               {c.empty}
             </div>

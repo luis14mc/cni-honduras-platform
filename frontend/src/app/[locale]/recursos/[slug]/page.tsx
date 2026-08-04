@@ -9,6 +9,7 @@ import {
   getAllResourceCategorySlugs,
   getResourceCategoryMeta,
 } from "@/src/data/resourceCategoryMeta";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export function generateStaticParams() {
   return getAllResourceCategorySlugs().map((slug) => ({ slug }));
@@ -37,14 +38,17 @@ export default async function RecursoCategoryPage({
   const category = getResourceCategoryMeta(slug);
   if (!category) notFound();
 
-  let documents: CmsDocument[] = [];
-  try {
-    documents = await getDocuments({ category: category.slug, locale });
-  } catch {
-    documents = [];
-  }
+  const result = await loadAsyncData(
+    () => getDocuments({ category: category.slug, locale }),
+    [] as CmsDocument[],
+  );
 
   return (
-    <ResourcesCategoryView locale={locale} category={category} documents={documents} />
+    <ResourcesCategoryView
+      locale={locale}
+      category={category}
+      documents={result.data}
+      loadStatus={result.status}
+    />
   );
 }

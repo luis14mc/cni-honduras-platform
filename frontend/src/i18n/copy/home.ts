@@ -30,7 +30,8 @@ export type HomeCopy = {
   testimonials: {
     title: string;
     cta: string;
-    items: ReadonlyArray<{ quote: string; name: string; role: string; initials: string }>;
+    empty: string;
+    error: string;
   };
   facilidadesMigratorias: {
     eyebrow: string;
@@ -109,7 +110,8 @@ export type HomeCopy = {
     description: string;
     cta: string;
     readMore: string;
-    items: ReadonlyArray<{ date: string; title: string; excerpt: string; imageAlt?: string }>;
+    empty: string;
+    error: string;
   };
   newsletter: { title: string; description: string; placeholder: string; button: string };
   actionCards?: {
@@ -191,22 +193,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     testimonials: {
       title: "Casos de Éxito",
       cta: "Ver todos los casos",
-      items: [
-        {
-          quote:
-            "Nuestro país tiene gente trabajadora, tierra fértil y una ubicación privilegiada. Invertir aquí es invertir en un modelo de crecimiento sostenible con rostro humano.",
-          name: "Naman Antonio Sánchez",
-          role: "Gerente General - Sinclair",
-          initials: "NS",
-        },
-        {
-          quote:
-            "Honduras tiene un potencial increíble para los inversionistas que buscan más que un retorno financiero; aquí se puede generar un impacto real y construir un futuro sostenible.",
-          name: "David Dachner",
-          role: "Gerente Propietario - Kimpton Grand Hotel",
-          initials: "DD",
-        },
-      ],
+      empty: "Próximamente publicaremos casos de éxito destacados.",
+      error: "No pudimos cargar los casos de éxito. Intente de nuevo más tarde.",
     },
     facilidadesMigratorias: {
       eyebrow: "Despacho de Promoción de Inversiones",
@@ -399,29 +387,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       description: "Las últimas noticias, eventos y comunicados del Consejo Nacional de Inversiones.",
       cta: "Ver sala de prensa",
       readMore: "Leer más",
-      items: [
-        {
-          date: "Mar 2025",
-          title: "Honduras consolida su presencia global con más de $58 millones en nuevas inversiones",
-          excerpt:
-            "Resultados del primer trimestre y priorización de sectores estratégicos bajo la Estrategia de Inversiones 2024.",
-          imageAlt: "Reunión de inversores",
-        },
-        {
-          date: "Mar 2025",
-          title: "Foro Honduras Investment Summit — Tegucigalpa",
-          excerpt:
-            "Diálogo entre Estado, sector privado y socios multilaterales para acelerar proyectos Ready to Invest.",
-          imageAlt: "Foro de inversión",
-        },
-        {
-          date: "Abr 2025",
-          title: "CNI presenta avances de la Estrategia de Inversiones ante la junta directiva",
-          excerpt:
-            "Informar, promocionar, acompañar, articular e incidir: resultados operativos del Consejo Nacional de Inversiones.",
-          imageAlt: "Junta directiva CNI",
-        },
-      ],
+      empty: "Próximamente publicaremos noticias y comunicados oficiales.",
+      error: "No pudimos cargar las noticias. Intente de nuevo más tarde.",
     },
     newsletter: {
       title: "Manténgase a la vanguardia",
@@ -519,22 +486,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
     testimonials: {
       title: "Success stories",
       cta: "View all cases",
-      items: [
-        {
-          quote:
-            "Our country has hardworking people, fertile land, and a privileged location. Investing here means investing in sustainable growth with a human face.",
-          name: "Naman Antonio Sánchez",
-          role: "General Manager - Sinclair",
-          initials: "NS",
-        },
-        {
-          quote:
-            "Honduras has incredible potential for investors seeking more than financial return; here you can generate real impact and build a sustainable future.",
-          name: "David Dachner",
-          role: "Owner Manager - Kimpton Grand Hotel",
-          initials: "DD",
-        },
-      ],
+      empty: "Featured success stories will be published here soon.",
+      error: "We could not load success stories right now. Please try again later.",
     },
     facilidadesMigratorias: {
       eyebrow: "Investment Promotion Office",
@@ -728,26 +681,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       description: "The latest news, events, and communiqués from the National Investment Council.",
       cta: "View press room",
       readMore: "Read more",
-      items: [
-        {
-          date: "Mar 2025",
-          title: "Honduras strengthens its global footprint with over $58M in new investment",
-          excerpt: "First-quarter results and strategic sector focus under the 2024 Investment Strategy.",
-          imageAlt: "Investors meeting",
-        },
-        {
-          date: "Mar 2025",
-          title: "Honduras Investment Summit forum — Tegucigalpa",
-          excerpt: "Dialogue among government, private sector, and multilateral partners to accelerate Ready to Invest projects.",
-          imageAlt: "Investment forum",
-        },
-        {
-          date: "Apr 2025",
-          title: "CNI reports progress on the Investment Strategy to its board",
-          excerpt: "Inform, promote, accompany, coordinate, and influence—operational results of the National Investment Council.",
-          imageAlt: "CNI board meeting",
-        },
-      ],
+      empty: "Official news and press releases will be published soon.",
+      error: "We could not load the news right now. Please try again later.",
     },
     newsletter: {
       title: "Stay ahead",

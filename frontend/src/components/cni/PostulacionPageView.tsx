@@ -6,6 +6,7 @@ import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { postulacionPageCopy } from "@/src/i18n/copy/postulacionPage";
 import { type Locale } from "@/src/i18n/config";
 import { getSectors } from "@/src/data/investmentSectors";
+import type { SectorCopy } from "@/src/data/investmentSectors";
 import { resolveHref } from "@/src/i18n/path";
 import { submitProjectApplication } from "@/src/services/forms";
 import type { ProjectApplicationPayload } from "@/src/types/forms";
@@ -164,11 +165,22 @@ function FieldError({ message }: { message?: string }) {
   return <p className="mt-2 text-sm font-medium text-red-700">{message}</p>;
 }
 
-export function PostulacionPageView({ locale }: { locale: Locale }) {
+export function PostulacionPageView({
+  locale,
+  sectors: sectorsProp,
+  sectorsStatus = "ok",
+}: {
+  locale: Locale;
+  sectors?: ReadonlyArray<Pick<SectorCopy, "slug" | "name">>;
+  sectorsStatus?: "ok" | "error";
+}) {
   const c = postulacionPageCopy[locale];
   const t = copy[locale];
   const L = (path: string) => resolveHref(locale, path);
-  const sectors = useMemo(() => getSectors(locale), [locale]);
+  const sectors = useMemo(
+    () => sectorsProp ?? getSectors(locale),
+    [locale, sectorsProp],
+  );
   const [form, setForm] = useState<FormState>(initialForm);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -390,11 +402,19 @@ export function PostulacionPageView({ locale }: { locale: Locale }) {
                         className="w-full rounded-xl border border-cni-primary/20 bg-cni-surface-low px-4 py-3 outline-none transition focus:border-cni-primary focus:ring-1 focus:ring-cni-primary"
                       >
                         <option value="">{t.placeholders.select}</option>
-                        {sectors.map((sector) => (
-                          <option key={sector.slug} value={sector.slug}>
-                            {sector.name}
+                        {sectorsStatus === "error" ? (
+                          <option value="" disabled>
+                            {locale === "es"
+                              ? "No se pudieron cargar los sectores"
+                              : "Could not load sectors"}
                           </option>
-                        ))}
+                        ) : (
+                          sectors.map((sector) => (
+                            <option key={sector.slug} value={sector.slug}>
+                              {sector.name}
+                            </option>
+                          ))
+                        )}
                       </select>
                       <FieldError message={errors.sector} />
                     </label>

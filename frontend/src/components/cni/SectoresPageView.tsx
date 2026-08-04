@@ -20,6 +20,7 @@ type Props = {
   locale: Locale;
   copy: SectoresIndexCopy;
   sectors: ReadonlyArray<SectorCopy>;
+  loadStatus?: "ok" | "error";
 };
 
 const SECTORES_HERO_IMAGE =
@@ -75,8 +76,16 @@ function quickStat(slug: SectorSlug, locale: Locale): { value: string; label: st
   }
 }
 
-export function SectoresPageView({ locale, copy: c, sectors }: Props) {
+export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }: Props) {
   const L = (path: string) => withLocale(locale, path);
+  const emptyMessage =
+    locale === "es"
+      ? "Próximamente publicaremos los sectores priorizados."
+      : "Priority sectors will be published here soon.";
+  const errorMessage =
+    locale === "es"
+      ? "No pudimos cargar los sectores. Intente de nuevo más tarde."
+      : "We could not load sectors right now. Please try again later.";
 
   return (
     <div className="al-sectores-index flex flex-1 flex-col bg-[#f8f9ff]">
@@ -205,7 +214,19 @@ export function SectoresPageView({ locale, copy: c, sectors }: Props) {
           />
 
           <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sectors.map((sector) => {
+            {loadStatus === "error" ? (
+              <div
+                role="alert"
+                className="md:col-span-2 lg:col-span-3 rounded-xl border border-red-200 bg-red-50 p-10 text-center text-red-800"
+              >
+                {errorMessage}
+              </div>
+            ) : sectors.length === 0 ? (
+              <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-dashed border-cni-primary/15 bg-[#f8f9ff] p-10 text-center text-cni-primary/70">
+                {emptyMessage}
+              </div>
+            ) : (
+              sectors.map((sector) => {
               const slug = sector.slug as SectorSlug;
               const palette = SECTOR_ACCENTS[slug];
               if (!palette) return null;
@@ -330,7 +351,8 @@ export function SectoresPageView({ locale, copy: c, sectors }: Props) {
                   </div>
                 </Link>
               );
-            })}
+            })
+            )}
           </div>
         </div>
       </section>

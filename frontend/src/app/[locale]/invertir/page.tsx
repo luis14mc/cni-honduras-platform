@@ -6,16 +6,37 @@ import { PageHero } from "@/src/components/cni/PageHero";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
 import { SectorTeaserCard } from "@/src/components/cni/SectorTeaserCard";
 import { SectorIcon } from "@/src/components/cni/SectorIcon";
-import type { SectorSlug } from "@/src/data/investmentSectors";
+import {
+  getSectorBySlug,
+  isSectorSlug,
+  type SectorCopy,
+  type SectorSlug,
+} from "@/src/data/investmentSectors";
 import { sectorPhotoHeaders, SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { isLocale } from "@/src/i18n/config";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-
-export const generateMetadata = makeGenerateMetadata(PAGE_SEO.invertir);
 import type { Locale } from "@/src/i18n/config";
 import { invertirPageCopy } from "@/src/i18n/copy/invertirPage";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
+import { getSectors } from "@/src/services/investment";
+import type { Sector } from "@/src/types/investment";
+import { loadAsyncData } from "@/src/lib/asyncData";
+import { designImages } from "@/src/lib/designAssets";
+
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO.invertir);
+
+function toSectorCopy(api: Sector, locale: Locale): SectorCopy {
+  const fallback = isSectorSlug(api.slug) ? getSectorBySlug(locale, api.slug) : undefined;
+  return {
+    slug: api.slug,
+    name: api.name,
+    short: api.short_description || "",
+    fullText: api.description || "",
+    highlights: fallback?.highlights ?? [],
+    image: api.image || fallback?.image || designImages.sectors.agroindustria,
+  };
+}
 
 export default async function InvertirPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -24,7 +45,14 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
   const c = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
 
-  const sectors = c.sectors;
+  const result = await loadAsyncData(() => getSectors({ locale }), [] as Sector[]);
+  const sectors: SectorCopy[] =
+    result.status === "ok"
+      ? [...result.data]
+          .filter((sector) => sector.is_active)
+          .sort((a, b) => a.order - b.order)
+          .map((sector) => toSectorCopy(sector, locale))
+      : [];
 
   return (
     <div className="flex flex-1 flex-col bg-[#f8f9ff]">
@@ -51,45 +79,62 @@ export default async function InvertirPage({ params }: { params: Promise<{ local
         </PageHero>
       </div>
 
-      <div className="sticky top-28 z-30 glass-panel border-b border-[#dce9ff]/30">
-        <div className="mx-auto max-w-screen-2xl overflow-x-auto px-6 no-scrollbar md:px-10">
-          <ul className="flex items-center gap-10 py-5">
-            {sectors.map((s) => (
-              <li key={s.slug}>
-                <Link
-                  href={getSectorHref(locale, s.slug)}
-                  className="group flex items-center gap-3 whitespace-nowrap text-sm font-extrabold uppercase tracking-tight text-[#0E7A7C] transition-colors hover:text-[#252A58]"
-                >
-                  <span className="block h-[2px] w-8 bg-[#35A963] transition-all group-hover:w-12" />
-                  {s.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      {sectors.length > 0 && (
+        <div className="sticky top-28 z-30 glass-panel border-b border-[#dce9ff]/30">
+          <div className="mx-auto max-w-screen-2xl overflow-x-auto px-6 no-scrollbar md:px-10">
+            <ul className="flex items-center gap-10 py-5">
+              {sectors.map((s) => (
+                <li key={s.slug}>
+                  <Link
+                    href={getSectorHref(locale, s.slug)}
+                    className="group flex items-center gap-3 whitespace-nowrap text-sm font-extrabold uppercase tracking-tight text-[#0E7A7C] transition-colors hover:text-[#252A58]"
+                  >
+                    <span className="block h-[2px] w-8 bg-[#35A963] transition-all group-hover:w-12" />
+                    {s.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
 
       <Section id="sectores" tone="white">
         <SectionHeader eyebrow={c.sectionEyebrow} title={c.sectionTitle} description={c.sectionDescription} />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {sectors.map((sector, idx) => (
-            <SectorTeaserCard
-              key={sector.slug}
-              locale={locale}
-              slug={sector.slug as SectorSlug}
-              name={sector.name}
-              short={sector.short}
-              image={sector.image}
-              badge={c.sectorBadge}
-              badgeIndex={idx}
-              viewDetailLabel={c.viewDetail}
-            />
-          ))}
-        </div>
+        {result.status === "error" ? (
+          <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-10 text-center text-red-800">
+            {locale === "es"
+              ? "No pudimos cargar los sectores. Intente de nuevo más tarde."
+              : "We could not load sectors right now. Please try again later."}
+          </div>
+        ) : sectors.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-[#dce9ff] bg-white p-10 text-center text-[#0E7A7C]">
+            {locale === "es"
+              ? "Próximamente publicaremos los sectores priorizados."
+              : "Priority sectors will be published here soon."}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {sectors.map((sector, idx) => (
+              <SectorTeaserCard
+                key={sector.slug}
+                locale={locale}
+                slug={sector.slug as SectorSlug}
+                name={sector.name}
+                short={sector.short}
+                image={sector.image}
+                badge={c.sectorBadge}
+                badgeIndex={idx}
+                viewDetailLabel={c.viewDetail}
+              />
+            ))}
+          </div>
+        )}
       </Section>
 
       {sectors.map((s, idx) => {
         const slug = s.slug as SectorSlug;
+        if (!isSectorSlug(slug)) return null;
         const sidePhoto = sectorPhotoHeaders[slug] ?? s.image;
         const sideUsesIcon = !sectorPhotoHeaders[slug];
 

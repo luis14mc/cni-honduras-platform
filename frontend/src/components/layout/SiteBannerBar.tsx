@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Locale } from "@/src/i18n/config";
 import type { SiteBanner } from "@/src/types/cms";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
@@ -15,20 +15,26 @@ function storageKey(id: number) {
   return `cni-banner-dismiss-${id}`;
 }
 
-export function SiteBannerBar({ locale, banners }: Props) {
-  const [visible, setVisible] = useState<SiteBanner[]>([]);
+function isDismissed(id: number): boolean {
+  try {
+    return sessionStorage.getItem(storageKey(id)) === "1";
+  } catch {
+    return false;
+  }
+}
 
-  useEffect(() => {
-    const active = banners.filter((banner) => {
-      if (!banner.dismissible) return true;
-      try {
-        return sessionStorage.getItem(storageKey(banner.id)) !== "1";
-      } catch {
-        return true;
-      }
-    });
-    setVisible(active);
-  }, [banners]);
+export function SiteBannerBar({ locale, banners }: Props) {
+  const [dismissedIds, setDismissedIds] = useState<number[]>([]);
+
+  const visible = useMemo(
+    () =>
+      banners.filter((banner) => {
+        if (!banner.dismissible) return true;
+        if (dismissedIds.includes(banner.id)) return false;
+        return !isDismissed(banner.id);
+      }),
+    [banners, dismissedIds],
+  );
 
   if (visible.length === 0) return null;
 
@@ -41,8 +47,8 @@ export function SiteBannerBar({ locale, banners }: Props) {
       } catch {
         // ignore
       }
+      setDismissedIds((ids) => [...ids, banner.id]);
     }
-    setVisible((items) => items.filter((item) => item.id !== banner.id));
   }
 
   const style = {

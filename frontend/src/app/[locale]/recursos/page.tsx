@@ -7,6 +7,9 @@ import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
+import { getDocuments } from "@/src/services/cms";
+import type { CmsDocument } from "@/src/types/cms";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.recursos);
 
@@ -28,12 +31,9 @@ const copy = {
     ],
     highlightsEyebrow: "Actualizados",
     highlightsTitle: "Documentos Destacados",
-    viewAll: "Ver Todos los Documentos",
-    highlights: [
-      { icon: "policy", tag: "Legal • 2024", title: "Compendio de Leyes de Inversión 2024", desc: "Incluye la Ley de Promoción y Protección de Inversiones y sus reglamentos actualizados al presente año fiscal." },
-      { icon: "menu_book", tag: "Guía • v3.0", title: "Guía del Inversionista: Doing Business in Honduras", desc: "Manual integral para establecer operaciones en el país, incluyendo procesos de registro y obligaciones patronales." },
-      { icon: "monitoring", tag: "Datos • Q3", title: "Reporte de Indicadores Macroeconómicos Q3", desc: "Análisis detallado de la situación económica nacional para la toma de decisiones estratégicas." },
-    ],
+    viewAll: "Ver categoría institucional",
+    empty: "Próximamente publicaremos documentos destacados desde el CMS.",
+    error: "No pudimos cargar los documentos destacados. Intente de nuevo más tarde.",
     preview: "Vista previa",
     download: "Descargar",
     ctaTitle: "¿Necesita asesoría técnica personalizada?",
@@ -58,12 +58,9 @@ const copy = {
     ],
     highlightsEyebrow: "Updated",
     highlightsTitle: "Featured Documents",
-    viewAll: "View All Documents",
-    highlights: [
-      { icon: "policy", tag: "Legal • 2024", title: "Investment Laws Compendium 2024", desc: "Includes the Investment Promotion and Protection Law and its regulations updated for the current fiscal year." },
-      { icon: "menu_book", tag: "Guide • v3.0", title: "Investor Guide: Doing Business in Honduras", desc: "Comprehensive manual for establishing operations in the country, including registration processes and labor obligations." },
-      { icon: "monitoring", tag: "Data • Q3", title: "Q3 Macroeconomic Indicators Report", desc: "Detailed analysis of the national economic situation for strategic decision making." },
-    ],
+    viewAll: "View institutional category",
+    empty: "Featured documents will be published from the CMS soon.",
+    error: "We could not load featured documents right now. Please try again later.",
     preview: "Preview",
     download: "Download",
     ctaTitle: "Need personalized technical advice?",
@@ -73,12 +70,23 @@ const copy = {
   },
 } as const;
 
+function formatFileSize(bytes: number | null): string {
+  if (!bytes) return "";
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default async function RecursosPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
+  const featuredResult = await loadAsyncData(
+    () => getDocuments({ featured: true, locale }),
+    [] as CmsDocument[],
+  );
+  const highlights = featuredResult.data.slice(0, 6);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
@@ -140,38 +148,72 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
               <span className="text-sm font-semibold uppercase tracking-[0.2em] text-[#b6c2d3]">{c.highlightsEyebrow}</span>
               <h2 className="mt-2 text-4xl font-extrabold text-[#252A58]">{c.highlightsTitle}</h2>
             </div>
-            <button
-              type="button"
+            <Link
+              href={L("/recursos/institucional")}
               className="flex items-center rounded-md bg-[#252A58] px-8 py-3 font-bold text-white transition-all hover:bg-[#24436B]"
             >
               {c.viewAll}
               <MaterialIcon name="open_in_new" className="ml-2" />
-            </button>
+            </Link>
           </div>
-          <div className="flex flex-col space-y-6">
-            {c.highlights.map((h) => (
-              <div key={h.title} className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row">
-                <div className="flex h-48 w-full shrink-0 flex-col items-center justify-center bg-[#24436B] p-6 text-center md:w-64">
-                  <MaterialIcon name={h.icon} className="mb-2 text-5xl text-[#35A963]" />
-                  <span className="text-xs font-bold uppercase tracking-widest text-white">{h.tag}</span>
-                </div>
-                <div className="flex flex-grow flex-col items-center justify-between gap-6 p-8 md:flex-row">
-                  <div>
-                    <h4 className="mb-2 text-xl font-bold text-[#252A58]">{h.title}</h4>
-                    <p className="max-w-xl text-[#0E7A7C]">{h.desc}</p>
+          {featuredResult.status === "error" ? (
+            <div role="alert" className="rounded-xl border border-red-200 bg-white p-10 text-center text-red-800 shadow-sm">
+              {c.error}
+            </div>
+          ) : highlights.length === 0 ? (
+            <div className="rounded-xl bg-white p-10 text-center text-[#0E7A7C] shadow-sm">{c.empty}</div>
+          ) : (
+            <div className="flex flex-col space-y-6">
+              {highlights.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row"
+                >
+                  <div className="relative flex h-48 w-full shrink-0 flex-col items-center justify-center overflow-hidden bg-[#24436B] p-6 text-center md:w-64">
+                    {doc.cover_image?.file ? (
+                      <img
+                        src={doc.cover_image.file}
+                        alt={doc.cover_image.alt_text || doc.title}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ) : (
+                      <>
+                        <MaterialIcon name="description" className="mb-2 text-5xl text-[#35A963]" />
+                        <span className="text-xs font-bold uppercase tracking-widest text-white">
+                          {doc.file_type ? doc.file_type.toUpperCase() : doc.category}
+                          {doc.file_size_bytes ? ` · ${formatFileSize(doc.file_size_bytes)}` : ""}
+                        </span>
+                      </>
+                    )}
                   </div>
-                  <div className="flex shrink-0 gap-4">
-                    <button type="button" className="flex items-center rounded-md border border-[#dce9ff] px-5 py-2 font-semibold text-[#252A58] transition-colors hover:bg-[#dce9ff]">
-                      <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
-                    </button>
-                    <button type="button" className="flex items-center rounded-md bg-[#252A58] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90">
-                      <MaterialIcon name="download" className="mr-2 text-xl" /> {c.download}
-                    </button>
+                  <div className="flex flex-grow flex-col items-center justify-between gap-6 p-8 md:flex-row">
+                    <div>
+                      <h4 className="mb-2 text-xl font-bold text-[#252A58]">{doc.title}</h4>
+                      <p className="max-w-xl text-[#0E7A7C]">{doc.description}</p>
+                    </div>
+                    <div className="flex shrink-0 gap-4">
+                      <a
+                        href={doc.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center rounded-md border border-[#dce9ff] px-5 py-2 font-semibold text-[#252A58] transition-colors hover:bg-[#dce9ff]"
+                      >
+                        <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
+                      </a>
+                      <a
+                        href={doc.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center rounded-md bg-[#252A58] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90"
+                      >
+                        <MaterialIcon name="download" className="mr-2 text-xl" /> {c.download}
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

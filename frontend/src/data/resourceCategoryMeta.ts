@@ -122,6 +122,7 @@ export const resourceCategoryUi = {
     helpPrimary: "Contactar Asesor",
     helpSecondary: "Preguntas Frecuentes",
     empty: "No hay documentos publicados en esta categoría por el momento.",
+    error: "No pudimos cargar los documentos. Intente de nuevo más tarde.",
   },
   en: {
     backToList: "Back to Resources",
@@ -136,5 +137,6 @@ export const resourceCategoryUi = {
     helpPrimary: "Contact Advisor",
     helpSecondary: "FAQ",
     empty: "There are no published documents in this category yet.",
+    error: "We could not load documents right now. Please try again later.",
   },
 } as const;

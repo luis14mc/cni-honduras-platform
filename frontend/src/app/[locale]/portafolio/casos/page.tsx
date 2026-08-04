@@ -9,6 +9,7 @@ import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getSuccessStories } from "@/src/services/investment";
 import type { SuccessStory } from "@/src/types/investment";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["portafolio-casos"]);
 
@@ -20,6 +21,7 @@ const copy = {
     description:
       "Descubra cómo corporaciones globales y visionarios locales han prosperado en Honduras con el acompañamiento del CNI.",
     empty: "Próximamente publicaremos casos de éxito desde el CMS institucional.",
+    error: "No pudimos cargar los casos de éxito. Intente de nuevo más tarde.",
     viewCase: "Ver caso",
     ctaTitle: "Crea tu caso de éxito con la asistencia gratuita del CNI",
     ctaPrimary: "Contactar al CNI",
@@ -31,19 +33,12 @@ const copy = {
     description:
       "Discover how global corporations and local visionaries have thrived in Honduras with CNI support.",
     empty: "Success stories will be published soon from the institutional CMS.",
+    error: "We could not load success stories right now. Please try again later.",
     viewCase: "View case",
     ctaTitle: "Build your success story with free CNI assistance",
     ctaPrimary: "Contact the CNI",
   },
 } as const;
-
-async function loadStories(locale: Locale): Promise<SuccessStory[]> {
-  try {
-    return await getSuccessStories({ locale });
-  } catch {
-    return [];
-  }
-}
 
 export default async function CasosPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -51,7 +46,11 @@ export default async function CasosPage({ params }: { params: Promise<{ locale: 
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const stories = await loadStories(locale);
+  const storiesResult = await loadAsyncData(
+    () => getSuccessStories({ locale }),
+    [] as SuccessStory[],
+  );
+  const stories = storiesResult.data;
   const featured = stories.find((story) => story.is_featured) ?? stories[0];
   const others = featured ? stories.filter((story) => story.slug !== featured.slug) : stories;
 
@@ -74,7 +73,11 @@ export default async function CasosPage({ params }: { params: Promise<{ locale: 
 
       <section className="px-8 py-24">
         <div className="mx-auto max-w-7xl">
-          {stories.length === 0 ? (
+          {storiesResult.status === "error" ? (
+            <div role="alert" className="rounded-xl border border-red-200 bg-white p-10 text-center text-lg text-red-800 shadow-md">
+              {c.error}
+            </div>
+          ) : stories.length === 0 ? (
             <div className="rounded-xl bg-white p-10 text-center text-lg text-[#0E7A7C] shadow-md">
               {c.empty}
             </div>
