@@ -16,5 +16,6 @@ RUN pip install --no-cache-dir -r requirements/prod.txt
 
 COPY backend/ .
 
-# Run entrypoint or gunicorn in production
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+RUN chmod +x scripts/start.sh
+
+CMD ["./scripts/start.sh"]
