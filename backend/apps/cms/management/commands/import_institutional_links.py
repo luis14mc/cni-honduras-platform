@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for order, (icon, title_es, title_en, url, accent) in enumerate(HOME_LINKS, start=1):
             external = url.startswith("http") and "cni.hn" not in url
-            InstitutionalLink.objects.update_or_create(
+            self._sync_link(
                 section=LinkSection.HOME_INTEREST,
                 icon=icon,
                 defaults={
@@ -21,12 +21,11 @@ class Command(BaseCommand):
                     "is_external": external,
                     "accent_color": accent,
                     "order": order,
-                    "is_active": True,
                 },
             )
 
         for order, (key, title_es, title_en, url) in enumerate(FOOTER_LINKS, start=1):
-            InstitutionalLink.objects.update_or_create(
+            self._sync_link(
                 section=LinkSection.FOOTER_EXTERNAL,
                 icon=key,
                 defaults={
@@ -36,8 +35,17 @@ class Command(BaseCommand):
                     "url": url,
                     "is_external": True,
                     "order": order,
-                    "is_active": True,
                 },
             )
 
         self.stdout.write(self.style.SUCCESS("Enlaces institucionales sincronizados."))
+
+    def _sync_link(self, *, section: str, icon: str, defaults: dict) -> None:
+        link, created = InstitutionalLink.objects.update_or_create(
+            section=section,
+            icon=icon,
+            defaults=defaults,
+        )
+        if created:
+            link.is_active = True
+            link.save(update_fields=["is_active"])
