@@ -26,6 +26,8 @@ export type HomeCopy = {
     memoria: string;
     portal: string;
     estudios: string;
+    empty: string;
+    error: string;
   };
   testimonials: {
     title: string;
@@ -189,6 +191,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       memoria: "Memoria Institucional",
       portal: "Portal Digital de Inversiones",
       estudios: "Vista de Estudios CNI",
+      empty: "No hay enlaces institucionales publicados en este momento.",
+      error: "No pudimos cargar los enlaces de interés. Intente de nuevo más tarde.",
     },
     testimonials: {
       title: "Casos de Éxito",
@@ -482,6 +486,8 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       memoria: "Institutional Report",
       portal: "Digital Investment Portal",
       estudios: "CNI Studies View",
+      empty: "No institutional links are published at this time.",
+      error: "We could not load the links of interest. Please try again later.",
     },
     testimonials: {
       title: "Success stories",

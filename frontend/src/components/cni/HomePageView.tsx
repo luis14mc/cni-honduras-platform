@@ -29,6 +29,7 @@ type Props = {
   apiSectors?: Sector[];
   sectorsStatus?: LoadStatus;
   interestLinks?: InstitutionalLink[];
+  interestLinksStatus?: LoadStatus;
 };
 
 const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
@@ -89,6 +90,7 @@ export function HomePageView({
   apiSectors = [],
   sectorsStatus = "ok",
   interestLinks = [],
+  interestLinksStatus = "ok",
 }: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
@@ -460,7 +462,11 @@ export function HomePageView({
         </div>
       </section>
 
-      <InterestLinksSection locale={locale} links={interestLinks} />
+      <InterestLinksSection
+        locale={locale}
+        links={interestLinks}
+        status={interestLinksStatus}
+      />
 
       {/* 5. Why Honduras Slider */}
       <section className="py-32 bg-cni-primary text-white overflow-hidden">

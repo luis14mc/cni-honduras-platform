@@ -10,6 +10,7 @@ import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
 import { getSiteBanners, getInstitutionalLinks } from "@/src/services/cms";
 import type { InstitutionalLink, SiteBanner } from "@/src/types/cms";
+import { loadAsyncData } from "@/src/lib/asyncData";
 
 export async function generateMetadata(
   { params }: { params: Promise<{ locale: string }> },
@@ -42,12 +43,10 @@ export default async function LocaleLayout({
     banners = [];
   }
 
-  let footerLinks: InstitutionalLink[] = [];
-  try {
-    footerLinks = await getInstitutionalLinks("footer_external", { locale });
-  } catch {
-    footerLinks = [];
-  }
+  const footerLinksResult = await loadAsyncData(
+    () => getInstitutionalLinks("footer_external", { locale }),
+    [] as InstitutionalLink[],
+  );
 
   return (
     <>
@@ -63,7 +62,10 @@ export default async function LocaleLayout({
       <main id="main-content" className="flex flex-1 flex-col pt-[5.25rem]">
         {children}
       </main>
-      <Footer externalLinks={footerLinks} />
+      <Footer
+        externalLinks={footerLinksResult.data}
+        externalLinksStatus={footerLinksResult.status}
+      />
     </>
   );
 }

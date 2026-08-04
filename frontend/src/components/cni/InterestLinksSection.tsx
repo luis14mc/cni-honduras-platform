@@ -4,9 +4,11 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
-import { withLocale } from "@/src/i18n/path";
 import { InterestLinkIcon, type InterestLinkIconId } from "@/src/components/cni/InterestLinkIcons";
 import type { InstitutionalLink } from "@/src/types/cms";
+import { mapInstitutionalLinkHref } from "@/src/lib/institutionalLinks";
+
+type LoadStatus = "ok" | "error";
 
 type InterestLink = {
   id: InterestLinkIconId;
@@ -16,46 +18,11 @@ type InterestLink = {
   accent: string;
 };
 
-function buildFallbackLinks(locale: Locale): InterestLink[] {
-  const copy = homeCopy[locale].enlacesRapidos;
-
-  return [
-    {
-      id: "guia",
-      title: copy.guia,
-      href: "https://online.flippingbook.com/view/972979540/",
-      external: true,
-      accent: "#29AB85",
-    },
-    {
-      id: "memoria",
-      title: copy.memoria,
-      href: "https://online.flippingbook.com/view/975450084/",
-      external: true,
-      accent: "#24436B",
-    },
-    {
-      id: "pdi",
-      title: copy.portal,
-      href: "https://pdihonduras.gob.hn/consulta",
-      external: true,
-      accent: "#0E7A7C",
-    },
-    {
-      id: "estudios",
-      title: copy.estudios,
-      href: withLocale(locale, "/recursos/estudios"),
-      external: false,
-      accent: "#35A963",
-    },
-  ];
-}
-
-function mapApiLinks(links: InstitutionalLink[]): InterestLink[] {
+function mapApiLinks(links: InstitutionalLink[], locale: Locale): InterestLink[] {
   return links.map((link) => ({
     id: (link.icon as InterestLinkIconId) || "guia",
     title: link.title,
-    href: link.url,
+    href: mapInstitutionalLinkHref(link, locale),
     external: link.is_external,
     accent: link.accent_color || "#29AB85",
   }));
@@ -64,11 +31,12 @@ function mapApiLinks(links: InstitutionalLink[]): InterestLink[] {
 type Props = {
   locale: Locale;
   links?: InstitutionalLink[];
+  status?: LoadStatus;
 };
 
-export function InterestLinksSection({ locale, links = [] }: Props) {
+export function InterestLinksSection({ locale, links = [], status = "ok" }: Props) {
   const copy = homeCopy[locale].enlacesRapidos;
-  const resolvedLinks = links.length > 0 ? mapApiLinks(links) : buildFallbackLinks(locale);
+  const resolvedLinks = mapApiLinks(links, locale);
 
   return (
     <section
@@ -89,27 +57,37 @@ export function InterestLinksSection({ locale, links = [] }: Props) {
             </h2>
           </header>
 
-          <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-1 lg:items-start lg:justify-end lg:gap-0 lg:divide-x lg:divide-cni-primary/10">
-            {resolvedLinks.map((item) => (
-              <li key={item.id} className="lg:min-w-0 lg:flex-1 lg:px-6 lg:first:pl-0 lg:last:pr-0">
-                <Link
-                  href={item.href}
-                  target={item.external ? "_blank" : undefined}
-                  rel={item.external ? "noopener noreferrer" : undefined}
-                  className="al-interest-link group flex items-center gap-4 rounded-xl px-1 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#29AB85] sm:gap-5 lg:flex-col lg:items-center lg:gap-4 lg:px-0 lg:py-1 lg:text-center"
-                  style={{ "--interest-accent": item.accent } as CSSProperties}
-                >
-                  <span className="relative flex h-20 w-20 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24 lg:h-28 lg:w-28">
-                    <InterestLinkIcon id={item.id} className="h-full w-full object-contain" />
-                  </span>
+          {status === "error" ? (
+            <p className="font-body text-sm text-cni-primary/70 lg:flex-1 lg:text-right" role="status">
+              {copy.error}
+            </p>
+          ) : resolvedLinks.length === 0 ? (
+            <p className="font-body text-sm text-cni-primary/60 lg:flex-1 lg:text-right" role="status">
+              {copy.empty}
+            </p>
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-1 lg:items-start lg:justify-end lg:gap-0 lg:divide-x lg:divide-cni-primary/10">
+              {resolvedLinks.map((item) => (
+                <li key={item.id} className="lg:min-w-0 lg:flex-1 lg:px-6 lg:first:pl-0 lg:last:pr-0">
+                  <Link
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noopener noreferrer" : undefined}
+                    className="al-interest-link group flex items-center gap-4 rounded-xl px-1 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#29AB85] sm:gap-5 lg:flex-col lg:items-center lg:gap-4 lg:px-0 lg:py-1 lg:text-center"
+                    style={{ "--interest-accent": item.accent } as CSSProperties}
+                  >
+                    <span className="relative flex h-20 w-20 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24 lg:h-28 lg:w-28">
+                      <InterestLinkIcon id={item.id} className="h-full w-full object-contain" />
+                    </span>
 
-                  <span className="min-w-0 flex-1 font-headline text-xs font-bold uppercase leading-snug tracking-[0.1em] text-cni-primary transition-colors duration-300 group-hover:text-[color:var(--interest-accent)] sm:text-[13px] lg:flex-none lg:max-w-[11rem] lg:text-xs lg:tracking-[0.12em]">
-                    {item.title}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                    <span className="min-w-0 flex-1 font-headline text-xs font-bold uppercase leading-snug tracking-[0.1em] text-cni-primary transition-colors duration-300 group-hover:text-[color:var(--interest-accent)] sm:text-[13px] lg:flex-none lg:max-w-[11rem] lg:text-xs lg:tracking-[0.12em]">
+                      {item.title}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </section>

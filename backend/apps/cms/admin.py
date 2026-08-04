@@ -123,11 +123,16 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
 
 @admin.register(InstitutionalLink)
 class InstitutionalLinkAdmin(TranslationAdmin):
-    list_display = ("title", "section", "url", "order", "is_active", "updated_at")
-    list_filter = ("section", "is_active")
+    list_display = ("title", "section", "icon", "url", "is_external", "order", "is_active", "updated_at")
+    list_filter = ("section", "is_active", "is_external")
     list_editable = ("order", "is_active")
-    search_fields = ("title", "url", "description")
+    search_fields = ("title", "icon", "url", "description")
     ordering = ("section", "order")
+    fieldsets = (
+        (None, {"fields": ("section", "icon", "url", "is_external", "order", "is_active")}),
+        ("Presentación", {"fields": ("accent_color",)}),
+        ("Textos visibles", {"fields": ("title", "description")}),
+    )
 
 
 @admin.register(SiteBanner)
