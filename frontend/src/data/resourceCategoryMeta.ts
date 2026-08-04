@@ -116,6 +116,8 @@ export const resourceCategoryUi = {
     search: "Buscar documentos...",
     download: "Descargar",
     view: "Ver Documento",
+    featured: "Destacado",
+    unavailable: "No disponible",
     helpTitle: "¿Necesita asistencia personalizada?",
     helpText:
       "Nuestro equipo de expertos en inversión está disponible para guiarle a través de los requisitos técnicos y legales.",
@@ -131,6 +133,8 @@ export const resourceCategoryUi = {
     search: "Search documents...",
     download: "Download",
     view: "View Document",
+    featured: "Featured",
+    unavailable: "Unavailable",
     helpTitle: "Need personalized assistance?",
     helpText:
       "Our investment experts team is available to guide you through technical and legal requirements.",

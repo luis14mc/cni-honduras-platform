@@ -12,7 +12,7 @@ class NewsTranslationOptions(TranslationOptions):
 
 
 class DocumentTranslationOptions(TranslationOptions):
-    fields = ("title", "description")
+    fields = ("title", "description", "seo_title", "seo_description")
 
 
 class InstitutionalLinkTranslationOptions(TranslationOptions):

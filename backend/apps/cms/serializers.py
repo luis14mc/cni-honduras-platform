@@ -60,6 +60,7 @@ class DocumentSerializer(serializers.ModelSerializer):
             "title",
             "slug",
             "file",
+            "external_url",
             "description",
             "category",
             "is_featured",
@@ -68,6 +69,9 @@ class DocumentSerializer(serializers.ModelSerializer):
             "file_type",
             "file_size_bytes",
             "published_at",
+            "document_date",
+            "seo_title",
+            "seo_description",
             "created_at",
             "updated_at",
         )

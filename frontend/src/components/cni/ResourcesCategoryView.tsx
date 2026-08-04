@@ -3,7 +3,17 @@ import Link from "next/link";
 import type { Locale } from "@/src/i18n/config";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import { designImages } from "@/src/lib/designAssets";
+import {
+  documentActionLabel,
+  documentCoverFallback,
+  documentCoverImage,
+  documentDisplayDate,
+  documentLinkRel,
+  documentLinkTarget,
+  documentOpenUrl,
+  formatDocumentDate,
+  formatDocumentFileSize,
+} from "@/src/lib/cmsDocuments";
 import {
   resourceCategoryUi,
   type ResourceCategoryMeta,
@@ -16,12 +26,6 @@ type Props = {
   documents: CmsDocument[];
   loadStatus?: "ok" | "error";
 };
-
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return "";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export function ResourcesCategoryView({
   locale,
@@ -39,7 +43,7 @@ export function ResourcesCategoryView({
       <header className="relative flex h-[60vh] min-h-[400px] items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src={designImages.resourcesDetail.hero}
+            src={documentCoverFallback()}
             alt={category.heroAlt[locale]}
             fill
             priority
@@ -96,48 +100,73 @@ export function ResourcesCategoryView({
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[...featured, ...regular].map((doc) => (
-              <article
-                key={doc.id}
-                className={`group flex flex-col justify-between rounded-xl bg-white p-8 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] ${doc.is_featured ? "border-t-4 border-[#35A963]" : ""}`}
-              >
-                <div>
-                  <div
-                    className={`mb-6 overflow-hidden rounded-lg ${doc.is_featured ? "bg-[#0E7A7C]" : "bg-[#24436B]"}`}
-                  >
-                    {doc.cover_image?.file ? (
-                      <img
-                        src={doc.cover_image.file}
-                        alt={doc.cover_image.alt_text || doc.title}
-                        className="h-40 w-full object-cover"
-                      />
+            {[...featured, ...regular].map((doc) => {
+              const openUrl = documentOpenUrl(doc);
+              const displayDate = documentDisplayDate(doc);
+
+              return (
+                <article
+                  key={doc.id}
+                  className={`group flex flex-col justify-between rounded-xl bg-white p-8 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] ${doc.is_featured ? "border-t-4 border-[#35A963]" : ""}`}
+                >
+                  <div>
+                    <div
+                      className={`relative mb-6 overflow-hidden rounded-lg ${doc.is_featured ? "bg-[#0E7A7C]" : "bg-[#24436B]"}`}
+                    >
+                      {documentCoverImage(doc) ? (
+                        <img
+                          src={documentCoverImage(doc) ?? ""}
+                          alt={doc.cover_image?.alt_text || doc.title}
+                          className="h-40 w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-40 w-full items-center justify-center text-[#35A963]">
+                          <MaterialIcon name="description" filled className="text-5xl" />
+                        </div>
+                      )}
+                      {doc.is_featured && (
+                        <span className="absolute left-3 top-3 rounded-sm bg-[#35A963] px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-[#261900]">
+                          {ui.featured}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{doc.title}</h3>
+                    {doc.description && (
+                      <p className="mb-4 leading-relaxed text-[#0E7A7C]">{doc.description}</p>
+                    )}
+                    <div className="space-y-1 text-xs font-semibold uppercase tracking-widest text-[#b6c2d3]">
+                      {doc.file_type && (
+                        <p>
+                          {doc.file_type.toUpperCase()}
+                          {doc.file_size_bytes
+                            ? ` · ${formatDocumentFileSize(doc.file_size_bytes, locale)}`
+                            : ""}
+                        </p>
+                      )}
+                      {displayDate && (
+                        <time dateTime={displayDate}>{formatDocumentDate(locale, displayDate)}</time>
+                      )}
+                    </div>
+                  </div>
+                  <div className="mt-8 flex gap-4">
+                    {openUrl ? (
+                      <a
+                        href={openUrl}
+                        target={documentLinkTarget(doc)}
+                        rel={documentLinkRel(doc)}
+                        className="flex flex-1 items-center justify-center rounded-lg bg-[#252A58] py-3 text-sm font-bold text-white transition-transform active:scale-95"
+                      >
+                        {documentActionLabel(doc, locale)}
+                      </a>
                     ) : (
-                      <div className="flex h-40 w-full items-center justify-center text-[#35A963]">
-                        <MaterialIcon name="description" filled className="text-5xl" />
-                      </div>
+                      <span className="flex flex-1 items-center justify-center rounded-lg bg-[#b6c2d3]/30 py-3 text-sm font-bold text-[#0E7A7C]">
+                        {ui.unavailable}
+                      </span>
                     )}
                   </div>
-                  <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{doc.title}</h3>
-                  <p className="mb-4 leading-relaxed text-[#0E7A7C]">{doc.description}</p>
-                  {doc.file_type && (
-                    <p className="text-xs font-semibold uppercase tracking-widest text-[#b6c2d3]">
-                      {doc.file_type.toUpperCase()}
-                      {doc.file_size_bytes ? ` · ${formatFileSize(doc.file_size_bytes)}` : ""}
-                    </p>
-                  )}
-                </div>
-                <div className="mt-8 flex gap-4">
-                  <a
-                    href={doc.file}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-1 items-center justify-center rounded-lg bg-[#252A58] py-3 text-sm font-bold text-white transition-transform active:scale-95"
-                  >
-                    {ui.download}
-                  </a>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </section>

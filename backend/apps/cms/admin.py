@@ -133,19 +133,52 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
         "is_featured",
         "order",
         "published_at",
+        "cover_image_preview",
         "updated_at",
     )
     list_filter = ("status", "category", "is_featured", "published_at")
-    search_fields = ("title", "slug", "description", "category")
+    search_fields = ("title", "slug", "description", "seo_title", "seo_description")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("created_at", "updated_at", "file_type", "file_size_bytes")
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "published_at",
+        "created_by",
+        "updated_by",
+        "file_type",
+        "file_size_bytes",
+        "cover_image_preview",
+        "file_link",
+    )
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order")}),
-        ("Archivo", {"fields": ("file", "file_type", "file_size_bytes", "cover_image")}),
+        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order", "document_date")}),
+        ("Archivo", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
+        ("Portada", {"fields": ("cover_image", "cover_image_preview")}),
         ("Descripción", {"fields": ("description",)}),
+        ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    @admin.display(description="Vista previa")
+    def cover_image_preview(self, obj):
+        if obj.cover_image_id and obj.cover_image.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
+                obj.cover_image.file.url,
+            )
+        return "—"
+
+    @admin.display(description="Enlace")
+    def file_link(self, obj):
+        if obj.file:
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>', obj.file.url)
+        if obj.external_url:
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa</a>',
+                obj.external_url,
+            )
+        return "—"
 
 
 @admin.register(InstitutionalLink)

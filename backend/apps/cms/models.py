@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -165,8 +166,10 @@ class Document(EditorialModel):
     slug = models.SlugField(max_length=255, unique=True)
     file = models.FileField(
         upload_to="documents/%Y/%m/",
+        blank=True,
         validators=[FileExtensionValidator(DOCUMENT_ALLOWED_EXTENSIONS)],
     )
+    external_url = models.URLField(blank=True, default="")
     description = models.TextField(blank=True)
     category = models.CharField(
         max_length=32,
@@ -176,6 +179,7 @@ class Document(EditorialModel):
     )
     is_featured = models.BooleanField(default=False, db_index=True)
     order = models.PositiveIntegerField(default=0)
+    document_date = models.DateField(null=True, blank=True)
     cover_image = models.ForeignKey(
         MediaAsset,
         on_delete=models.SET_NULL,
@@ -185,6 +189,8 @@ class Document(EditorialModel):
     )
     file_type = models.CharField(max_length=16, blank=True, default="")
     file_size_bytes = models.PositiveIntegerField(null=True, blank=True)
+    seo_title = models.CharField(max_length=255, blank=True, default="")
+    seo_description = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["order", "-published_at", "-created_at", "-id"]
@@ -194,22 +200,57 @@ class Document(EditorialModel):
     def __str__(self) -> str:
         return self.title
 
+    def _has_uploaded_file(self) -> bool:
+        return bool(self.file and getattr(self.file, "name", ""))
+
+    def _has_external_url(self) -> bool:
+        return bool(self.external_url and self.external_url.strip())
+
     def clean(self):
         super().clean()
-        if self.file and hasattr(self.file, "size") and self.file.size:
+        has_file = self._has_uploaded_file()
+        has_external = self._has_external_url()
+
+        if has_file and has_external:
+            raise ValidationError(
+                "Seleccione un archivo subido o una URL externa, no ambos."
+            )
+
+        if self.status == PublishStatus.PUBLISHED and not has_file and not has_external:
+            raise ValidationError(
+                "Un documento publicado debe tener un archivo o una URL externa."
+            )
+
+        if has_file and hasattr(self.file, "size") and self.file.size:
             if self.file.size > DOCUMENT_MAX_BYTES:
                 raise ValidationError(
-                    {"file": f"El archivo excede el límite de {DOCUMENT_MAX_BYTES // (1024 * 1024)} MB."}
+                    {
+                        "file": (
+                            f"El archivo excede el límite de "
+                            f"{DOCUMENT_MAX_BYTES // (1024 * 1024)} MB."
+                        )
+                    }
                 )
 
-    def save(self, *args, **kwargs):
-        if self.file:
+    def _sync_file_metadata(self) -> None:
+        if self._has_uploaded_file():
             name = getattr(self.file, "name", "") or ""
             ext = os.path.splitext(name)[1].lstrip(".").lower()
             if ext:
                 self.file_type = ext
             if hasattr(self.file, "size") and self.file.size:
                 self.file_size_bytes = self.file.size
+            return
+
+        if self._has_external_url():
+            path = urlparse(self.external_url).path
+            ext = os.path.splitext(path)[1].lstrip(".").lower()
+            if ext in DOCUMENT_ALLOWED_EXTENSIONS:
+                self.file_type = ext
+            self.file_size_bytes = None
+
+    def save(self, *args, **kwargs):
+        self._sync_file_metadata()
         super().save(*args, **kwargs)
 
 
