@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.utils import timezone
 from modeltranslation.admin import TranslationAdmin
 
@@ -81,19 +82,45 @@ class PageAdmin(EditorialAdminMixin, TranslationAdmin):
 
 @admin.register(News)
 class NewsAdmin(EditorialAdminMixin, TranslationAdmin):
-    list_display = ("title", "category", "status", "is_featured", "published_at", "updated_at")
+    list_display = (
+        "title",
+        "category",
+        "status",
+        "is_featured",
+        "published_at",
+        "featured_image_preview",
+        "updated_at",
+    )
     list_filter = ("status", "category", "is_featured", "published_at")
-    search_fields = ("title", "summary", "content")
+    search_fields = (
+        "title",
+        "slug",
+        "summary",
+        "content",
+        "author_name",
+        "seo_title",
+        "seo_description",
+    )
     prepopulated_fields = {"slug": ("title",)}
+    readonly_fields = EditorialAdminMixin.readonly_fields + ("featured_image_preview",)
 
     fieldsets = (
         (None, {"fields": ("title", "slug", "category", "status", "published_at", "is_featured")}),
         ("Contenido", {"fields": ("summary", "content")}),
-        ("Imagen destacada", {"fields": ("featured_image",)}),
+        ("Imagen destacada", {"fields": ("featured_image", "featured_image_preview")}),
         ("Fuente", {"fields": ("author_name", "source", "external_url")}),
         ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    @admin.display(description="Vista previa")
+    def featured_image_preview(self, obj):
+        if obj.featured_image_id and obj.featured_image.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
+                obj.featured_image.file.url,
+            )
+        return "—"
 
 
 @admin.register(Document)

@@ -12,6 +12,7 @@ import type { Sector, SuccessStory } from "@/src/types/investment";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
 import { designImages } from "@/src/lib/designAssets";
+import { newsCardImage } from "@/src/lib/cmsNews";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
@@ -49,22 +50,12 @@ const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
   },
 };
 
-const newsFallbackImages = [
-  "/images/hero/home/logistica.webp",
-  "/images/hero/home/energia.webp",
-  "/images/hero/home/turismo.webp",
-];
-
 function formatNewsDate(locale: Locale, value: string): string {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "es-HN", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   }).format(new Date(value));
-}
-
-function newsImage(article: NewsArticle, index: number): string {
-  return article.featured_image?.file || newsFallbackImages[index % newsFallbackImages.length]!;
 }
 
 function statValueSize(value: string): string {
@@ -1599,7 +1590,7 @@ export function HomePageView({
                 >
                   <div className="relative h-44 overflow-hidden bg-cni-primary">
                     <Image
-                      src={newsImage(article, idx)}
+                      src={newsCardImage(article, idx)}
                       alt={article.featured_image?.alt_text || article.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"

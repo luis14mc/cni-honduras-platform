@@ -90,7 +90,7 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
   const L = (p: string) => resolveHref(locale, p);
   const newsResult = await loadAsyncData(() => getNews({ locale }), [] as NewsArticle[]);
   const articles = newsResult.data;
-  const featured = articles.find((article) => article.is_featured) ?? articles[0];
+  const featured = articles.find((article) => article.is_featured);
   const archive = featured ? articles.filter((article) => article.slug !== featured.slug) : articles;
 
   return (
@@ -113,7 +113,7 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
         </div>
       </section>
 
-      {featured && (
+      {newsResult.status !== "error" && featured && (
         <section className="bg-[#f8f9ff] px-8 py-24">
           <div className="mx-auto max-w-7xl">
             <div className="mb-12 border-l-4 border-[#35A963] pl-6">

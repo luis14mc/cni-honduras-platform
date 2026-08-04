@@ -56,13 +56,15 @@ export function buildMetadata(seo: PageSeo, locale: Locale): Metadata {
 export function buildDetailMetadata(options: {
   locale: Locale;
   slugPath: string;
+  /** Ruta canónica EN cuando difiere de `/en` + slugPath (p. ej. `/en/news/...`). */
+  enMirrorPath?: string;
   title: string;
   description?: string;
   image?: string | null;
 }): Metadata {
-  const { locale, slugPath, title, description, image } = options;
+  const { locale, slugPath, enMirrorPath, title, description, image } = options;
   const esPath = slugPath.startsWith("/") ? slugPath : `/${slugPath}`;
-  const enPath = `/en${esPath}`;
+  const enPath = enMirrorPath ?? `/en${esPath}`;
 
   return {
     title,

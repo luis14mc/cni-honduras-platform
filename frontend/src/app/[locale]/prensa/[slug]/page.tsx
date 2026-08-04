@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { designImages } from "@/src/lib/designAssets";
+import { buildNewsArticleMetadata, loadNewsArticle } from "@/src/lib/cmsNews";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import { getNewsArticle } from "@/src/services/cms";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 
 const copy = {
@@ -14,6 +14,8 @@ const copy = {
     source: "Fuente",
     author: "Autor",
     externalLink: "Ver enlace externo",
+    loadError:
+      "No pudimos cargar esta noticia en este momento. Intente de nuevo más tarde.",
     ctaTitle: "Acelera tu proceso de inversión en Honduras",
     ctaDesc: "Nuestro equipo de asesores técnicos y legales está listo para acompañar tu visión de negocio.",
     ctaButton: "Contacta al CNI para asistencia gratuita",
@@ -23,6 +25,7 @@ const copy = {
     source: "Source",
     author: "Author",
     externalLink: "Open external link",
+    loadError: "We could not load this article right now. Please try again later.",
     ctaTitle: "Accelerate your investment process in Honduras",
     ctaDesc: "Our team of technical and legal advisors is ready to support your business vision.",
     ctaButton: "Contact the CNI for free assistance",
@@ -46,14 +49,6 @@ const categoryLabels: Record<Locale, Record<NewsCategory, string>> = {
   },
 };
 
-async function loadArticle(slug: string, locale: Locale): Promise<NewsArticle | null> {
-  try {
-    return await getNewsArticle(slug, { locale });
-  } catch {
-    return null;
-  }
-}
-
 function formatDate(locale: Locale, value: string): string {
   return new Intl.DateTimeFormat(locale === "en" ? "en-US" : "es-HN", {
     day: "2-digit",
@@ -73,6 +68,46 @@ function paragraphs(content: string): string[] {
     .filter(Boolean);
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale: raw, slug } = await params;
+  if (!isLocale(raw)) return {};
+  return buildNewsArticleMetadata(slug, raw as Locale);
+}
+
+function PrensaArticleError({
+  message,
+  backLabel,
+  backHref,
+}: {
+  message: string;
+  backLabel: string;
+  backHref: string;
+}) {
+  return (
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
+      <div className="mx-auto w-full max-w-3xl px-6 py-32 md:px-12">
+        <Link
+          href={backHref}
+          className="mb-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#35A963] hover:text-[#252A58]"
+        >
+          <MaterialIcon name="arrow_back" className="text-sm" />
+          {backLabel}
+        </Link>
+        <div
+          role="alert"
+          className="rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800"
+        >
+          {message}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default async function PrensaArticlePage({
   params,
 }: {
@@ -83,9 +118,23 @@ export default async function PrensaArticlePage({
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const article = await loadArticle(slug, locale);
-  if (!article) notFound();
+  const result = await loadNewsArticle(slug, locale);
 
+  if (result.status === "not_found") {
+    notFound();
+  }
+
+  if (result.status === "error") {
+    return (
+      <PrensaArticleError
+        message={c.loadError}
+        backLabel={c.backToArchive}
+        backHref={L("/prensa")}
+      />
+    );
+  }
+
+  const article = result.article;
   const body = paragraphs(article.content);
 
   return (
