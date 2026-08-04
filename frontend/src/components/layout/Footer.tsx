@@ -116,8 +116,42 @@ export default function Footer({
     label: link.title,
     href: mapInstitutionalLinkHref(link, locale),
   }));
-  const showExternalColumn =
-    externalLinksStatus === "error" || resolvedExternalLinks.length > 0;
+
+  const externalColumnContent =
+    externalLinksStatus === "error" ? (
+      <nav aria-labelledby="footer-external" className="flex flex-col">
+        <h4
+          id="footer-external"
+          className="mb-5 font-headline text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-white/90"
+        >
+          {ft.externalTitle}
+        </h4>
+        <p className="font-body text-sm text-white/60" role="status">
+          {ft.externalError}
+        </p>
+      </nav>
+    ) : resolvedExternalLinks.length === 0 ? (
+      <nav aria-labelledby="footer-external" className="flex flex-col">
+        <h4
+          id="footer-external"
+          className="mb-5 font-headline text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-white/90"
+        >
+          {ft.externalTitle}
+        </h4>
+        <p className="font-body text-sm text-white/60" role="status">
+          {ft.externalEmpty}
+        </p>
+      </nav>
+    ) : (
+      <FooterLinkColumn
+        id="footer-external"
+        title={ft.externalTitle}
+        links={resolvedExternalLinks}
+        resolveHref={L}
+        external
+        columns={2}
+      />
+    );
 
   return (
     <footer className="site-footer relative mt-auto w-full overflow-hidden pb-10 text-white" role="contentinfo">
@@ -130,11 +164,7 @@ export default function Footer({
       <div className="relative z-10 mx-auto max-w-screen-2xl px-6 md:px-10">
         <FooterGuacamayaCta copy={ft} contactHref={L("/contacto")} />
 
-        <div
-          className={`mb-14 grid grid-cols-1 gap-10 sm:grid-cols-2 ${
-            showExternalColumn ? "lg:grid-cols-3" : "lg:grid-cols-2"
-          } lg:gap-12`}
-        >
+        <div className="mb-14 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
           <FooterBrandColumn
             homeHref={L("/")}
             brandAria={layoutCopy[locale].nav.brandSubtitle}
@@ -148,30 +178,7 @@ export default function Footer({
             resolveHref={L}
           />
 
-          {showExternalColumn ? (
-            externalLinksStatus === "error" ? (
-              <nav aria-labelledby="footer-external" className="flex flex-col">
-                <h4
-                  id="footer-external"
-                  className="mb-5 font-headline text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-white/90"
-                >
-                  {ft.externalTitle}
-                </h4>
-                <p className="font-body text-sm text-white/60" role="status">
-                  {ft.externalError}
-                </p>
-              </nav>
-            ) : (
-              <FooterLinkColumn
-                id="footer-external"
-                title={ft.externalTitle}
-                links={resolvedExternalLinks}
-                resolveHref={L}
-                external
-                columns={2}
-              />
-            )
-          ) : null}
+          {externalColumnContent}
         </div>
 
         <FooterBottomBar copy={ft} resolveHref={L} />
