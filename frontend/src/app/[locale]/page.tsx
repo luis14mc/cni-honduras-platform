@@ -4,7 +4,7 @@ import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getNews, getInstitutionalLinks } from "@/src/services/cms";
+import { getFeaturedNews, getInstitutionalLinks } from "@/src/services/cms";
 import { getSuccessStories, getSectors } from "@/src/services/investment";
 import type { NewsArticle } from "@/src/types/cms";
 import type { SuccessStory, Sector } from "@/src/types/investment";
@@ -20,7 +20,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   const [newsResult, storiesResult, sectorsResult, linksResult] = await Promise.all([
     loadAsyncData(async () => {
-      const news = await getNews({ locale });
+      const news = await getFeaturedNews({ locale });
       return [...news]
         .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
         .slice(0, 3);

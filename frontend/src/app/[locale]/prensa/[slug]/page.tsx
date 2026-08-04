@@ -1,8 +1,10 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { designImages } from "@/src/lib/designAssets";
+import { buildDetailMetadata } from "@/src/lib/seo";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { getNewsArticle } from "@/src/services/cms";
@@ -71,6 +73,34 @@ function paragraphs(content: string): string[] {
     .split(/\n{2,}/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>;
+}): Promise<Metadata> {
+  const { locale: raw, slug } = await params;
+  if (!isLocale(raw)) return {};
+  const locale = raw as Locale;
+
+  try {
+    const article = await getNewsArticle(slug, { locale });
+    const title = article.seo_title?.trim() || article.title;
+    const description =
+      article.seo_description?.trim() || article.summary?.trim() || article.title;
+
+    return buildDetailMetadata({
+      locale,
+      slugPath: `/prensa/${slug}`,
+      enMirrorPath: `/en/news/${slug}`,
+      title,
+      description,
+      image: article.featured_image?.file ?? null,
+    });
+  } catch {
+    return {};
+  }
 }
 
 export default async function PrensaArticlePage({

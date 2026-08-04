@@ -32,7 +32,7 @@ class NewsViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         queryset = (
             News.objects.published()
             .select_related("featured_image")
-            .order_by("-published_at", "-updated_at")
+            .order_by("-is_featured", "-published_at", "-updated_at")
         )
         category = self.request.query_params.get("category")
         if category:
