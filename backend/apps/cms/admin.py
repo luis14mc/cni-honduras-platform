@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils import timezone
 from modeltranslation.admin import TranslationAdmin
@@ -179,6 +180,44 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
                 obj.external_url,
             )
         return "—"
+
+    @admin.action(description="Publicar seleccionados")
+    def make_published(self, request, queryset):
+        now = timezone.now()
+        published_count = 0
+        failed_titles: list[str] = []
+
+        for doc in queryset:
+            doc.status = PublishStatus.PUBLISHED
+            if not doc.published_at:
+                doc.published_at = now
+            doc.updated_at = now
+            doc.updated_by = request.user
+            try:
+                doc.full_clean()
+                doc.save()
+                published_count += 1
+            except ValidationError:
+                failed_titles.append(doc.title)
+
+        if published_count:
+            self.message_user(
+                request,
+                f"{published_count} documento(s) publicado(s) correctamente.",
+                level=messages.SUCCESS,
+            )
+        if failed_titles:
+            preview = ", ".join(failed_titles[:5])
+            extra = f" y {len(failed_titles) - 5} más" if len(failed_titles) > 5 else ""
+            self.message_user(
+                request,
+                (
+                    f"{len(failed_titles)} documento(s) no se publicaron porque no cumplen "
+                    f"las validaciones (requieren archivo o URL externa, no ambos): "
+                    f"{preview}{extra}."
+                ),
+                level=messages.WARNING,
+            )
 
 
 @admin.register(InstitutionalLink)

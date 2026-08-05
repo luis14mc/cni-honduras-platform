@@ -1,13 +1,19 @@
+from django.contrib.auth import get_user_model
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
 
+from apps.cms.admin import DocumentAdmin, NewsAdmin
 from apps.cms.models import (
     DOCUMENT_MAX_BYTES,
     Document,
     DocumentCategory,
+    News,
+    NewsCategory,
     PublishStatus,
 )
 
@@ -201,3 +207,147 @@ class DocumentApiTests(TestCase):
         payload = response.json()
         self.assertTrue(payload["file"])
         self.assertEqual(payload["external_url"], "")
+
+
+def admin_request(user):
+    factory = RequestFactory()
+    request = factory.get("/admin/cms/document/")
+    request.user = user
+    middleware = SessionMiddleware(lambda req: None)
+    middleware.process_request(request)
+    request.session.save()
+    request._messages = FallbackStorage(request)
+    return request
+
+
+class DocumentAdminPublishTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.user = user_model.objects.create_superuser(
+            username="editor",
+            email="editor@example.com",
+            password="secret",
+        )
+        self.document_admin = DocumentAdmin(Document, admin.site)
+        self.request = admin_request(self.user)
+
+    def _publish(self, queryset):
+        self.document_admin.make_published(self.request, queryset)
+
+    def test_cannot_publish_without_file_or_url(self):
+        doc = Document.objects.create(
+            title="Sin fuente",
+            title_es="Sin fuente",
+            slug="sin-fuente",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(Document.objects.filter(pk=doc.pk))
+        doc.refresh_from_db()
+        self.assertEqual(doc.status, PublishStatus.DRAFT)
+        self.assertIsNone(doc.published_at)
+
+    def test_can_publish_with_file(self):
+        doc = Document.objects.create(
+            title="Con archivo",
+            title_es="Con archivo",
+            slug="con-archivo",
+            file=pdf_file(),
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(Document.objects.filter(pk=doc.pk))
+        doc.refresh_from_db()
+        self.assertEqual(doc.status, PublishStatus.PUBLISHED)
+        self.assertIsNotNone(doc.published_at)
+        self.assertEqual(doc.updated_by, self.user)
+
+    def test_can_publish_with_external_url(self):
+        doc = Document.objects.create(
+            title="Externo",
+            title_es="Externo",
+            slug="externo-admin",
+            external_url="https://example.com/study.pdf",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(Document.objects.filter(pk=doc.pk))
+        doc.refresh_from_db()
+        self.assertEqual(doc.status, PublishStatus.PUBLISHED)
+        self.assertIsNotNone(doc.published_at)
+
+    def test_cannot_publish_with_both_sources(self):
+        doc = Document.objects.create(
+            title="Doble fuente",
+            title_es="Doble fuente",
+            slug="doble-fuente-admin",
+            file=pdf_file(),
+            external_url="https://example.com/doc.pdf",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(Document.objects.filter(pk=doc.pk))
+        doc.refresh_from_db()
+        self.assertEqual(doc.status, PublishStatus.DRAFT)
+
+    def test_mixed_selection_publishes_valid_only(self):
+        valid_file = Document.objects.create(
+            title="Valido archivo",
+            title_es="Valido archivo",
+            slug="valido-archivo",
+            file=pdf_file(),
+            status=PublishStatus.DRAFT,
+        )
+        valid_url = Document.objects.create(
+            title="Valido url",
+            title_es="Valido url",
+            slug="valido-url",
+            external_url="https://example.com/report.pdf",
+            status=PublishStatus.DRAFT,
+        )
+        invalid = Document.objects.create(
+            title="Invalido",
+            title_es="Invalido",
+            slug="invalido",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(Document.objects.filter(
+            pk__in=[valid_file.pk, valid_url.pk, invalid.pk],
+        ))
+
+        valid_file.refresh_from_db()
+        valid_url.refresh_from_db()
+        invalid.refresh_from_db()
+
+        self.assertEqual(valid_file.status, PublishStatus.PUBLISHED)
+        self.assertEqual(valid_url.status, PublishStatus.PUBLISHED)
+        self.assertEqual(invalid.status, PublishStatus.DRAFT)
+
+        stored_messages = [str(message) for message in self.request._messages]
+        self.assertTrue(any("2 documento(s) publicado(s)" in message for message in stored_messages))
+        self.assertTrue(any("1 documento(s) no se publicaron" in message for message in stored_messages))
+
+
+class NewsAdminPublishTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.user = user_model.objects.create_superuser(
+            username="news-editor",
+            email="news@example.com",
+            password="secret",
+        )
+        self.news_admin = NewsAdmin(News, admin.site)
+        self.request = admin_request(self.user)
+
+    def test_news_bulk_publish_still_works(self):
+        news = News.objects.create(
+            title="Borrador",
+            title_es="Borrador",
+            slug="borrador-news-admin",
+            summary="Resumen",
+            summary_es="Resumen",
+            content="Contenido",
+            content_es="Contenido",
+            category=NewsCategory.NEWS,
+            status=PublishStatus.DRAFT,
+        )
+        self.news_admin.make_published(self.request, News.objects.filter(pk=news.pk))
+        news.refresh_from_db()
+        self.assertEqual(news.status, PublishStatus.PUBLISHED)
+        self.assertIsNotNone(news.published_at)
