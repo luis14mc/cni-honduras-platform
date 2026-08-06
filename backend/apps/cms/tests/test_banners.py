@@ -61,6 +61,47 @@ class SiteBannerModelTests(TestCase):
         with self.assertRaises(ValidationError):
             banner.full_clean()
 
+    def _banner(self, **kwargs):
+        defaults = {
+            "title": "Banner",
+            "title_es": "Banner",
+            "placement": BannerPlacement.HOME_HERO,
+        }
+        defaults.update(kwargs)
+        return SiteBanner(**defaults)
+
+    def test_internal_cta_valid(self):
+        banner = self._banner(link_url="/es/recursos", link_external=False)
+        banner.full_clean()
+
+    def test_external_cta_valid(self):
+        banner = self._banner(link_url="https://example.com/path", link_external=True)
+        banner.full_clean()
+
+    def test_internal_without_leading_slash_invalid(self):
+        banner = self._banner(link_url="es/recursos", link_external=False)
+        with self.assertRaises(ValidationError):
+            banner.full_clean()
+
+    def test_protocol_relative_internal_invalid(self):
+        banner = self._banner(link_url="//example.com/path", link_external=False)
+        with self.assertRaises(ValidationError):
+            banner.full_clean()
+
+    def test_javascript_scheme_invalid(self):
+        banner = self._banner(link_url="javascript:alert(1)", link_external=False)
+        with self.assertRaises(ValidationError):
+            banner.full_clean()
+
+    def test_malformed_external_url_invalid(self):
+        banner = self._banner(link_url="not-a-valid-url", link_external=True)
+        with self.assertRaises(ValidationError):
+            banner.full_clean()
+
+    def test_external_http_scheme_valid(self):
+        banner = self._banner(link_url="http://example.com", link_external=True)
+        banner.full_clean()
+
 
 class SiteBannerApiTests(TestCase):
     def setUp(self):
@@ -218,6 +259,20 @@ class SiteBannerApiTests(TestCase):
         self.assertEqual(item["cta_url"], "https://example.com/path")
         self.assertTrue(item["open_in_new_tab"])
         self.assertEqual(item["order"], 7)
+
+    def test_internal_cta_url_in_api(self):
+        self._published(
+            title="Interno",
+            title_es="Interno",
+            placement=BannerPlacement.HOME_HERO,
+            link_url="/es/prensa",
+            link_external=False,
+            cta_label="Ver prensa",
+        )
+        response = self._get_banners(placement="home_hero")
+        item = response.json()["results"][0]
+        self.assertEqual(item["cta_url"], "/es/prensa")
+        self.assertFalse(item["open_in_new_tab"])
 
     def test_viewset_list_via_factory(self):
         self._published(

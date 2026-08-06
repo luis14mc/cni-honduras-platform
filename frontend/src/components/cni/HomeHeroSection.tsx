@@ -10,7 +10,8 @@ import {
   bannerDesktopImage,
   bannerHasCta,
   bannerMobileImage,
-  bannerOpensInNewTab,
+  bannerCtaIsExternal,
+  bannerCtaTarget,
   heroImageAlt,
   heroSlideImages,
   primaryHeroBanner,
@@ -28,13 +29,13 @@ function HeroCta({ banner }: { banner: SiteBanner }) {
   if (!bannerHasCta(banner)) return null;
 
   const href = bannerCtaUrl(banner);
-  const external = bannerOpensInNewTab(banner);
+  const external = bannerCtaIsExternal(banner);
   const className =
     "mt-6 inline-flex items-center gap-2 rounded-full bg-cni-gold px-8 py-3.5 font-headline text-xs font-bold uppercase tracking-widest text-cni-primary transition hover:bg-cni-gold/90";
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel={bannerCtaRel(banner)} className={className}>
+      <a href={href} target={bannerCtaTarget(banner)} rel={bannerCtaRel(banner)} className={className}>
         {banner.cta_label}
       </a>
     );

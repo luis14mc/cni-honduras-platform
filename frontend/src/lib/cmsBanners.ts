@@ -10,6 +10,14 @@ export function bannerOpensInNewTab(banner: SiteBanner): boolean {
   return banner.open_in_new_tab ?? banner.link_external;
 }
 
+export function bannerCtaIsExternal(banner: SiteBanner): boolean {
+  return bannerOpensInNewTab(banner);
+}
+
+export function bannerCtaTarget(banner: SiteBanner): "_blank" | undefined {
+  return bannerCtaIsExternal(banner) ? "_blank" : undefined;
+}
+
 export function bannerDesktopImage(banner: SiteBanner): string | null {
   return banner.image?.file ?? null;
 }

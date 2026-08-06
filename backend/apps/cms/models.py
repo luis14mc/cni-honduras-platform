@@ -295,7 +295,7 @@ class SiteBanner(EditorialModel):
     starts_at = models.DateTimeField(null=True, blank=True, db_index=True)
     ends_at = models.DateTimeField(null=True, blank=True, db_index=True)
     priority = models.PositiveIntegerField(default=0, db_index=True)
-    link_url = models.URLField(blank=True, default="")
+    link_url = models.CharField(max_length=500, blank=True, default="")
     link_external = models.BooleanField(default=False)
     dismissible = models.BooleanField(default=True)
     background_color = models.CharField(max_length=7, blank=True, default="")
@@ -323,6 +323,31 @@ class SiteBanner(EditorialModel):
     def __str__(self) -> str:
         return self.title
 
+    def _validate_link_url(self):
+        url = (self.link_url or "").strip()
+        if not url:
+            return
+
+        lowered = url.lower()
+        for prefix in ("javascript:", "data:", "vbscript:", "file:"):
+            if lowered.startswith(prefix):
+                raise ValidationError({"link_url": "Esquema de URL no permitido."})
+
+        if self.link_external:
+            parsed = urlparse(url)
+            if parsed.scheme not in ("http", "https") or not parsed.netloc:
+                raise ValidationError(
+                    {"link_url": "La URL externa debe ser absoluta y usar http o https."}
+                )
+            return
+
+        if not url.startswith("/"):
+            raise ValidationError({"link_url": "La ruta interna debe comenzar con /."})
+        if url.startswith("//"):
+            raise ValidationError({"link_url": "La ruta interna no puede comenzar con //."})
+        if urlparse(url).scheme:
+            raise ValidationError({"link_url": "La ruta interna no puede incluir un esquema de URL."})
+
     def clean(self):
         super().clean()
         if self.starts_at and self.ends_at and self.ends_at <= self.starts_at:
@@ -331,6 +356,7 @@ class SiteBanner(EditorialModel):
             raise ValidationError(
                 {"cta_label": "Indique una URL de destino cuando el banner tiene etiqueta de CTA."}
             )
+        self._validate_link_url()
 
     @classmethod
     def active_in_window(cls, queryset=None):

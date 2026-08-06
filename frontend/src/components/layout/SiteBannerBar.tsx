@@ -9,7 +9,8 @@ import {
   bannerCtaRel,
   bannerCtaUrl,
   bannerHasCta,
-  bannerOpensInNewTab,
+  bannerCtaIsExternal,
+  bannerCtaTarget,
 } from "@/src/lib/cmsBanners";
 
 type Props = {
@@ -81,14 +82,20 @@ export function SiteBannerBar({ locale, banners }: Props) {
     >
       <div className="mx-auto flex max-w-screen-2xl items-center gap-4">
         {bannerHasCta(banner) ? (
-          <Link
-            href={bannerCtaUrl(banner)}
-            target={bannerOpensInNewTab(banner) ? "_blank" : undefined}
-            rel={bannerCtaRel(banner)}
-            className="flex flex-1 justify-center hover:opacity-95"
-          >
-            {content}
-          </Link>
+          bannerCtaIsExternal(banner) ? (
+            <a
+              href={bannerCtaUrl(banner)}
+              target={bannerCtaTarget(banner)}
+              rel={bannerCtaRel(banner)}
+              className="flex flex-1 justify-center hover:opacity-95"
+            >
+              {content}
+            </a>
+          ) : (
+            <Link href={bannerCtaUrl(banner)} className="flex flex-1 justify-center hover:opacity-95">
+              {content}
+            </Link>
+          )
         ) : (
           content
         )}

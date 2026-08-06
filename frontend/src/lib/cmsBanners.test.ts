@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   bannerCtaRel,
+  bannerCtaTarget,
   bannerCtaUrl,
   bannerDesktopImage,
   bannerHasCta,
   bannerMobileImage,
   bannerOpensInNewTab,
+  bannerCtaIsExternal,
   heroSlideImages,
   primaryHeroBanner,
 } from "@/src/lib/cmsBanners";
@@ -75,18 +77,29 @@ describe("bannerHasCta", () => {
   });
 });
 
-describe("bannerCtaRel", () => {
-  it("adds rel for external CTAs", () => {
+describe("bannerCta navigation", () => {
+  it("treats relative paths as internal", () => {
+    expect(bannerCtaIsExternal(baseBanner)).toBe(false);
+    expect(bannerCtaTarget(baseBanner)).toBeUndefined();
+    expect(bannerCtaUrl(baseBanner)).toBe("/es/invertir");
+  });
+
+  it("treats external URLs with target and rel", () => {
     const external = {
       ...baseBanner,
-      cta_url: "https://example.com",
+      cta_url: "https://example.com/recursos",
+      link_url: "https://example.com/recursos",
+      link_external: true,
       open_in_new_tab: true,
     };
+    expect(bannerCtaIsExternal(external)).toBe(true);
+    expect(bannerCtaTarget(external)).toBe("_blank");
     expect(bannerCtaRel(external)).toBe("noopener noreferrer");
   });
 
-  it("omits rel for internal CTAs", () => {
-    expect(bannerCtaRel(baseBanner)).toBeUndefined();
+  it("does not mutate or prefix internal paths", () => {
+    const internal = { ...baseBanner, cta_url: "/en/resources", link_url: "/en/resources" };
+    expect(bannerCtaUrl(internal)).toBe("/en/resources");
   });
 });
 
