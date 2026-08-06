@@ -53,3 +53,4 @@ yarn-error.log*
 *.py[cod]
 .venv/
 venv/
+/backend/staticfiles/

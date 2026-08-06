@@ -18,4 +18,9 @@ COPY backend/ .
 
 RUN chmod +x scripts/start.sh
 
+ENV DJANGO_SETTINGS_MODULE=config.settings.production
+ENV DATABASE_URL=sqlite:////tmp/collectstatic.db
+ENV DJANGO_SECRET_KEY=build-collectstatic-only-not-for-runtime
+RUN python manage.py collectstatic --noinput
+
 CMD ["./scripts/start.sh"]
