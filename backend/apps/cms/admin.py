@@ -236,15 +236,107 @@ class InstitutionalLinkAdmin(TranslationAdmin):
 
 @admin.register(SiteBanner)
 class SiteBannerAdmin(EditorialAdminMixin, TranslationAdmin):
-    list_display = ("title", "placement", "status", "priority", "starts_at", "ends_at", "updated_at")
+    list_display = (
+        "title",
+        "placement",
+        "status",
+        "priority",
+        "window_status",
+        "image_preview",
+        "starts_at",
+        "ends_at",
+        "updated_at",
+    )
     list_filter = ("status", "placement", "starts_at", "ends_at")
-    search_fields = ("title", "body")
+    search_fields = ("title", "body", "cta_label")
+    readonly_fields = EditorialAdminMixin.readonly_fields + (
+        "image_preview",
+        "mobile_image_preview",
+        "window_status",
+    )
 
     fieldsets = (
         (None, {"fields": ("title", "placement", "status", "published_at", "priority")}),
-        ("Contenido", {"fields": ("body", "cta_label", "image")}),
-        ("Vigencia", {"fields": ("starts_at", "ends_at")}),
+        (
+            "Contenido",
+            {"fields": ("body", "cta_label", "image", "image_preview", "mobile_image", "mobile_image_preview")},
+        ),
+        ("Vigencia", {"fields": ("starts_at", "ends_at", "window_status")}),
         ("Enlace", {"fields": ("link_url", "link_external")}),
         ("Presentación", {"fields": ("background_color", "text_color", "dismissible")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    @admin.display(description="Vista previa")
+    def image_preview(self, obj):
+        if obj.image_id and obj.image.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
+                obj.image.file.url,
+            )
+        return "—"
+
+    @admin.display(description="Vista previa móvil")
+    def mobile_image_preview(self, obj):
+        if obj.mobile_image_id and obj.mobile_image.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:120px;border-radius:4px;" />',
+                obj.mobile_image.file.url,
+            )
+        return "—"
+
+    @admin.display(description="Vigencia")
+    def window_status(self, obj):
+        if obj.pk is None:
+            return "—"
+        now = timezone.now()
+        if obj.status != PublishStatus.PUBLISHED:
+            return "No publicado"
+        if obj.starts_at and obj.starts_at > now:
+            return "Programado"
+        if obj.ends_at and obj.ends_at < now:
+            return "Vencido"
+        return "Activo"
+
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.created_by:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        if obj.status == PublishStatus.PUBLISHED and not obj.published_at:
+            obj.published_at = timezone.now()
+        obj.full_clean()
+        super(EditorialAdminMixin, self).save_model(request, obj, form, change)
+
+    @admin.action(description="Publicar seleccionados")
+    def make_published(self, request, queryset):
+        now = timezone.now()
+        published_count = 0
+        failed_titles: list[str] = []
+
+        for banner in queryset:
+            banner.status = PublishStatus.PUBLISHED
+            if not banner.published_at:
+                banner.published_at = now
+            banner.updated_at = now
+            banner.updated_by = request.user
+            try:
+                banner.full_clean()
+                banner.save()
+                published_count += 1
+            except ValidationError:
+                failed_titles.append(banner.title)
+
+        if published_count:
+            self.message_user(
+                request,
+                f"{published_count} banner(s) publicado(s) correctamente.",
+                level=messages.SUCCESS,
+            )
+        if failed_titles:
+            preview = ", ".join(failed_titles[:5])
+            extra = f" y {len(failed_titles) - 5} más" if len(failed_titles) > 5 else ""
+            self.message_user(
+                request,
+                f"{len(failed_titles)} banner(s) no se publicaron por validaciones: {preview}{extra}.",
+                level=messages.WARNING,
+            )

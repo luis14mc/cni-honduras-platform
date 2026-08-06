@@ -4,11 +4,10 @@ import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getFeaturedNews, getInstitutionalLinks } from "@/src/services/cms";
+import { getFeaturedNews, getInstitutionalLinks, getSiteBanners } from "@/src/services/cms";
 import { getSuccessStories, getSectors } from "@/src/services/investment";
-import type { NewsArticle } from "@/src/types/cms";
+import type { NewsArticle, InstitutionalLink, SiteBanner } from "@/src/types/cms";
 import type { SuccessStory, Sector } from "@/src/types/investment";
-import type { InstitutionalLink } from "@/src/types/cms";
 import { loadAsyncData } from "@/src/lib/asyncData";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.home);
@@ -18,7 +17,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
 
-  const [newsResult, storiesResult, sectorsResult, linksResult] = await Promise.all([
+  const [newsResult, storiesResult, sectorsResult, linksResult, heroResult] = await Promise.all([
     loadAsyncData(async () => {
       const news = await getFeaturedNews({ locale });
       return [...news]
@@ -34,6 +33,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       () => getInstitutionalLinks("home_interest", { locale }),
       [] as InstitutionalLink[],
     ),
+    loadAsyncData(
+      () => getSiteBanners("home_hero", { locale }),
+      [] as SiteBanner[],
+    ),
   ]);
 
   return (
@@ -47,6 +50,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       sectorsStatus={sectorsResult.status}
       interestLinks={linksResult.data}
       interestLinksStatus={linksResult.status}
+      heroBanners={heroResult.data}
+      heroBannersStatus={heroResult.status}
     />
   );
 }

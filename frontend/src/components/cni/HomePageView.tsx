@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
-import type { NewsArticle, NewsCategory, InstitutionalLink } from "@/src/types/cms";
+import type { NewsArticle, NewsCategory, InstitutionalLink, SiteBanner } from "@/src/types/cms";
 import type { Sector, SuccessStory } from "@/src/types/investment";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
@@ -18,6 +18,7 @@ import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
 import { strategicAlliesLevel1, strategicAlliesLevel2, strategicAllyLogoSize } from "@/src/data/strategicAllies";
 import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection";
+import { HomeHeroSection } from "@/src/components/cni/HomeHeroSection";
 
 type LoadStatus = "ok" | "error";
 
@@ -31,6 +32,8 @@ type Props = {
   sectorsStatus?: LoadStatus;
   interestLinks?: InstitutionalLink[];
   interestLinksStatus?: LoadStatus;
+  heroBanners?: SiteBanner[];
+  heroBannersStatus?: LoadStatus;
 };
 
 const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
@@ -82,6 +85,8 @@ export function HomePageView({
   sectorsStatus = "ok",
   interestLinks = [],
   interestLinksStatus = "ok",
+  heroBanners = [],
+  heroBannersStatus = "ok",
 }: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
@@ -113,13 +118,7 @@ export function HomePageView({
     }, 400);
   };
 
-  // Imágenes de fondo para héroe animado
-  const heroImages = [
-    "/images/hero/home/agricultura.webp",
-    "/images/hero/home/turismo.webp",
-    "/images/hero/home/energia.webp",
-    "/images/hero/home/logistica.webp"
-  ];
+  const heroBannersToShow = heroBannersStatus === "ok" ? heroBanners : [];
 
   // Datos para los gráficos dinámicos interactivos reales (JSON de la solicitud)
   const ledgerCharts = useMemo(() => ledgerChartPalette(locale), [locale]);
@@ -285,35 +284,17 @@ export function HomePageView({
   return (
     <div className={cn("flex flex-1 flex-col overflow-hidden", shell.root)}>
 
-      {/* 1. Animated Hero */}
-      <section
-        className={cn(
-          "relative flex items-center overflow-hidden bg-cni-primary -mt-[5.25rem] pt-[5.25rem] h-screen min-h-[100vh]",
-        )}
-      >
-        <div className="absolute inset-0 z-0">
-          {heroImages.map((src, idx) => (
-            <div key={idx} className="hero-slide absolute inset-0">
-              <Image
-                className="object-cover opacity-70"
-                src={src}
-                alt={hc.hero.imageAlt}
-                fill
-                priority={idx === 0}
-                sizes="100vw"
-              />
-            </div>
-          ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-cni-primary via-cni-primary/30 to-transparent"></div>
-        </div>
-
-        <div className="relative z-10 max-w-screen-2xl mx-auto px-8 w-full">
-          <h1 className={cn(t.heroTitle, "text-white uppercase leading-[0.9] tracking-tighter")}>
+      {/* 1. Hero (CMS o fallback estructural) */}
+      <HomeHeroSection
+        locale={locale}
+        banners={heroBannersToShow}
+        fallbackTitle={
+          <>
             {hc.hero.titleLine1} <br />
             <span className="text-cni-gold">{hc.hero.titleGrow}</span>
-          </h1>
-        </div>
-      </section>
+          </>
+        }
+      />
 
       {/* 2. Action Entry Points */}
       <section className="py-12 px-8 -mt-24 relative z-20">
