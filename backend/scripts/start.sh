@@ -9,6 +9,13 @@ fi
 echo "Applying database migrations..."
 python manage.py migrate --noinput
 
+# Temporary bootstrap only: set CREATE_DJANGO_SUPERUSER=true in Render for the first
+# deploy/login, then remove it or set to false after confirming admin access.
+if [ "${CREATE_DJANGO_SUPERUSER}" = "true" ]; then
+  echo "Ensuring Django superuser from environment..."
+  python manage.py ensure_superuser
+fi
+
 echo "Synchronizing institutional links..."
 python manage.py import_institutional_links
 
