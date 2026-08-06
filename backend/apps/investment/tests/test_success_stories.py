@@ -1,10 +1,26 @@
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.messages.storage.fallback import FallbackStorage
+from django.contrib.sessions.middleware import SessionMiddleware
 from django.core.exceptions import ValidationError
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.cms.models import PublishStatus
+from apps.investment.admin import SuccessStoryAdmin
 from apps.investment.models import Sector, SuccessStory
+
+
+def admin_request(user):
+    factory = RequestFactory()
+    request = factory.get("/admin/investment/successstory/")
+    request.user = user
+    middleware = SessionMiddleware(lambda req: None)
+    middleware.process_request(request)
+    request.session.save()
+    request._messages = FallbackStorage(request)
+    return request
 
 
 class SuccessStoryModelTests(TestCase):
@@ -178,13 +194,93 @@ class SuccessStoryApiTests(TestCase):
         slugs = [item["slug"] for item in response.json()["results"]]
         self.assertEqual(slugs, ["alto", "bajo"])
 
-    def test_bulk_publish_validation_blocks_empty_content(self):
+
+class SuccessStoryAdminPublishTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+        self.user = user_model.objects.create_superuser(
+            username="story-editor",
+            email="story@example.com",
+            password="secret",
+        )
+        self.story_admin = SuccessStoryAdmin(SuccessStory, admin.site)
+        self.request = admin_request(self.user)
+
+    def _publish(self, queryset):
+        self.story_admin.make_published(self.request, queryset)
+
+    def test_bulk_publish_valid_story(self):
+        story = SuccessStory.objects.create(
+            title="Valido",
+            title_es="Valido",
+            slug="valido-admin",
+            summary="Resumen",
+            summary_es="Resumen",
+            content="Contenido",
+            content_es="Contenido",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(SuccessStory.objects.filter(pk=story.pk))
+        story.refresh_from_db()
+
+        self.assertEqual(story.status, PublishStatus.PUBLISHED)
+        self.assertIsNotNone(story.published_at)
+        self.assertEqual(story.updated_by, self.user)
+
+        stored_messages = [str(message) for message in self.request._messages]
+        self.assertTrue(
+            any("1 caso(s) de éxito publicado(s) correctamente." in message for message in stored_messages)
+        )
+
+    def test_bulk_publish_invalid_story_stays_draft(self):
         story = SuccessStory.objects.create(
             title="Sin contenido",
             title_es="Sin contenido",
-            slug="sin-contenido",
+            slug="sin-contenido-admin",
             status=PublishStatus.DRAFT,
         )
-        story.status = PublishStatus.PUBLISHED
-        with self.assertRaises(ValidationError):
-            story.full_clean()
+        self._publish(SuccessStory.objects.filter(pk=story.pk))
+        story.refresh_from_db()
+
+        self.assertEqual(story.status, PublishStatus.DRAFT)
+        self.assertIsNone(story.published_at)
+        self.assertIsNone(story.updated_by)
+
+        stored_messages = [str(message) for message in self.request._messages]
+        self.assertTrue(
+            any("1 caso(s) no se publicaron por validaciones" in message for message in stored_messages)
+        )
+
+    def test_bulk_publish_mixed_selection(self):
+        valid = SuccessStory.objects.create(
+            title="Valido mixto",
+            title_es="Valido mixto",
+            slug="valido-mixto",
+            summary="Resumen",
+            summary_es="Resumen",
+            status=PublishStatus.DRAFT,
+        )
+        invalid = SuccessStory.objects.create(
+            title="Invalido mixto",
+            title_es="Invalido mixto",
+            slug="invalido-mixto",
+            status=PublishStatus.DRAFT,
+        )
+        self._publish(SuccessStory.objects.filter(pk__in=[valid.pk, invalid.pk]))
+
+        valid.refresh_from_db()
+        invalid.refresh_from_db()
+
+        self.assertEqual(valid.status, PublishStatus.PUBLISHED)
+        self.assertIsNotNone(valid.published_at)
+        self.assertEqual(valid.updated_by, self.user)
+        self.assertEqual(invalid.status, PublishStatus.DRAFT)
+        self.assertIsNone(invalid.published_at)
+
+        stored_messages = [str(message) for message in self.request._messages]
+        self.assertTrue(
+            any("1 caso(s) de éxito publicado(s) correctamente." in message for message in stored_messages)
+        )
+        self.assertTrue(
+            any("1 caso(s) no se publicaron por validaciones" in message for message in stored_messages)
+        )
