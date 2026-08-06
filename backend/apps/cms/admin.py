@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django.utils import timezone
 from modeltranslation.admin import TranslationAdmin
@@ -133,19 +134,90 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
         "is_featured",
         "order",
         "published_at",
+        "cover_image_preview",
         "updated_at",
     )
     list_filter = ("status", "category", "is_featured", "published_at")
-    search_fields = ("title", "slug", "description", "category")
+    search_fields = ("title", "slug", "description", "seo_title", "seo_description")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("created_at", "updated_at", "file_type", "file_size_bytes")
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+        "published_at",
+        "created_by",
+        "updated_by",
+        "file_type",
+        "file_size_bytes",
+        "cover_image_preview",
+        "file_link",
+    )
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order")}),
-        ("Archivo", {"fields": ("file", "file_type", "file_size_bytes", "cover_image")}),
+        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order", "document_date")}),
+        ("Archivo", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
+        ("Portada", {"fields": ("cover_image", "cover_image_preview")}),
         ("Descripción", {"fields": ("description",)}),
+        ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    @admin.display(description="Vista previa")
+    def cover_image_preview(self, obj):
+        if obj.cover_image_id and obj.cover_image.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
+                obj.cover_image.file.url,
+            )
+        return "—"
+
+    @admin.display(description="Enlace")
+    def file_link(self, obj):
+        if obj.file:
+            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>', obj.file.url)
+        if obj.external_url:
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa</a>',
+                obj.external_url,
+            )
+        return "—"
+
+    @admin.action(description="Publicar seleccionados")
+    def make_published(self, request, queryset):
+        now = timezone.now()
+        published_count = 0
+        failed_titles: list[str] = []
+
+        for doc in queryset:
+            doc.status = PublishStatus.PUBLISHED
+            if not doc.published_at:
+                doc.published_at = now
+            doc.updated_at = now
+            doc.updated_by = request.user
+            try:
+                doc.full_clean()
+                doc.save()
+                published_count += 1
+            except ValidationError:
+                failed_titles.append(doc.title)
+
+        if published_count:
+            self.message_user(
+                request,
+                f"{published_count} documento(s) publicado(s) correctamente.",
+                level=messages.SUCCESS,
+            )
+        if failed_titles:
+            preview = ", ".join(failed_titles[:5])
+            extra = f" y {len(failed_titles) - 5} más" if len(failed_titles) > 5 else ""
+            self.message_user(
+                request,
+                (
+                    f"{len(failed_titles)} documento(s) no se publicaron porque no cumplen "
+                    f"las validaciones (requieren archivo o URL externa, no ambos): "
+                    f"{preview}{extra}."
+                ),
+                level=messages.WARNING,
+            )
 
 
 @admin.register(InstitutionalLink)

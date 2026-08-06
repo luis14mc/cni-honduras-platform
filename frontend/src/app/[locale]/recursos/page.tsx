@@ -8,6 +8,13 @@ import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getDocuments } from "@/src/services/cms";
+import {
+  documentActionLabel,
+  documentLinkRel,
+  documentLinkTarget,
+  documentOpenUrl,
+  formatDocumentFileSize,
+} from "@/src/lib/cmsDocuments";
 import type { CmsDocument } from "@/src/types/cms";
 import { loadAsyncData } from "@/src/lib/asyncData";
 
@@ -28,6 +35,7 @@ const copy = {
       { icon: "construction", title: "Recursos para la Inversión", text: "Guías técnicas y manuales de procedimientos para facilitar el aterrizaje de capital.", cta: "Descargar Guías", href: "/recursos/tecnicos" },
       { icon: "gavel", title: "Recursos Legales", text: "Compendio actualizado de leyes, decretos y marcos regulatorios del país.", cta: "Marco Legal", href: "/cni/servicios-legales" },
       { icon: "article", title: "Otros Documentos", text: "Formularios diversos, plantillas y material de consulta general.", cta: "Ver Biblioteca", href: "/recursos/biblioteca" },
+      { icon: "analytics", title: "Estudios CNI", text: "Estudios sectoriales y análisis de mercado para inversionistas.", cta: "Ver Estudios", href: "/recursos/estudios" },
     ],
     highlightsEyebrow: "Actualizados",
     highlightsTitle: "Documentos Destacados",
@@ -55,6 +63,7 @@ const copy = {
       { icon: "construction", title: "Investment Resources", text: "Technical guides and procedure manuals to facilitate capital landing.", cta: "Download Guides", href: "/recursos/tecnicos" },
       { icon: "gavel", title: "Legal Resources", text: "Updated compendium of laws, decrees and regulatory frameworks.", cta: "Legal Framework", href: "/cni/servicios-legales" },
       { icon: "article", title: "Other Documents", text: "Various forms, templates and general consultation material.", cta: "View Library", href: "/recursos/biblioteca" },
+      { icon: "analytics", title: "CNI Studies", text: "Sector studies and market analysis for investors.", cta: "View Studies", href: "/recursos/estudios" },
     ],
     highlightsEyebrow: "Updated",
     highlightsTitle: "Featured Documents",
@@ -69,12 +78,6 @@ const copy = {
     ctaSecondary: "Schedule Virtual Meeting",
   },
 } as const;
-
-function formatFileSize(bytes: number | null): string {
-  if (!bytes) return "";
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 export default async function RecursosPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -164,7 +167,9 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
             <div className="rounded-xl bg-white p-10 text-center text-[#0E7A7C] shadow-sm">{c.empty}</div>
           ) : (
             <div className="flex flex-col space-y-6">
-              {highlights.map((doc) => (
+              {highlights.map((doc) => {
+                const openUrl = documentOpenUrl(doc);
+                return (
                 <div
                   key={doc.id}
                   className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row"
@@ -181,9 +186,14 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
                         <MaterialIcon name="description" className="mb-2 text-5xl text-[#35A963]" />
                         <span className="text-xs font-bold uppercase tracking-widest text-white">
                           {doc.file_type ? doc.file_type.toUpperCase() : doc.category}
-                          {doc.file_size_bytes ? ` · ${formatFileSize(doc.file_size_bytes)}` : ""}
+                          {doc.file_size_bytes ? ` · ${formatDocumentFileSize(doc.file_size_bytes, locale)}` : ""}
                         </span>
                       </>
+                    )}
+                    {doc.is_featured && (
+                      <span className="absolute left-3 top-3 rounded-sm bg-[#35A963] px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-[#261900]">
+                        {locale === "es" ? "Destacado" : "Featured"}
+                      </span>
                     )}
                   </div>
                   <div className="flex flex-grow flex-col items-center justify-between gap-6 p-8 md:flex-row">
@@ -191,27 +201,30 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
                       <h4 className="mb-2 text-xl font-bold text-[#252A58]">{doc.title}</h4>
                       <p className="max-w-xl text-[#0E7A7C]">{doc.description}</p>
                     </div>
-                    <div className="flex shrink-0 gap-4">
-                      <a
-                        href={doc.file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center rounded-md border border-[#dce9ff] px-5 py-2 font-semibold text-[#252A58] transition-colors hover:bg-[#dce9ff]"
-                      >
-                        <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
-                      </a>
-                      <a
-                        href={doc.file}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center rounded-md bg-[#252A58] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90"
-                      >
-                        <MaterialIcon name="download" className="mr-2 text-xl" /> {c.download}
-                      </a>
-                    </div>
+                    {openUrl ? (
+                      <div className="flex shrink-0 gap-4">
+                        <a
+                          href={openUrl}
+                          target={documentLinkTarget(doc)}
+                          rel={documentLinkRel(doc)}
+                          className="flex items-center rounded-md border border-[#dce9ff] px-5 py-2 font-semibold text-[#252A58] transition-colors hover:bg-[#dce9ff]"
+                        >
+                          <MaterialIcon name="visibility" className="mr-2 text-xl" /> {c.preview}
+                        </a>
+                        <a
+                          href={openUrl}
+                          target={documentLinkTarget(doc)}
+                          rel={documentLinkRel(doc)}
+                          className="flex items-center rounded-md bg-[#252A58] px-5 py-2 font-semibold text-white shadow-lg transition-opacity hover:opacity-90"
+                        >
+                          <MaterialIcon name="download" className="mr-2 text-xl" /> {documentActionLabel(doc, locale)}
+                        </a>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           )}
         </div>

@@ -32,6 +32,7 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/resources/institutional": "/recursos/institucional",
     "/resources/technical": "/recursos/tecnicos",
     "/resources/library": "/recursos/biblioteca",
+    "/resources/studies": "/recursos/estudios",
     "/news": "/prensa",
     "/contact": "/contacto",
   };
@@ -83,9 +84,11 @@ function buildMaps() {
   es.set("/recursos/institucional", "/es/recursos/institucional");
   es.set("/recursos/tecnicos", "/es/recursos/tecnicos");
   es.set("/recursos/biblioteca", "/es/recursos/biblioteca");
+  es.set("/recursos/estudios", "/es/recursos/estudios");
   en.set("/en/resources/institutional", "/en/recursos/institucional");
   en.set("/en/resources/technical", "/en/recursos/tecnicos");
   en.set("/en/resources/library", "/en/recursos/biblioteca");
+  en.set("/en/resources/studies", "/en/recursos/estudios");
   return { es, en };
 }
 

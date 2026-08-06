@@ -34,6 +34,7 @@ export interface CmsDocument {
   title: string;
   slug: string;
   file: string;
+  external_url: string;
   description: string;
   category: DocumentCategory;
   is_featured: boolean;
@@ -42,6 +43,9 @@ export interface CmsDocument {
   file_type: string;
   file_size_bytes: number | null;
   published_at: string;
+  document_date: string | null;
+  seo_title: string;
+  seo_description: string;
   created_at: string;
   updated_at: string;
 }
