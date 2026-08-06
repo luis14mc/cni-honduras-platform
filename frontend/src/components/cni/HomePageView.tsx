@@ -13,6 +13,14 @@ import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
 import { designImages } from "@/src/lib/designAssets";
 import { newsCardImage } from "@/src/lib/cmsNews";
+import {
+  successStoryCoverImage,
+  successStoryDetailHref,
+  successStoryDisplayName,
+  successStoryInitials,
+  successStoryLogoImage,
+  successStoryQuote,
+} from "@/src/lib/cmsSuccessStories";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
@@ -221,17 +229,18 @@ export function HomePageView({
     featuredStoriesStatus === "ok"
       ? featuredStories.slice(0, 2).map((story) => ({
           slug: story.slug,
-          name: story.testimonial_author || story.company_name || story.title,
+          name: successStoryDisplayName(story),
           role: story.company_name,
-          quote: story.testimonial_quote || story.summary,
+          quote: successStoryQuote(story),
           caseTitle: story.title,
-          photo: story.image || designImages.casos.sinclair,
-          logo: story.logo?.file || designImages.casos.sinclair,
+          photo: successStoryCoverImage(story),
+          logo: successStoryLogoImage(story),
+          initials: successStoryInitials(story),
           logoAlt: story.title,
         }))
       : [];
 
-  const caseHref = (slug: string) => L(`/portafolio/casos/${slug}`);
+  const caseHref = (slug: string) => successStoryDetailHref(locale, slug);
 
   // Obtener copias específicas para mayor legibilidad
   const dCopy = hc.graficosDashboard ?? {
@@ -1492,14 +1501,20 @@ export function HomePageView({
                 className="al-success-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-5 md:p-6 transition-colors hover:border-cni-gold/25 hover:bg-white"
               >
                 <div className="al-success-logo mb-5 flex h-16 w-full items-center justify-center rounded-lg border border-cni-primary/10 bg-white px-4 py-3 md:h-[4.5rem]">
-                  <Image
-                    src={card.logo}
-                    alt={card.logoAlt}
-                    width={180}
-                    height={56}
-                    className="h-10 w-auto max-h-full max-w-full object-contain md:h-12"
-                    sizes="180px"
-                  />
+                  {card.logo ? (
+                    <Image
+                      src={card.logo}
+                      alt={card.logoAlt}
+                      width={180}
+                      height={56}
+                      className="h-10 w-auto max-h-full max-w-full object-contain md:h-12"
+                      sizes="180px"
+                    />
+                  ) : (
+                    <span className="font-headline text-sm font-extrabold uppercase tracking-widest text-cni-primary/70">
+                      {card.initials}
+                    </span>
+                  )}
                 </div>
 
                 <p className="font-body text-sm leading-relaxed text-cni-primary/80 italic line-clamp-4">
@@ -1507,14 +1522,20 @@ export function HomePageView({
                 </p>
 
                 <div className="mt-5 flex items-center gap-3 border-t border-cni-primary/8 pt-4">
-                  <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-sm">
-                    <Image
-                      src={card.photo}
-                      alt={card.name}
-                      fill
-                      sizes="44px"
-                      className="object-cover"
-                    />
+                  <div className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-cni-primary/10 ring-2 ring-white shadow-sm">
+                    {card.photo ? (
+                      <Image
+                        src={card.photo}
+                        alt={card.name}
+                        fill
+                        sizes="44px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="font-headline text-[10px] font-bold uppercase text-cni-primary">
+                        {card.initials}
+                      </span>
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="truncate font-headline text-xs font-extrabold uppercase tracking-wide text-cni-primary">

@@ -2,18 +2,27 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
-import { designImages } from "@/src/lib/designAssets";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { getSuccessStory, getSuccessStories } from "@/src/services/investment";
 import type { SuccessStory } from "@/src/types/investment";
 import { buildDetailMetadata } from "@/src/lib/seo";
+import {
+  formatSuccessStoryInvestment,
+  formatSuccessStoryJobs,
+  successStoryCoverImage,
+  successStoryDetailHref,
+  successStoryHasCover,
+  successStoryHasLogo,
+  successStoryLogoImage,
+} from "@/src/lib/cmsSuccessStories";
 
 const copy = {
   es: {
     back: "Volver a casos de éxito",
     company: "Empresa",
     sector: "Sector",
+    origin: "País de origen",
     investment: "Inversión",
     jobs: "Empleos generados",
     cta: "Contactar al CNI",
@@ -22,6 +31,7 @@ const copy = {
     back: "Back to success stories",
     company: "Company",
     sector: "Sector",
+    origin: "Country of origin",
     investment: "Investment",
     jobs: "Jobs generated",
     cta: "Contact the CNI",
@@ -65,7 +75,6 @@ export default async function CasoDetallePage({
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = copy[locale];
-  const L = (p: string) => resolveHref(locale, p);
 
   let story;
   try {
@@ -88,16 +97,31 @@ export default async function CasoDetallePage({
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="relative flex min-h-[50vh] items-end overflow-hidden bg-[#252A58] pb-16 pt-40">
         <div className="absolute inset-0">
-          {story.image ? (
-            <img src={story.image} alt={story.title} className="h-full w-full object-cover opacity-50" />
+          {successStoryHasCover(story) ? (
+            <img
+              src={successStoryCoverImage(story)!}
+              alt={story.title}
+              className="h-full w-full object-cover opacity-50"
+            />
           ) : (
-            <Image src={designImages.casos.sinclair} alt={story.title} fill className="object-cover opacity-50" />
+            <div className="h-full w-full bg-gradient-to-br from-[#252A58] to-[#0E7A7C] opacity-80" />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#252A58] via-[#252A58]/70 to-transparent" />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-4xl px-8">
+          {successStoryHasLogo(story) && (
+            <div className="mb-6 inline-flex rounded-lg bg-white/95 p-3">
+              <Image
+                src={successStoryLogoImage(story)!}
+                alt={story.company_name || story.title}
+                width={160}
+                height={48}
+                className="h-10 w-auto object-contain"
+              />
+            </div>
+          )}
           <Link
-            href={L("/portafolio/casos")}
+            href={resolveHref(locale, "/portafolio/casos")}
             className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#35A963]"
           >
             <MaterialIcon name="arrow_back" className="text-sm" />
@@ -128,24 +152,22 @@ export default async function CasoDetallePage({
               <dd className="mt-1">{story.sector.name}</dd>
             </div>
           )}
-          {story.investment_amount != null && story.investment_amount !== "" && (
+          {story.country_origin && (
             <div>
-              <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.investment}</dt>
-              <dd className="mt-1">
-                {new Intl.NumberFormat(locale === "en" ? "en-US" : "es-HN", {
-                  style: "currency",
-                  currency: "USD",
-                  maximumFractionDigits: 0,
-                }).format(Number(story.investment_amount))}
-              </dd>
+              <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.origin}</dt>
+              <dd className="mt-1">{story.country_origin}</dd>
             </div>
           )}
-          {story.jobs_generated != null && (
+          {formatSuccessStoryInvestment(locale, story.investment_amount) && (
+            <div>
+              <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.investment}</dt>
+              <dd className="mt-1">{formatSuccessStoryInvestment(locale, story.investment_amount)}</dd>
+            </div>
+          )}
+          {formatSuccessStoryJobs(locale, story.jobs_generated) && (
             <div>
               <dt className="text-xs font-bold uppercase tracking-widest text-[#252A58]">{c.jobs}</dt>
-              <dd className="mt-1">
-                {new Intl.NumberFormat(locale === "en" ? "en-US" : "es-HN").format(story.jobs_generated)}
-              </dd>
+              <dd className="mt-1">{formatSuccessStoryJobs(locale, story.jobs_generated)}</dd>
             </div>
           )}
         </dl>
@@ -167,7 +189,7 @@ export default async function CasoDetallePage({
               {related.map((item) => (
                 <Link
                   key={item.slug}
-                  href={L(`/portafolio/casos/${item.slug}`)}
+                  href={successStoryDetailHref(locale, item.slug)}
                   className="rounded-xl border border-[#dce9ff] p-6 hover:border-[#35A963]"
                 >
                   <h3 className="font-bold text-[#252A58]">{item.title}</h3>
@@ -182,7 +204,7 @@ export default async function CasoDetallePage({
       <section className="px-8 py-16">
         <div className="mx-auto max-w-xl text-center">
           <Link
-            href={L("/contacto")}
+            href={resolveHref(locale, "/contacto")}
             className="inline-block rounded-md bg-[#252A58] px-10 py-4 font-bold text-white"
           >
             {c.cta}

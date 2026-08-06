@@ -9,6 +9,11 @@ import type { SectorCopy, SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
 import { invertirPageCopy, SECTOR_ACCENTS } from "@/src/i18n/copy/invertirPage";
 import { withLocale, getSectorHref } from "@/src/i18n/path";
+import {
+  formatSuccessStoryInvestment,
+  formatSuccessStoryJobs,
+  successStoryDetailHref,
+} from "@/src/lib/cmsSuccessStories";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
 import type {
@@ -482,8 +487,9 @@ export function SectorDetailView({
 
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {successStories.map((story, i) => (
-                <article
+                <Link
                   key={story.slug}
+                  href={successStoryDetailHref(locale, story.slug)}
                   className="al-sector-data-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
                 >
                   {story.company_name && (
@@ -508,23 +514,23 @@ export function SectorDetailView({
                         </dd>
                       </div>
                     )}
-                    {story.investment_amount && (
+                    {story.investment_amount && formatSuccessStoryInvestment(locale, story.investment_amount) && (
                       <div>
                         <dt className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-on-surface-variant/60">
                           {locale === "es" ? "Inversión" : "Investment"}
                         </dt>
                         <dd className="mt-1 font-display text-sm font-extrabold text-cni-primary">
-                          {story.investment_amount}
+                          {formatSuccessStoryInvestment(locale, story.investment_amount)}
                         </dd>
                       </div>
                     )}
-                    {story.jobs_generated !== null && (
+                    {story.jobs_generated !== null && formatSuccessStoryJobs(locale, story.jobs_generated) && (
                       <div className="col-span-2">
                         <dt className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-on-surface-variant/60">
                           {locale === "es" ? "Empleos generados" : "Jobs generated"}
                         </dt>
                         <dd className="mt-1 font-display text-base font-extrabold text-cni-primary">
-                          {story.jobs_generated}
+                          {formatSuccessStoryJobs(locale, story.jobs_generated)}
                         </dd>
                       </div>
                     )}
@@ -532,7 +538,7 @@ export function SectorDetailView({
                   <span className="mt-4 font-headline text-[9px] font-bold uppercase tracking-[0.2em] text-cni-on-surface-variant/55">
                     {locale === "es" ? `Caso 0${i + 1}` : `Case 0${i + 1}`}
                   </span>
-                </article>
+                </Link>
               ))}
             </div>
           </div>
