@@ -22,6 +22,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // The editorial CMS lives outside the localized public site; skip locale
+  // rewrites/redirects so /cms and /cms/* resolve to the CMS app router tree.
+  if (pathname === "/cms" || pathname.startsWith("/cms/")) {
+    return NextResponse.next();
+  }
+
   const normalized = normalizePath(pathname);
 
   for (const rule of legacyRedirects) {

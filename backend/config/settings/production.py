@@ -16,6 +16,15 @@ X_FRAME_OPTIONS = "DENY"
 SESSION_COOKIE_SECURE = env.bool("DJANGO_SESSION_COOKIE_SECURE", default=False)  # noqa: F405
 CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=False)
 
+# The CMS frontend (Vercel) and this API (Render) live on different sites, so the
+# session/CSRF cookies must be sent on cross-site XHR. Set these to "None" in
+# production (which requires Secure=True). Defaults to "Lax" for same-site setups.
+SESSION_COOKIE_SAMESITE = env.str("DJANGO_SESSION_COOKIE_SAMESITE", default="Lax")  # noqa: F405
+CSRF_COOKIE_SAMESITE = env.str("DJANGO_CSRF_COOKIE_SAMESITE", default="Lax")  # noqa: F405
+# The SPA reads the CSRF token from the cookie to echo it in X-CSRFToken, so the
+# CSRF cookie must not be HttpOnly.
+CSRF_COOKIE_HTTPONLY = False
+
 if env.bool("DJANGO_USE_SECURE_PROXY_HEADERS", default=False):  # noqa: F405
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

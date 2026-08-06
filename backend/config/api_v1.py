@@ -10,6 +10,7 @@ from django.urls import include, path
 app_name = "api-v1"
 
 urlpatterns = [
+    path("cms-admin/", include("apps.cms.cms_admin.urls")),
     path("cms/", include("apps.cms.api_urls")),
     path("geo/", include("apps.geo.api_urls")),
     path("investment/", include("apps.investment.api_urls")),
