@@ -1,7 +1,11 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.core.exceptions import ValidationError
+from django.utils.html import format_html
+from django.utils import timezone
 from modeltranslation.admin import TranslationAdmin
 
 from apps.cms.admin import EditorialAdminMixin
+from apps.cms.models import PublishStatus
 
 from .models import (
     InvestmentOpportunity,
@@ -73,19 +77,87 @@ class SuccessStoryAdmin(EditorialAdminMixin, TranslationAdmin):
         "status",
         "is_featured",
         "order",
+        "image_preview",
         "updated_at",
     )
-    list_filter = ("status", "is_featured", "sector")
+    list_filter = ("status", "is_featured", "sector", "published_at")
     search_fields = ("title", "slug", "company_name", "summary", "content")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = EditorialAdminMixin.readonly_fields + (
+        "image_preview",
+        "logo_preview",
+    )
     autocomplete_fields = ("sector", "logo")
 
     fieldsets = (
         (None, {"fields": ("title", "slug", "company_name", "country_origin", "status", "published_at")}),
-        ("Contenido", {"fields": ("summary", "content", "image", "logo")}),
+        (
+            "Contenido",
+            {"fields": ("summary", "content", "image", "image_preview", "logo", "logo_preview")},
+        ),
         ("Testimonial", {"fields": ("testimonial_quote", "testimonial_author")}),
         ("Clasificación", {"fields": ("sector", "order", "is_featured")}),
         ("Datos", {"fields": ("investment_amount", "jobs_generated")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    @admin.display(description="Imagen")
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
+                obj.image.url,
+            )
+        return "—"
+
+    @admin.display(description="Logo")
+    def logo_preview(self, obj):
+        if obj.logo_id and obj.logo.file:
+            return format_html(
+                '<img src="{}" alt="" style="max-height:80px;max-width:160px;border-radius:4px;" />',
+                obj.logo.file.url,
+            )
+        return "—"
+
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.created_by:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        if obj.status == PublishStatus.PUBLISHED and not obj.published_at:
+            obj.published_at = timezone.now()
+        obj.full_clean()
+        super(EditorialAdminMixin, self).save_model(request, obj, form, change)
+
+    @admin.action(description="Publicar seleccionados")
+    def make_published(self, request, queryset):
+        now = timezone.now()
+        published_count = 0
+        failed_titles: list[str] = []
+
+        for story in queryset:
+            story.status = PublishStatus.PUBLISHED
+            if not story.published_at:
+                story.published_at = now
+            story.updated_at = now
+            story.updated_by = request.user
+            try:
+                story.full_clean()
+                story.save()
+                published_count += 1
+            except ValidationError:
+                failed_titles.append(story.title)
+
+        if published_count:
+            self.message_user(
+                request,
+                f"{published_count} caso(s) de éxito publicado(s) correctamente.",
+                level=messages.SUCCESS,
+            )
+        if failed_titles:
+            preview = ", ".join(failed_titles[:5])
+            extra = f" y {len(failed_titles) - 5} más" if len(failed_titles) > 5 else ""
+            self.message_user(
+                request,
+                f"{len(failed_titles)} caso(s) no se publicaron por validaciones: {preview}{extra}.",
+                level=messages.WARNING,
+            )

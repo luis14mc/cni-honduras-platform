@@ -1,7 +1,10 @@
+from decimal import Decimal
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import slugify
 
-from apps.cms.models import EditorialModel
+from apps.cms.models import EditorialModel, PublishStatus
 from apps.media_library.models import MediaAsset
 
 
@@ -200,12 +203,26 @@ class SuccessStory(EditorialModel):
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("order", "-published_at", "-created_at", "-id")
+        ordering = ("order", "-is_featured", "-published_at", "-created_at", "-id")
         verbose_name = "Caso de éxito"
         verbose_name_plural = "Casos de éxito"
 
     def __str__(self) -> str:
         return self.title
+
+    def clean(self):
+        super().clean()
+        if self.status == PublishStatus.PUBLISHED:
+            if not (self.title or "").strip():
+                raise ValidationError({"title": "El título es obligatorio para publicar."})
+            if not (self.summary or "").strip() and not (self.content or "").strip():
+                raise ValidationError(
+                    {"content": "Indique un resumen o contenido mínimo para publicar."}
+                )
+        if self.investment_amount is not None and self.investment_amount < Decimal("0"):
+            raise ValidationError({"investment_amount": "La inversión no puede ser negativa."})
+        if self.jobs_generated is not None and self.jobs_generated < 0:
+            raise ValidationError({"jobs_generated": "Los empleos generados no pueden ser negativos."})
 
     def save(self, *args, **kwargs):
         if not self.slug:
