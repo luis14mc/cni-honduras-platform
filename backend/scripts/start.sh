@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+if [ ! -f staticfiles/admin/css/base.css ]; then
+  echo "Collecting static files..."
+  python manage.py collectstatic --noinput
+fi
+
 echo "Applying database migrations..."
 python manage.py migrate --noinput
 

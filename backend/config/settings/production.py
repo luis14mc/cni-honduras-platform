@@ -4,6 +4,12 @@ from .base import *  # noqa: F401,F403
 
 DEBUG = False
 
+# Serve collected static files (Django Admin CSS/JS) from the app container.
+_whitenoise_middleware = "whitenoise.middleware.WhiteNoiseMiddleware"
+if _whitenoise_middleware not in MIDDLEWARE:  # noqa: F405
+    security_index = MIDDLEWARE.index("django.middleware.security.SecurityMiddleware")  # noqa: F405
+    MIDDLEWARE.insert(security_index + 1, _whitenoise_middleware)  # noqa: F405
+
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
 
