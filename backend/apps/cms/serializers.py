@@ -95,6 +95,10 @@ class InstitutionalLinkSerializer(serializers.ModelSerializer):
 
 class SiteBannerSerializer(serializers.ModelSerializer):
     image = MediaAssetLiteSerializer(read_only=True)
+    mobile_image = MediaAssetLiteSerializer(read_only=True)
+    cta_url = serializers.CharField(source="link_url", read_only=True)
+    open_in_new_tab = serializers.BooleanField(source="link_external", read_only=True)
+    order = serializers.IntegerField(source="priority", read_only=True)
 
     class Meta:
         model = SiteBanner
@@ -107,11 +111,15 @@ class SiteBannerSerializer(serializers.ModelSerializer):
             "starts_at",
             "ends_at",
             "priority",
+            "order",
             "link_url",
+            "cta_url",
             "link_external",
+            "open_in_new_tab",
             "dismissible",
             "background_color",
             "text_color",
             "image",
+            "mobile_image",
             "published_at",
         )

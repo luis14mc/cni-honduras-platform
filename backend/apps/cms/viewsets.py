@@ -83,7 +83,7 @@ class SiteBannerViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = SiteBannerSerializer
 
     def get_queryset(self):
-        queryset = SiteBanner.active_in_window().select_related("image").order_by(
+        queryset = SiteBanner.active_in_window().select_related("image", "mobile_image").order_by(
             *SiteBanner._meta.ordering
         )
         placement = self.request.query_params.get("placement")

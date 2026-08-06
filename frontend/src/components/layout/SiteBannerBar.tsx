@@ -5,6 +5,12 @@ import { useMemo, useState } from "react";
 import type { Locale } from "@/src/i18n/config";
 import type { SiteBanner } from "@/src/types/cms";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import {
+  bannerCtaRel,
+  bannerCtaUrl,
+  bannerHasCta,
+  bannerOpensInNewTab,
+} from "@/src/lib/cmsBanners";
 
 type Props = {
   locale: Locale;
@@ -60,7 +66,7 @@ export function SiteBannerBar({ locale, banners }: Props) {
     <div className="flex flex-1 flex-wrap items-center justify-center gap-3 text-sm font-medium">
       <span>{banner.title}</span>
       {banner.body && <span className="opacity-90">{banner.body}</span>}
-      {banner.link_url && banner.cta_label && (
+      {bannerHasCta(banner) && (
         <span className="font-bold underline underline-offset-2">{banner.cta_label}</span>
       )}
     </div>
@@ -74,11 +80,11 @@ export function SiteBannerBar({ locale, banners }: Props) {
       aria-label={locale === "es" ? "Aviso institucional" : "Institutional notice"}
     >
       <div className="mx-auto flex max-w-screen-2xl items-center gap-4">
-        {banner.link_url ? (
+        {bannerHasCta(banner) ? (
           <Link
-            href={banner.link_url}
-            target={banner.link_external ? "_blank" : undefined}
-            rel={banner.link_external ? "noopener noreferrer" : undefined}
+            href={bannerCtaUrl(banner)}
+            target={bannerOpensInNewTab(banner) ? "_blank" : undefined}
+            rel={bannerCtaRel(banner)}
             className="flex flex-1 justify-center hover:opacity-95"
           >
             {content}

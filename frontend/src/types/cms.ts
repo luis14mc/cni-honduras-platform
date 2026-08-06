@@ -75,11 +75,15 @@ export interface SiteBanner {
   starts_at: string | null;
   ends_at: string | null;
   priority: number;
+  order?: number;
   link_url: string;
+  cta_url?: string;
   link_external: boolean;
+  open_in_new_tab?: boolean;
   dismissible: boolean;
   background_color: string;
   text_color: string;
   image: MediaAssetLite | null;
+  mobile_image: MediaAssetLite | null;
   published_at: string;
 }

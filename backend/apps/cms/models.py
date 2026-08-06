@@ -307,6 +307,13 @@ class SiteBanner(EditorialModel):
         blank=True,
         related_name="banners",
     )
+    mobile_image = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="mobile_banners",
+    )
 
     class Meta:
         ordering = ["-priority", "-published_at", "-id"]
@@ -320,6 +327,10 @@ class SiteBanner(EditorialModel):
         super().clean()
         if self.starts_at and self.ends_at and self.ends_at <= self.starts_at:
             raise ValidationError({"ends_at": "La fecha de fin debe ser posterior al inicio."})
+        if self.cta_label and not self.link_url:
+            raise ValidationError(
+                {"cta_label": "Indique una URL de destino cuando el banner tiene etiqueta de CTA."}
+            )
 
     @classmethod
     def active_in_window(cls, queryset=None):
