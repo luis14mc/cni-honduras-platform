@@ -316,36 +316,73 @@ class CMSAdminSecurityTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
         )
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
+    def _patch_group_permissions(self, group: Group, permission: Permission, *, as_superuser: bool = False):
+        if as_superuser:
+            self._login("super", "pw-super-123")
+        else:
+            self._staff_group_admin()
+            self._login("groupadmin", "pw-group-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[group.pk]),
+            {"permission_ids": [permission.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        return res
+
     def test_group_admin_can_assign_cms_permissions(self):
         editor_group = Group.objects.get(name=EDITOR)
         news_view = Permission.objects.get(
             codename="view_news", content_type__app_label="cms"
         )
-        self._staff_group_admin()
-        self._login("groupadmin", "pw-group-123")
-        token = self._csrf()
-        res = self.client.patch(
-            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
-            {"permission_ids": [news_view.pk]},
-            format="json",
-            HTTP_X_CSRFTOKEN=token,
+        res = self._patch_group_permissions(editor_group, news_view)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.content)
+        editor_group.refresh_from_db()
+        self.assertTrue(editor_group.permissions.filter(pk=news_view.pk).exists())
+
+    def test_group_admin_can_assign_add_news(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        perm = Permission.objects.get(codename="add_news", content_type__app_label="cms")
+        res = self._patch_group_permissions(editor_group, perm)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.content)
+        editor_group.refresh_from_db()
+        self.assertTrue(editor_group.permissions.filter(pk=perm.pk).exists())
+
+    def test_group_admin_can_assign_change_sector(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        perm = Permission.objects.get(
+            codename="change_sector", content_type__app_label="investment"
         )
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        res = self._patch_group_permissions(editor_group, perm)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.content)
+        editor_group.refresh_from_db()
+        self.assertTrue(editor_group.permissions.filter(pk=perm.pk).exists())
+
+    def test_group_admin_can_assign_view_mediaasset(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        perm = Permission.objects.get(
+            codename="view_mediaasset", content_type__app_label="media_library"
+        )
+        res = self._patch_group_permissions(editor_group, perm)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.content)
+        editor_group.refresh_from_db()
+        self.assertTrue(editor_group.permissions.filter(pk=perm.pk).exists())
 
     def test_group_admin_cannot_assign_auth_change_user(self):
         editor_group = Group.objects.get(name=EDITOR)
         auth_perm = Permission.objects.get(
             codename="change_user", content_type__app_label="auth"
         )
-        self._staff_group_admin()
-        self._login("groupadmin", "pw-group-123")
-        token = self._csrf()
-        res = self.client.patch(
-            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
-            {"permission_ids": [auth_perm.pk]},
-            format="json",
-            HTTP_X_CSRFTOKEN=token,
+        res = self._patch_group_permissions(editor_group, auth_perm)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_group_admin_cannot_assign_auth_change_group(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        auth_perm = Permission.objects.get(
+            codename="change_group", content_type__app_label="auth"
         )
+        res = self._patch_group_permissions(editor_group, auth_perm)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_group_admin_cannot_modify_superadmin_group(self):
@@ -369,15 +406,10 @@ class CMSAdminSecurityTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
         news_view = Permission.objects.get(
             codename="view_news", content_type__app_label="cms"
         )
-        self._login("super", "pw-super-123")
-        token = self._csrf()
-        res = self.client.patch(
-            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
-            {"permission_ids": [news_view.pk]},
-            format="json",
-            HTTP_X_CSRFTOKEN=token,
-        )
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        res = self._patch_group_permissions(editor_group, news_view, as_superuser=True)
+        self.assertEqual(res.status_code, status.HTTP_200_OK, res.content)
+        editor_group.refresh_from_db()
+        self.assertTrue(editor_group.permissions.filter(pk=news_view.pk).exists())
 
     def test_self_escalation_via_group_membership_blocked(self):
         editor_group = Group.objects.get(name=EDITOR)

@@ -21,15 +21,9 @@ _MATRIX_ACTIONS = ("view", "add", "change", "delete")
 
 _CMS_PUBLISH_MODELS = frozenset({"news", "document", "sitebanner", "page"})
 
-_assignable_ids_cache: set[int] | None = None
 
-
-def cms_assignable_permission_ids(*, refresh: bool = False) -> set[int]:
+def cms_assignable_permission_ids() -> set[int]:
     """IDs of permissions the CMS roles endpoint may assign (editorial scope only)."""
-
-    global _assignable_ids_cache
-    if not refresh and _assignable_ids_cache is not None:
-        return _assignable_ids_cache
 
     ids: set[int] = set()
     for app_label, model_name, _label in CMS_MATRIX_MODELS:
@@ -54,9 +48,6 @@ def cms_assignable_permission_ids(*, refresh: bool = False) -> set[int]:
     )
     if publish_id:
         ids.add(publish_id)
-
-    if ids:
-        _assignable_ids_cache = ids
     return ids
 
 

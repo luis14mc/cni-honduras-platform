@@ -19,7 +19,7 @@ from .admin_privileges import (
     assert_can_modify_superuser_target,
     validate_assignable_permissions,
 )
-from .matrix import cms_assignable_permission_ids, cms_assignable_permissions
+from .matrix import cms_assignable_permissions
 from .serializers import EditorialAuditMixin, MediaAssetNestedSerializer, SectorNestedSerializer
 from .user_guards import assert_safe_superuser_change
 
@@ -396,9 +396,14 @@ class GroupAdminSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        cms_assignable_permission_ids(refresh=True)
+        self._bind_permission_queryset(self.fields["permission_ids"])
+
+    @staticmethod
+    def _bind_permission_queryset(field: serializers.Field) -> None:
+        """ManyRelatedField validates against child_relation.queryset, not queryset."""
         qs = cms_assignable_permissions()
-        self.fields["permission_ids"].queryset = qs
+        field.queryset = qs
+        field.child_relation.queryset = qs
 
     def get_user_count(self, obj) -> int:
         return obj.user_set.count()
