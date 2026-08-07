@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { PagesListView } from "@/src/components/cms/modules/PagesListView";
 
-export default function paginasPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Páginas"
-      description="Páginas institucionales del sitio."
-    />
-  );
+export default function PaginasPage() {
+  return <PagesListView />;
 }

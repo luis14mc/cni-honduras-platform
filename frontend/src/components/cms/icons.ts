@@ -10,6 +10,7 @@ import {
   Megaphone,
   Newspaper,
   Settings,
+  Shield,
   TrendingUp,
   Trophy,
   Users,
@@ -27,6 +28,7 @@ export const CMS_ICONS: Record<string, LucideIcon> = {
   Images,
   LayoutTemplate,
   Users,
+  Shield,
   Settings,
 };
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Menu, PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { CmsBreadcrumb } from "@/src/components/cms/CmsBreadcrumb";
+import { CmsGlobalSearch } from "@/src/components/cms/CmsGlobalSearch";
 import { CmsUserMenu } from "@/src/components/cms/CmsUserMenu";
 
 interface CmsHeaderProps {
@@ -41,11 +42,7 @@ export function CmsHeader({ collapsed, onToggleCollapse, onOpenMobile }: CmsHead
         <CmsBreadcrumb pathname={pathname} />
       </div>
 
-      {/* Future search — placeholder, disabled for now */}
-      <div className="ml-auto hidden items-center gap-2 rounded-lg border border-[#334E88]/15 bg-[#334E88]/5 px-3 py-1.5 text-sm text-[#252A58]/40 md:flex">
-        <Search className="h-4 w-4" aria-hidden />
-        <span>Buscar (próximamente)</span>
-      </div>
+      <CmsGlobalSearch />
 
       <div className="ml-auto md:ml-0">
         <CmsUserMenu />

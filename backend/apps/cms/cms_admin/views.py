@@ -7,7 +7,8 @@ issued and no passwords are ever returned or logged. Access is limited to
 
 from __future__ import annotations
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.db.models import Q
 from django.middleware.csrf import get_token
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -18,7 +19,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from apps.cms.models import Document, News, PublishStatus, SiteBanner
+from apps.cms.models import Document, InstitutionalLink, News, Page, PublishStatus, SiteBanner
 from apps.investment.models import (
     InvestmentOpportunity,
     OpportunityStatus,
@@ -28,6 +29,10 @@ from apps.investment.models import (
 
 from .permissions import IsCMSStaff
 from .serializers import CMSUserSerializer, LoginSerializer
+
+User = get_user_model()
+
+SEARCH_LIMIT = 5
 
 
 @method_decorator(ensure_csrf_cookie, name="get")
@@ -122,6 +127,7 @@ class DashboardView(APIView):
             "documents": split(Document),
             "banners": split(SiteBanner),
             "success_stories": split(SuccessStory),
+            "pages": split(Page),
             "sectors": {
                 "total": Sector.objects.count(),
                 "active": Sector.objects.filter(is_active=True).count(),
@@ -137,10 +143,44 @@ class DashboardView(APIView):
         return Response(
             {
                 "counts": counts,
+                "pending": self._pending_content(),
                 "recent_activity": self._recent_activity(),
                 "generated_at": timezone.now().isoformat(),
             }
         )
+
+    def _pending_content(self) -> dict:
+        draft = PublishStatus.DRAFT
+        editorial_models = (News, Document, SiteBanner, SuccessStory, Page)
+
+        drafts = sum(m.all_objects.filter(status=draft).count() for m in editorial_models)
+
+        def missing_en(model, fields: tuple[str, ...]) -> int:
+            q = model.all_objects.filter(status__in=[draft, PublishStatus.PUBLISHED])
+            en_q = Q()
+            for field in fields:
+                en_q |= Q(**{f"{field}_en": ""}) | Q(**{f"{field}_en__isnull": True})
+            return q.filter(en_q).count()
+
+        missing_translation = (
+            missing_en(News, ("title", "summary"))
+            + missing_en(Document, ("title", "description"))
+            + missing_en(SuccessStory, ("title", "summary"))
+            + missing_en(Page, ("title", "content"))
+        )
+
+        missing_image = (
+            News.all_objects.filter(status=draft, featured_image__isnull=True).count()
+            + Document.all_objects.filter(status=draft, cover_image__isnull=True).count()
+            + Page.all_objects.filter(status=draft, featured_image__isnull=True).count()
+            + SuccessStory.all_objects.filter(status=draft, logo__isnull=True, image="").count()
+        )
+
+        return {
+            "drafts": drafts,
+            "missing_translation_en": missing_translation,
+            "missing_image": missing_image,
+        }
 
     def _recent_activity(self) -> list[dict]:
         """Derive activity from ``updated_at`` on existing models — no new table.
@@ -166,6 +206,97 @@ class DashboardView(APIView):
         collect(Document.all_objects.order_by("-updated_at")[:10], "document")
         collect(SiteBanner.all_objects.order_by("-updated_at")[:10], "banner")
         collect(SuccessStory.all_objects.order_by("-updated_at")[:10], "success_story")
+        collect(Page.all_objects.order_by("-updated_at")[:10], "page")
+        for obj in Sector.objects.order_by("-updated_at")[:10]:
+            events.append(
+                {
+                    "type": "sector",
+                    "id": obj.id,
+                    "label": obj.name,
+                    "status": "active" if obj.is_active else "inactive",
+                    "updated_at": obj.updated_at.isoformat(),
+                }
+            )
+        for obj in InvestmentOpportunity.objects.select_related("sector").order_by("-updated_at")[:10]:
+            events.append(
+                {
+                    "type": "opportunity",
+                    "id": obj.id,
+                    "label": obj.title,
+                    "status": obj.status,
+                    "updated_at": obj.updated_at.isoformat(),
+                }
+            )
 
         events.sort(key=lambda e: e["updated_at"], reverse=True)
-        return events[:10]
+        return events[:15]
+
+
+class SearchView(APIView):
+    """Global CMS search across editorial models."""
+
+    permission_classes = [IsCMSStaff]
+
+    def get(self, request):
+        q = (request.query_params.get("q") or "").strip()
+        empty = {
+            "news": [],
+            "documents": [],
+            "banners": [],
+            "success_stories": [],
+            "sectors": [],
+            "opportunities": [],
+            "pages": [],
+        }
+        if not q:
+            return Response(empty)
+
+        def search_model(qs, fields, label_attr="title"):
+            filter_q = Q()
+            for field in fields:
+                filter_q |= Q(**{f"{field}__icontains": q})
+            results = []
+            for obj in qs.filter(filter_q).order_by("-updated_at")[:SEARCH_LIMIT]:
+                results.append(
+                    {
+                        "id": obj.id,
+                        "label": getattr(obj, label_attr, str(obj)),
+                        "status": getattr(obj, "status", None),
+                        "updated_at": obj.updated_at.isoformat(),
+                    }
+                )
+            return results
+
+        return Response(
+            {
+                "news": search_model(
+                    News.all_objects.all(),
+                    ("title", "title_es", "title_en", "slug"),
+                ),
+                "documents": search_model(
+                    Document.all_objects.all(),
+                    ("title", "title_es", "title_en", "slug"),
+                ),
+                "banners": search_model(
+                    SiteBanner.all_objects.all(),
+                    ("title", "title_es", "title_en"),
+                ),
+                "success_stories": search_model(
+                    SuccessStory.all_objects.all(),
+                    ("title", "title_es", "title_en", "company_name"),
+                ),
+                "sectors": search_model(
+                    Sector.objects.all(),
+                    ("name", "name_es", "name_en", "slug"),
+                    label_attr="name",
+                ),
+                "opportunities": search_model(
+                    InvestmentOpportunity.objects.all(),
+                    ("title", "slug", "summary"),
+                ),
+                "pages": search_model(
+                    Page.all_objects.all(),
+                    ("title", "title_es", "title_en", "slug"),
+                ),
+            }
+        )

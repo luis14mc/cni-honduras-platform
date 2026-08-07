@@ -23,11 +23,25 @@ export interface DashboardCounts {
   documents: CmsCountSplit;
   banners: CmsCountSplit;
   success_stories: CmsCountSplit;
+  pages: CmsCountSplit;
   sectors: { total: number; active: number };
   opportunities: { total: number; open: number };
 }
 
-export type ActivityType = "news" | "document" | "banner" | "success_story";
+export interface PendingContent {
+  drafts: number;
+  missing_translation_en: number;
+  missing_image: number;
+}
+
+export type ActivityType =
+  | "news"
+  | "document"
+  | "banner"
+  | "success_story"
+  | "page"
+  | "sector"
+  | "opportunity";
 
 export interface ActivityItem {
   type: ActivityType;
@@ -39,6 +53,7 @@ export interface ActivityItem {
 
 export interface DashboardPayload {
   counts: DashboardCounts;
+  pending: PendingContent;
   recent_activity: ActivityItem[];
   generated_at: string;
 }

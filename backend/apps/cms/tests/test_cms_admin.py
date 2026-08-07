@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from apps.cms.cms_admin.roles import ALL_ROLES, EDITOR
-from apps.cms.models import Document, News, PublishStatus, SiteBanner, BannerPlacement
+from apps.cms.models import Document, News, Page, PublishStatus, SiteBanner, BannerPlacement
 from apps.cms.tests.base import CMSAdminTestCase
 from apps.investment.models import (
     InvestmentOpportunity,
@@ -19,6 +19,19 @@ from apps.investment.models import (
 )
 
 User = get_user_model()
+
+DASHBOARD_ACTIVITY_TYPES = frozenset(
+    {
+        "news",
+        "document",
+        "banner",
+        "success_story",
+        "page",
+        "sector",
+        "opportunity",
+    }
+)
+DASHBOARD_ACTIVITY_LIMIT = 15
 
 
 class CMSAdminCsrfFlowTests(CMSAdminTestCase):
@@ -283,6 +296,9 @@ class CMSAdminDashboardTests(CMSAdminTestCase):
             title="Caso", slug="caso", status=PublishStatus.PUBLISHED,
             published_at=now,
         )
+        Page.all_objects.create(
+            title="Contacto", slug="contacto-test", status=PublishStatus.DRAFT,
+        )
 
     def test_dashboard_counts(self):
         self.client.force_login(self.staff)
@@ -303,11 +319,16 @@ class CMSAdminDashboardTests(CMSAdminTestCase):
         self.client.force_login(self.staff)
         res = self.client.get(reverse("api-v1:cms-admin:dashboard"))
         activity = res.json()["recent_activity"]
-        self.assertLessEqual(len(activity), 10)
+        self.assertLessEqual(len(activity), DASHBOARD_ACTIVITY_LIMIT)
         self.assertGreater(len(activity), 0)
+        for entry in activity:
+            self.assertIn(entry["type"], DASHBOARD_ACTIVITY_TYPES)
+            self.assertIsInstance(entry["id"], int)
+            self.assertTrue(entry["label"])
+            self.assertIn("updated_at", entry)
+            self.assertIn("status", entry)
         types = {e["type"] for e in activity}
-        self.assertTrue(types <= {"news", "document", "banner", "success_story"})
-        # Ordered by updated_at desc.
+        self.assertTrue(types <= DASHBOARD_ACTIVITY_TYPES)
         stamps = [e["updated_at"] for e in activity]
         self.assertEqual(stamps, sorted(stamps, reverse=True))
 
