@@ -33,6 +33,25 @@ const TYPE_FILTERS: { value: "" | MediaType; label: string }[] = [
   { value: "file", label: "Archivos" },
 ];
 
+function formatBytes(bytes: number | null | undefined): string {
+  if (!bytes || bytes <= 0) return "—";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatDimensions(asset: MediaAsset): string | null {
+  if (asset.width && asset.height) return `${asset.width}×${asset.height}px`;
+  return null;
+}
+
+function describeAsset(asset: MediaAsset): string {
+  const parts = [asset.media_type, formatBytes(asset.file_size_bytes)];
+  const dims = formatDimensions(asset);
+  if (dims) parts.push(dims);
+  return parts.filter(Boolean).join(" · ");
+}
+
 export function CmsMediaPicker({
   open,
   onClose,
@@ -101,6 +120,7 @@ export function CmsMediaPicker({
   }, [open, onClose]);
 
   const handleUpload = async (files: FileList | File[]) => {
+    if (uploading) return;
     const list = Array.from(files);
     if (!list.length) return;
     setUploading(true);
@@ -283,7 +303,7 @@ export function CmsMediaPicker({
                     <MediaThumb asset={asset} size={40} />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-[#252A58]">{asset.title}</p>
-                      <p className="text-xs text-[#252A58]/50">{asset.media_type}</p>
+                      <p className="text-xs text-[#252A58]/50">{describeAsset(asset)}</p>
                     </div>
                   </button>
                 </li>
@@ -302,6 +322,7 @@ export function CmsMediaPicker({
               <MediaThumb asset={preview} size={48} />
               <div className="min-w-0">
                 <p className="truncate font-medium text-[#252A58]">{preview.title}</p>
+                <p className="text-xs text-[#252A58]/50">{describeAsset(preview)}</p>
                 <p className="text-xs text-[#252A58]/50">{preview.alt_text || "Sin texto alternativo"}</p>
               </div>
             </div>
@@ -409,6 +430,7 @@ export function CmsMediaField({
           <MediaThumb asset={asset} size={64} />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{asset.title}</p>
+            <p className="text-xs text-[#252A58]/50">{describeAsset(asset)}</p>
             <div className="mt-2 flex gap-2">
               <button
                 type="button"

@@ -27,6 +27,7 @@ import {
   type SuccessStoryWritePayload,
 } from "@/src/lib/cms/editorial/successStories";
 import type { MediaAsset, SuccessStoryItem } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
 interface StoryFormState {
@@ -134,6 +135,7 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<StoryFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -142,13 +144,23 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
+
+  useEffect(() => {
     if (isNew) return;
     let cancelled = false;
     (async () => {
       setLoading(true);
       try {
         const item = await getSuccessStory(storyId);
-        if (!cancelled) setForm(storyToForm(item));
+        if (!cancelled) {
+          const next = storyToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -158,7 +170,7 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
     return () => {
       cancelled = true;
     };
-  }, [isNew, storyId]);
+  }, [isNew, storyId, markClean]);
 
   const patch = useCallback((partial: Partial<StoryFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -180,9 +192,18 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
       const id = await persist();
       toast.success("Borrador guardado.");
       if (isNew) router.replace(`/cms/casos-exito/${id}`);
-      else setForm(storyToForm(await getSuccessStory(id)));
+      else {
+        const next = storyToForm(await getSuccessStory(id));
+        setForm(next);
+        markClean(next);
+      }
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -198,11 +219,18 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
     try {
       const id = await persist();
       const published = await publishSuccessStory(id);
-      setForm(storyToForm(published));
+      const next = storyToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Caso de éxito publicado.");
       if (isNew) router.replace(`/cms/casos-exito/${id}`);
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -237,6 +265,7 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
       <CmsEditorLayout
         title={isNew ? "Nuevo caso de éxito" : "Editar caso de éxito"}
         backHref="/cms/casos-exito"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar
             status={form.status}

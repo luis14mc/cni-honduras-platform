@@ -33,6 +33,7 @@ export function CmsGlobalSearch() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<FlatResult[]>([]);
+  const [searchError, setSearchError] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,12 +47,16 @@ export function CmsGlobalSearch() {
     let cancelled = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- async search updates after fetch
     setLoading(true);
+    setSearchError(false);
     cmsSearch(debounced)
       .then((data) => {
         if (!cancelled) setResults(flattenResults(data));
       })
       .catch(() => {
-        if (!cancelled) setResults([]);
+        if (!cancelled) {
+          setResults([]);
+          setSearchError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -100,7 +105,9 @@ export function CmsGlobalSearch() {
           id="cms-global-search-results"
           className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-lg border border-[#334E88]/15 bg-white py-1 shadow-lg"
         >
-          {displayResults.length === 0 && !loading ? (
+          {searchError ? (
+            <p className="px-3 py-2 text-sm text-red-600">Error al buscar. Intente de nuevo.</p>
+          ) : displayResults.length === 0 && !loading ? (
             <p className="px-3 py-2 text-sm text-[#252A58]/50">Sin resultados</p>
           ) : (
             displayResults.map(({ type, item }) => (

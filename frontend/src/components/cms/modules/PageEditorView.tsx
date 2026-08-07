@@ -27,6 +27,7 @@ import {
   type PageWritePayload,
 } from "@/src/lib/cms/editorial/pages";
 import type { MediaAsset, PageItem } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
 interface PageFormState {
@@ -48,6 +49,26 @@ interface PageFormState {
   updated_at: string | null;
   updated_by_name: string | null;
 }
+
+const emptyPageForm = (): PageFormState => ({
+  title_es: "",
+  title_en: "",
+  slug: "",
+  content_es: "",
+  content_en: "",
+  excerpt_es: "",
+  excerpt_en: "",
+  featured_image: null,
+  featured_image_detail: null,
+  seo_title_es: "",
+  seo_title_en: "",
+  seo_description_es: "",
+  seo_description_en: "",
+  status: "draft",
+  is_protected: false,
+  updated_at: null,
+  updated_by_name: null,
+});
 
 function pageToForm(item: PageItem): PageFormState {
   return {
@@ -100,6 +121,7 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<PageFormState | null>(null);
+  const { dirty, markClean } = useEditorDirty(form ?? emptyPageForm());
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -114,7 +136,11 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
       setLoadError(false);
       try {
         const item = await getPage(pageId);
-        if (!cancelled) setForm(pageToForm(item));
+        if (!cancelled) {
+          const next = pageToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -124,7 +150,7 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [pageId]);
+  }, [pageId, markClean]);
 
   const patch = useCallback((partial: Partial<PageFormState>) => {
     setForm((prev) => (prev ? { ...prev, ...partial } : prev));
@@ -147,9 +173,18 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
     try {
       await persist();
       toast.success("Borrador guardado.");
-      setForm(pageToForm(await getPage(pageId)));
+      const next = pageToForm(await getPage(pageId));
+      setForm(next);
+      markClean(next);
     } catch (err) {
-      toast.error(err instanceof CmsApiError || err instanceof Error ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -166,10 +201,19 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
     try {
       await persist();
       const published = await publishPage(pageId);
-      setForm(pageToForm(published));
+      const next = pageToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Página publicada.");
     } catch (err) {
-      toast.error(err instanceof CmsApiError || err instanceof Error ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -208,6 +252,7 @@ export function PageEditorView({ pageId }: PageEditorViewProps) {
         title="Editar página"
         description={form.title_es || form.title_en}
         backHref="/cms/paginas"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar
             status={form.status}

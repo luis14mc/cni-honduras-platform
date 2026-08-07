@@ -27,6 +27,8 @@ import {
 } from "@/src/lib/cms/editorial/opportunities";
 import { listSectors } from "@/src/lib/cms/editorial/sectors";
 import type { OpportunityItem, OpportunityStatus, SectorItem } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
+import { useSlugField } from "@/src/lib/cms/useSlugField";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 import { cn } from "@/src/lib/utils";
 
@@ -105,6 +107,12 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
   const isNew = opportunityId === undefined;
 
   const [form, setForm] = useState<OpportunityFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
+  const { slug, setSlug } = useSlugField({
+    title: form.title,
+    initialSlug: form.slug,
+    isNew,
+  });
   const [sectors, setSectors] = useState<SectorItem[]>([]);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
@@ -112,6 +120,12 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
   const [publishing, setPublishing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
 
   useEffect(() => {
     listSectors({ page_size: 200, is_active: true })
@@ -127,7 +141,11 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
       setLoadError(false);
       try {
         const item = await getOpportunity(opportunityId);
-        if (!cancelled) setForm(opportunityToForm(item));
+        if (!cancelled) {
+          const next = opportunityToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -137,11 +155,19 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
     return () => {
       cancelled = true;
     };
-  }, [isNew, opportunityId]);
+  }, [isNew, opportunityId, markClean]);
 
   const patch = useCallback((partial: Partial<OpportunityFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
   }, []);
+
+  useEffect(() => {
+    if (slug !== form.slug) {
+      // Sync auto-generated slug into form state for dirty tracking and save payload.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      patch({ slug });
+    }
+  }, [slug, form.slug, patch]);
 
   const persist = async (): Promise<number> => {
     if (!form.title.trim()) throw new Error("El título es obligatorio.");
@@ -161,9 +187,20 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
       const id = await persist();
       toast.success("Oportunidad guardada.");
       if (isNew) router.replace(`/cms/oportunidades/${id}`);
-      else setForm(opportunityToForm(await getOpportunity(id)));
+      else {
+        const next = opportunityToForm(await getOpportunity(id));
+        setForm(next);
+        markClean(next);
+      }
     } catch (err) {
-      toast.error(err instanceof CmsApiError || err instanceof Error ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -174,11 +211,20 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
     try {
       const id = await persist();
       const published = await publishOpportunity(id);
-      setForm(opportunityToForm(published));
+      const next = opportunityToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Oportunidad publicada.");
       if (isNew) router.replace(`/cms/oportunidades/${id}`);
     } catch (err) {
-      toast.error(err instanceof CmsApiError || err instanceof Error ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -189,7 +235,9 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
     setPublishing(true);
     try {
       const updated = await unpublishOpportunity(opportunityId);
-      setForm(opportunityToForm(updated));
+      const next = opportunityToForm(updated);
+      setForm(next);
+      markClean(next);
       toast.success("Oportunidad despublicada.");
     } catch (err) {
       toast.error(err instanceof CmsApiError ? err.message : "No se pudo despublicar.");
@@ -229,6 +277,7 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
         title={isNew ? "Nueva oportunidad" : "Editar oportunidad"}
         description={form.title || "Complete los datos de la oportunidad de inversión."}
         backHref="/cms/oportunidades"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar updatedAt={form.updated_at}>
             <div>
@@ -337,8 +386,8 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
           <CmsFormField label="Slug" htmlFor="opp-slug">
             <input
               id="opp-slug"
-              value={form.slug}
-              onChange={(e) => patch({ slug: e.target.value })}
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
               className={cmsInputClass}
             />
           </CmsFormField>

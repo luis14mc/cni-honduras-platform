@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { CmsSectionHeader } from "@/src/components/cms/CmsSectionHeader";
+import { useUnsavedChanges } from "@/src/lib/cms/useUnsavedChanges";
 import { cn } from "@/src/lib/utils";
 
 interface CmsEditorLayoutProps {
@@ -15,6 +16,7 @@ interface CmsEditorLayoutProps {
   sidebar?: ReactNode;
   children: ReactNode;
   className?: string;
+  dirty?: boolean;
 }
 
 export function CmsEditorLayout({
@@ -26,11 +28,22 @@ export function CmsEditorLayout({
   sidebar,
   children,
   className,
+  dirty = false,
 }: CmsEditorLayoutProps) {
+  const { confirmLeave } = useUnsavedChanges(dirty);
+
+  const handleBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!confirmLeave()) {
+      event.preventDefault();
+      return;
+    }
+  };
+
   return (
     <div className={cn("space-y-6", className)}>
       <Link
         href={backHref}
+        onClick={handleBack}
         className="inline-flex items-center gap-1.5 text-sm font-medium text-[#334E88] transition hover:text-[#252A58]"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden />

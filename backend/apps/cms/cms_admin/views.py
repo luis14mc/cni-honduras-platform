@@ -176,10 +176,22 @@ class DashboardView(APIView):
             + SuccessStory.all_objects.filter(status=draft, logo__isnull=True, image="").count()
         )
 
+        documents_without_resource = Document.all_objects.filter(status=draft).filter(
+            Q(file="") | Q(file__isnull=True),
+            Q(external_url="") | Q(external_url__isnull=True),
+        ).count()
+
+        incomplete_opportunities = InvestmentOpportunity.objects.filter(
+            Q(summary="") | Q(summary__isnull=True)
+            | Q(description="") | Q(description__isnull=True)
+        ).count()
+
         return {
             "drafts": drafts,
             "missing_translation_en": missing_translation,
             "missing_image": missing_image,
+            "documents_without_resource": documents_without_resource,
+            "incomplete_opportunities": incomplete_opportunities,
         }
 
     def _recent_activity(self) -> list[dict]:

@@ -32,6 +32,8 @@ export interface PendingContent {
   drafts: number;
   missing_translation_en: number;
   missing_image: number;
+  documents_without_resource: number;
+  incomplete_opportunities: number;
 }
 
 export type ActivityType =

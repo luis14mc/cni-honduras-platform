@@ -116,6 +116,56 @@ export function activityEditorHref(type: ActivityType, id: number): string {
   }
 }
 
+export interface AttentionItem {
+  key: string;
+  label: string;
+  value: number;
+  href: string;
+  hint: string;
+}
+
+/** Map pending counts to actionable dashboard links. Pure — unit tested. */
+export function buildAttentionItems(pending: DashboardPayload["pending"]): AttentionItem[] {
+  const items: AttentionItem[] = [
+    {
+      key: "drafts",
+      label: "Borradores",
+      value: pending.drafts,
+      href: "/cms/noticias?status=draft",
+      hint: "Contenido editorial sin publicar",
+    },
+    {
+      key: "missing_translation_en",
+      label: "Sin traducción EN",
+      value: pending.missing_translation_en,
+      href: "/cms/noticias",
+      hint: "Falta título o resumen en inglés",
+    },
+    {
+      key: "missing_image",
+      label: "Sin imagen destacada",
+      value: pending.missing_image,
+      href: "/cms/noticias",
+      hint: "Borradores sin imagen principal",
+    },
+    {
+      key: "documents_without_resource",
+      label: "Documentos sin recurso",
+      value: pending.documents_without_resource,
+      href: "/cms/documentos?status=draft",
+      hint: "Borradores sin archivo ni URL externa",
+    },
+    {
+      key: "incomplete_opportunities",
+      label: "Oportunidades incompletas",
+      value: pending.incomplete_opportunities,
+      href: "/cms/oportunidades",
+      hint: "Falta resumen o descripción",
+    },
+  ];
+  return items.filter((item) => item.value > 0);
+}
+
 // Human summary for an activity row. Pure — unit tested.
 export function describeActivity(item: ActivityItem): string {
   const kind = ACTIVITY_LABELS[item.type] ?? "Contenido";
@@ -123,7 +173,7 @@ export function describeActivity(item: ActivityItem): string {
   return status ? `${kind} · ${status}` : kind;
 }
 
-// Relative "hace X" formatting from an ISO timestamp. Pure — unit tested.
+/** Relative "hace X" formatting from an ISO timestamp. Pure — unit tested. */
 export function relativeTime(iso: string, now: Date = new Date()): string {
   const then = new Date(iso).getTime();
   const diffMs = now.getTime() - then;
