@@ -5,28 +5,11 @@
 // credentials so the browser attaches the session cookie.
 
 import { API_BASE_URL } from "@/src/lib/api";
-import type { CmsFailureKind } from "@/src/lib/cms/types";
+import { CmsApiError, parseCmsErrorBody } from "@/src/lib/cms/errors";
+
+export { CmsApiError, classifyStatus } from "@/src/lib/cms/errors";
 
 export const CMS_API_BASE = `${API_BASE_URL}/cms-admin`;
-
-export class CmsApiError extends Error {
-  readonly status: number;
-  readonly kind: CmsFailureKind;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.name = "CmsApiError";
-    this.status = status;
-    this.kind = classifyStatus(status);
-  }
-}
-
-// Map an HTTP status to a UI-facing failure kind. Exported for testing.
-export function classifyStatus(status: number): CmsFailureKind {
-  if (status === 401) return "expired";
-  if (status === 403) return "unauthorized";
-  return "error";
-}
 
 // Read a cookie value from a document.cookie-style string. Exported for testing.
 export function readCookie(name: string, cookieString: string): string | null {
@@ -89,21 +72,20 @@ export async function ensureCsrfToken(): Promise<string> {
   return csrfFetchPromise;
 }
 
-async function parseDetail(response: Response): Promise<string> {
+async function parseErrorResponse(response: Response): Promise<CmsApiError> {
+  let body: unknown = null;
   try {
-    const body: unknown = await response.json();
-    if (
-      body &&
-      typeof body === "object" &&
-      "detail" in body &&
-      typeof (body as { detail: unknown }).detail === "string"
-    ) {
-      return (body as { detail: string }).detail;
-    }
+    body = await response.json();
   } catch {
     // non-JSON body
   }
-  return response.statusText || "Request failed";
+  const parsed = parseCmsErrorBody(body, response.status);
+  return new CmsApiError(parsed.message, response.status, parsed.fieldErrors);
+}
+
+async function parseDetail(response: Response): Promise<string> {
+  const err = await parseErrorResponse(response);
+  return err.message;
 }
 
 function isCsrfForbidden(status: number, detail: string): boolean {
@@ -117,7 +99,7 @@ export async function cmsGet<T>(path: string): Promise<T> {
     headers: { Accept: "application/json" },
   });
   if (!response.ok) {
-    throw new CmsApiError(await parseDetail(response), response.status);
+    throw await parseErrorResponse(response);
   }
   return response.json() as Promise<T>;
 }
@@ -143,12 +125,12 @@ async function cmsUnsafeRequest<T>(
     return undefined as T;
   }
   if (!response.ok) {
-    const detail = await parseDetail(response);
-    if (!csrfRetried && isCsrfForbidden(response.status, detail)) {
+    const err = await parseErrorResponse(response);
+    if (!csrfRetried && isCsrfForbidden(response.status, err.message)) {
       clearInMemoryCsrfToken();
       return cmsUnsafeRequest(method, path, payload, true);
     }
-    throw new CmsApiError(detail, response.status);
+    throw err;
   }
   return response.json() as Promise<T>;
 }
@@ -193,12 +175,12 @@ async function cmsUploadInternal<T>(
     return undefined as T;
   }
   if (!response.ok) {
-    const detail = await parseDetail(response);
-    if (!csrfRetried && isCsrfForbidden(response.status, detail)) {
+    const err = await parseErrorResponse(response);
+    if (!csrfRetried && isCsrfForbidden(response.status, err.message)) {
       clearInMemoryCsrfToken();
       return cmsUploadInternal(path, formData, true);
     }
-    throw new CmsApiError(detail, response.status);
+    throw err;
   }
   return response.json() as Promise<T>;
 }

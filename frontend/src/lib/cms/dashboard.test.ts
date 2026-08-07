@@ -16,7 +16,13 @@ const payload: DashboardPayload = {
     sectors: { total: 6, active: 5 },
     opportunities: { total: 7, open: 4 },
   },
-  pending: { drafts: 5, missing_translation_en: 2, missing_image: 1 },
+  pending: {
+    drafts: 5,
+    missing_translation_en: 2,
+    missing_image: 1,
+    documents_without_resource: 0,
+    incomplete_opportunities: 1,
+  },
   recent_activity: [],
   generated_at: "2026-08-06T12:00:00Z",
 };

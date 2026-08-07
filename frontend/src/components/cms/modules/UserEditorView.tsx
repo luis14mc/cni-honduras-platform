@@ -22,6 +22,7 @@ import {
   updateUser,
 } from "@/src/lib/cms/editorial/users";
 import type { CmsGroup, CmsStaffUser } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canManageUsers } from "@/src/lib/cms/permissions";
 import { cn } from "@/src/lib/utils";
 
@@ -80,6 +81,7 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
   const isNew = userId === undefined;
 
   const [form, setForm] = useState<UserFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
   const [groups, setGroups] = useState<CmsGroup[]>([]);
   const [newPassword, setNewPassword] = useState("");
   const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
@@ -90,6 +92,12 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
   const [togglingActive, setTogglingActive] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
 
   useEffect(() => {
     listGroups()
@@ -105,7 +113,11 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
       setLoadError(false);
       try {
         const item = await getUser(userId);
-        if (!cancelled) setForm(userToForm(item, groups));
+        if (!cancelled) {
+          const next = userToForm(item, groups);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -115,7 +127,7 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [isNew, userId, groups]);
+  }, [isNew, userId, groups, markClean]);
 
   const patch = useCallback((partial: Partial<UserFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -169,10 +181,17 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
           group_ids: form.group_ids,
         });
         toast.success("Usuario actualizado.");
-        setForm(userToForm(await getUser(userId!), groups));
+        const next = userToForm(await getUser(userId!), groups);
+        setForm(next);
+        markClean(next);
       }
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -204,7 +223,9 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
       const updated = form.is_active
         ? await deactivateUser(userId)
         : await activateUser(userId);
-      setForm(userToForm(updated, groups));
+      const next = userToForm(updated, groups);
+      setForm(next);
+      markClean(next);
       toast.success(form.is_active ? "Usuario desactivado." : "Usuario activado.");
     } catch (err) {
       toast.error(err instanceof CmsApiError ? err.message : "No se pudo cambiar el estado.");
@@ -241,6 +262,7 @@ export function UserEditorView({ userId }: UserEditorViewProps) {
         title={isNew ? "Nuevo usuario" : "Editar usuario"}
         description={isNew ? "Cree una cuenta para el equipo del CMS." : form.username}
         backHref="/cms/usuarios"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar>
             <div>

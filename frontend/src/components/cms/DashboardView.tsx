@@ -7,6 +7,7 @@ import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { CmsApiError } from "@/src/lib/cms/api";
 import {
   activityEditorHref,
+  buildAttentionItems,
   buildStatCards,
   describeActivity,
   fetchDashboard,
@@ -103,78 +104,113 @@ export function DashboardView() {
       ) : null}
 
       {load.status === "ready" ? (
-        <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {buildStatCards(load.data).map((card) => (
-              <CmsStatCard
-                key={card.key}
-                label={card.label}
-                value={card.value}
-                icon={card.icon}
-                href={card.href}
-                hint={card.hint}
-                accent={card.accent}
-              />
-            ))}
-          </div>
-
-          <section className="rounded-xl border border-[#334E88]/10 bg-white p-5">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#252A58]/60">
-              Contenido pendiente
-            </h2>
-            <ul className="grid gap-3 sm:grid-cols-3">
-              <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
-                <p className="text-2xl font-bold text-[#334E88]">{load.data.pending.drafts}</p>
-                <p className="text-sm text-[#252A58]/60">Borradores</p>
-              </li>
-              <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
-                <p className="text-2xl font-bold text-[#334E88]">
-                  {load.data.pending.missing_translation_en}
-                </p>
-                <p className="text-sm text-[#252A58]/60">Sin traducción EN</p>
-              </li>
-              <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
-                <p className="text-2xl font-bold text-[#334E88]">{load.data.pending.missing_image}</p>
-                <p className="text-sm text-[#252A58]/60">Sin imagen destacada</p>
-              </li>
-            </ul>
-          </section>
-
-          <section className="rounded-xl border border-[#334E88]/10 bg-white p-5">
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#252A58]/60">
-              Actividad reciente
-            </h2>
-            {load.data.recent_activity.length === 0 ? (
-              <CmsEmptyState
-                title="Sin actividad reciente"
-                description="Cuando se edite o publique contenido aparecerá aquí."
-              />
-            ) : (
-              <ul className="divide-y divide-[#334E88]/8">
-                {load.data.recent_activity.map((item) => (
-                  <li key={`${item.type}-${item.id}`}>
-                    <Link
-                      href={activityEditorHref(item.type, item.id)}
-                      className="flex items-center justify-between gap-3 py-3 transition hover:bg-[#334E88]/5 -mx-2 px-2 rounded-lg"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-medium text-[#252A58]">{item.label}</p>
-                        <p className="text-xs text-[#252A58]/50">{describeActivity(item)}</p>
-                      </div>
-                      <time
-                        dateTime={item.updated_at}
-                        className="shrink-0 text-xs text-[#252A58]/40"
-                      >
-                        {relativeTime(item.updated_at)}
-                      </time>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </>
+        <DashboardReady data={load.data} />
       ) : null}
+    </>
+  );
+}
+
+function DashboardReady({ data }: { data: DashboardPayload }) {
+  const attention = buildAttentionItems(data.pending);
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {buildStatCards(data).map((card) => (
+          <CmsStatCard
+            key={card.key}
+            label={card.label}
+            value={card.value}
+            icon={card.icon}
+            href={card.href}
+            hint={card.hint}
+            accent={card.accent}
+          />
+        ))}
+      </div>
+
+      <section className="rounded-xl border border-[#334E88]/10 bg-white p-5">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#252A58]/60">
+          Necesita atención
+        </h2>
+        {attention.length === 0 ? (
+          <p className="text-sm text-[#252A58]/60">No hay pendientes calculables en este momento.</p>
+        ) : (
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {attention.map((item) => (
+              <li key={item.key}>
+                <Link
+                  href={item.href}
+                  className="block rounded-lg bg-[#334E88]/5 px-4 py-3 transition hover:bg-[#334E88]/10"
+                >
+                  <p className="text-2xl font-bold text-[#334E88]">{item.value}</p>
+                  <p className="text-sm font-medium text-[#252A58]">{item.label}</p>
+                  <p className="mt-1 text-xs text-[#252A58]/50">{item.hint}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="rounded-xl border border-[#334E88]/10 bg-white p-5">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#252A58]/60">
+          Contenido pendiente
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
+            <p className="text-2xl font-bold text-[#334E88]">{data.pending.drafts}</p>
+            <p className="text-sm text-[#252A58]/60">Borradores</p>
+          </li>
+          <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
+            <p className="text-2xl font-bold text-[#334E88]">{data.pending.missing_translation_en}</p>
+            <p className="text-sm text-[#252A58]/60">Sin traducción EN</p>
+          </li>
+          <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
+            <p className="text-2xl font-bold text-[#334E88]">{data.pending.missing_image}</p>
+            <p className="text-sm text-[#252A58]/60">Sin imagen destacada</p>
+          </li>
+          <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
+            <p className="text-2xl font-bold text-[#334E88]">{data.pending.documents_without_resource}</p>
+            <p className="text-sm text-[#252A58]/60">Docs sin recurso</p>
+          </li>
+          <li className="rounded-lg bg-[#334E88]/5 px-4 py-3">
+            <p className="text-2xl font-bold text-[#334E88]">{data.pending.incomplete_opportunities}</p>
+            <p className="text-sm text-[#252A58]/60">Oport. incompletas</p>
+          </li>
+        </ul>
+      </section>
+
+      <section className="rounded-xl border border-[#334E88]/10 bg-white p-5">
+        <h2 className="mb-4 text-sm font-bold uppercase tracking-wide text-[#252A58]/60">
+          Actividad reciente
+        </h2>
+        {data.recent_activity.length === 0 ? (
+          <CmsEmptyState
+            title="Sin actividad reciente"
+            description="Cuando se edite o publique contenido aparecerá aquí."
+          />
+        ) : (
+          <ul className="divide-y divide-[#334E88]/8">
+            {data.recent_activity.map((item) => (
+              <li key={`${item.type}-${item.id}`}>
+                <Link
+                  href={activityEditorHref(item.type, item.id)}
+                  className="flex items-center justify-between gap-3 py-3 transition hover:bg-[#334E88]/5 -mx-2 px-2 rounded-lg"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-[#252A58]">{item.label}</p>
+                    <p className="text-xs text-[#252A58]/50">{describeActivity(item)}</p>
+                  </div>
+                  <time dateTime={item.updated_at} className="shrink-0 text-xs text-[#252A58]/40">
+                    {relativeTime(item.updated_at)}
+                  </time>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </>
   );
 }

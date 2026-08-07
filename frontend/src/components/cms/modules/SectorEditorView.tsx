@@ -26,6 +26,8 @@ import {
   type SectorWritePayload,
 } from "@/src/lib/cms/editorial/sectors";
 import type { SectorItem } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
+import { useSlugField } from "@/src/lib/cms/useSlugField";
 import { canAdd, canChange, canDelete } from "@/src/lib/cms/permissions";
 import { cn } from "@/src/lib/utils";
 
@@ -111,6 +113,12 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<SectorFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
+  const { slug, setSlug } = useSlugField({
+    title: form.name_es,
+    initialSlug: form.slug,
+    isNew,
+  });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
@@ -120,6 +128,12 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
+
+  useEffect(() => {
     if (isNew) return;
     let cancelled = false;
     (async () => {
@@ -127,7 +141,11 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
       setLoadError(false);
       try {
         const item = await getSector(sectorId);
-        if (!cancelled) setForm(sectorToForm(item));
+        if (!cancelled) {
+          const next = sectorToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -137,11 +155,19 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [isNew, sectorId]);
+  }, [isNew, sectorId, markClean]);
 
   const patch = useCallback((partial: Partial<SectorFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
   }, []);
+
+  useEffect(() => {
+    if (slug !== form.slug) {
+      // Sync auto-generated slug into form state for dirty tracking and save payload.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      patch({ slug });
+    }
+  }, [slug, form.slug, patch]);
 
   const persist = async (): Promise<number> => {
     if (!form.name_es.trim()) {
@@ -170,11 +196,20 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
         router.replace(`/cms/sectores/${id}`);
       } else {
         const refreshed = await getSector(id);
-        setForm(sectorToForm(refreshed));
+        const next = sectorToForm(refreshed);
+        setForm(next);
+        markClean(next);
         setImageFile(null);
       }
     } catch (err) {
-      toast.error(err instanceof CmsApiError || err instanceof Error ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -187,7 +222,9 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
       const updated = form.is_active
         ? await deactivateSector(sectorId)
         : await activateSector(sectorId);
-      setForm(sectorToForm(updated));
+      const next = sectorToForm(updated);
+      setForm(next);
+      markClean(next);
       toast.success(form.is_active ? "Sector desactivado." : "Sector activado.");
     } catch (err) {
       toast.error(err instanceof CmsApiError ? err.message : "No se pudo cambiar el estado.");
@@ -228,6 +265,7 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
         title={isNew ? "Nuevo sector" : "Editar sector"}
         description={isNew ? "Complete la información del sector en español e inglés." : form.name_es || form.name_en}
         backHref="/cms/sectores"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar updatedAt={form.updated_at}>
             <div>
@@ -249,8 +287,8 @@ export function SectorEditorView({ sectorId }: SectorEditorViewProps) {
             <CmsFormField label="Slug" htmlFor="sector-slug">
               <input
                 id="sector-slug"
-                value={form.slug}
-                onChange={(e) => patch({ slug: e.target.value })}
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
                 className={cmsInputClass}
                 placeholder="sector-ejemplo"
               />

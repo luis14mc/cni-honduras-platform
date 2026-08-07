@@ -28,6 +28,7 @@ import {
   type NewsWritePayload,
 } from "@/src/lib/cms/editorial/news";
 import type { MediaAsset, NewsItem } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
 const CATEGORY_OPTIONS = [
@@ -127,12 +128,19 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<NewsFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
 
   useEffect(() => {
     if (isNew) return;
@@ -142,7 +150,11 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
       setLoadError(false);
       try {
         const item = await getNews(newsId);
-        if (!cancelled) setForm(newsToForm(item));
+        if (!cancelled) {
+          const next = newsToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -152,7 +164,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [isNew, newsId]);
+  }, [isNew, newsId, markClean]);
 
   const patch = useCallback((partial: Partial<NewsFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -177,10 +189,17 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
         router.replace(`/cms/noticias/${id}`);
       } else {
         const refreshed = await getNews(id);
-        setForm(newsToForm(refreshed));
+        const next = newsToForm(refreshed);
+        setForm(next);
+        markClean(next);
       }
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -196,11 +215,18 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
     try {
       const id = await persist();
       const published = await publishNews(id);
-      setForm(newsToForm(published));
+      const next = newsToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Noticia publicada.");
       if (isNew) router.replace(`/cms/noticias/${id}`);
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -238,6 +264,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
         title={isNew ? "Nueva noticia" : "Editar noticia"}
         description={isNew ? "Complete el contenido en español e inglés." : form.title_es || form.title_en}
         backHref="/cms/noticias"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar
             status={form.status}

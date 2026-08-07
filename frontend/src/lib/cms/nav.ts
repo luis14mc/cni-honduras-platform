@@ -100,3 +100,38 @@ export function findNavItem(href: string): CmsNavItem | null {
   }
   return null;
 }
+
+const ACTION_LABELS: Record<string, string> = {
+  nueva: "Nueva",
+  nuevo: "Nuevo",
+  roles: "Roles y permisos",
+};
+
+/** Resolve nav section + optional action label for nested CMS routes. */
+export function resolveNavForPath(pathname: string): {
+  section: CmsNavItem | null;
+  actionLabel: string | null;
+} {
+  const normalized = pathname.replace(/\/$/, "") || "/cms";
+  let section: CmsNavItem | null = null;
+
+  for (const group of CMS_NAV) {
+    for (const item of group.items) {
+      if (normalized === item.href || normalized.startsWith(`${item.href}/`)) {
+        if (!section || item.href.length > section.href.length) {
+          section = item;
+        }
+      }
+    }
+  }
+
+  if (!section || section.href === "/cms") {
+    return { section: null, actionLabel: null };
+  }
+
+  const suffix = normalized.slice(section.href.length).replace(/^\//, "");
+  if (!suffix) return { section, actionLabel: null };
+  if (/^\d+$/.test(suffix)) return { section, actionLabel: "Editar" };
+  const segment = suffix.split("/")[0];
+  return { section, actionLabel: ACTION_LABELS[segment] ?? segment };
+}

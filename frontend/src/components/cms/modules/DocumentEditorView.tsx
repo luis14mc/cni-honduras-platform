@@ -27,6 +27,7 @@ import {
   type DocumentWritePayload,
 } from "@/src/lib/cms/editorial/documents";
 import type { DocumentItem, MediaAsset } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
 const CATEGORY_OPTIONS = [
@@ -116,6 +117,7 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<DocFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
@@ -125,13 +127,23 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
+
+  useEffect(() => {
     if (isNew) return;
     let cancelled = false;
     (async () => {
       setLoading(true);
       try {
         const item = await getDocument(documentId);
-        if (!cancelled) setForm(docToForm(item));
+        if (!cancelled) {
+          const next = docToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -141,7 +153,7 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [isNew, documentId]);
+  }, [isNew, documentId, markClean]);
 
   const patch = useCallback((partial: Partial<DocFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -165,11 +177,18 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
       if (isNew) router.replace(`/cms/documentos/${id}`);
       else {
         const refreshed = await getDocument(id);
-        setForm(docToForm(refreshed));
+        const next = docToForm(refreshed);
+        setForm(next);
+        markClean(next);
         setFile(null);
       }
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -189,11 +208,18 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
     try {
       const id = await persist();
       const published = await publishDocument(id);
-      setForm(docToForm(published));
+      const next = docToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Documento publicado.");
       if (isNew) router.replace(`/cms/documentos/${id}`);
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -225,6 +251,7 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
       <CmsEditorLayout
         title={isNew ? "Nuevo documento" : "Editar documento"}
         backHref="/cms/documentos"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar
             status={form.status}

@@ -5,6 +5,7 @@ import { Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { CmsBreadcrumb } from "@/src/components/cms/CmsBreadcrumb";
 import { CmsGlobalSearch } from "@/src/components/cms/CmsGlobalSearch";
 import { CmsUserMenu } from "@/src/components/cms/CmsUserMenu";
+import { getEnvironmentBadgeLabel } from "@/src/lib/cms/environment";
 
 interface CmsHeaderProps {
   collapsed: boolean;
@@ -14,6 +15,7 @@ interface CmsHeaderProps {
 
 export function CmsHeader({ collapsed, onToggleCollapse, onOpenMobile }: CmsHeaderProps) {
   const pathname = usePathname();
+  const envBadge = getEnvironmentBadgeLabel();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-[#334E88]/10 bg-white/90 px-4 backdrop-blur">
@@ -43,6 +45,15 @@ export function CmsHeader({ collapsed, onToggleCollapse, onOpenMobile }: CmsHead
       </div>
 
       <CmsGlobalSearch />
+
+      {envBadge ? (
+        <span
+          className="hidden rounded-full border border-amber-400/40 bg-amber-50 px-2 py-0.5 text-[10px] font-bold tracking-wider text-amber-800 sm:inline"
+          title={`Entorno: ${envBadge}`}
+        >
+          {envBadge}
+        </span>
+      ) : null}
 
       <div className="ml-auto md:ml-0">
         <CmsUserMenu />

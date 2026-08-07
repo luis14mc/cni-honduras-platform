@@ -27,6 +27,7 @@ import {
   type BannerWritePayload,
 } from "@/src/lib/cms/editorial/banners";
 import type { BannerItem, MediaAsset } from "@/src/lib/cms/editorial/types";
+import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
 const PLACEMENT_OPTIONS = [
@@ -132,6 +133,7 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
 
   const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<BannerFormState>(emptyForm);
+  const { dirty, markClean } = useEditorDirty(form);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -140,13 +142,23 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    if (isNew) {
+      markClean(emptyForm());
+    }
+  }, [isNew, markClean]);
+
+  useEffect(() => {
     if (isNew) return;
     let cancelled = false;
     (async () => {
       setLoading(true);
       try {
         const item = await getBanner(bannerId);
-        if (!cancelled) setForm(bannerToForm(item));
+        if (!cancelled) {
+          const next = bannerToForm(item);
+          setForm(next);
+          markClean(next);
+        }
       } catch {
         if (!cancelled) setLoadError(true);
       } finally {
@@ -156,7 +168,7 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [isNew, bannerId]);
+  }, [isNew, bannerId, markClean]);
 
   const patch = useCallback((partial: Partial<BannerFormState>) => {
     setForm((prev) => ({ ...prev, ...partial }));
@@ -178,9 +190,18 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
       const id = await persist();
       toast.success("Borrador guardado.");
       if (isNew) router.replace(`/cms/banners/${id}`);
-      else setForm(bannerToForm(await getBanner(id)));
+      else {
+        const next = bannerToForm(await getBanner(id));
+        setForm(next);
+        markClean(next);
+      }
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
@@ -196,11 +217,18 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
     try {
       const id = await persist();
       const published = await publishBanner(id);
-      setForm(bannerToForm(published));
+      const next = bannerToForm(published);
+      setForm(next);
+      markClean(next);
       toast.success("Banner publicado.");
       if (isNew) router.replace(`/cms/banners/${id}`);
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
     }
@@ -233,6 +261,7 @@ export function BannerEditorView({ bannerId }: BannerEditorViewProps) {
       <CmsEditorLayout
         title={isNew ? "Nuevo banner" : "Editar banner"}
         backHref="/cms/banners"
+        dirty={dirty}
         sidebar={
           <CmsEditorSidebar
             status={form.status}

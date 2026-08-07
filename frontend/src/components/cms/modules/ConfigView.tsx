@@ -6,7 +6,8 @@ import { CmsConfirmDialog } from "@/src/components/cms/editor/CmsConfirmDialog";
 import { CmsSectionHeader } from "@/src/components/cms/CmsSectionHeader";
 import { cmsInputClass, cmsSelectClass, CmsFormField } from "@/src/components/cms/editor/CmsFormField";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
-import { CmsErrorState, CmsLoadingState } from "@/src/components/cms/states";
+import { CmsErrorState, CmsLoadingState, CmsUnauthorizedState } from "@/src/components/cms/states";
+import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { CmsApiError } from "@/src/lib/cms/api";
 import {
   createInstitutionalLink,
@@ -55,6 +56,7 @@ const emptyRow = (): LinkRow => ({
 });
 
 export function ConfigView() {
+  const { user } = useCmsAuth();
   const toast = useCmsToast();
   const [rows, setRows] = useState<LinkRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,6 +138,10 @@ export function ConfigView() {
       setDeleteTarget(null);
     }
   };
+
+  if (!user?.is_superuser) {
+    return <CmsUnauthorizedState />;
+  }
 
   if (loading) return <CmsLoadingState label="Cargando configuración…" />;
   if (loadError) return <CmsErrorState onRetry={() => void load()} />;

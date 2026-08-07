@@ -6,6 +6,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
   Bold,
+  Eraser,
   Heading2,
   Heading3,
   Italic,
@@ -66,7 +67,10 @@ export function CmsRichTextEditor({
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
-      Link.configure({ openOnClick: false, HTMLAttributes: { rel: "noopener noreferrer" } }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
+      }),
     ],
     content: value || "",
     editable: !disabled,
@@ -179,6 +183,13 @@ export function CmsRichTextEditor({
         </ToolbarButton>
         <ToolbarButton onClick={setLink} active={editor.isActive("link")} label="Enlace" disabled={disabled}>
           <Link2 className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()}
+          label="Limpiar formato"
+          disabled={disabled}
+        >
+          <Eraser className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
