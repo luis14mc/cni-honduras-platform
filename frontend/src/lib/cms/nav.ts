@@ -36,10 +36,10 @@ export const CMS_NAV: CmsNavGroup[] = [
     key: "content",
     label: "Contenido",
     items: [
-      { key: "news", label: "Noticias", href: "/cms/noticias", icon: "Newspaper", anyPerm: ["cms.view_news", "cms.add_news"] },
-      { key: "documents", label: "Documentos", href: "/cms/documentos", icon: "FileText", anyPerm: ["cms.view_document", "cms.add_document"] },
-      { key: "banners", label: "Banners", href: "/cms/banners", icon: "Megaphone", anyPerm: ["cms.view_sitebanner", "cms.add_sitebanner"] },
-      { key: "success", label: "Casos de éxito", href: "/cms/casos-exito", icon: "Trophy", anyPerm: ["investment.view_successstory", "investment.add_successstory"] },
+      { key: "news", label: "Noticias", href: "/cms/noticias", icon: "Newspaper", anyPerm: ["cms.view_news", "cms.add_news"], ready: true },
+      { key: "documents", label: "Documentos", href: "/cms/documentos", icon: "FileText", anyPerm: ["cms.view_document", "cms.add_document"], ready: true },
+      { key: "banners", label: "Banners", href: "/cms/banners", icon: "Megaphone", anyPerm: ["cms.view_sitebanner", "cms.add_sitebanner"], ready: true },
+      { key: "success", label: "Casos de éxito", href: "/cms/casos-exito", icon: "Trophy", anyPerm: ["investment.view_successstory", "investment.add_successstory"], ready: true },
     ],
   },
   {
@@ -54,7 +54,7 @@ export const CMS_NAV: CmsNavGroup[] = [
     key: "library",
     label: "Biblioteca",
     items: [
-      { key: "media", label: "Multimedia", href: "/cms/multimedia", icon: "Images", anyPerm: ["media_library.view_mediaasset", "media_library.add_mediaasset"] },
+      { key: "media", label: "Multimedia", href: "/cms/multimedia", icon: "Images", anyPerm: ["media_library.view_mediaasset", "media_library.add_mediaasset"], ready: true },
     ],
   },
   {

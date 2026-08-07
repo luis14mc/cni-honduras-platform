@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { CmsApiError } from "@/src/lib/cms/api";
 import {
+  activityEditorHref,
   buildStatCards,
   describeActivity,
   fetchDashboard,
@@ -24,10 +25,10 @@ import {
 import { cmsIcon } from "@/src/components/cms/icons";
 
 const QUICK_ACTIONS = [
-  { label: "Nueva noticia", href: "/cms/noticias", icon: "Newspaper" },
-  { label: "Nuevo documento", href: "/cms/documentos", icon: "FileText" },
-  { label: "Nuevo banner", href: "/cms/banners", icon: "Megaphone" },
-  { label: "Caso de éxito", href: "/cms/casos-exito", icon: "Trophy" },
+  { label: "Nueva noticia", href: "/cms/noticias/nueva", icon: "Newspaper" },
+  { label: "Nuevo documento", href: "/cms/documentos/nuevo", icon: "FileText" },
+  { label: "Nuevo banner", href: "/cms/banners/nuevo", icon: "Megaphone" },
+  { label: "Caso de éxito", href: "/cms/casos-exito/nuevo", icon: "Trophy" },
 ];
 
 type LoadState =
@@ -129,20 +130,22 @@ export function DashboardView() {
             ) : (
               <ul className="divide-y divide-[#334E88]/8">
                 {load.data.recent_activity.map((item) => (
-                  <li
-                    key={`${item.type}-${item.id}`}
-                    className="flex items-center justify-between gap-3 py-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-[#252A58]">{item.label}</p>
-                      <p className="text-xs text-[#252A58]/50">{describeActivity(item)}</p>
-                    </div>
-                    <time
-                      dateTime={item.updated_at}
-                      className="shrink-0 text-xs text-[#252A58]/40"
+                  <li key={`${item.type}-${item.id}`}>
+                    <Link
+                      href={activityEditorHref(item.type, item.id)}
+                      className="flex items-center justify-between gap-3 py-3 transition hover:bg-[#334E88]/5 -mx-2 px-2 rounded-lg"
                     >
-                      {relativeTime(item.updated_at)}
-                    </time>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-[#252A58]">{item.label}</p>
+                        <p className="text-xs text-[#252A58]/50">{describeActivity(item)}</p>
+                      </div>
+                      <time
+                        dateTime={item.updated_at}
+                        className="shrink-0 text-xs text-[#252A58]/40"
+                      >
+                        {relativeTime(item.updated_at)}
+                      </time>
+                    </Link>
                   </li>
                 ))}
               </ul>

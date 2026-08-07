@@ -156,3 +156,49 @@ async function cmsUnsafeRequest<T>(
 export async function cmsPost<T>(path: string, payload?: unknown): Promise<T> {
   return cmsUnsafeRequest("POST", path, payload, false);
 }
+
+export async function cmsPut<T>(path: string, payload?: unknown): Promise<T> {
+  return cmsUnsafeRequest("PUT", path, payload, false);
+}
+
+export async function cmsPatch<T>(path: string, payload?: unknown): Promise<T> {
+  return cmsUnsafeRequest("PATCH", path, payload, false);
+}
+
+export async function cmsDelete(path: string): Promise<void> {
+  await cmsUnsafeRequest<void>("DELETE", path, undefined, false);
+}
+
+/** Multipart upload (e.g. media library). Sends CSRF; does not set Content-Type. */
+export async function cmsUpload<T>(path: string, formData: FormData): Promise<T> {
+  return cmsUploadInternal(path, formData, false);
+}
+
+async function cmsUploadInternal<T>(
+  path: string,
+  formData: FormData,
+  csrfRetried: boolean,
+): Promise<T> {
+  const csrf = await ensureCsrfToken();
+  const response = await fetch(`${CMS_API_BASE}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+      "X-CSRFToken": csrf,
+    },
+    body: formData,
+  });
+  if (response.status === 204) {
+    return undefined as T;
+  }
+  if (!response.ok) {
+    const detail = await parseDetail(response);
+    if (!csrfRetried && isCsrfForbidden(response.status, detail)) {
+      clearInMemoryCsrfToken();
+      return cmsUploadInternal(path, formData, true);
+    }
+    throw new CmsApiError(detail, response.status);
+  }
+  return response.json() as Promise<T>;
+}

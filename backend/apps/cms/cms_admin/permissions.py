@@ -9,13 +9,11 @@ from __future__ import annotations
 
 from rest_framework.permissions import BasePermission
 
+from apps.cms.models import PublishStatus
+
 
 class IsCMSStaff(BasePermission):
-    """Allow only authenticated, active, staff users into the CMS.
-
-    Matches the access rule of the CMS login: ``is_active`` and ``is_staff``.
-    Superusers naturally satisfy ``is_staff``.
-    """
+    """Allow only authenticated, active, staff users into the CMS."""
 
     message = "Se requiere una sesión de personal activo para acceder al CMS."
 
@@ -30,15 +28,86 @@ class IsCMSStaff(BasePermission):
 
 
 def has_model_permission(user, app_label: str, codename: str) -> bool:
-    """Return whether ``user`` holds ``<app_label>.<codename>``.
-
-    Superusers implicitly hold every permission. Helper kept small on purpose so
-    upcoming CRUD modules can gate write operations per model without repeating
-    the superuser short-circuit.
-    """
+    """Return whether ``user`` holds ``<app_label>.<codename>``."""
 
     if user is None or not user.is_authenticated:
         return False
     if user.is_superuser:
         return True
     return user.has_perm(f"{app_label}.{codename}")
+
+
+def can_publish(user) -> bool:
+    """Whether the user may publish, unpublish, or archive editorial content."""
+
+    return has_model_permission(user, "cms", "can_publish")
+
+
+def can_view_model(user, app_label: str, model_name: str) -> bool:
+    return has_model_permission(user, app_label, f"view_{model_name}")
+
+
+def can_add_model(user, app_label: str, model_name: str) -> bool:
+    return has_model_permission(user, app_label, f"add_{model_name}")
+
+
+def can_change_model(user, app_label: str, model_name: str) -> bool:
+    return has_model_permission(user, app_label, f"change_{model_name}")
+
+
+def can_delete_model(user, app_label: str, model_name: str) -> bool:
+    return has_model_permission(user, app_label, f"delete_{model_name}")
+
+
+_ACTION_PERM = {
+    "list": "view",
+    "retrieve": "view",
+    "create": "add",
+    "update": "change",
+    "partial_update": "change",
+    "destroy": "delete",
+}
+
+
+class CMSModelPermission(BasePermission):
+    """Map DRF actions to Django model permissions for a single model."""
+
+    message = "No tiene permiso para realizar esta acción."
+
+    def _model_scope(self, view) -> tuple[str, str]:
+        app_label = getattr(view, "app_label", "")
+        model_name = getattr(view, "model_name", "")
+        return app_label, model_name
+
+    def has_permission(self, request, view) -> bool:
+        app_label, model_name = self._model_scope(view)
+        if not app_label or not model_name:
+            return False
+        user = request.user
+        action = getattr(view, "action", None)
+        if action in ("publish", "archive", "reorder", "unpublish"):
+            if request.method not in ("POST", "PATCH", "PUT"):
+                return False
+            if not can_change_model(user, app_label, model_name):
+                return False
+            return can_publish(user)
+        perm_kind = _ACTION_PERM.get(action or "")
+        if not perm_kind:
+            return True
+        checker = {
+            "view": can_view_model,
+            "add": can_add_model,
+            "change": can_change_model,
+            "delete": can_delete_model,
+        }[perm_kind]
+        return checker(user, app_label, model_name)
+
+
+def assert_status_change_allowed(user, new_status: str, current_status: str | None = None) -> None:
+    """Raise ``PermissionError`` when a non-publisher tries to publish/archive."""
+
+    from rest_framework.exceptions import PermissionDenied
+
+    if new_status in (PublishStatus.PUBLISHED, PublishStatus.ARCHIVED):
+        if new_status != current_status and not can_publish(user):
+            raise PermissionDenied("No tiene permiso para publicar o archivar contenido.")

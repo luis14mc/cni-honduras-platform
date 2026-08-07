@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { DocumentsListView } from "@/src/components/cms/modules/DocumentsListView";
 
-export default function documentosPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Documentos"
-      description="Biblioteca de documentos institucionales y técnicos."
-    />
-  );
+export default function DocumentosPage() {
+  return <DocumentsListView />;
 }
