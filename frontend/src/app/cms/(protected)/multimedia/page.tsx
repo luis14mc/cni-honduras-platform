@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { MediaListView } from "@/src/components/cms/modules/MediaListView";
 
-export default function multimediaPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Multimedia"
-      description="Biblioteca de imágenes y archivos multimedia."
-    />
-  );
+export default function MultimediaPage() {
+  return <MediaListView />;
 }

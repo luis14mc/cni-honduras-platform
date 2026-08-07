@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { NewsListView } from "@/src/components/cms/modules/NewsListView";
 
-export default function noticiasPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Noticias"
-      description="Gestione comunicados, artículos y anuncios del CNI."
-    />
-  );
+export default function NoticiasPage() {
+  return <NewsListView />;
 }

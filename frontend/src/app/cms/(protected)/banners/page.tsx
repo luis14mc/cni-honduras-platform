@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { BannersListView } from "@/src/components/cms/modules/BannersListView";
 
-export default function bannersPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Banners"
-      description="Banners temporales y avisos del sitio."
-    />
-  );
+export default function BannersPage() {
+  return <BannersListView />;
 }

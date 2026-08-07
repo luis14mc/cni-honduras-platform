@@ -4,7 +4,10 @@ import {
   CMS_API_BASE,
   classifyStatus,
   clearInMemoryCsrfToken,
+  cmsDelete,
+  cmsPatch,
   cmsPost,
+  cmsPut,
   ensureCsrfToken,
   getInMemoryCsrfToken,
   readCookie,
@@ -215,5 +218,77 @@ describe("in-memory CSRF token", () => {
 
     // csrf fetch + login + csrf refresh + login retry (no third retry)
     expect(fetchMock).toHaveBeenCalledTimes(4);
+  });
+});
+
+describe("cmsPut / cmsPatch / cmsDelete", () => {
+  beforeEach(() => {
+    clearInMemoryCsrfToken();
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("cmsPut sends PUT with CSRF and JSON body", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ csrfToken: "put-token" }), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: 1 }), { status: 200 }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await cmsPut("/news/1/", { title_es: "T" });
+
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({
+      method: "PUT",
+      credentials: "include",
+      headers: expect.objectContaining({
+        "X-CSRFToken": "put-token",
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({ title_es: "T" }),
+    });
+  });
+
+  it("cmsPatch sends PATCH with CSRF", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ csrfToken: "patch-token" }), { status: 200 }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ id: 2 }), { status: 200 }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await cmsPatch("/news/2/", { summary_es: "S" });
+
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({
+      method: "PATCH",
+      headers: expect.objectContaining({ "X-CSRFToken": "patch-token" }),
+    });
+  });
+
+  it("cmsDelete sends DELETE with CSRF and handles 204", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ csrfToken: "del-token" }), { status: 200 }),
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await cmsDelete("/news/3/");
+
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({
+      method: "DELETE",
+      credentials: "include",
+      headers: expect.objectContaining({ "X-CSRFToken": "del-token" }),
+    });
   });
 });

@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { SuccessStoriesListView } from "@/src/components/cms/modules/SuccessStoriesListView";
 
-export default function casosexitoPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Casos de éxito"
-      description="Historias de inversión y logros destacados."
-    />
-  );
+export default function CasosExitoPage() {
+  return <SuccessStoriesListView />;
 }

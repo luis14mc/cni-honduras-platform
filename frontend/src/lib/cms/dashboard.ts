@@ -91,6 +91,22 @@ const STATUS_LABELS: Record<string, string> = {
   archived: "archivado",
 };
 
+/** Editor route for a dashboard activity row. Pure — unit tested. */
+export function activityEditorHref(type: ActivityType, id: number): string {
+  switch (type) {
+    case "news":
+      return `/cms/noticias/${id}`;
+    case "document":
+      return `/cms/documentos/${id}`;
+    case "banner":
+      return `/cms/banners/${id}`;
+    case "success_story":
+      return `/cms/casos-exito/${id}`;
+    default:
+      return "/cms";
+  }
+}
+
 // Human summary for an activity row. Pure — unit tested.
 export function describeActivity(item: ActivityItem): string {
   const kind = ACTIVITY_LABELS[item.type] ?? "Contenido";

@@ -10,7 +10,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
-from apps.cms.cms_admin.roles import ALL_ROLES, ROLE_MODEL_MATRIX, SUPERADMIN
+from apps.cms.cms_admin.roles import ALL_ROLES, CMS_ADMIN, EDITOR, ROLE_MODEL_MATRIX, SUPERADMIN
 
 
 class Command(BaseCommand):
@@ -25,6 +25,9 @@ class Command(BaseCommand):
         for role, models in ROLE_MODEL_MATRIX.items():
             group = Group.objects.get(name=role)
             perms = self._permissions_for(models)
+            publish_perm = self._publish_permission()
+            if publish_perm and role in (CMS_ADMIN, EDITOR, SUPERADMIN):
+                perms.append(publish_perm)
             group.permissions.set(perms)
             self.stdout.write(
                 f"  {role}: {len(perms)} permisos asignados"
@@ -35,7 +38,11 @@ class Command(BaseCommand):
         # editorial + investment scope here for staff added to the group.
         superadmin = Group.objects.get(name=SUPERADMIN)
         all_models = sorted({m for models in ROLE_MODEL_MATRIX.values() for m in models})
-        superadmin.permissions.set(self._permissions_for(all_models))
+        super_perms = self._permissions_for(all_models)
+        publish_perm = self._publish_permission()
+        if publish_perm:
+            super_perms.append(publish_perm)
+        superadmin.permissions.set(super_perms)
 
         self.stdout.write(
             self.style.SUCCESS(
@@ -58,3 +65,10 @@ class Command(BaseCommand):
                 continue
             perms.extend(Permission.objects.filter(content_type=ct))
         return perms
+
+    def _publish_permission(self) -> Permission | None:
+        try:
+            ct = ContentType.objects.get(app_label="cms", model="page")
+        except ContentType.DoesNotExist:
+            return None
+        return Permission.objects.filter(content_type=ct, codename="can_publish").first()
