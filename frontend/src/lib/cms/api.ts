@@ -40,19 +40,53 @@ export function readCookie(name: string, cookieString: string): string | null {
   return null;
 }
 
-function currentCsrfToken(): string | null {
-  if (typeof document === "undefined") return null;
-  return readCookie("csrftoken", document.cookie);
+/** In-memory CSRF token from GET /csrf/ JSON — never localStorage/sessionStorage. */
+let inMemoryCsrfToken: string | null = null;
+let csrfFetchPromise: Promise<string> | null = null;
+
+/** Test hook: read the cached CSRF token without fetching. */
+export function getInMemoryCsrfToken(): string | null {
+  return inMemoryCsrfToken;
 }
 
-// Ensure the CSRF cookie is present before an unsafe request.
-export async function ensureCsrfCookie(): Promise<void> {
-  if (currentCsrfToken()) return;
-  await fetch(`${CMS_API_BASE}/csrf/`, {
+/** Test hook: reset the in-memory CSRF cache. */
+export function clearInMemoryCsrfToken(): void {
+  inMemoryCsrfToken = null;
+  csrfFetchPromise = null;
+}
+
+async function fetchCsrfTokenFromApi(): Promise<string> {
+  const response = await fetch(`${CMS_API_BASE}/csrf/`, {
     method: "GET",
     credentials: "include",
     headers: { Accept: "application/json" },
   });
+  if (!response.ok) {
+    throw new CmsApiError(await parseDetail(response), response.status);
+  }
+  const body: unknown = await response.json();
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("csrfToken" in body) ||
+    typeof (body as { csrfToken: unknown }).csrfToken !== "string"
+  ) {
+    throw new CmsApiError("Missing csrfToken in response", response.status);
+  }
+  const token = (body as { csrfToken: string }).csrfToken;
+  inMemoryCsrfToken = token;
+  return token;
+}
+
+/** Fetch and cache the CSRF token from the API JSON body. */
+export async function ensureCsrfToken(): Promise<string> {
+  if (inMemoryCsrfToken) return inMemoryCsrfToken;
+  if (!csrfFetchPromise) {
+    csrfFetchPromise = fetchCsrfTokenFromApi().finally(() => {
+      csrfFetchPromise = null;
+    });
+  }
+  return csrfFetchPromise;
 }
 
 async function parseDetail(response: Response): Promise<string> {
@@ -72,6 +106,10 @@ async function parseDetail(response: Response): Promise<string> {
   return response.statusText || "Request failed";
 }
 
+function isCsrfForbidden(status: number, detail: string): boolean {
+  return status === 403 && detail.toLowerCase().includes("csrf");
+}
+
 export async function cmsGet<T>(path: string): Promise<T> {
   const response = await fetch(`${CMS_API_BASE}${path}`, {
     method: "GET",
@@ -84,16 +122,20 @@ export async function cmsGet<T>(path: string): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function cmsPost<T>(path: string, payload?: unknown): Promise<T> {
-  await ensureCsrfCookie();
-  const csrf = currentCsrfToken();
+async function cmsUnsafeRequest<T>(
+  method: "POST" | "PUT" | "PATCH" | "DELETE",
+  path: string,
+  payload: unknown | undefined,
+  csrfRetried: boolean,
+): Promise<T> {
+  const csrf = await ensureCsrfToken();
   const response = await fetch(`${CMS_API_BASE}${path}`, {
-    method: "POST",
+    method,
     credentials: "include",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
-      ...(csrf ? { "X-CSRFToken": csrf } : {}),
+      "X-CSRFToken": csrf,
     },
     body: payload === undefined ? undefined : JSON.stringify(payload),
   });
@@ -101,7 +143,16 @@ export async function cmsPost<T>(path: string, payload?: unknown): Promise<T> {
     return undefined as T;
   }
   if (!response.ok) {
-    throw new CmsApiError(await parseDetail(response), response.status);
+    const detail = await parseDetail(response);
+    if (!csrfRetried && isCsrfForbidden(response.status, detail)) {
+      clearInMemoryCsrfToken();
+      return cmsUnsafeRequest(method, path, payload, true);
+    }
+    throw new CmsApiError(detail, response.status);
   }
   return response.json() as Promise<T>;
+}
+
+export async function cmsPost<T>(path: string, payload?: unknown): Promise<T> {
+  return cmsUnsafeRequest("POST", path, payload, false);
 }

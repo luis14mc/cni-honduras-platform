@@ -21,9 +21,10 @@ CSRF_COOKIE_SECURE = env.bool("DJANGO_CSRF_COOKIE_SECURE", default=False)
 # production (which requires Secure=True). Defaults to "Lax" for same-site setups.
 SESSION_COOKIE_SAMESITE = env.str("DJANGO_SESSION_COOKIE_SAMESITE", default="Lax")  # noqa: F405
 CSRF_COOKIE_SAMESITE = env.str("DJANGO_CSRF_COOKIE_SAMESITE", default="Lax")  # noqa: F405
-# The SPA reads the CSRF token from the cookie to echo it in X-CSRFToken, so the
-# CSRF cookie must not be HttpOnly.
-CSRF_COOKIE_HTTPONLY = False
+# The SPA reads csrfToken from GET /cms-admin/csrf/ JSON, not from document.cookie.
+# HttpOnly keeps the cookie off-limits to JavaScript while the browser still sends
+# it automatically with credentials: "include" for Django's CSRF check.
+CSRF_COOKIE_HTTPONLY = True
 
 if env.bool("DJANGO_USE_SECURE_PROXY_HEADERS", default=False):  # noqa: F405
     SESSION_COOKIE_SECURE = True

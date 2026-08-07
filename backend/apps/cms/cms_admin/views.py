@@ -8,6 +8,7 @@ issued and no passwords are ever returned or logged. Access is limited to
 from __future__ import annotations
 
 from django.contrib.auth import authenticate, login, logout
+from django.middleware.csrf import get_token
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -31,15 +32,17 @@ from .serializers import CMSUserSerializer, LoginSerializer
 
 @method_decorator(ensure_csrf_cookie, name="get")
 class CSRFView(APIView):
-    """Set the CSRF cookie so the SPA can send ``X-CSRFToken`` on login.
+    """Set the CSRF cookie and return the token for cross-origin SPAs.
 
-    Public by design: it only issues a CSRF token, never identity data.
+    The browser stores the cookie on the API host; the SPA reads ``csrfToken``
+    from this JSON body (not ``document.cookie``) and sends it as
+    ``X-CSRFToken`` on unsafe requests. Public by design — no identity data.
     """
 
     permission_classes = [AllowAny]
 
     def get(self, request):
-        return Response({"detail": "CSRF cookie set."})
+        return Response({"csrfToken": get_token(request)})
 
 
 @method_decorator(csrf_protect, name="post")
@@ -77,6 +80,7 @@ class LoginView(APIView):
         return Response(CMSUserSerializer(user).data)
 
 
+@method_decorator(csrf_protect, name="post")
 class LogoutView(APIView):
     """Terminate the current session."""
 

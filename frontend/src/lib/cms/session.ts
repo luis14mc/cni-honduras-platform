@@ -2,7 +2,7 @@
 // tests share. Keeping the logic here (not in the React component) makes it
 // unit-testable in the Node vitest environment.
 
-import { CmsApiError, cmsGet, cmsPost } from "@/src/lib/cms/api";
+import { CmsApiError, clearInMemoryCsrfToken, cmsGet, cmsPost } from "@/src/lib/cms/api";
 import type { CmsUser } from "@/src/lib/cms/types";
 
 export async function fetchCurrentUser(): Promise<CmsUser> {
@@ -10,11 +10,15 @@ export async function fetchCurrentUser(): Promise<CmsUser> {
 }
 
 export async function login(username: string, password: string): Promise<CmsUser> {
-  return cmsPost<CmsUser>("/login/", { username, password });
+  const user = await cmsPost<CmsUser>("/login/", { username, password });
+  // Login rotates the session; the pre-login CSRF token is no longer valid.
+  clearInMemoryCsrfToken();
+  return user;
 }
 
 export async function logout(): Promise<void> {
   await cmsPost<void>("/logout/");
+  clearInMemoryCsrfToken();
 }
 
 export interface LoginFieldErrors {

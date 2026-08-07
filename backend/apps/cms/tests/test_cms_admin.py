@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient, APITestCase
 
 from apps.cms.cms_admin.roles import ALL_ROLES, EDITOR
 from apps.cms.models import Document, News, PublishStatus, SiteBanner, BannerPlacement
@@ -18,6 +18,86 @@ from apps.investment.models import (
 )
 
 User = get_user_model()
+
+
+class CMSAdminCsrfFlowTests(APITestCase):
+    """Real CSRF enforcement for the cross-origin CMS login/logout flow."""
+
+    def setUp(self):
+        self.client = APIClient(enforce_csrf_checks=True)
+        self.staff = User.objects.create_user(
+            username="editor", password="pw-editor-123", is_staff=True
+        )
+
+    def _fetch_csrf_token(self) -> str:
+        res = self.client.get(reverse("api-v1:cms-admin:csrf"))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        data = res.json()
+        self.assertIn("csrfToken", data)
+        self.assertIsInstance(data["csrfToken"], str)
+        self.assertTrue(data["csrfToken"])
+        self.assertNotIn("sessionid", data)
+        return data["csrfToken"]
+
+    def test_login_without_csrf_forbidden(self):
+        res = self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "editor", "password": "pw-editor-123"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_csrf_endpoint_returns_token(self):
+        token = self._fetch_csrf_token()
+        self.assertGreater(len(token), 10)
+
+    def test_login_with_csrf_succeeds_and_me_works(self):
+        token = self._fetch_csrf_token()
+        res = self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "editor", "password": "pw-editor-123"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.json()["username"], "editor")
+
+        me = self.client.get(reverse("api-v1:cms-admin:me"))
+        self.assertEqual(me.status_code, status.HTTP_200_OK)
+        self.assertEqual(me.json()["username"], "editor")
+
+    def test_logout_with_csrf_succeeds(self):
+        token = self._fetch_csrf_token()
+        self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "editor", "password": "pw-editor-123"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+
+        # Login rotates the session; fetch a fresh token before logout.
+        logout_token = self._fetch_csrf_token()
+        res = self.client.post(
+            reverse("api-v1:cms-admin:logout"),
+            format="json",
+            HTTP_X_CSRFTOKEN=logout_token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
+
+        me = self.client.get(reverse("api-v1:cms-admin:me"))
+        self.assertIn(me.status_code, (401, 403))
+
+    def test_logout_without_csrf_forbidden(self):
+        token = self._fetch_csrf_token()
+        self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "editor", "password": "pw-editor-123"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+
+        res = self.client.post(reverse("api-v1:cms-admin:logout"), format="json")
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class CMSAdminAuthTests(APITestCase):
