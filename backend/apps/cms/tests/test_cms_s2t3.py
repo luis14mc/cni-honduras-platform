@@ -10,7 +10,7 @@ from django.core.management import call_command
 from django.urls import reverse
 from rest_framework import status
 
-from apps.cms.cms_admin.roles import EDITOR, INVESTMENTS
+from apps.cms.cms_admin.roles import EDITOR, INVESTMENTS, SUPERADMIN
 from apps.cms.models import InstitutionalLink, Page, PublishStatus
 from apps.cms.tests.base import CMSAdminTestCase
 from apps.cms.tests.test_cms_editorial import CMSAdminEditorialTestMixin
@@ -196,13 +196,13 @@ class UserAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
 
     def test_cannot_deactivate_final_superuser(self):
         admin = User.objects.create_user(
-            username="useradmin", password="pw-admin-123", is_staff=True
+            username="useradmin2", password="pw-admin-123", is_staff=True
         )
         change_user = Permission.objects.get(
             codename="change_user", content_type__app_label="auth"
         )
         admin.user_permissions.add(change_user)
-        self._login("useradmin", "pw-admin-123")
+        self._login("useradmin2", "pw-admin-123")
         token = self._csrf()
         res = self.client.post(
             reverse("api-v1:cms-admin:users-deactivate", args=[self.superadmin.pk]),
@@ -210,7 +210,7 @@ class UserAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
             format="json",
             HTTP_X_CSRFTOKEN=token,
         )
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_delete_final_superuser(self):
         self._login("super", "pw-super-123")
@@ -220,6 +220,181 @@ class UserAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
             HTTP_X_CSRFTOKEN=token,
         )
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class CMSAdminSecurityTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
+    def _staff_user_admin(self):
+        admin = User.objects.create_user(
+            username="useradmin", password="pw-admin-123", is_staff=True
+        )
+        change_user = Permission.objects.get(
+            codename="change_user", content_type__app_label="auth"
+        )
+        admin.user_permissions.add(change_user)
+        return admin
+
+    def _staff_group_admin(self):
+        admin = User.objects.create_user(
+            username="groupadmin", password="pw-group-123", is_staff=True
+        )
+        change_group = Permission.objects.get(
+            codename="change_group", content_type__app_label="auth"
+        )
+        admin.user_permissions.add(change_group)
+        return admin
+
+    def test_user_admin_can_edit_profile_fields(self):
+        target = User.objects.create_user(
+            username="editor2", password="pw-ed-123", is_staff=True, email="old@cni.hn"
+        )
+        self._staff_user_admin()
+        self._login("useradmin", "pw-admin-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:users-detail", args=[target.pk]),
+            {"first_name": "María", "email": "maria@cni.hn"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        target.refresh_from_db()
+        self.assertEqual(target.first_name, "María")
+        self.assertEqual(target.email, "maria@cni.hn")
+
+    def test_non_superuser_cannot_set_is_superuser(self):
+        target = User.objects.create_user(
+            username="promote", password="pw-pr-123", is_staff=True
+        )
+        self._staff_user_admin()
+        self._login("useradmin", "pw-admin-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:users-detail", args=[target.pk]),
+            {"is_superuser": True},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_superuser_cannot_modify_superuser(self):
+        self._staff_user_admin()
+        self._login("useradmin", "pw-admin-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:users-detail", args=[self.superadmin.pk]),
+            {"email": "hacked@cni.hn"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_superuser_cannot_assign_superadmin_group(self):
+        target = User.objects.create_user(
+            username="victim", password="pw-vic-123", is_staff=True
+        )
+        superadmin_group = Group.objects.get(name=SUPERADMIN)
+        self._staff_user_admin()
+        self._login("useradmin", "pw-admin-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:users-detail", args=[target.pk]),
+            {"group_ids": [superadmin_group.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_non_superuser_cannot_deactivate_last_superuser(self):
+        self._staff_user_admin()
+        self._login("useradmin", "pw-admin-123")
+        token = self._csrf()
+        res = self.client.post(
+            reverse("api-v1:cms-admin:users-deactivate", args=[self.superadmin.pk]),
+            {},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_group_admin_can_assign_cms_permissions(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        news_view = Permission.objects.get(
+            codename="view_news", content_type__app_label="cms"
+        )
+        self._staff_group_admin()
+        self._login("groupadmin", "pw-group-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
+            {"permission_ids": [news_view.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_group_admin_cannot_assign_auth_change_user(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        auth_perm = Permission.objects.get(
+            codename="change_user", content_type__app_label="auth"
+        )
+        self._staff_group_admin()
+        self._login("groupadmin", "pw-group-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
+            {"permission_ids": [auth_perm.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_group_admin_cannot_modify_superadmin_group(self):
+        superadmin_group = Group.objects.get(name=SUPERADMIN)
+        news_view = Permission.objects.get(
+            codename="view_news", content_type__app_label="cms"
+        )
+        self._staff_group_admin()
+        self._login("groupadmin", "pw-group-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[superadmin_group.pk]),
+            {"permission_ids": [news_view.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_superuser_can_manage_editor_group(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        news_view = Permission.objects.get(
+            codename="view_news", content_type__app_label="cms"
+        )
+        self._login("super", "pw-super-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
+            {"permission_ids": [news_view.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+    def test_self_escalation_via_group_membership_blocked(self):
+        editor_group = Group.objects.get(name=EDITOR)
+        group_admin = self._staff_group_admin()
+        group_admin.groups.add(editor_group)
+        news_add = Permission.objects.get(
+            codename="add_news", content_type__app_label="cms"
+        )
+        self._login("groupadmin", "pw-group-123")
+        token = self._csrf()
+        res = self.client.patch(
+            reverse("api-v1:cms-admin:groups-detail", args=[editor_group.pk]),
+            {"permission_ids": [news_add.pk]},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class GroupAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):

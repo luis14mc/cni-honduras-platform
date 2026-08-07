@@ -12,7 +12,16 @@ from rest_framework import serializers
 from apps.cms.models import InstitutionalLink, Page
 from apps.investment.models import InvestmentOpportunity, Sector
 
+from .admin_privileges import (
+    assert_can_assign_groups,
+    assert_can_change_superuser_flag,
+    assert_can_modify_group,
+    assert_can_modify_superuser_target,
+    validate_assignable_permissions,
+)
+from .matrix import cms_assignable_permission_ids, cms_assignable_permissions
 from .serializers import EditorialAuditMixin, MediaAssetNestedSerializer, SectorNestedSerializer
+from .user_guards import assert_safe_superuser_change
 
 User = get_user_model()
 
@@ -285,6 +294,9 @@ class CMSStaffUserCreateSerializer(serializers.ModelSerializer):
         if attrs["password"] != attrs.pop("password_confirm"):
             raise serializers.ValidationError({"password_confirm": "Las contraseñas no coinciden."})
         validate_password(attrs["password"])
+        actor = self.context["request"].user
+        groups = attrs.get("groups") or []
+        assert_can_assign_groups(actor, groups)
         return attrs
 
     def create(self, validated_data):
@@ -319,8 +331,8 @@ class CMSStaffUserUpdateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         actor = self.context["request"].user
         target = self.instance
-        from .user_guards import assert_safe_superuser_change
-
+        assert_can_modify_superuser_target(actor, target)
+        assert_can_change_superuser_flag(actor, attrs, target)
         making_inactive = attrs.get("is_active") is False
         removing_super = attrs.get("is_superuser") is False and target.is_superuser
         assert_safe_superuser_change(
@@ -329,6 +341,13 @@ class CMSStaffUserUpdateSerializer(serializers.ModelSerializer):
         if target.pk == actor.pk and attrs.get("is_superuser") is False:
             raise serializers.ValidationError(
                 {"is_superuser": "No puede quitarse privilegios de superusuario."}
+            )
+        groups = attrs.get("groups")
+        if groups is not None:
+            assert_can_assign_groups(actor, groups)
+        if not actor.is_superuser and attrs.get("is_staff") is False and target.is_staff:
+            raise serializers.ValidationError(
+                {"is_staff": "No puede quitar acceso staff a usuarios del CMS."}
             )
         return attrs
 
@@ -362,20 +381,42 @@ class GroupPermissionSerializer(serializers.ModelSerializer):
 class GroupAdminSerializer(serializers.ModelSerializer):
     permissions = GroupPermissionSerializer(many=True, read_only=True)
     permission_ids = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Permission.objects.all(), source="permissions", write_only=True, required=False
+        many=True,
+        queryset=Permission.objects.none(),
+        source="permissions",
+        write_only=True,
+        required=False,
     )
     user_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Group
         fields = ("id", "name", "permissions", "permission_ids", "user_count")
+        read_only_fields = ("name",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        cms_assignable_permission_ids(refresh=True)
+        qs = cms_assignable_permissions()
+        self.fields["permission_ids"].queryset = qs
 
     def get_user_count(self, obj) -> int:
         return obj.user_set.count()
 
+    def validate_permission_ids(self, permissions):
+        validate_assignable_permissions(permissions)
+        return permissions
+
+    def validate(self, attrs):
+        actor = self.context["request"].user
+        group = self.instance
+        new_name = attrs.get("name")
+        assert_can_modify_group(actor, group, renaming_to=new_name)
+        return attrs
+
     def update(self, instance, validated_data):
         perms = validated_data.pop("permissions", None)
-        instance.name = validated_data.get("name", instance.name)
+        validated_data.pop("name", None)
         instance.save()
         if perms is not None:
             instance.permissions.set(perms)

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
@@ -17,6 +16,8 @@ from rest_framework.response import Response
 from apps.cms.models import InstitutionalLink, Page
 from apps.investment.models import InvestmentOpportunity, Sector
 
+from .admin_privileges import assert_can_modify_group, assert_can_modify_superuser_target
+from .matrix import build_permission_catalog
 from .page_protection import is_protected_page_slug
 from .permissions import (
     CMSModelPermission,
@@ -37,25 +38,10 @@ from .serializers_s2t3 import (
     SectorAdminSerializer,
     SetPasswordSerializer,
 )
-from .user_guards import assert_can_modify_user, assert_safe_superuser_delete
+from .user_guards import assert_can_modify_user, assert_safe_superuser_change, assert_safe_superuser_delete
 from .viewsets import CMSPaginationMixin, EditorialFilterMixin, EditorialViewSetMixin
 
 User = get_user_model()
-
-# Models exposed in the roles permission matrix (read from Django, not hardcoded truth).
-CMS_MATRIX_MODELS: tuple[tuple[str, str, str], ...] = (
-    ("cms", "news", "Noticias"),
-    ("cms", "document", "Documentos"),
-    ("cms", "sitebanner", "Banners"),
-    ("cms", "page", "Páginas"),
-    ("cms", "institutionallink", "Enlaces institucionales"),
-    ("investment", "sector", "Sectores"),
-    ("investment", "investmentopportunity", "Oportunidades"),
-    ("investment", "successstory", "Casos de éxito"),
-    ("media_library", "mediaasset", "Multimedia"),
-)
-
-_MATRIX_ACTIONS = ("view", "add", "change", "delete")
 
 
 class SectorFilterMixin:
@@ -250,11 +236,14 @@ class CMSUserAdminViewSet(CMSPaginationMixin, viewsets.ModelViewSet):
         serializer.save()
 
     def perform_update(self, serializer):
-        assert_can_modify_user(self.request.user, self.get_object())
+        target = self.get_object()
+        assert_can_modify_user(self.request.user, target)
+        assert_can_modify_superuser_target(self.request.user, target)
         serializer.save()
 
     def perform_destroy(self, instance):
         assert_can_modify_user(self.request.user, instance)
+        assert_can_modify_superuser_target(self.request.user, instance)
         assert_safe_superuser_delete(instance)
         instance.delete()
 
@@ -262,6 +251,7 @@ class CMSUserAdminViewSet(CMSPaginationMixin, viewsets.ModelViewSet):
     def set_password(self, request, pk=None):
         user = self.get_object()
         assert_can_modify_user(request.user, user)
+        assert_can_modify_superuser_target(request.user, user)
         ser = SetPasswordSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
         user.set_password(ser.validated_data["password"])
@@ -272,6 +262,7 @@ class CMSUserAdminViewSet(CMSPaginationMixin, viewsets.ModelViewSet):
     def activate(self, request, pk=None):
         user = self.get_object()
         assert_can_modify_user(request.user, user)
+        assert_can_modify_superuser_target(request.user, user)
         user.is_active = True
         user.save(update_fields=["is_active"])
         return Response(CMSStaffUserSerializer(user).data)
@@ -279,54 +270,12 @@ class CMSUserAdminViewSet(CMSPaginationMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def deactivate(self, request, pk=None):
         user = self.get_object()
-        from .user_guards import assert_safe_superuser_change
-
         assert_can_modify_user(request.user, user)
+        assert_can_modify_superuser_target(request.user, user)
         assert_safe_superuser_change(request.user, user, making_inactive=True)
         user.is_active = False
         user.save(update_fields=["is_active"])
         return Response(CMSStaffUserSerializer(user).data)
-
-
-def _build_permission_catalog() -> list[dict]:
-    catalog: list[dict] = []
-    for app_label, model_name, label in CMS_MATRIX_MODELS:
-        try:
-            ct = ContentType.objects.get(app_label=app_label, model=model_name)
-        except ContentType.DoesNotExist:
-            continue
-        perms = []
-        for action in _MATRIX_ACTIONS:
-            codename = f"{action}_{model_name}"
-            try:
-                perm = Permission.objects.get(content_type=ct, codename=codename)
-            except Permission.DoesNotExist:
-                continue
-            perms.append(
-                {
-                    "id": perm.id,
-                    "codename": perm.codename,
-                    "action": action,
-                    "name": perm.name,
-                }
-            )
-        publish_perm = None
-        if app_label == "cms" and model_name in ("news", "document", "sitebanner", "page"):
-            try:
-                publish = Permission.objects.get(codename="can_publish", content_type__app_label="cms")
-                publish_perm = {"id": publish.id, "codename": publish.codename, "action": "publish", "name": publish.name}
-            except Permission.DoesNotExist:
-                pass
-        catalog.append(
-            {
-                "app_label": app_label,
-                "model": model_name,
-                "label": label,
-                "permissions": perms,
-                "publish_permission": publish_perm,
-            }
-        )
-    return catalog
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -346,14 +295,18 @@ class CMSGroupAdminViewSet(CMSPaginationMixin, viewsets.ModelViewSet):
     def permission_catalog(self, request):
         if not can_manage_groups(request.user):
             raise PermissionDenied("Se requieren permisos administrativos de grupos.")
-        return Response({"models": _build_permission_catalog()})
+        return Response({"models": build_permission_catalog()})
 
     def update(self, request, *args, **kwargs):
         if not can_manage_groups(request.user):
             raise PermissionDenied("Se requieren permisos administrativos de grupos.")
+        group = self.get_object()
+        assert_can_modify_group(request.user, group)
         return super().update(request, *args, **kwargs)
 
     def partial_update(self, request, *args, **kwargs):
         if not can_manage_groups(request.user):
             raise PermissionDenied("Se requieren permisos administrativos de grupos.")
+        group = self.get_object()
+        assert_can_modify_group(request.user, group)
         return super().partial_update(request, *args, **kwargs)
