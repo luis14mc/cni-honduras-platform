@@ -43,3 +43,15 @@ export function canView(
 ): boolean {
   return hasPermission(user, `${appLabel}.view_${modelName}`);
 }
+
+export function canManageUsers(user: CmsUser | null | undefined): boolean {
+  if (!user) return false;
+  if (user.is_superuser) return true;
+  return hasPermission(user, "auth.change_user");
+}
+
+export function canManageGroups(user: CmsUser | null | undefined): boolean {
+  if (!user) return false;
+  if (user.is_superuser) return true;
+  return hasPermission(user, "auth.change_group");
+}

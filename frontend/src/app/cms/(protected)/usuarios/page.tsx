@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { UsersListView } from "@/src/components/cms/modules/UsersListView";
 
-export default function usuariosPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Usuarios"
-      description="Administración de usuarios y roles del CMS."
-    />
-  );
+export default function UsuariosPage() {
+  return <UsersListView />;
 }

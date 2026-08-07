@@ -10,7 +10,15 @@ from .viewsets import (
     SiteBannerAdminViewSet,
     SuccessStoryAdminViewSet,
 )
-from .views import CSRFView, DashboardView, LoginView, LogoutView, MeView
+from .viewsets_s2t3 import (
+    CMSGroupAdminViewSet,
+    CMSUserAdminViewSet,
+    InstitutionalLinkAdminViewSet,
+    InvestmentOpportunityAdminViewSet,
+    PageAdminViewSet,
+    SectorAdminViewSet,
+)
+from .views import CSRFView, DashboardView, LoginView, LogoutView, MeView, SearchView
 
 app_name = "cms-admin"
 
@@ -20,6 +28,12 @@ router.register("news", NewsAdminViewSet, basename="news")
 router.register("documents", DocumentAdminViewSet, basename="documents")
 router.register("banners", SiteBannerAdminViewSet, basename="banners")
 router.register("success-stories", SuccessStoryAdminViewSet, basename="success-stories")
+router.register("sectors", SectorAdminViewSet, basename="sectors")
+router.register("opportunities", InvestmentOpportunityAdminViewSet, basename="opportunities")
+router.register("pages", PageAdminViewSet, basename="pages")
+router.register("users", CMSUserAdminViewSet, basename="users")
+router.register("groups", CMSGroupAdminViewSet, basename="groups")
+router.register("institutional-links", InstitutionalLinkAdminViewSet, basename="institutional-links")
 
 urlpatterns = [
     path("csrf/", CSRFView.as_view(), name="csrf"),
@@ -27,5 +41,6 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("me/", MeView.as_view(), name="me"),
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
+    path("search/", SearchView.as_view(), name="search"),
     path("", include(router.urls)),
 ]

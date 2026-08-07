@@ -125,7 +125,144 @@ export interface BannerItem extends EditorialAudit {
 export interface SectorRef {
   id: number;
   name: string;
+  name_es?: string;
+  name_en?: string;
   slug: string;
+  is_active?: boolean;
+}
+
+export interface SectorItem {
+  id: number;
+  name: string;
+  name_es: string;
+  name_en: string;
+  slug: string;
+  short_description: string;
+  short_description_es: string;
+  short_description_en: string;
+  description: string;
+  description_es: string;
+  description_en: string;
+  icon: string;
+  image: string | null;
+  image_url: string | null;
+  color_hex: string;
+  is_featured: boolean;
+  is_active: boolean;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type OpportunityStatus = "open" | "in_progress" | "closed";
+
+export interface OpportunityItem {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  description: string;
+  sector: number;
+  sector_detail: SectorRef | null;
+  department: number | null;
+  region: number | null;
+  estimated_investment: string | null;
+  estimated_jobs: number | null;
+  status: OpportunityStatus;
+  is_public: boolean;
+  is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PageItem extends EditorialAudit {
+  id: number;
+  title: string;
+  title_es: string;
+  title_en: string;
+  slug: string;
+  content: string;
+  content_es: string;
+  content_en: string;
+  excerpt: string;
+  excerpt_es: string;
+  excerpt_en: string;
+  featured_image: number | null;
+  featured_image_detail: MediaAsset | null;
+  seo_title: string;
+  seo_title_es: string;
+  seo_title_en: string;
+  seo_description: string;
+  seo_description_es: string;
+  seo_description_en: string;
+  status: PublishStatus;
+  published_at: string | null;
+  is_protected: boolean;
+}
+
+export interface InstitutionalLinkItem {
+  id: number;
+  section: string;
+  title: string;
+  title_es: string;
+  title_en: string;
+  description: string;
+  description_es: string;
+  description_en: string;
+  url: string;
+  is_external: boolean;
+  icon: string;
+  accent_color: string;
+  is_active: boolean;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CmsStaffUser {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
+  groups: string[];
+  last_login: string | null;
+  date_joined: string;
+}
+
+export interface CmsGroup {
+  id: number;
+  name: string;
+  permissions: { id: number; codename: string; name: string; content_type: number }[];
+  user_count: number;
+}
+
+export interface PermissionCatalogModel {
+  app_label: string;
+  model: string;
+  label: string;
+  permissions: { id: number; codename: string; action: string; name: string }[];
+  publish_permission: { id: number; codename: string; action: string; name: string } | null;
+}
+
+export interface SearchResultItem {
+  id: number;
+  label: string;
+  status: string | null;
+  updated_at: string;
+}
+
+export interface SearchResults {
+  news: SearchResultItem[];
+  documents: SearchResultItem[];
+  banners: SearchResultItem[];
+  success_stories: SearchResultItem[];
+  sectors: SearchResultItem[];
+  opportunities: SearchResultItem[];
+  pages: SearchResultItem[];
 }
 
 export interface SuccessStoryItem extends EditorialAudit {
@@ -166,12 +303,17 @@ export interface ListParams {
   page?: number;
   page_size?: number;
   search?: string;
-  status?: PublishStatus | "";
+  status?: PublishStatus | OpportunityStatus | "";
   media_type?: MediaType | "";
   category?: string;
   placement?: string;
   date_from?: string;
   date_to?: string;
+  is_active?: boolean | "";
+  is_featured?: boolean | "";
+  is_public?: boolean | "";
+  sector?: number | string;
+  section?: string;
 }
 
 /** Build a query string from list/filter params. */
@@ -186,6 +328,14 @@ export function buildListQuery(params: ListParams): string {
   if (params.placement) qs.set("placement", params.placement);
   if (params.date_from) qs.set("date_from", params.date_from);
   if (params.date_to) qs.set("date_to", params.date_to);
+  if (params.is_active === true) qs.set("is_active", "true");
+  if (params.is_active === false) qs.set("is_active", "false");
+  if (params.is_featured === true) qs.set("is_featured", "true");
+  if (params.is_featured === false) qs.set("is_featured", "false");
+  if (params.is_public === true) qs.set("is_public", "true");
+  if (params.is_public === false) qs.set("is_public", "false");
+  if (params.sector) qs.set("sector", String(params.sector));
+  if (params.section) qs.set("section", params.section);
   const str = qs.toString();
   return str ? `?${str}` : "";
 }

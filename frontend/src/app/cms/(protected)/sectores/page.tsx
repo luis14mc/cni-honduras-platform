@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { SectorsListView } from "@/src/components/cms/modules/SectorsListView";
 
-export default function sectoresPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Sectores"
-      description="Sectores estratégicos de inversión."
-    />
-  );
+export default function SectoresPage() {
+  return <SectorsListView />;
 }

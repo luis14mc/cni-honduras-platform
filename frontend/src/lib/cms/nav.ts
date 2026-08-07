@@ -46,8 +46,8 @@ export const CMS_NAV: CmsNavGroup[] = [
     key: "investment",
     label: "Inversión",
     items: [
-      { key: "sectors", label: "Sectores", href: "/cms/sectores", icon: "Layers", anyPerm: ["investment.view_sector", "investment.add_sector"] },
-      { key: "opportunities", label: "Oportunidades", href: "/cms/oportunidades", icon: "TrendingUp", anyPerm: ["investment.view_investmentopportunity", "investment.add_investmentopportunity"] },
+      { key: "sectors", label: "Sectores", href: "/cms/sectores", icon: "Layers", anyPerm: ["investment.view_sector", "investment.add_sector"], ready: true },
+      { key: "opportunities", label: "Oportunidades", href: "/cms/oportunidades", icon: "TrendingUp", anyPerm: ["investment.view_investmentopportunity", "investment.add_investmentopportunity"], ready: true },
     ],
   },
   {
@@ -61,15 +61,16 @@ export const CMS_NAV: CmsNavGroup[] = [
     key: "site",
     label: "Sitio",
     items: [
-      { key: "pages", label: "Páginas", href: "/cms/paginas", icon: "LayoutTemplate", anyPerm: ["cms.view_page", "cms.add_page"] },
+      { key: "pages", label: "Páginas", href: "/cms/paginas", icon: "LayoutTemplate", anyPerm: ["cms.view_page", "cms.add_page"], ready: true },
     ],
   },
   {
     key: "admin",
     label: "Administración",
     items: [
-      { key: "users", label: "Usuarios", href: "/cms/usuarios", icon: "Users", superuserOnly: true },
-      { key: "settings", label: "Configuración", href: "/cms/configuracion", icon: "Settings", superuserOnly: true },
+      { key: "users", label: "Usuarios", href: "/cms/usuarios", icon: "Users", superuserOnly: true, ready: true },
+      { key: "roles", label: "Roles y permisos", href: "/cms/usuarios/roles", icon: "Shield", superuserOnly: true, ready: true },
+      { key: "settings", label: "Configuración", href: "/cms/configuracion", icon: "Settings", superuserOnly: true, ready: true },
     ],
   },
 ];

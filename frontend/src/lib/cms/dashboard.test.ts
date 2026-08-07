@@ -12,9 +12,11 @@ const payload: DashboardPayload = {
     documents: { total: 4, published: 4, draft: 0 },
     banners: { total: 2, published: 1, draft: 1 },
     success_stories: { total: 3, published: 2, draft: 1 },
+    pages: { total: 8, published: 6, draft: 2 },
     sectors: { total: 6, active: 5 },
     opportunities: { total: 7, open: 4 },
   },
+  pending: { drafts: 5, missing_translation_en: 2, missing_image: 1 },
   recent_activity: [],
   generated_at: "2026-08-06T12:00:00Z",
 };

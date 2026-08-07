@@ -83,6 +83,9 @@ const ACTIVITY_LABELS: Record<ActivityType, string> = {
   document: "Documento",
   banner: "Banner",
   success_story: "Caso de éxito",
+  page: "Página",
+  sector: "Sector",
+  opportunity: "Oportunidad",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -102,6 +105,12 @@ export function activityEditorHref(type: ActivityType, id: number): string {
       return `/cms/banners/${id}`;
     case "success_story":
       return `/cms/casos-exito/${id}`;
+    case "page":
+      return `/cms/paginas/${id}`;
+    case "sector":
+      return `/cms/sectores/${id}`;
+    case "opportunity":
+      return `/cms/oportunidades/${id}`;
     default:
       return "/cms";
   }

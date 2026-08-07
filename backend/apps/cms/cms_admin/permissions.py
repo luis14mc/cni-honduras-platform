@@ -91,6 +91,8 @@ class CMSModelPermission(BasePermission):
             if not can_change_model(user, app_label, model_name):
                 return False
             return can_publish(user)
+        if action in ("activate", "deactivate"):
+            return can_change_model(user, app_label, model_name)
         perm_kind = _ACTION_PERM.get(action or "")
         if not perm_kind:
             return True
@@ -104,10 +106,46 @@ class CMSModelPermission(BasePermission):
 
 
 def assert_status_change_allowed(user, new_status: str, current_status: str | None = None) -> None:
-    """Raise ``PermissionError`` when a non-publisher tries to publish/archive."""
+    """Raise ``PermissionDenied`` when a non-publisher tries to publish/archive."""
 
     from rest_framework.exceptions import PermissionDenied
 
     if new_status in (PublishStatus.PUBLISHED, PublishStatus.ARCHIVED):
         if new_status != current_status and not can_publish(user):
             raise PermissionDenied("No tiene permiso para publicar o archivar contenido.")
+
+
+def can_manage_users(user) -> bool:
+    if user.is_superuser:
+        return True
+    return has_model_permission(user, "auth", "change_user")
+
+
+def can_manage_groups(user) -> bool:
+    if user.is_superuser:
+        return True
+    return has_model_permission(user, "auth", "change_group")
+
+
+class IsCMSUserAdmin(BasePermission):
+    """Manage CMS staff accounts — superuser or auth.change_user."""
+
+    message = "Se requieren permisos administrativos de usuarios."
+
+    def has_permission(self, request, view) -> bool:
+        user = getattr(request, "user", None)
+        if not IsCMSStaff().has_permission(request, view):
+            return False
+        return can_manage_users(user)
+
+
+class IsCMSGroupAdmin(BasePermission):
+    """Manage Django groups/roles — superuser or auth.change_group."""
+
+    message = "Se requieren permisos administrativos de grupos."
+
+    def has_permission(self, request, view) -> bool:
+        user = getattr(request, "user", None)
+        if not IsCMSStaff().has_permission(request, view):
+            return False
+        return can_manage_groups(user)

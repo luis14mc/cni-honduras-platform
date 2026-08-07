@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { OpportunitiesListView } from "@/src/components/cms/modules/OpportunitiesListView";
 
-export default function oportunidadesPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Oportunidades"
-      description="Oportunidades de inversión publicadas."
-    />
-  );
+export default function OportunidadesPage() {
+  return <OpportunitiesListView />;
 }

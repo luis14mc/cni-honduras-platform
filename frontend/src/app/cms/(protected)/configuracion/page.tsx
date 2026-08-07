@@ -1,10 +1,5 @@
-import { CmsModulePlaceholder } from "@/src/components/cms/CmsModulePlaceholder";
+import { ConfigView } from "@/src/components/cms/modules/ConfigView";
 
-export default function configuracionPage() {
-  return (
-    <CmsModulePlaceholder
-      title="Configuración"
-      description="Ajustes generales del CMS."
-    />
-  );
+export default function ConfiguracionPage() {
+  return <ConfigView />;
 }
