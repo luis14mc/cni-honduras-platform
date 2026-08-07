@@ -14,6 +14,7 @@ from apps.investment.models import Sector, SuccessStory
 from apps.media_library.models import MediaAsset
 
 from .permissions import assert_status_change_allowed
+from .upload_validation import validate_upload_file
 
 User = get_user_model()
 
@@ -307,15 +308,38 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             return url
         return None
 
+    def _document_candidate(self, attrs: dict) -> Document:
+        """Build an unsaved Document reflecting the post-validation state."""
+
+        if self.instance is not None:
+            candidate = Document()
+            for field in Document._meta.concrete_fields:
+                if field.primary_key:
+                    candidate.pk = self.instance.pk
+                    continue
+                setattr(candidate, field.attname, getattr(self.instance, field.attname))
+            candidate._state.adding = False
+        else:
+            candidate = Document()
+            candidate._state.adding = True
+
+        for key, value in attrs.items():
+            setattr(candidate, key, value)
+        return candidate
+
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        instance = self.instance
-        if instance is None:
-            return attrs
-        for key, value in attrs.items():
-            setattr(instance, key, value)
+
+        uploaded = attrs.get("file")
+        if uploaded is not None:
+            try:
+                validate_upload_file(uploaded)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({"file": exc.messages}) from exc
+
+        candidate = self._document_candidate(attrs)
         try:
-            instance.full_clean()
+            candidate.full_clean()
         except DjangoValidationError as exc:
             raise serializers.ValidationError(exc.message_dict) from exc
         return attrs

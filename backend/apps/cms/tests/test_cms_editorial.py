@@ -10,10 +10,11 @@ from django.core.management import call_command
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 
 from apps.cms.cms_admin.roles import AUTHOR, EDITOR, INVESTMENTS
 from apps.cms.models import Document, News, PublishStatus, SiteBanner, BannerPlacement
+from apps.cms.tests.base import CMSAdminTestCase
 from apps.investment.models import SuccessStory
 from apps.media_library.models import MediaAsset
 
@@ -26,6 +27,7 @@ class CMSAdminEditorialTestMixin:
         call_command("seed_cms_roles")
 
     def setUp(self):
+        super().setUp()
         self.client = APIClient(enforce_csrf_checks=True)
         self.editor = User.objects.create_user(
             username="editor", password="pw-editor-123", is_staff=True
@@ -78,7 +80,7 @@ class CMSAdminEditorialTestMixin:
         )
 
 
-class CMSAdminMediaTests(CMSAdminEditorialTestMixin, APITestCase):
+class CMSAdminMediaTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
     def test_anonymous_blocked(self):
         res = self.client.get(reverse("api-v1:cms-admin:media-list"))
         self.assertIn(res.status_code, (401, 403))
@@ -110,6 +112,50 @@ class CMSAdminMediaTests(CMSAdminEditorialTestMixin, APITestCase):
         )
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_html_masquerading_rejected(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile(
+            "photo.png",
+            b"<html>bad</html>",
+            content_type="text/html",
+        )
+        res = self.client.post(
+            reverse("api-v1:cms-admin:media-list"),
+            {"title": "Fake PNG", "file": upload},
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_js_mime_rejected(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile(
+            "photo.png",
+            b"alert(1)",
+            content_type="application/javascript",
+        )
+        res = self.client.post(
+            reverse("api-v1:cms-admin:media-list"),
+            {"title": "JS", "file": upload},
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_valid_pdf_upload(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile("doc.pdf", b"%PDF-1.4", content_type="application/pdf")
+        res = self.client.post(
+            reverse("api-v1:cms-admin:media-list"),
+            {"title": "PDF", "file": upload},
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
     def test_non_staff_blocked(self):
         outsider = User.objects.create_user(username="out", password="pw-out-123")
         token = self._csrf()
@@ -124,7 +170,7 @@ class CMSAdminMediaTests(CMSAdminEditorialTestMixin, APITestCase):
         self.assertIn(res.status_code, (401, 403))
 
 
-class CMSAdminNewsTests(CMSAdminEditorialTestMixin, APITestCase):
+class CMSAdminNewsTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
     def test_list_and_create_draft(self):
         self._login("author", "pw-author-123")
         token = self._csrf()
@@ -193,7 +239,7 @@ class CMSAdminNewsTests(CMSAdminEditorialTestMixin, APITestCase):
         self.assertEqual(res.json()["title_en"], "Updated title")
 
 
-class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, APITestCase):
+class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
     def test_create_with_external_url(self):
         self._login("author", "pw-author-123")
         token = self._csrf()
@@ -208,6 +254,106 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, APITestCase):
             token=token,
         )
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_draft_without_file_allowed(self):
+        self._login("author", "pw-author-123")
+        token = self._csrf()
+        res = self._post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "Sin archivo",
+                "slug": "doc-draft",
+                "status": PublishStatus.DRAFT,
+            },
+            token=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_file_and_external_url_rejected(self):
+        self._login("author", "pw-author-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile("a.pdf", b"%PDF", content_type="application/pdf")
+        res = self.client.post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "Ambos",
+                "slug": "doc-both",
+                "external_url": "https://example.com/a.pdf",
+                "file": upload,
+                "status": PublishStatus.DRAFT,
+            },
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_published_without_source_rejected(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        res = self._post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "Publicado vacío",
+                "slug": "doc-pub-empty",
+                "status": PublishStatus.PUBLISHED,
+            },
+            token=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_with_valid_pdf(self):
+        self._login("author", "pw-author-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile("report.pdf", b"%PDF-1.4", content_type="application/pdf")
+        res = self.client.post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "PDF local",
+                "slug": "doc-pdf",
+                "file": upload,
+                "status": PublishStatus.DRAFT,
+            },
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_invalid_extension_rejected(self):
+        self._login("author", "pw-author-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile("bad.exe", b"MZ", content_type="application/octet-stream")
+        res = self.client.post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "Malicioso",
+                "slug": "doc-bad",
+                "file": upload,
+                "status": PublishStatus.DRAFT,
+            },
+            format="multipart",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_oversized_file_rejected(self):
+        from django.test import override_settings
+
+        self._login("author", "pw-author-123")
+        token = self._csrf()
+        upload = SimpleUploadedFile("big.pdf", b"x" * 2048, content_type="application/pdf")
+        with override_settings(CMS_MAX_UPLOAD_BYTES=1024):
+            res = self.client.post(
+                reverse("api-v1:cms-admin:documents-list"),
+                {
+                    "title_es": "Grande",
+                    "slug": "doc-big",
+                    "file": upload,
+                    "status": PublishStatus.DRAFT,
+                },
+                format="multipart",
+                HTTP_X_CSRFTOKEN=token,
+            )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_file_and_external_url_rejected(self):
         self._login("editor", "pw-editor-123")
@@ -228,7 +374,7 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, APITestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class CMSAdminBannerTests(CMSAdminEditorialTestMixin, APITestCase):
+class CMSAdminBannerTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
     def test_create_and_invalid_url(self):
         self._login("editor", "pw-editor-123")
         token = self._csrf()
@@ -257,7 +403,7 @@ class CMSAdminBannerTests(CMSAdminEditorialTestMixin, APITestCase):
         self.assertEqual(ok.status_code, status.HTTP_201_CREATED)
 
 
-class CMSAdminSuccessStoryTests(CMSAdminEditorialTestMixin, APITestCase):
+class CMSAdminSuccessStoryTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
     def test_negative_metrics_rejected(self):
         self._login("invest", "pw-invest-123")
         token = self._csrf()

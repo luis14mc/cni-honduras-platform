@@ -6,10 +6,11 @@ from django.core.management import call_command
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 
 from apps.cms.cms_admin.roles import ALL_ROLES, EDITOR
 from apps.cms.models import Document, News, PublishStatus, SiteBanner, BannerPlacement
+from apps.cms.tests.base import CMSAdminTestCase
 from apps.investment.models import (
     InvestmentOpportunity,
     OpportunityStatus,
@@ -20,10 +21,11 @@ from apps.investment.models import (
 User = get_user_model()
 
 
-class CMSAdminCsrfFlowTests(APITestCase):
+class CMSAdminCsrfFlowTests(CMSAdminTestCase):
     """Real CSRF enforcement for the cross-origin CMS login/logout flow."""
 
     def setUp(self):
+        super().setUp()
         self.client = APIClient(enforce_csrf_checks=True)
         self.staff = User.objects.create_user(
             username="editor", password="pw-editor-123", is_staff=True
@@ -100,8 +102,76 @@ class CMSAdminCsrfFlowTests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class CMSAdminAuthTests(APITestCase):
+class CMSLoginThrottleTests(CMSAdminTestCase):
+    """Verify cms_login throttling without leaking state across test cases."""
+
     def setUp(self):
+        super().setUp()
+        from rest_framework.settings import api_settings
+
+        api_settings.reload()
+        self.client = APIClient(enforce_csrf_checks=True)
+        User.objects.create_user(
+            username="throttle-user",
+            password="pw-throttle-123",
+            is_staff=True,
+        )
+
+    def _csrf(self) -> str:
+        return self.client.get(reverse("api-v1:cms-admin:csrf")).json()["csrfToken"]
+
+    def test_login_attempts_populate_throttle_history(self):
+        import time
+
+        from django.core.cache import cache
+
+        key = "throttle_cms_login_127.0.0.1"
+        for _ in range(3):
+            token = self._csrf()
+            res = self.client.post(
+                reverse("api-v1:cms-admin:login"),
+                {"username": "throttle-user", "password": "wrong"},
+                format="json",
+                HTTP_X_CSRFTOKEN=token,
+            )
+            self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        history = cache.get(key, [])
+        self.assertGreaterEqual(len(history), 3)
+        self.assertTrue(all(isinstance(ts, float) for ts in history))
+
+    def test_login_throttle_returns_429_when_history_full(self):
+        import time
+
+        from django.core.cache import cache
+
+        key = "throttle_cms_login_127.0.0.1"
+        now = time.time()
+        cache.set(key, [now] * 10, 120)
+
+        token = self._csrf()
+        res = self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "throttle-user", "password": "wrong"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_429_TOO_MANY_REQUESTS)
+
+    def test_login_not_blocked_after_cache_reset(self):
+        token = self._csrf()
+        res = self.client.post(
+            reverse("api-v1:cms-admin:login"),
+            {"username": "throttle-user", "password": "pw-throttle-123"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+
+class CMSAdminAuthTests(CMSAdminTestCase):
+    def setUp(self):
+        super().setUp()
         self.staff = User.objects.create_user(
             username="editor", password="pw-editor-123", is_staff=True
         )
@@ -183,8 +253,9 @@ class CMSAdminAuthTests(APITestCase):
         self.assertIn(me.status_code, (401, 403))
 
 
-class CMSAdminDashboardTests(APITestCase):
+class CMSAdminDashboardTests(CMSAdminTestCase):
     def setUp(self):
+        super().setUp()
         self.staff = User.objects.create_user(
             username="editor", password="pw-editor-123", is_staff=True
         )
@@ -241,7 +312,7 @@ class CMSAdminDashboardTests(APITestCase):
         self.assertEqual(stamps, sorted(stamps, reverse=True))
 
 
-class SeedCMSRolesTests(APITestCase):
+class SeedCMSRolesTests(CMSAdminTestCase):
     def test_seed_creates_all_groups_idempotently(self):
         call_command("seed_cms_roles")
         call_command("seed_cms_roles")  # second run must not duplicate

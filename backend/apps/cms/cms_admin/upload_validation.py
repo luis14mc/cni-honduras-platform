@@ -42,6 +42,65 @@ ALLOWED_EXTENSIONS = ALLOWED_IMAGE_EXTENSIONS | ALLOWED_DOCUMENT_EXTENSIONS | AL
 
 DEFAULT_MAX_BYTES = 25 * 1024 * 1024  # 25 MB
 
+# MIME types that must never be accepted regardless of filename.
+BLOCKED_MIME_TYPES = frozenset(
+    {
+        "application/javascript",
+        "application/x-javascript",
+        "text/javascript",
+        "text/html",
+        "application/xhtml+xml",
+        "application/x-msdownload",
+        "application/vnd.microsoft.portable-executable",
+        "application/x-msdos-program",
+        "application/x-sh",
+        "application/x-php",
+        "text/x-php",
+        "application/x-httpd-php",
+    }
+)
+
+BLOCKED_MIME_PREFIXES = (
+    "text/html",
+    "application/javascript",
+    "text/javascript",
+)
+
+# Acceptable MIME types per extension (browsers may vary slightly).
+EXTENSION_MIME_MAP: dict[str, frozenset[str]] = {
+    "jpg": frozenset({"image/jpeg", "image/pjpeg"}),
+    "jpeg": frozenset({"image/jpeg", "image/pjpeg"}),
+    "png": frozenset({"image/png"}),
+    "gif": frozenset({"image/gif"}),
+    "webp": frozenset({"image/webp"}),
+    "svg": frozenset({"image/svg+xml"}),
+    "pdf": frozenset({"application/pdf"}),
+    "doc": frozenset({"application/msword"}),
+    "docx": frozenset(
+        {"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
+    ),
+    "xls": frozenset({"application/vnd.ms-excel"}),
+    "xlsx": frozenset(
+        {"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
+    ),
+    "ppt": frozenset({"application/vnd.ms-powerpoint"}),
+    "pptx": frozenset(
+        {"application/vnd.openxmlformats-officedocument.presentationml.presentation"}
+    ),
+    "zip": frozenset({"application/zip", "application/x-zip-compressed"}),
+    "mp4": frozenset({"video/mp4"}),
+    "webm": frozenset({"video/webm"}),
+    "mov": frozenset({"video/quicktime"}),
+}
+
+# Common generic fallbacks browsers use for binary uploads.
+GENERIC_MIME_FALLBACKS = frozenset(
+    {
+        "application/octet-stream",
+        "binary/octet-stream",
+    }
+)
+
 
 def max_upload_bytes() -> int:
     return int(getattr(settings, "CMS_MAX_UPLOAD_BYTES", DEFAULT_MAX_BYTES))
@@ -49,6 +108,36 @@ def max_upload_bytes() -> int:
 
 def _extension(name: str) -> str:
     return os.path.splitext(name or "")[1].lstrip(".").lower()
+
+
+def _normalize_mime(content_type: str) -> str:
+    return (content_type or "").split(";")[0].strip().lower()
+
+
+def _validate_mime(name: str, ext: str, content_type: str) -> None:
+    normalized = _normalize_mime(content_type)
+    if not normalized:
+        return
+
+    if normalized in BLOCKED_MIME_TYPES:
+        raise ValidationError("Tipo MIME no permitido para archivos editoriales.")
+    if any(normalized.startswith(prefix) for prefix in BLOCKED_MIME_PREFIXES):
+        raise ValidationError("Tipo MIME no permitido para archivos editoriales.")
+
+    expected = EXTENSION_MIME_MAP.get(ext)
+    if not expected:
+        return
+
+    if normalized in expected or normalized in GENERIC_MIME_FALLBACKS:
+        return
+
+    guessed, _ = mimetypes.guess_type(name)
+    if guessed and _normalize_mime(guessed) in expected and normalized in GENERIC_MIME_FALLBACKS:
+        return
+
+    raise ValidationError(
+        f"El tipo MIME «{normalized}» no es compatible con la extensión .{ext}."
+    )
 
 
 def validate_upload_file(uploaded_file) -> None:
@@ -71,14 +160,7 @@ def validate_upload_file(uploaded_file) -> None:
         )
 
     content_type = getattr(uploaded_file, "content_type", "") or ""
-    if content_type:
-        lowered = content_type.lower()
-        if lowered.startswith(("text/html", "application/javascript", "text/javascript")):
-            raise ValidationError("Tipo MIME no permitido para archivos editoriales.")
-        guessed, _ = mimetypes.guess_type(name)
-        if guessed and guessed != content_type and guessed.startswith("image/"):
-            # Allow minor mismatches; block obvious HTML/JS masquerading as images.
-            pass
+    _validate_mime(name, ext, content_type)
 
 
 def infer_media_type(filename: str) -> str:
