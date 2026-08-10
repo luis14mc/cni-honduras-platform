@@ -6,6 +6,9 @@ import { designImages } from "@/src/lib/designAssets";
 import { buildNewsArticleMetadata, loadNewsArticle } from "@/src/lib/cmsNews";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
+import { NewsBlocksRenderer } from "@/src/components/news/NewsBlocksRenderer";
+import { ensureBlocks } from "@/src/lib/newsBlocks";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 
 const copy = {
@@ -58,10 +61,10 @@ function formatDate(locale: Locale, value: string): string {
 }
 
 function mediaUrl(article: NewsArticle): string | null {
-  return article.featured_image?.file || null;
+  return resolveMediaFileUrl(article.featured_image?.file_url || article.featured_image?.file) || null;
 }
 
-function paragraphs(content: string): string[] {
+function legacyParagraphs(content: string): string[] {
   return content
     .split(/\n{2,}/)
     .map((item) => item.trim())
@@ -135,7 +138,8 @@ export default async function PrensaArticlePage({
   }
 
   const article = result.article;
-  const body = paragraphs(article.content);
+  const blocks = ensureBlocks(article.content_blocks);
+  const body = legacyParagraphs(article.content);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
@@ -174,11 +178,15 @@ export default async function PrensaArticlePage({
           {mediaUrl(article) && (
             <img src={mediaUrl(article) ?? ""} alt={article.title} className="mb-10 w-full rounded-xl object-cover" />
           )}
-          <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
-            {(body.length > 0 ? body : [article.content]).map((item) => (
-              <p key={item}>{item}</p>
-            ))}
-          </div>
+          {blocks.length > 0 ? (
+            <NewsBlocksRenderer blocks={blocks} />
+          ) : (
+            <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
+              {(body.length > 0 ? body : [article.content]).map((item) => (
+                <p key={item.slice(0, 48)}>{item}</p>
+              ))}
+            </div>
+          )}
           <div className="mt-12 rounded-xl border-l-4 border-[#35A963] bg-[#eff4ff] p-8">
             <dl className="grid gap-4 text-sm text-[#0E7A7C] sm:grid-cols-2">
               {article.source && (

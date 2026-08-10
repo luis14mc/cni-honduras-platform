@@ -27,6 +27,8 @@ class CMSDashboardPendingS2T4Tests(CMSAdminTestCase):
         Document.objects.create(
             title="Sin recurso",
             slug="sin-recurso",
+            language="es",
+            resource_key="sin-recurso",
             status=PublishStatus.DRAFT,
         )
         sector = Sector.objects.create(name="Agro", slug="agro-pending")
@@ -115,7 +117,9 @@ class CMSPublicIntegrationSmokeS2T4Tests(CMSAdminEditorialTestMixin, CMSAdminTes
             {
                 "title_es": "Doc smoke",
                 "slug": "smoke-s2t4-doc",
-                "external_url_es": "https://example.com/smoke.pdf",
+                "language": "es",
+                "resource_key": "smoke-s2t4-doc",
+                "external_url": "https://example.com/smoke.pdf",
                 "status": PublishStatus.DRAFT,
             },
             token=token,

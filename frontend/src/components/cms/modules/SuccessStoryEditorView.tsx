@@ -48,6 +48,12 @@ interface StoryFormState {
   is_featured: boolean;
   logo: number | null;
   logo_detail: MediaAsset | null;
+  featured_image: number | null;
+  featured_image_detail: MediaAsset | null;
+  person_photo: number | null;
+  person_photo_detail: MediaAsset | null;
+  person_name: string;
+  person_role: string;
   status: SuccessStoryItem["status"];
   updated_at: string | null;
   updated_by_name: string | null;
@@ -71,6 +77,12 @@ const emptyForm = (): StoryFormState => ({
   is_featured: false,
   logo: null,
   logo_detail: null,
+  featured_image: null,
+  featured_image_detail: null,
+  person_photo: null,
+  person_photo_detail: null,
+  person_name: "",
+  person_role: "",
   status: "draft",
   updated_at: null,
   updated_by_name: null,
@@ -95,6 +107,12 @@ function storyToForm(item: SuccessStoryItem): StoryFormState {
     is_featured: item.is_featured,
     logo: item.logo,
     logo_detail: item.logo_detail,
+    featured_image: item.featured_image,
+    featured_image_detail: item.featured_image_detail,
+    person_photo: item.person_photo,
+    person_photo_detail: item.person_photo_detail,
+    person_name: item.person_name ?? "",
+    person_role: item.person_role ?? "",
     status: item.status,
     updated_at: item.updated_at,
     updated_by_name: item.updated_by_name,
@@ -119,6 +137,10 @@ function formToPayload(form: StoryFormState): SuccessStoryWritePayload {
     testimonial_author_en: form.testimonial_author_en,
     is_featured: form.is_featured,
     logo: form.logo,
+    featured_image: form.featured_image,
+    person_photo: form.person_photo,
+    person_name: form.person_name,
+    person_role: form.person_role,
     status: "draft",
   };
 }
@@ -273,11 +295,43 @@ export function SuccessStoryEditorView({ storyId }: SuccessStoryEditorViewProps)
             updatedBy={form.updated_by_name}
           >
             <CmsMediaField
-              label="Logo / imagen"
+              label="Logo"
               asset={form.logo_detail}
               onSelect={(asset) => patch({ logo: asset.id, logo_detail: asset })}
               onClear={() => patch({ logo: null, logo_detail: null })}
             />
+            <CmsMediaField
+              label="Imagen principal"
+              asset={form.featured_image_detail}
+              onSelect={(asset) =>
+                patch({ featured_image: asset.id, featured_image_detail: asset })
+              }
+              onClear={() => patch({ featured_image: null, featured_image_detail: null })}
+            />
+            <CmsMediaField
+              label="Foto de la persona"
+              asset={form.person_photo_detail}
+              onSelect={(asset) =>
+                patch({ person_photo: asset.id, person_photo_detail: asset })
+              }
+              onClear={() => patch({ person_photo: null, person_photo_detail: null })}
+            />
+            <CmsFormField label="Nombre de la persona" htmlFor="story-person-name">
+              <input
+                id="story-person-name"
+                value={form.person_name}
+                onChange={(e) => patch({ person_name: e.target.value })}
+                className={cmsInputClass}
+              />
+            </CmsFormField>
+            <CmsFormField label="Cargo / rol" htmlFor="story-person-role">
+              <input
+                id="story-person-role"
+                value={form.person_role}
+                onChange={(e) => patch({ person_role: e.target.value })}
+                className={cmsInputClass}
+              />
+            </CmsFormField>
             <CmsFormField label="Empresa" htmlFor="story-company">
               <input
                 id="story-company"

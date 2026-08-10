@@ -7,7 +7,7 @@ import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { homeCopy } from "@/src/i18n/copy/home";
 import { getSectorHref, withLocale } from "@/src/i18n/path";
-import type { NewsArticle, NewsCategory, InstitutionalLink, SiteBanner } from "@/src/types/cms";
+import type { NewsArticle, NewsCategory, InstitutionalLink } from "@/src/types/cms";
 import type { Sector, SuccessStory } from "@/src/types/investment";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
@@ -40,8 +40,6 @@ type Props = {
   sectorsStatus?: LoadStatus;
   interestLinks?: InstitutionalLink[];
   interestLinksStatus?: LoadStatus;
-  heroBanners?: SiteBanner[];
-  heroBannersStatus?: LoadStatus;
 };
 
 const newsCategoryLabels: Record<Locale, Record<NewsCategory, string>> = {
@@ -93,8 +91,6 @@ export function HomePageView({
   sectorsStatus = "ok",
   interestLinks = [],
   interestLinksStatus = "ok",
-  heroBanners = [],
-  heroBannersStatus = "ok",
 }: Props) {
   const hc = homeCopy[locale];
   const L = (path: string) => withLocale(locale, path);
@@ -125,8 +121,6 @@ export function HomePageView({
       setChartLoading(false);
     }, 400);
   };
-
-  const heroBannersToShow = heroBannersStatus === "ok" ? heroBanners : [];
 
   // Datos para los gráficos dinámicos interactivos reales (JSON de la solicitud)
   const ledgerCharts = useMemo(() => ledgerChartPalette(locale), [locale]);
@@ -293,11 +287,10 @@ export function HomePageView({
   return (
     <div className={cn("flex flex-1 flex-col overflow-hidden", shell.root)}>
 
-      {/* 1. Hero (CMS o fallback estructural) */}
+      {/* 1. Hero estructural estático (no CMS) */}
       <HomeHeroSection
         locale={locale}
-        banners={heroBannersToShow}
-        fallbackTitle={
+        title={
           <>
             {hc.hero.titleLine1} <br />
             <span className="text-cni-gold">{hc.hero.titleGrow}</span>

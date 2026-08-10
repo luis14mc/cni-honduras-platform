@@ -1,4 +1,4 @@
-"""QA fixes for PR #15 — hero images, news publish, localized documents."""
+"""QA coverage for language-row Documents and News content_blocks."""
 
 from __future__ import annotations
 
@@ -7,10 +7,21 @@ from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 
-from apps.cms.models import BannerPlacement, Document, DocumentCategory, News, PublishStatus, SiteBanner
+from apps.cms.models import (
+    BannerPlacement,
+    Document,
+    DocumentCategory,
+    DocumentLanguage,
+    News,
+    PublishStatus,
+    SiteBanner,
+)
 from apps.cms.tests.base import CMSAdminTestCase
 from apps.cms.tests.test_cms_editorial import CMSAdminEditorialTestMixin
 from apps.media_library.models import MediaAsset, MediaType
+
+BLOCKS_ES = [{"type": "paragraph", "text": "Bloque ES"}]
+BLOCKS_EN = [{"type": "paragraph", "text": "Block EN"}]
 
 
 class HeroBannerImageTests(CMSAdminTestCase):
@@ -77,67 +88,221 @@ class NewsPublishWithoutSlugTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertIn(body["slug"], slugs)
 
 
-class DocumentLocalizedApiTests(CMSAdminTestCase):
+class DocumentLanguageRowApiTests(CMSAdminTestCase):
     def setUp(self):
         from rest_framework.test import APIClient
 
         self.client = APIClient()
 
-    def test_lang_es_and_en_return_distinct_resources(self):
-        doc = Document.objects.create(
-            title="Guía",
+    def test_es_and_en_rows_share_resource_key_with_distinct_slugs(self):
+        Document.objects.create(
+            title="Guía ES",
             title_es="Guía ES",
-            title_en="Guide EN",
-            slug="guia-localized",
-            external_url_es="https://example.com/es.pdf",
-            external_url_en="https://example.com/en.pdf",
+            slug="guia-es",
+            language=DocumentLanguage.ES,
+            resource_key="guia",
+            external_url="https://example.com/es.pdf",
             category=DocumentCategory.BIBLIOTECA,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
         )
-        es = self.client.get(f"/api/v1/cms/documents/{doc.slug}/?lang=es").json()
-        en = self.client.get(f"/api/v1/cms/documents/{doc.slug}/?lang=en").json()
+        Document.objects.create(
+            title="Guide EN",
+            title_en="Guide EN",
+            slug="guia-en",
+            language=DocumentLanguage.EN,
+            resource_key="guia",
+            external_url="https://example.com/en.pdf",
+            category=DocumentCategory.BIBLIOTECA,
+            status=PublishStatus.PUBLISHED,
+            published_at=timezone.now(),
+        )
+
+        es = self.client.get("/api/v1/cms/documents/guia-es/?lang=es").json()
+        en = self.client.get("/api/v1/cms/documents/guia-en/?lang=en").json()
+        self.assertEqual(es["resource_key"], "guia")
+        self.assertEqual(en["resource_key"], "guia")
+        self.assertEqual(es["language"], "es")
+        self.assertEqual(en["language"], "en")
         self.assertEqual(es["external_url"], "https://example.com/es.pdf")
         self.assertEqual(en["external_url"], "https://example.com/en.pdf")
         self.assertTrue(es["has_resource"])
         self.assertTrue(en["has_resource"])
 
-    def test_en_without_resource_has_no_fallback_file(self):
-        doc = Document.objects.create(
+    def test_lang_filter_excludes_other_language_rows(self):
+        Document.objects.create(
             title="Solo ES",
             title_es="Solo ES",
             slug="solo-es",
-            external_url_es="https://example.com/es-only.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="solo-es",
+            external_url="https://example.com/es-only.pdf",
             category=DocumentCategory.BIBLIOTECA,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
         )
-        en = self.client.get(f"/api/v1/cms/documents/{doc.slug}/?lang=en").json()
-        self.assertEqual(en["external_url"], "")
-        self.assertFalse(en["has_resource"])
+        missing = self.client.get("/api/v1/cms/documents/solo-es/?lang=en")
+        self.assertEqual(missing.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_patch_en_preserves_es_fields(self):
-        mixin = CMSAdminEditorialTestMixin()
-        mixin.setUpTestData()
-        mixin.setUp()
-        mixin._login("editor", "pw-editor-123")
-        token = mixin._csrf()
-        create = mixin._post(
+        listed = self.client.get("/api/v1/cms/documents/?lang=en")
+        slugs = [item["slug"] for item in listed.json()["results"]]
+        self.assertNotIn("solo-es", slugs)
+
+
+class DocumentSiblingAdminTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
+    def test_patch_es_does_not_wipe_en_sibling(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        es = self._post(
             reverse("api-v1:cms-admin:documents-list"),
             {
                 "title_es": "Doc ES",
-                "external_url_es": "https://example.com/es.pdf",
+                "slug": "doc-pair-es",
+                "language": "es",
+                "resource_key": "doc-pair",
+                "external_url": "https://example.com/es.pdf",
                 "status": PublishStatus.DRAFT,
             },
             token=token,
         )
-        doc_id = create.json()["id"]
-        res = mixin._patch(
-            reverse("api-v1:cms-admin:documents-detail", args=[doc_id]),
-            {"title_en": "Doc EN", "external_url_en": "https://example.com/en.pdf"},
+        self.assertEqual(es.status_code, status.HTTP_201_CREATED, es.content)
+        es_id = es.json()["id"]
+
+        en = self._post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_en": "Doc EN",
+                "title": "Doc EN",
+                "slug": "doc-pair-en",
+                "language": "en",
+                "resource_key": "doc-pair",
+                "external_url": "https://example.com/en.pdf",
+                "status": PublishStatus.DRAFT,
+            },
             token=token,
         )
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        body = res.json()
-        self.assertEqual(body["title_es"], "Doc ES")
-        self.assertEqual(body["external_url_en"], "https://example.com/en.pdf")
+        self.assertEqual(en.status_code, status.HTTP_201_CREATED, en.content)
+        en_id = en.json()["id"]
+
+        patch = self._patch(
+            reverse("api-v1:cms-admin:documents-detail", args=[es_id]),
+            {"title_es": "Doc ES actualizado", "external_url": "https://example.com/es-v2.pdf"},
+            token=token,
+        )
+        self.assertEqual(patch.status_code, status.HTTP_200_OK, patch.content)
+
+        en_refresh = self.client.get(
+            reverse("api-v1:cms-admin:documents-detail", args=[en_id]),
+        )
+        self.assertEqual(en_refresh.status_code, status.HTTP_200_OK)
+        en_body = en_refresh.json()
+        self.assertEqual(en_body["resource_key"], "doc-pair")
+        self.assertEqual(en_body["language"], "en")
+        self.assertEqual(en_body["external_url"], "https://example.com/en.pdf")
+        self.assertEqual(en_body["slug"], "doc-pair-en")
+
+    def test_create_english_version_action(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        create = self._post(
+            reverse("api-v1:cms-admin:documents-list"),
+            {
+                "title_es": "Informe",
+                "slug": "informe-es",
+                "language": "es",
+                "resource_key": "informe",
+                "external_url": "https://example.com/informe.pdf",
+                "status": PublishStatus.DRAFT,
+            },
+            token=token,
+        )
+        self.assertEqual(create.status_code, status.HTTP_201_CREATED, create.content)
+        es_id = create.json()["id"]
+
+        sibling = self.client.post(
+            reverse("api-v1:cms-admin:documents-detail", args=[es_id])
+            + "create-english-version/",
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(sibling.status_code, status.HTTP_201_CREATED, sibling.content)
+        body = sibling.json()
+        self.assertEqual(body["language"], "en")
+        self.assertEqual(body["resource_key"], "informe")
+        self.assertEqual(body["status"], PublishStatus.DRAFT)
+        self.assertNotEqual(body["slug"], "informe-es")
+        self.assertFalse(body["file"])
+        self.assertEqual(body["external_url"], "")
+
+        duplicate = self.client.post(
+            reverse("api-v1:cms-admin:documents-detail", args=[es_id])
+            + "create-english-version/",
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(duplicate.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class NewsContentBlocksTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
+    def test_content_blocks_es_and_en_independent(self):
+        self._login("editor", "pw-editor-123")
+        token = self._csrf()
+        create = self._post(
+            reverse("api-v1:cms-admin:news-list"),
+            {
+                "title_es": "Noticia bloques",
+                "slug": "noticia-bloques",
+                "summary_es": "Resumen",
+                "content_es": "<p>Legacy</p>",
+                "content_blocks_es": BLOCKS_ES,
+                "status": PublishStatus.DRAFT,
+            },
+            token=token,
+        )
+        self.assertEqual(create.status_code, status.HTTP_201_CREATED, create.content)
+        news_id = create.json()["id"]
+        self.assertEqual(create.json()["content_blocks_es"], BLOCKS_ES)
+
+        patch_en = self._patch(
+            reverse("api-v1:cms-admin:news-detail", args=[news_id]),
+            {"content_blocks_en": BLOCKS_EN},
+            token=token,
+        )
+        self.assertEqual(patch_en.status_code, status.HTTP_200_OK, patch_en.content)
+        self.assertEqual(patch_en.json()["content_blocks_es"], BLOCKS_ES)
+        self.assertEqual(patch_en.json()["content_blocks_en"], BLOCKS_EN)
+
+        pub = self.client.post(
+            reverse("api-v1:cms-admin:news-publish", args=[news_id]),
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(pub.status_code, status.HTTP_200_OK, pub.content)
+
+        public_es = self.client.get("/api/v1/cms/news/noticia-bloques/?lang=es")
+        self.assertEqual(public_es.status_code, status.HTTP_200_OK)
+        self.assertEqual(public_es.json()["content_blocks"], BLOCKS_ES)
+
+        public_en = self.client.get("/api/v1/cms/news/noticia-bloques/?lang=en")
+        self.assertEqual(public_en.status_code, status.HTTP_200_OK)
+        self.assertEqual(public_en.json()["content_blocks"], BLOCKS_EN)
+
+        patch_es = self._patch(
+            reverse("api-v1:cms-admin:news-detail", args=[news_id]),
+            {
+                "content_blocks_es": [
+                    {"type": "paragraph", "text": "Bloque ES actualizado"},
+                ],
+            },
+            token=token,
+        )
+        self.assertEqual(patch_es.status_code, status.HTTP_200_OK, patch_es.content)
+        body = patch_es.json()
+        self.assertEqual(
+            body["content_blocks_es"],
+            [{"type": "paragraph", "text": "Bloque ES actualizado"}],
+        )
+        self.assertEqual(body["content_blocks_en"], BLOCKS_EN)
+
+        news = News.all_objects.get(pk=news_id)
+        self.assertEqual(news.content_blocks_en, BLOCKS_EN)
