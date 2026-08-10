@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
-import { designImages } from "@/src/lib/designAssets";
 import { buildNewsArticleMetadata, loadNewsArticle } from "@/src/lib/cmsNews";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { NewsBlocksRenderer } from "@/src/components/news/NewsBlocksRenderer";
 import { ensureBlocks } from "@/src/lib/newsBlocks";
 import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
+import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 
 const copy = {
@@ -145,11 +145,14 @@ export default async function PrensaArticlePage({
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="relative flex min-h-[60vh] items-center overflow-hidden bg-[#252A58] pb-24 pt-40">
         <div className="absolute inset-0 z-0">
-          {mediaUrl(article) ? (
-            <img src={mediaUrl(article) ?? ""} alt={article.title} className="h-full w-full object-cover opacity-50" />
-          ) : (
-            <Image src={designImages.prensa.hero} alt={article.title} fill priority sizes="100vw" className="object-cover opacity-50" />
-          )}
+          <Image
+            src={PAGE_HEROES.prensaArticle.image}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-50"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#252A58] via-[#252A58]/60 to-transparent" />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-4xl px-6 md:px-12">

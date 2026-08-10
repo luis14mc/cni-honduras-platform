@@ -7,6 +7,7 @@ import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { getSuccessStory, getSuccessStories } from "@/src/services/investment";
 import type { SuccessStory } from "@/src/types/investment";
 import { buildDetailMetadata } from "@/src/lib/seo";
+import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import {
   formatSuccessStoryInvestment,
   formatSuccessStoryJobs,
@@ -97,15 +98,14 @@ export default async function CasoDetallePage({
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <header className="relative flex min-h-[50vh] items-end overflow-hidden bg-[#252A58] pb-16 pt-40">
         <div className="absolute inset-0">
-          {successStoryHasCover(story) ? (
-            <img
-              src={successStoryCoverImage(story)!}
-              alt={story.title}
-              className="h-full w-full object-cover opacity-50"
-            />
-          ) : (
-            <div className="h-full w-full bg-gradient-to-br from-[#252A58] to-[#0E7A7C] opacity-80" />
-          )}
+          <Image
+            src={PAGE_HEROES.casos.image}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-50"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#252A58] via-[#252A58]/70 to-transparent" />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-4xl px-8">
@@ -133,9 +133,20 @@ export default async function CasoDetallePage({
       </header>
 
       <article className="mx-auto w-full max-w-3xl px-8 py-16">
+        {successStoryHasCover(story) ? (
+          <div className="relative mb-10 aspect-[16/9] w-full overflow-hidden rounded-xl">
+            <Image
+              src={successStoryCoverImage(story)!}
+              alt={story.title}
+              fill
+              className="object-cover"
+              sizes="(max-width:768px) 100vw, 720px"
+            />
+          </div>
+        ) : null}
         <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
           {(body.length > 0 ? body : [story.content]).map((item) => (
-            <p key={item}>{item}</p>
+            <p key={item.slice(0, 48)}>{item}</p>
           ))}
         </div>
 

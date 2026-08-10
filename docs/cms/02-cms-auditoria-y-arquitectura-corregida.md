@@ -4,6 +4,12 @@
 > Veredicto general: **el diagnóstico del estado actual es correcto y bien fundamentado, pero la arquitectura propuesta no cabe en 15 días y sobre-modela la internacionalización.** Con dos correcciones estructurales (i18n por columnas y recorte de alcance en sectores) el plan sí es ejecutable en 15 días.
 > Fecha: 2026-07-31
 
+## Regla arquitectónica (S2-T4)
+
+**Page heroes are static frontend assets and are outside CMS scope.**
+
+Los heroes de páginas públicas (home, prensa, recursos, casos, oportunidades, sectores, institucionales) no se administran vía CMS. El CMS solo edita contenido dinámico debajo del hero.
+
 ---
 
 ## 1. Veredicto por criterio

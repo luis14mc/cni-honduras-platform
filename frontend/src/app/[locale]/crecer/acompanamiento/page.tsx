@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Building2, Briefcase, Quote, Sparkles, Eye } from "lucide-react";
 import { PageHero } from "@/src/components/cni/PageHero";
+import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import { Section, SectionHeader } from "@/src/components/cni/Section";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
@@ -35,7 +36,7 @@ export default async function CrecerPage({ params }: { params: Promise<{ locale:
             </>
           }
           description={c.heroDescription}
-          imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuBSOg6Q-Wh0zKokXoH2NlZv2jRx--sDup4QwYCIRMXzFuHqxX4KwVqSZ69EMQhRPUtequFsCMwT36BPnVesRMR8L2_DYdMSKNSfb5qyAA8T7sl9LMucYA6mWoDQmKpJuLwCVbHmr8VJuL0KhkOdA-y2V0RplpiFWoVDlAcooS-4piAv54VXVxQQO3Iys0a_GNRiwd9qSCkX9EEGLS_ejMC7T4wYB1avlDXR3ue314NWJTDccoH5JIbAXYnOEd1U-2jCJqsx38TmkoXU"
+          imageSrc={PAGE_HEROES.oportunidades.image}
           imageAlt={c.heroImageAlt}
           heightClass="min-h-[560px] md:min-h-[620px]"
         >

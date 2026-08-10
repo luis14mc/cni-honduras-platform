@@ -26,13 +26,25 @@ Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → 
 3. **Necesita atención** shows only items with count > 0
 4. Recent activity links open correct editor routes
 
-## 3. Home hero (estático — no CMS)
+## 3. Page heroes (estáticos — fuera del CMS)
 
-1. Open `/es` o `/en` — el carousel muestra las 4 imágenes estructurales:
-   `/images/hero/home/{agricultura,turismo,energia,logistica}.webp`
-2. Confirmar que **no** se llama `GET …/banners/?placement=home_hero` desde la home
-3. El título del hero viene de i18n (`homeCopy`), no de SiteBanner
-4. SiteBanner puede seguir existiendo para `site_top` / otros usos, pero **no** alimenta el hero estructural
+**Regla:** Page heroes are static frontend assets and are outside CMS scope.
+
+Ningún hero de página pública debe venir de SiteBanner, Page, MediaAsset, News, Document ni SuccessStory.
+
+Validar en staging (hero visible, imagen correcta, sin request CMS para el hero):
+
+| Página | Esperado |
+|--------|----------|
+| Home `/es` | 4 slides `/images/hero/home/*` — **no** llama `banners/?placement=home_hero` |
+| Prensa listado + detalle | Hero estructural `designImages.prensa.hero`; `featured_image` solo en cuerpo |
+| Recursos / estudios | Hero estático; portadas CMS solo en cards |
+| Casos listado + detalle | Hero estructural; logo/cover CMS en contenido |
+| Oportunidades / crecer | Hero `PageHero` estático |
+| Sectores detalle | `sectorPhotoHeaders` estáticos — **no** `sector.image` API |
+| Institucionales | Heroes de `designAssets` / `PageHero` — sin CMS |
+
+SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement `home_hero` es legacy y no debe usarse en CMS UI.
 
 ## 4. News (bloques ES/EN → publish → público)
 

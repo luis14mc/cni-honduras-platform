@@ -7,6 +7,20 @@ Admin **no se elimina**: permanece como herramienta técnica de respaldo.
 Esta entrega es **foundation**: login, layout, dashboard funcional, permisos y
 shells de módulos. No incluye CRUD, editor TipTap ni page builder.
 
+## Alcance del CMS vs heroes de página
+
+**Page heroes are static frontend assets and are outside CMS scope.**
+
+Los heroes estructurales (Home, Prensa, Recursos, Casos, Oportunidades, Sectores,
+páginas institucionales) se definen en el frontend (`components`, `designAssets`,
+`/public/images/…`). El CMS **no** administra fondos ni composición de heroes.
+
+Sí administra contenido dinámico **debajo** del hero: noticias, documentos,
+casos de éxito, oportunidades, multimedia, usuarios/roles.
+
+`SiteBanner` queda limitado a barras no estructurales (`site_top`, `footer`).
+El placement `home_hero` es legacy y no alimenta el sitio público.
+
 ## Arquitectura
 
 - **Frontend**: Next.js (App Router) bajo la ruta top-level `/cms` (fuera de
