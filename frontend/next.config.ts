@@ -12,6 +12,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/aida/**" },
       { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/aida-public/**" },
       { protocol: "https", hostname: "cdn.pixabay.com", pathname: "/**" },
+      { protocol: "https", hostname: "api-test.cni.hn", pathname: "/**" },
+      { protocol: "https", hostname: "api.cni.hn", pathname: "/**" },
+      { protocol: "http", hostname: "localhost", pathname: "/**" },
+      { protocol: "http", hostname: "127.0.0.1", pathname: "/**" },
     ],
   },
 };

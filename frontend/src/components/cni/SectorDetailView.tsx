@@ -4,6 +4,7 @@ import { ArrowRight, Check, TrendingUp, MapPin, Briefcase, Globe2 } from "lucide
 import type { CSSProperties } from "react";
 import { SectorIcon } from "@/src/components/cni/SectorIcon";
 import { sectorPhotoHeaders, SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
+import { designImages } from "@/src/lib/designAssets";
 import type { Locale } from "@/src/i18n/config";
 import type { SectorCopy, SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorPageExtra } from "@/src/i18n/copy/sectorDetailPage";
@@ -73,7 +74,8 @@ export function SectorDetailView({
   const hasSuccessStories = successStories.length > 0;
 
   const palette = SECTOR_ACCENTS[slug] ?? SECTOR_ACCENTS.agroindustria;
-  const photoSrc = sectorPhotoHeaders[slug] ?? sector.image;
+  // Structural hero — frontend assets only; never sector.image from CMS/API.
+  const photoSrc = sectorPhotoHeaders[slug] ?? designImages.sectors.agroindustria;
   const sectorStyle: CSSProperties & Record<string, string> = {
     "--sector-accent": palette.accent,
     "--sector-soft": palette.soft,

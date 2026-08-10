@@ -2,6 +2,7 @@ export interface MediaAssetLite {
   id: number;
   title: string;
   file: string;
+  file_url?: string | null;
   alt_text: string;
   caption: string;
   media_type: string;
@@ -16,6 +17,7 @@ export interface NewsArticle {
   slug: string;
   summary: string;
   content: string;
+  content_blocks?: import("@/src/lib/newsBlocks").NewsBlock[];
   featured_image: MediaAssetLite | null;
   category: NewsCategory;
   author_name: string;
@@ -31,9 +33,12 @@ export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "es
 
 export interface CmsDocument {
   id: number;
+  language?: "es" | "en";
+  resource_key?: string;
   title: string;
   slug: string;
   file: string;
+  file_url?: string | null;
   external_url: string;
   description: string;
   category: DocumentCategory;
@@ -48,6 +53,7 @@ export interface CmsDocument {
   seo_description: string;
   created_at: string;
   updated_at: string;
+  has_resource?: boolean;
 }
 
 export type LinkSection = "home_interest" | "footer_external" | "tramites" | "top_bar";

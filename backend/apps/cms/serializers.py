@@ -1,6 +1,9 @@
+"""Localized public API serializers for CMS content."""
+
 from rest_framework import serializers
 
-from apps.media_library.serializers import MediaAssetLiteSerializer
+from apps.core.api import resolve_lang
+from apps.media_library.serializers import MediaAssetLiteSerializer, absolute_file_url
 
 from .models import Document, InstitutionalLink, News, Page, SiteBanner
 
@@ -27,6 +30,7 @@ class PageSerializer(serializers.ModelSerializer):
 
 class NewsSerializer(serializers.ModelSerializer):
     featured_image = MediaAssetLiteSerializer(read_only=True)
+    content_blocks = serializers.SerializerMethodField()
 
     class Meta:
         model = News
@@ -36,6 +40,7 @@ class NewsSerializer(serializers.ModelSerializer):
             "slug",
             "summary",
             "content",
+            "content_blocks",
             "featured_image",
             "category",
             "author_name",
@@ -49,17 +54,52 @@ class NewsSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+    def get_content_blocks(self, obj: News):
+        from apps.media_library.models import MediaAsset
+
+        request = self.context.get("request")
+        lang = resolve_lang(request) if request is not None else "es"
+        blocks = list(obj.content_blocks_en if lang == "en" else obj.content_blocks_es or [])
+        media_ids = [
+            block.get("media_id")
+            for block in blocks
+            if isinstance(block, dict) and block.get("type") == "image" and block.get("media_id")
+        ]
+        assets = {
+            asset.id: asset
+            for asset in MediaAsset.objects.filter(id__in=media_ids)
+        } if media_ids else {}
+        enriched = []
+        for block in blocks:
+            if not isinstance(block, dict):
+                continue
+            item = dict(block)
+            if item.get("type") == "image" and item.get("media_id") in assets:
+                asset = assets[item["media_id"]]
+                item["preview_url"] = absolute_file_url(asset.file, self.context)
+                if not item.get("alt"):
+                    item["alt"] = asset.alt_text or ""
+            enriched.append(item)
+        return enriched
+
 
 class DocumentSerializer(serializers.ModelSerializer):
+    """One language version per row; filter by Document.language via viewset."""
+
     cover_image = MediaAssetLiteSerializer(read_only=True)
+    file_url = serializers.SerializerMethodField()
+    has_resource = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
         fields = (
             "id",
+            "language",
+            "resource_key",
             "title",
             "slug",
             "file",
+            "file_url",
             "external_url",
             "description",
             "category",
@@ -74,7 +114,14 @@ class DocumentSerializer(serializers.ModelSerializer):
             "seo_description",
             "created_at",
             "updated_at",
+            "has_resource",
         )
+
+    def get_file_url(self, obj: Document) -> str | None:
+        return absolute_file_url(obj.file, self.context) if obj.file else None
+
+    def get_has_resource(self, obj: Document) -> bool:
+        return obj.has_resource()
 
 
 class InstitutionalLinkSerializer(serializers.ModelSerializer):

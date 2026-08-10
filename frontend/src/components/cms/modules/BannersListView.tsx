@@ -19,8 +19,9 @@ const PAGE_SIZE = 20;
 
 const PLACEMENT_LABELS: Record<string, string> = {
   site_top: "Barra superior",
-  home_hero: "Hero del home",
   footer: "Footer",
+  // Legacy placement — no longer used for public page heroes
+  home_hero: "Hero (legacy — no usar)",
 };
 
 export function BannersListView() {

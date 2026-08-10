@@ -47,6 +47,8 @@ export interface NewsItem extends EditorialAudit {
   content: string;
   content_es: string;
   content_en: string;
+  content_blocks_es: unknown[];
+  content_blocks_en: unknown[];
   featured_image: number | null;
   featured_image_detail: MediaAsset | null;
   category: string;
@@ -66,6 +68,8 @@ export interface NewsItem extends EditorialAudit {
 
 export interface DocumentItem extends EditorialAudit {
   id: number;
+  language: "es" | "en";
+  resource_key: string;
   title: string;
   title_es: string;
   title_en: string;
@@ -284,6 +288,12 @@ export interface SuccessStoryItem extends EditorialAudit {
   image_url: string | null;
   logo: number | null;
   logo_detail: MediaAsset | null;
+  featured_image: number | null;
+  featured_image_detail: MediaAsset | null;
+  person_photo: number | null;
+  person_photo_detail: MediaAsset | null;
+  person_name: string;
+  person_role: string;
   country_origin: string;
   investment_amount: string;
   jobs_generated: number | null;

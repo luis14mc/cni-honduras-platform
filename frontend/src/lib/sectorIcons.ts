@@ -24,9 +24,11 @@ export const SECTOR_ICON_SIZE = {
   header: 132,
   sidebar: 32,
 } as const;
-export const sectorPhotoHeaders: Partial<Record<SectorSlug, string>> = {
+export const sectorPhotoHeaders: Record<SectorSlug, string> = {
   agroindustria: designImages.sectors.agroindustria,
+  manufactura: designImages.sectors.manufactura,
   turismo: designImages.sectors.turismo,
   energia: designImages.sectors.energia,
+  infraestructura: designImages.sectors.infraestructura,
   logistica: designImages.sectors.logistica,
 };

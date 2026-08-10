@@ -1,5 +1,6 @@
 import type { Locale } from "@/src/i18n/config";
 import type { SiteBanner } from "@/src/types/cms";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 
 /** URL del CTA: alias de API o campo legacy. */
 export function bannerCtaUrl(banner: SiteBanner): string {
@@ -19,11 +20,18 @@ export function bannerCtaTarget(banner: SiteBanner): "_blank" | undefined {
 }
 
 export function bannerDesktopImage(banner: SiteBanner): string | null {
-  return banner.image?.file ?? null;
+  const raw = banner.image?.file_url ?? banner.image?.file ?? null;
+  return resolveMediaFileUrl(raw);
 }
 
 export function bannerMobileImage(banner: SiteBanner): string | null {
-  return banner.mobile_image?.file ?? bannerDesktopImage(banner);
+  const raw =
+    banner.mobile_image?.file_url ??
+    banner.mobile_image?.file ??
+    banner.image?.file_url ??
+    banner.image?.file ??
+    null;
+  return resolveMediaFileUrl(raw);
 }
 
 export function bannerHasCta(banner: SiteBanner): boolean {

@@ -58,14 +58,23 @@ describe("bannerOpensInNewTab", () => {
 });
 
 describe("banner images", () => {
-  it("returns desktop and mobile image URLs", () => {
-    expect(bannerDesktopImage(baseBanner)).toBe("/media/banners/hero-desktop.webp");
-    expect(bannerMobileImage(baseBanner)).toBe("/media/banners/hero-mobile.webp");
+  it("returns absolute desktop and mobile image URLs", () => {
+    const banner: SiteBanner = {
+      ...baseBanner,
+      image: {
+        id: 1,
+        file: "/media/banners/hero-desktop.webp",
+        file_url: "https://api-test.cni.hn/media/banners/hero-desktop.webp",
+        alt_text: "Hero",
+      },
+    };
+    expect(bannerDesktopImage(banner)).toBe("https://api-test.cni.hn/media/banners/hero-desktop.webp");
+    expect(bannerMobileImage(banner)).toContain("/media/");
   });
 
   it("falls back mobile to desktop", () => {
     const banner = { ...baseBanner, mobile_image: null };
-    expect(bannerMobileImage(banner)).toBe("/media/banners/hero-desktop.webp");
+    expect(bannerMobileImage(banner)).toBe("http://localhost:8000/media/banners/hero-desktop.webp");
   });
 });
 
@@ -111,8 +120,8 @@ describe("heroSlideImages", () => {
       image: { id: 3, file: "/media/banners/hero-2.webp", alt_text: "2" },
     };
     expect(heroSlideImages([baseBanner, second])).toEqual([
-      "/media/banners/hero-desktop.webp",
-      "/media/banners/hero-2.webp",
+      "http://localhost:8000/media/banners/hero-desktop.webp",
+      "http://localhost:8000/media/banners/hero-2.webp",
     ]);
   });
 });

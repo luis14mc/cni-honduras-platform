@@ -248,12 +248,18 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Doc",
                 "slug": "doc-1",
+                "language": "es",
+                "resource_key": "doc-1",
                 "external_url": "https://example.com/file.pdf",
                 "status": PublishStatus.DRAFT,
             },
             token=token,
         )
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        body = res.json()
+        self.assertEqual(body["language"], "es")
+        self.assertEqual(body["resource_key"], "doc-1")
+        self.assertEqual(body["external_url"], "https://example.com/file.pdf")
 
     def test_create_draft_without_file_allowed(self):
         self._login("author", "pw-author-123")
@@ -263,6 +269,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Sin archivo",
                 "slug": "doc-draft",
+                "language": "es",
+                "resource_key": "doc-draft",
                 "status": PublishStatus.DRAFT,
             },
             token=token,
@@ -278,6 +286,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Ambos",
                 "slug": "doc-both",
+                "language": "es",
+                "resource_key": "doc-both",
                 "external_url": "https://example.com/a.pdf",
                 "file": upload,
                 "status": PublishStatus.DRAFT,
@@ -295,6 +305,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Publicado vacío",
                 "slug": "doc-pub-empty",
+                "language": "es",
+                "resource_key": "doc-pub-empty",
                 "status": PublishStatus.PUBLISHED,
             },
             token=token,
@@ -310,6 +322,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "PDF local",
                 "slug": "doc-pdf",
+                "language": "es",
+                "resource_key": "doc-pdf",
                 "file": upload,
                 "status": PublishStatus.DRAFT,
             },
@@ -327,6 +341,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Malicioso",
                 "slug": "doc-bad",
+                "language": "es",
+                "resource_key": "doc-bad",
                 "file": upload,
                 "status": PublishStatus.DRAFT,
             },
@@ -347,6 +363,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
                 {
                     "title_es": "Grande",
                     "slug": "doc-big",
+                    "language": "es",
+                    "resource_key": "doc-big",
                     "file": upload,
                     "status": PublishStatus.DRAFT,
                 },
@@ -361,6 +379,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         doc = Document.all_objects.create(
             title="X",
             slug="x-doc",
+            language="es",
+            resource_key="x-doc",
             external_url="https://example.com/a.pdf",
             status=PublishStatus.DRAFT,
         )

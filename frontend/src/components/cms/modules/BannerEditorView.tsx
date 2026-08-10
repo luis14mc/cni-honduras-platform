@@ -32,7 +32,6 @@ import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissi
 
 const PLACEMENT_OPTIONS = [
   { value: "site_top", label: "Barra superior global" },
-  { value: "home_hero", label: "Hero del home" },
   { value: "footer", label: "Footer" },
 ];
 

@@ -129,6 +129,8 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
     list_display = (
         "id",
         "title",
+        "language",
+        "resource_key",
         "category",
         "status",
         "is_featured",
@@ -137,8 +139,8 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
         "cover_image_preview",
         "updated_at",
     )
-    list_filter = ("status", "category", "is_featured", "published_at")
-    search_fields = ("title", "slug", "description", "seo_title", "seo_description")
+    list_filter = ("status", "language", "category", "is_featured", "published_at")
+    search_fields = ("title", "slug", "resource_key", "description", "seo_title", "seo_description")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = (
         "created_at",
@@ -153,8 +155,24 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
     )
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order", "document_date")}),
-        ("Archivo", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
+        (
+            None,
+            {
+                "fields": (
+                    "language",
+                    "resource_key",
+                    "title",
+                    "slug",
+                    "status",
+                    "published_at",
+                    "category",
+                    "is_featured",
+                    "order",
+                    "document_date",
+                )
+            },
+        ),
+        ("Recurso", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
         ("Portada", {"fields": ("cover_image", "cover_image_preview")}),
         ("Descripción", {"fields": ("description",)}),
         ("SEO", {"fields": ("seo_title", "seo_description")}),
@@ -173,7 +191,10 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
     @admin.display(description="Enlace")
     def file_link(self, obj):
         if obj.file:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>', obj.file.url)
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>',
+                obj.file.url,
+            )
         if obj.external_url:
             return format_html(
                 '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa</a>',

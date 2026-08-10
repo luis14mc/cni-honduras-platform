@@ -192,6 +192,22 @@ class SuccessStory(EditorialModel):
         blank=True,
         related_name="success_story_logos",
     )
+    featured_image = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="success_story_featured_images",
+    )
+    person_photo = models.ForeignKey(
+        MediaAsset,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="success_story_person_photos",
+    )
+    person_name = models.CharField(max_length=200, blank=True, default="")
+    person_role = models.CharField(max_length=200, blank=True, default="")
     country_origin = models.CharField(max_length=120, blank=True, default="")
     investment_amount = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True

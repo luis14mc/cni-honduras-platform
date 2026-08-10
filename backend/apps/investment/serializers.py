@@ -90,6 +90,8 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
 class SuccessStorySerializer(serializers.ModelSerializer):
     sector = SectorLiteSerializer(read_only=True)
     logo = MediaAssetLiteSerializer(read_only=True)
+    featured_image = MediaAssetLiteSerializer(read_only=True)
+    person_photo = MediaAssetLiteSerializer(read_only=True)
 
     class Meta:
         model = SuccessStory
@@ -103,6 +105,10 @@ class SuccessStorySerializer(serializers.ModelSerializer):
             "content",
             "image",
             "logo",
+            "featured_image",
+            "person_photo",
+            "person_name",
+            "person_role",
             "country_origin",
             "investment_amount",
             "jobs_generated",

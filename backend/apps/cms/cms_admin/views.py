@@ -178,6 +178,7 @@ class DashboardView(APIView):
 
         documents_without_resource = Document.all_objects.filter(status=draft).filter(
             Q(file="") | Q(file__isnull=True),
+        ).filter(
             Q(external_url="") | Q(external_url__isnull=True),
         ).count()
 

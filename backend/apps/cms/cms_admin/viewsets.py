@@ -12,7 +12,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.response import Response
 
-from apps.cms.models import Document, News, PublishStatus, SiteBanner
+from apps.cms.models import Document, News, PublishStatus, SiteBanner, unique_slug_for_model
 from apps.investment.models import SuccessStory
 from apps.media_library.models import MediaAsset
 
@@ -238,19 +238,44 @@ class NewsAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
 
 @method_decorator(csrf_protect, name="dispatch")
 class DocumentAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
-    queryset = Document.all_objects.select_related("cover_image", "created_by", "updated_by")
+    queryset = Document.all_objects.select_related(
+        "cover_image", "created_by", "updated_by"
+    )
     serializer_class = DocumentAdminSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     app_label = "cms"
     model_name = "document"
-    search_fields = ("title", "title_es", "title_en", "slug")
+    search_fields = ("title", "title_es", "title_en", "slug", "resource_key")
 
-    def perform_update(self, serializer):
-        # Allow direct file upload on document update via multipart
-        super().perform_update(serializer)
+    @action(detail=True, methods=["post"], url_path="create-english-version")
+    def create_english_version(self, request, pk=None):
+        """Create an EN sibling sharing resource_key — does not copy PDF/cover."""
+        source = self.get_object()
+        if source.language != "es":
+            raise ValidationError({"language": "Solo se puede clonar desde una versión en español."})
+        if Document.all_objects.filter(resource_key=source.resource_key, language="en").exists():
+            raise ValidationError({"language": "Ya existe una versión en inglés para este recurso."})
 
-    def perform_create(self, serializer):
-        super().perform_create(serializer)
+        en_slug = unique_slug_for_model(Document, f"{source.slug}-en", None)
+        sibling = Document(
+            language="en",
+            resource_key=source.resource_key,
+            title="",
+            title_en="",
+            title_es="",
+            slug=en_slug,
+            description="",
+            category=source.category,
+            is_featured=False,
+            order=source.order,
+            document_date=source.document_date,
+            status=PublishStatus.DRAFT,
+            created_by=request.user,
+            updated_by=request.user,
+        )
+        sibling.save()
+        serializer = self.get_serializer(sibling)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @method_decorator(csrf_protect, name="dispatch")
@@ -283,7 +308,7 @@ class SiteBannerAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
 @method_decorator(csrf_protect, name="dispatch")
 class SuccessStoryAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
     queryset = SuccessStory.all_objects.select_related(
-        "sector", "logo", "created_by", "updated_by"
+        "sector", "logo", "featured_image", "person_photo", "created_by", "updated_by"
     )
     serializer_class = SuccessStoryAdminSerializer
     app_label = "investment"
