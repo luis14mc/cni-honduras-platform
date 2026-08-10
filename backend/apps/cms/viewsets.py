@@ -52,7 +52,7 @@ class DocumentViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = (
             Document.objects.published()
-            .select_related("cover_image")
+            .select_related("cover_image_es", "cover_image_en")
             .order_by(*Document._meta.ordering)
         )
         category = self.request.query_params.get("category")

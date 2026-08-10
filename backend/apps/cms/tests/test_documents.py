@@ -28,7 +28,7 @@ def make_document(**overrides) -> Document:
         "title": "Documento",
         "title_es": "Documento",
         "slug": "documento",
-        "file": pdf_file(),
+        "file_es": pdf_file(),
         "category": DocumentCategory.INSTITUCIONAL,
         "status": PublishStatus.PUBLISHED,
         "published_at": timezone.now(),
@@ -38,7 +38,7 @@ def make_document(**overrides) -> Document:
 
 
 class DocumentModelTests(TestCase):
-    def test_publish_requires_file_or_external_url(self):
+    def test_publish_requires_file_or_external_url_es(self):
         doc = Document(
             title="Sin archivo",
             slug="sin-archivo",
@@ -52,22 +52,22 @@ class DocumentModelTests(TestCase):
         doc = Document(title="Borrador", slug="borrador", status=PublishStatus.DRAFT)
         doc.full_clean()
 
-    def test_rejects_file_and_external_url_together(self):
+    def test_rejects_file_and_external_url_es_together(self):
         doc = Document(
             title="Doble fuente",
             slug="doble-fuente",
-            file=pdf_file(),
-            external_url="https://example.com/doc.pdf",
+            file_es=pdf_file(),
+            external_url_es="https://example.com/doc.pdf",
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
             doc.full_clean()
 
-    def test_external_url_only_sets_file_type_from_extension(self):
+    def test_external_url_es_only_sets_file_type_from_extension(self):
         doc = Document(
             title="Externo",
             slug="externo",
-            external_url="https://example.com/report.pdf",
+            external_url_es="https://example.com/report.pdf",
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
         )
@@ -81,7 +81,7 @@ class DocumentModelTests(TestCase):
         doc = Document(
             title="Grande",
             slug="grande",
-            file=pdf_file(size=DOCUMENT_MAX_BYTES + 1),
+            file_es=pdf_file(size=DOCUMENT_MAX_BYTES + 1),
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
@@ -91,7 +91,7 @@ class DocumentModelTests(TestCase):
         doc = Document(
             title="Exe",
             slug="exe",
-            file=SimpleUploadedFile("bad.exe", b"x", content_type="application/octet-stream"),
+            file_es=SimpleUploadedFile("bad.exe", b"x", content_type="application/octet-stream"),
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
@@ -107,7 +107,7 @@ class DocumentApiTests(TestCase):
             title="Privado",
             title_es="Privado",
             slug="privado",
-            file=pdf_file(),
+            file_es=pdf_file(),
             category=DocumentCategory.TECNICOS,
             status=PublishStatus.DRAFT,
         )
@@ -120,7 +120,7 @@ class DocumentApiTests(TestCase):
             title="Futuro",
             title_es="Futuro",
             slug="futuro",
-            file=pdf_file(),
+            file_es=pdf_file(),
             category=DocumentCategory.BIBLIOTECA,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now() + timezone.timedelta(days=1),
@@ -156,7 +156,7 @@ class DocumentApiTests(TestCase):
             title="Borrador",
             title_es="Borrador",
             slug="borrador-detalle",
-            file=pdf_file(),
+            file_es=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         response = self.client.get("/api/v1/cms/documents/borrador-detalle/")
@@ -184,12 +184,12 @@ class DocumentApiTests(TestCase):
         slugs = [item["slug"] for item in response.json()["results"]]
         self.assertEqual(slugs[:2], ["primero", "segundo"])
 
-    def test_external_url_document_exposed(self):
+    def test_external_url_es_document_exposed(self):
         Document.objects.create(
             title="Externo",
             title_es="Externo",
             slug="externo-api",
-            external_url="https://example.com/study.pdf",
+            external_url_es="https://example.com/study.pdf",
             category=DocumentCategory.ESTUDIOS,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
@@ -252,7 +252,7 @@ class DocumentAdminPublishTests(TestCase):
             title="Con archivo",
             title_es="Con archivo",
             slug="con-archivo",
-            file=pdf_file(),
+            file_es=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -261,12 +261,12 @@ class DocumentAdminPublishTests(TestCase):
         self.assertIsNotNone(doc.published_at)
         self.assertEqual(doc.updated_by, self.user)
 
-    def test_can_publish_with_external_url(self):
+    def test_can_publish_with_external_url_es(self):
         doc = Document.objects.create(
             title="Externo",
             title_es="Externo",
             slug="externo-admin",
-            external_url="https://example.com/study.pdf",
+            external_url_es="https://example.com/study.pdf",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -279,8 +279,8 @@ class DocumentAdminPublishTests(TestCase):
             title="Doble fuente",
             title_es="Doble fuente",
             slug="doble-fuente-admin",
-            file=pdf_file(),
-            external_url="https://example.com/doc.pdf",
+            file_es=pdf_file(),
+            external_url_es="https://example.com/doc.pdf",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -292,14 +292,14 @@ class DocumentAdminPublishTests(TestCase):
             title="Valido archivo",
             title_es="Valido archivo",
             slug="valido-archivo",
-            file=pdf_file(),
+            file_es=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         valid_url = Document.objects.create(
             title="Valido url",
             title_es="Valido url",
             slug="valido-url",
-            external_url="https://example.com/report.pdf",
+            external_url_es="https://example.com/report.pdf",
             status=PublishStatus.DRAFT,
         )
         invalid = Document.objects.create(

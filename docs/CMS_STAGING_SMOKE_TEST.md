@@ -26,68 +26,76 @@ Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → 
 3. **Necesita atención** shows only items with count > 0
 4. Recent activity links open correct editor routes
 
-## 3. News (draft → publish → public)
+## 3. Home hero
 
-1. `/cms/noticias/nueva` — create draft with ES title + content
+1. Open `/es` or `/en` — hero carousel shows banner images (not empty gradient only)
+2. DevTools Network: `GET /api/v1/cms/banners/?placement=home_hero` returns banners with `image.file_url` absolute (https://api-test.cni.hn/…)
+3. Images load without 404 on `test.cni.hn`
+
+## 4. News (draft → publish → public)
+
+1. `/cms/noticias/nueva` — create draft with ES title + content (slug auto-generated)
 2. Save draft — toast success, URL becomes `/cms/noticias/{id}`
-3. Publish — status changes to published
+3. Publish — status changes to published; errors show field name if validation fails
 4. `GET https://api-test.cni.hn/api/v1/cms/news/?lang=es` — item visible by slug
 5. Edit EN tab only — ES title unchanged after save
 
-## 4. Document
+## 5. Document (ES/EN resources)
 
-1. Create draft with external URL OR upload file
-2. Publish
-3. Public list includes document slug
+1. `/cms/documentos/nuevo` — tab Español: título, PDF ES o URL ES, portada ES
+2. Tab English: title, file EN or external URL EN, cover EN (optional until EN content exists)
+3. Publish requires recurso ES; EN resource required only if title/description EN filled
+4. `GET …/documents/{slug}/?lang=es` — returns ES `external_url` / `file_url`
+5. `GET …/documents/{slug}/?lang=en` — returns EN resource when configured; **no** ES PDF fallback
 
-## 5. Banner
+## 6. Banner
 
 1. Create + publish banner with valid date window
 2. Public banners endpoint returns it when active
 
-## 6. Success Story
+## 7. Success Story
 
 1. Create + publish case
 2. Public investment API lists published story
 
-## 7. Sector
+## 8. Sector
 
 1. Create sector, set active
 2. Public `/api/v1/investment/sectors/` includes slug
 
-## 8. Opportunity
+## 9. Opportunity
 
 1. Create with sector, summary, description
 2. Set public — visible on public opportunities list
 
-## 9. Page
+## 10. Page
 
 1. Edit existing page (pages are seeded/protected)
 2. Publish if allowed — verify public pages endpoint if exposed
 
-## 10. Media
+## 11. Media
 
 1. `/cms/multimedia` — upload image
 2. MediaPicker in news editor — search, select, preview, clear, change
 3. No duplicate upload on double-click
 
-## 11. Users & Roles (superuser)
+## 12. Users & Roles (superuser)
 
 1. `/cms/usuarios` — list, create, edit
 2. `/cms/usuarios/roles` — assign permissions, save without 400
 3. Non-superuser cannot access users/roles/config
 
-## 12. Configuración (superuser)
+## 13. Configuración (superuser)
 
 1. `/cms/configuracion` — institutional links CRUD
 2. Non-superuser sees unauthorized state
 
-## 13. Global search
+## 14. Global search
 
 1. Header search — debounced results, click navigates to editor
 2. Errors show feedback (not silent empty)
 
-## 14. UX checks
+## 15. UX checks
 
 - Staging badge visible in header (not in production)
 - Breadcrumbs correct on nested routes (`/cms/noticias/42`)
@@ -96,7 +104,7 @@ Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → 
 - TipTap: bold, lists, link, clear format, undo/redo
 - Responsive: sidebar drawer at 390px, usable list tables
 
-## 15. Regression
+## 16. Regression
 
 - No console errors on dashboard
 - No hardcoded API URLs in network tab

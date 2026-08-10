@@ -2,6 +2,7 @@ export interface MediaAssetLite {
   id: number;
   title: string;
   file: string;
+  file_url?: string | null;
   alt_text: string;
   caption: string;
   media_type: string;
@@ -34,6 +35,7 @@ export interface CmsDocument {
   title: string;
   slug: string;
   file: string;
+  file_url?: string | null;
   external_url: string;
   description: string;
   category: DocumentCategory;
@@ -48,6 +50,7 @@ export interface CmsDocument {
   seo_description: string;
   created_at: string;
   updated_at: string;
+  has_resource?: boolean;
 }
 
 export type LinkSection = "home_interest" | "footer_external" | "tramites" | "top_bar";

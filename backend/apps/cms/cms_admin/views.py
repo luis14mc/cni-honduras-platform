@@ -171,14 +171,15 @@ class DashboardView(APIView):
 
         missing_image = (
             News.all_objects.filter(status=draft, featured_image__isnull=True).count()
-            + Document.all_objects.filter(status=draft, cover_image__isnull=True).count()
+            + Document.all_objects.filter(status=draft, cover_image_es__isnull=True).count()
             + Page.all_objects.filter(status=draft, featured_image__isnull=True).count()
             + SuccessStory.all_objects.filter(status=draft, logo__isnull=True, image="").count()
         )
 
         documents_without_resource = Document.all_objects.filter(status=draft).filter(
-            Q(file="") | Q(file__isnull=True),
-            Q(external_url="") | Q(external_url__isnull=True),
+            Q(file_es="") | Q(file_es__isnull=True),
+        ).filter(
+            Q(external_url_es="") | Q(external_url_es__isnull=True),
         ).count()
 
         incomplete_opportunities = InvestmentOpportunity.objects.filter(

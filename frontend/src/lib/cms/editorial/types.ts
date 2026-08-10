@@ -70,9 +70,12 @@ export interface DocumentItem extends EditorialAudit {
   title_es: string;
   title_en: string;
   slug: string;
-  file: string | null;
-  file_url: string | null;
-  external_url: string;
+  file_es: string | null;
+  file_es_url: string | null;
+  file_en: string | null;
+  file_en_url: string | null;
+  external_url_es: string;
+  external_url_en: string;
   description: string;
   description_es: string;
   description_en: string;
@@ -80,8 +83,10 @@ export interface DocumentItem extends EditorialAudit {
   is_featured: boolean;
   order: number;
   document_date: string | null;
-  cover_image: number | null;
-  cover_image_detail: MediaAsset | null;
+  cover_image_es: number | null;
+  cover_image_en: number | null;
+  cover_image_es_detail: MediaAsset | null;
+  cover_image_en_detail: MediaAsset | null;
   file_type: string;
   file_size_bytes: number | null;
   seo_title: string;

@@ -7,9 +7,10 @@ import mimetypes
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
+from django.utils.text import slugify
 from rest_framework import serializers
 
-from apps.cms.models import Document, News, PublishStatus, SiteBanner
+from apps.cms.models import Document, News, PublishStatus, SiteBanner, unique_slug_for_model
 from apps.investment.models import Sector, SuccessStory
 from apps.media_library.models import MediaAsset
 
@@ -227,6 +228,19 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        if not attrs.get("slug") and not (self.instance and self.instance.slug):
+            title = (
+                attrs.get("title_es")
+                or attrs.get("title")
+                or (getattr(self.instance, "title_es", "") if self.instance else "")
+                or (getattr(self.instance, "title", "") if self.instance else "")
+            )
+            if str(title).strip():
+                attrs["slug"] = unique_slug_for_model(
+                    News,
+                    slugify(str(title)),
+                    getattr(self.instance, "pk", None),
+                )
         instance = self.instance
         status = attrs.get("status", getattr(instance, "status", PublishStatus.DRAFT))
         if status == PublishStatus.PUBLISHED:
@@ -241,8 +255,10 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
 
 class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
-    cover_image_detail = MediaAssetNestedSerializer(source="cover_image", read_only=True)
-    file_url = serializers.SerializerMethodField()
+    cover_image_es_detail = MediaAssetNestedSerializer(source="cover_image_es", read_only=True)
+    cover_image_en_detail = MediaAssetNestedSerializer(source="cover_image_en", read_only=True)
+    file_es_url = serializers.SerializerMethodField()
+    file_en_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
@@ -252,9 +268,12 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "title_es",
             "title_en",
             "slug",
-            "file",
-            "file_url",
-            "external_url",
+            "file_es",
+            "file_es_url",
+            "file_en",
+            "file_en_url",
+            "external_url_es",
+            "external_url_en",
             "description",
             "description_es",
             "description_en",
@@ -262,8 +281,10 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "is_featured",
             "order",
             "document_date",
-            "cover_image",
-            "cover_image_detail",
+            "cover_image_es",
+            "cover_image_es_detail",
+            "cover_image_en",
+            "cover_image_en_detail",
             "file_type",
             "file_size_bytes",
             "seo_title",
@@ -291,26 +312,32 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "created_by_name",
             "updated_by",
             "updated_by_name",
-            "cover_image_detail",
-            "file_url",
+            "cover_image_es_detail",
+            "cover_image_en_detail",
+            "file_es_url",
+            "file_en_url",
         )
         extra_kwargs = {
             "title": {"required": False, "allow_blank": True},
             "slug": {"required": False, "allow_blank": True},
         }
 
-    def get_file_url(self, obj: Document) -> str | None:
-        if obj.file:
-            request = self.context.get("request")
-            url = obj.file.url
-            if request and url.startswith("/"):
-                return request.build_absolute_uri(url)
-            return url
-        return None
+    def _absolute_file_url(self, file_field) -> str | None:
+        if not file_field:
+            return None
+        request = self.context.get("request")
+        url = file_field.url
+        if request and url.startswith("/"):
+            return request.build_absolute_uri(url)
+        return url
+
+    def get_file_es_url(self, obj: Document) -> str | None:
+        return self._absolute_file_url(obj.file_es)
+
+    def get_file_en_url(self, obj: Document) -> str | None:
+        return self._absolute_file_url(obj.file_en)
 
     def _document_candidate(self, attrs: dict) -> Document:
-        """Build an unsaved Document reflecting the post-validation state."""
-
         if self.instance is not None:
             candidate = Document()
             for field in Document._meta.concrete_fields:
@@ -330,12 +357,13 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
 
-        uploaded = attrs.get("file")
-        if uploaded is not None:
-            try:
-                validate_upload_file(uploaded)
-            except DjangoValidationError as exc:
-                raise serializers.ValidationError({"file": exc.messages}) from exc
+        for key in ("file_es", "file_en"):
+            uploaded = attrs.get(key)
+            if uploaded is not None:
+                try:
+                    validate_upload_file(uploaded)
+                except DjangoValidationError as exc:
+                    raise serializers.ValidationError({key: exc.messages}) from exc
 
         candidate = self._document_candidate(attrs)
         try:

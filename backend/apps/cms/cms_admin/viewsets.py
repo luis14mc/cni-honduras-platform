@@ -238,7 +238,9 @@ class NewsAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
 
 @method_decorator(csrf_protect, name="dispatch")
 class DocumentAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
-    queryset = Document.all_objects.select_related("cover_image", "created_by", "updated_by")
+    queryset = Document.all_objects.select_related(
+        "cover_image_es", "cover_image_en", "created_by", "updated_by"
+    )
     serializer_class = DocumentAdminSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     app_label = "cms"
