@@ -30,8 +30,11 @@ export type HomeCopy = {
     error: string;
   };
   testimonials: {
+    eyebrow: string;
     title: string;
+    description: string;
     cta: string;
+    ctaFeatured: string;
     empty: string;
     error: string;
   };
@@ -195,8 +198,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       error: "No pudimos cargar los enlaces de interés. Intente de nuevo más tarde.",
     },
     testimonials: {
+      eyebrow: "Voces del ecosistema",
       title: "Casos de Éxito",
+      description:
+        "Testimonios de inversionistas globales y líderes locales que confiaron en Honduras para hacer crecer sus proyectos.",
       cta: "Ver todos los casos",
+      ctaFeatured: "Ver caso completo",
       empty: "Próximamente publicaremos casos de éxito destacados.",
       error: "No pudimos cargar los casos de éxito. Intente de nuevo más tarde.",
     },
@@ -490,8 +497,12 @@ export const homeCopy: Record<Locale, HomeCopy> = {
       error: "We could not load the links of interest. Please try again later.",
     },
     testimonials: {
+      eyebrow: "Ecosystem voices",
       title: "Success stories",
+      description:
+        "Voices of global investors and local leaders who trusted Honduras to grow their projects.",
       cta: "View all cases",
+      ctaFeatured: "Read full case",
       empty: "Featured success stories will be published here soon.",
       error: "We could not load success stories right now. Please try again later.",
     },
