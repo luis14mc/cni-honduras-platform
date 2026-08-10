@@ -30,6 +30,7 @@ class PageSerializer(serializers.ModelSerializer):
 
 class NewsSerializer(serializers.ModelSerializer):
     featured_image = MediaAssetLiteSerializer(read_only=True)
+    content_blocks = serializers.SerializerMethodField()
 
     class Meta:
         model = News
@@ -39,6 +40,7 @@ class NewsSerializer(serializers.ModelSerializer):
             "slug",
             "summary",
             "content",
+            "content_blocks",
             "featured_image",
             "category",
             "author_name",
@@ -52,13 +54,39 @@ class NewsSerializer(serializers.ModelSerializer):
             "updated_at",
         )
 
+    def get_content_blocks(self, obj: News):
+        from apps.media_library.models import MediaAsset
+
+        request = self.context.get("request")
+        lang = resolve_lang(request) if request is not None else "es"
+        blocks = list(obj.content_blocks_en if lang == "en" else obj.content_blocks_es or [])
+        media_ids = [
+            block.get("media_id")
+            for block in blocks
+            if isinstance(block, dict) and block.get("type") == "image" and block.get("media_id")
+        ]
+        assets = {
+            asset.id: asset
+            for asset in MediaAsset.objects.filter(id__in=media_ids)
+        } if media_ids else {}
+        enriched = []
+        for block in blocks:
+            if not isinstance(block, dict):
+                continue
+            item = dict(block)
+            if item.get("type") == "image" and item.get("media_id") in assets:
+                asset = assets[item["media_id"]]
+                item["preview_url"] = absolute_file_url(asset.file, self.context)
+                if not item.get("alt"):
+                    item["alt"] = asset.alt_text or ""
+            enriched.append(item)
+        return enriched
+
 
 class DocumentSerializer(serializers.ModelSerializer):
-    """Expose locale-resolved file/URL/cover without ES→EN fallback for files."""
+    """One language version per row; filter by Document.language via viewset."""
 
-    cover_image = serializers.SerializerMethodField()
-    file = serializers.SerializerMethodField()
-    external_url = serializers.SerializerMethodField()
+    cover_image = MediaAssetLiteSerializer(read_only=True)
     file_url = serializers.SerializerMethodField()
     has_resource = serializers.SerializerMethodField()
 
@@ -66,6 +94,8 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = Document
         fields = (
             "id",
+            "language",
+            "resource_key",
             "title",
             "slug",
             "file",
@@ -87,43 +117,11 @@ class DocumentSerializer(serializers.ModelSerializer):
             "has_resource",
         )
 
-    def _lang(self) -> str:
-        request = self.context.get("request")
-        if request is None:
-            return "es"
-        return resolve_lang(request)
-
-    def _file_field(self, obj: Document):
-        return obj.file_en if self._lang() == "en" else obj.file_es
-
-    def _external_value(self, obj: Document) -> str:
-        return obj.external_url_en if self._lang() == "en" else obj.external_url_es
-
-    def _cover(self, obj: Document):
-        return obj.cover_image_en if self._lang() == "en" else obj.cover_image_es
-
-    def get_file(self, obj: Document) -> str:
-        field = self._file_field(obj)
-        return field.name if field else ""
-
     def get_file_url(self, obj: Document) -> str | None:
-        field = self._file_field(obj)
-        return absolute_file_url(field, self.context) if field else None
-
-    def get_external_url(self, obj: Document) -> str:
-        return self._external_value(obj) or ""
-
-    def get_cover_image(self, obj: Document):
-        cover = self._cover(obj)
-        if not cover:
-            return None
-        return MediaAssetLiteSerializer(cover, context=self.context).data
+        return absolute_file_url(obj.file, self.context) if obj.file else None
 
     def get_has_resource(self, obj: Document) -> bool:
-        lang = self._lang()
-        if lang == "en":
-            return obj._has_uploaded_file("en") or obj._has_external_url("en")
-        return obj._has_uploaded_file("es") or obj._has_external_url("es")
+        return obj.has_resource()
 
 
 class InstitutionalLinkSerializer(serializers.ModelSerializer):

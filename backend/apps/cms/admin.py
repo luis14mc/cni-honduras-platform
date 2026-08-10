@@ -129,6 +129,8 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
     list_display = (
         "id",
         "title",
+        "language",
+        "resource_key",
         "category",
         "status",
         "is_featured",
@@ -137,8 +139,8 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
         "cover_image_preview",
         "updated_at",
     )
-    list_filter = ("status", "category", "is_featured", "published_at")
-    search_fields = ("title", "slug", "description", "seo_title", "seo_description")
+    list_filter = ("status", "language", "category", "is_featured", "published_at")
+    search_fields = ("title", "slug", "resource_key", "description", "seo_title", "seo_description")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = (
         "created_at",
@@ -153,10 +155,25 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
     )
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order", "document_date")}),
-        ("Archivo ES", {"fields": ("file_es", "external_url_es", "file_type", "file_size_bytes", "file_link")}),
-        ("Archivo EN", {"fields": ("file_en", "external_url_en")}),
-        ("Portada", {"fields": ("cover_image_es", "cover_image_en", "cover_image_preview")}),
+        (
+            None,
+            {
+                "fields": (
+                    "language",
+                    "resource_key",
+                    "title",
+                    "slug",
+                    "status",
+                    "published_at",
+                    "category",
+                    "is_featured",
+                    "order",
+                    "document_date",
+                )
+            },
+        ),
+        ("Recurso", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
+        ("Portada", {"fields": ("cover_image", "cover_image_preview")}),
         ("Descripción", {"fields": ("description",)}),
         ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
@@ -164,24 +181,24 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
 
     @admin.display(description="Vista previa")
     def cover_image_preview(self, obj):
-        if obj.cover_image_es_id and obj.cover_image_es.file:
+        if obj.cover_image_id and obj.cover_image.file:
             return format_html(
                 '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
-                obj.cover_image_es.file.url,
+                obj.cover_image.file.url,
             )
         return "—"
 
     @admin.display(description="Enlace")
     def file_link(self, obj):
-        if obj.file_es:
+        if obj.file:
             return format_html(
-                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo ES</a>',
-                obj.file_es.url,
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>',
+                obj.file.url,
             )
-        if obj.external_url_es:
+        if obj.external_url:
             return format_html(
-                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa ES</a>',
-                obj.external_url_es,
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa</a>',
+                obj.external_url,
             )
         return "—"
 

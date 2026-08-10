@@ -26,37 +26,47 @@ Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → 
 3. **Necesita atención** shows only items with count > 0
 4. Recent activity links open correct editor routes
 
-## 3. Home hero
+## 3. Home hero (estático — no CMS)
 
-1. Open `/es` or `/en` — hero carousel shows banner images (not empty gradient only)
-2. DevTools Network: `GET /api/v1/cms/banners/?placement=home_hero` returns banners with `image.file_url` absolute (https://api-test.cni.hn/…)
-3. Images load without 404 on `test.cni.hn`
+1. Open `/es` o `/en` — el carousel muestra las 4 imágenes estructurales:
+   `/images/hero/home/{agricultura,turismo,energia,logistica}.webp`
+2. Confirmar que **no** se llama `GET …/banners/?placement=home_hero` desde la home
+3. El título del hero viene de i18n (`homeCopy`), no de SiteBanner
+4. SiteBanner puede seguir existiendo para `site_top` / otros usos, pero **no** alimenta el hero estructural
 
-## 4. News (draft → publish → public)
+## 4. News (bloques ES/EN → publish → público)
 
-1. `/cms/noticias/nueva` — create draft with ES title + content (slug auto-generated)
-2. Save draft — toast success, URL becomes `/cms/noticias/{id}`
-3. Publish — status changes to published; errors show field name if validation fails
-4. `GET https://api-test.cni.hn/api/v1/cms/news/?lang=es` — item visible by slug
-5. Edit EN tab only — ES title unchanged after save
+1. `/cms/noticias/nueva` — título ES + bloques (párrafo, heading, imagen, lista…)
+2. Guardar draft — slug auto-generado
+3. Tab English — bloques EN independientes; guardar sin borrar ES
+4. Publish — status published + `published_at`
+5. Público `/es/prensa/{slug}` renderiza bloques; `/en/…` usa bloques EN
+6. Editar solo ES — `content_blocks_en` intacto
 
-## 5. Document (ES/EN resources)
+## 5. Document (registros independientes por idioma)
 
-1. `/cms/documentos/nuevo` — tab Español: título, PDF ES o URL ES, portada ES
-2. Tab English: title, file EN or external URL EN, cover EN (optional until EN content exists)
-3. Publish requires recurso ES; EN resource required only if title/description EN filled
-4. `GET …/documents/{slug}/?lang=es` — returns ES `external_url` / `file_url`
-5. `GET …/documents/{slug}/?lang=en` — returns EN resource when configured; **no** ES PDF fallback
+1. Crear documento `language=es` con PDF o URL + portada + `resource_key`
+2. Acción **Crear versión en inglés** — mismo `resource_key`, slug distinto, **sin** copiar PDF
+3. Completar título/archivo EN en el registro hermano
+4. Listado muestra badges ES/EN, grupo/recurso, portada
+5. Público `?lang=es` solo filas ES; `?lang=en` solo filas EN
+6. Documentos legacy migrados → `language=es`
 
 ## 6. Banner
 
-1. Create + publish banner with valid date window
+1. Create + publish banner with valid date window (`site_top` / footer — no hero estructural)
 2. Public banners endpoint returns it when active
 
 ## 7. Success Story
 
 1. Create + publish case
-2. Public investment API lists published story
+2. MediaPicker independiente: Logo, Imagen principal, Foto de la persona
+3. Campos `person_name` / `person_role`
+4. Public investment API lists published story
+
+## Scope note — Opportunities
+
+Opportunity **no** se rediseña en este sprint. Mantener estable; revisión posterior con ejemplos de negocio.
 
 ## 8. Sector
 

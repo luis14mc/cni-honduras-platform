@@ -138,6 +138,8 @@ class News(EditorialModel):
     slug = models.SlugField(max_length=255, unique=True)
     summary = models.TextField(blank=True)
     content = models.TextField(blank=True)
+    content_blocks_es = models.JSONField(default=list, blank=True)
+    content_blocks_en = models.JSONField(default=list, blank=True)
     featured_image = models.ForeignKey(
         MediaAsset,
         on_delete=models.SET_NULL,
@@ -181,25 +183,42 @@ class DocumentCategory(models.TextChoices):
     ESTUDIOS = "estudios", "Estudios"
 
 
+class DocumentLanguage(models.TextChoices):
+    ES = "es", "Español"
+    EN = "en", "English"
+
+
 DOCUMENT_ALLOWED_EXTENSIONS = ["pdf", "docx", "xlsx", "pptx", "zip"]
 DOCUMENT_MAX_BYTES = 25 * 1024 * 1024  # 25 MB
 
 
 class Document(EditorialModel):
+    """
+    One Document row per language version.
+
+    Pair ES/EN with the same ``resource_key``. Assets are never shared across
+    languages — create a sibling row for EN instead of dual file_es/file_en.
+    """
+
+    language = models.CharField(
+        max_length=5,
+        choices=DocumentLanguage.choices,
+        default=DocumentLanguage.ES,
+        db_index=True,
+    )
+    resource_key = models.SlugField(
+        max_length=255,
+        db_index=True,
+        help_text="Stable key shared by ES/EN versions of the same resource.",
+    )
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
-    file_es = models.FileField(
+    file = models.FileField(
         upload_to="documents/%Y/%m/",
         blank=True,
         validators=[FileExtensionValidator(DOCUMENT_ALLOWED_EXTENSIONS)],
     )
-    file_en = models.FileField(
-        upload_to="documents/%Y/%m/",
-        blank=True,
-        validators=[FileExtensionValidator(DOCUMENT_ALLOWED_EXTENSIONS)],
-    )
-    external_url_es = models.URLField(blank=True, default="")
-    external_url_en = models.URLField(blank=True, default="")
+    external_url = models.URLField(blank=True, default="")
     description = models.TextField(blank=True)
     category = models.CharField(
         max_length=32,
@@ -210,19 +229,12 @@ class Document(EditorialModel):
     is_featured = models.BooleanField(default=False, db_index=True)
     order = models.PositiveIntegerField(default=0)
     document_date = models.DateField(null=True, blank=True)
-    cover_image_es = models.ForeignKey(
+    cover_image = models.ForeignKey(
         MediaAsset,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="cover_es_documents",
-    )
-    cover_image_en = models.ForeignKey(
-        MediaAsset,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="cover_en_documents",
+        related_name="cover_documents",
     )
     file_type = models.CharField(max_length=16, blank=True, default="")
     file_size_bytes = models.PositiveIntegerField(null=True, blank=True)
@@ -233,88 +245,61 @@ class Document(EditorialModel):
         ordering = ["order", "-published_at", "-created_at", "-id"]
         verbose_name = "Document"
         verbose_name_plural = "Documents"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["resource_key", "language"],
+                name="cms_document_unique_resource_language",
+            ),
+        ]
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.title} [{self.language}]"
 
-    def _has_uploaded_file(self, lang: str = "es") -> bool:
-        field = self.file_es if lang == "es" else self.file_en
-        return bool(field and getattr(field, "name", ""))
+    def has_uploaded_file(self) -> bool:
+        return bool(self.file and getattr(self.file, "name", ""))
 
-    def _has_external_url(self, lang: str = "es") -> bool:
-        value = self.external_url_es if lang == "es" else self.external_url_en
-        return bool(value and value.strip())
+    def has_external_url(self) -> bool:
+        return bool(self.external_url and self.external_url.strip())
 
-    def _has_en_content(self) -> bool:
-        return bool((self.title_en or "").strip()) or bool((self.description_en or "").strip())
+    def has_resource(self) -> bool:
+        return self.has_uploaded_file() or self.has_external_url()
 
     def clean(self):
         super().clean()
         errors: dict[str, str] = {}
 
-        for lang in ("es", "en"):
-            has_file = self._has_uploaded_file(lang)
-            has_external = self._has_external_url(lang)
-            file_key = "file_es" if lang == "es" else "file_en"
-            url_key = "external_url_es" if lang == "es" else "external_url_en"
-            if has_file and has_external:
-                errors[file_key] = (
-                    "Seleccione un archivo subido o una URL externa, no ambos."
-                )
-                errors[url_key] = (
-                    "Seleccione un archivo subido o una URL externa, no ambos."
+        if self.has_uploaded_file() and self.has_external_url():
+            errors["file"] = "Seleccione un archivo subido o una URL externa, no ambos."
+            errors["external_url"] = "Seleccione un archivo subido o una URL externa, no ambos."
+
+        if self.has_uploaded_file():
+            if hasattr(self.file, "size") and self.file.size and self.file.size > DOCUMENT_MAX_BYTES:
+                errors["file"] = (
+                    f"El archivo excede el límite de "
+                    f"{DOCUMENT_MAX_BYTES // (1024 * 1024)} MB."
                 )
 
-            if has_file:
-                field = self.file_es if lang == "es" else self.file_en
-                if hasattr(field, "size") and field.size and field.size > DOCUMENT_MAX_BYTES:
-                    errors[file_key] = (
-                        f"El archivo excede el límite de "
-                        f"{DOCUMENT_MAX_BYTES // (1024 * 1024)} MB."
-                    )
+        if self.status == PublishStatus.PUBLISHED and not self.has_resource():
+            errors["file"] = "Un documento publicado debe tener archivo o URL externa."
 
-        if self.status == PublishStatus.PUBLISHED:
-            if not self._has_uploaded_file("es") and not self._has_external_url("es"):
-                errors["file_es"] = (
-                    "Un documento publicado debe tener archivo o URL externa en español."
-                )
-            if self._has_en_content() and not self._has_uploaded_file("en") and not self._has_external_url("en"):
-                errors["file_en"] = (
-                    "Si hay contenido en inglés, debe proporcionar recurso EN (archivo o URL)."
-                )
+        if not (self.resource_key or "").strip():
+            errors["resource_key"] = "resource_key es obligatorio."
 
         if errors:
             raise ValidationError(errors)
 
     def _sync_file_metadata(self) -> None:
-        if self._has_uploaded_file("es"):
-            name = getattr(self.file_es, "name", "") or ""
+        if self.has_uploaded_file():
+            name = getattr(self.file, "name", "") or ""
             ext = os.path.splitext(name)[1].lstrip(".").lower()
             if ext:
                 self.file_type = ext
-            if hasattr(self.file_es, "size") and self.file_es.size:
-                self.file_size_bytes = self.file_es.size
+            if hasattr(self.file, "size") and self.file.size:
+                self.file_size_bytes = self.file.size
             return
 
-        if self._has_external_url("es"):
-            path = urlparse(self.external_url_es).path
-            ext = os.path.splitext(path)[1].lstrip(".").lower()
-            if ext in DOCUMENT_ALLOWED_EXTENSIONS:
-                self.file_type = ext
-            self.file_size_bytes = None
-            return
-
-        if self._has_uploaded_file("en"):
-            name = getattr(self.file_en, "name", "") or ""
-            ext = os.path.splitext(name)[1].lstrip(".").lower()
-            if ext:
-                self.file_type = ext
-            if hasattr(self.file_en, "size") and self.file_en.size:
-                self.file_size_bytes = self.file_en.size
-            return
-
-        if self._has_external_url("en"):
-            path = urlparse(self.external_url_en).path
+        if self.has_external_url():
+            path = urlparse(self.external_url).path
             ext = os.path.splitext(path)[1].lstrip(".").lower()
             if ext in DOCUMENT_ALLOWED_EXTENSIONS:
                 self.file_type = ext
@@ -322,9 +307,11 @@ class Document(EditorialModel):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            title = (self.title_es or self.title or "").strip()
+            title = (self.title or "").strip()
             if title:
                 self.slug = unique_slug_for_model(Document, slugify(title), self.pk)
+        if not self.resource_key and self.slug:
+            self.resource_key = self.slug
         self._sync_file_metadata()
         super().save(*args, **kwargs)
 

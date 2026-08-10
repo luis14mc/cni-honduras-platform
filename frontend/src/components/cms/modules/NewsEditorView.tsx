@@ -13,7 +13,7 @@ import {
 } from "@/src/components/cms/editor/CmsFormField";
 import { CmsLocaleTabs, localeField, type CmsLocale } from "@/src/components/cms/editor/CmsLocaleTabs";
 import { CmsMediaField } from "@/src/components/cms/editor/CmsMediaPicker";
-import { CmsRichTextEditor } from "@/src/components/cms/editor/CmsRichTextEditor";
+import { NewsBlockEditor } from "@/src/components/cms/editor/NewsBlockEditor";
 import { CmsSaveBar } from "@/src/components/cms/editor/CmsSaveBar";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsLoadingState, CmsErrorState } from "@/src/components/cms/states";
@@ -28,6 +28,7 @@ import {
   type NewsWritePayload,
 } from "@/src/lib/cms/editorial/news";
 import type { MediaAsset, NewsItem } from "@/src/lib/cms/editorial/types";
+import { ensureBlocks, type NewsBlock } from "@/src/lib/newsBlocks";
 import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
 
@@ -46,6 +47,8 @@ interface NewsFormState {
   summary_en: string;
   content_es: string;
   content_en: string;
+  content_blocks_es: NewsBlock[];
+  content_blocks_en: NewsBlock[];
   category: string;
   author_name: string;
   source: string;
@@ -65,6 +68,8 @@ const emptyForm = (): NewsFormState => ({
   summary_en: "",
   content_es: "",
   content_en: "",
+  content_blocks_es: [],
+  content_blocks_en: [],
   category: "news",
   author_name: "",
   source: "CNI",
@@ -85,6 +90,8 @@ function newsToForm(item: NewsItem): NewsFormState {
     summary_en: item.summary_en ?? "",
     content_es: item.content_es ?? "",
     content_en: item.content_en ?? "",
+    content_blocks_es: ensureBlocks(item.content_blocks_es),
+    content_blocks_en: ensureBlocks(item.content_blocks_en),
     category: item.category,
     author_name: item.author_name ?? "",
     source: item.source ?? "CNI",
@@ -106,6 +113,8 @@ function formToPayload(form: NewsFormState): NewsWritePayload {
     summary_en: form.summary_en,
     content_es: form.content_es,
     content_en: form.content_en,
+    content_blocks_es: form.content_blocks_es,
+    content_blocks_en: form.content_blocks_en,
     category: form.category,
     author_name: form.author_name,
     source: form.source,
@@ -252,7 +261,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
 
   const titleField = localeField("title", locale) as keyof NewsFormState;
   const summaryField = localeField("summary", locale) as keyof NewsFormState;
-  const contentField = localeField("content", locale) as keyof NewsFormState;
+  const blocksField = locale === "en" ? "content_blocks_en" : "content_blocks_es";
 
   const userCanSave = isNew ? canAdd(user, "cms", "news") : canChange(user, "cms", "news");
   const userCanPublish = canPublish(user);
@@ -338,11 +347,10 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
             />
           </CmsFormField>
 
-          <CmsFormField label="Contenido">
-            <CmsRichTextEditor
-              value={form[contentField] as string}
-              onChange={(html) => patch({ [contentField]: html })}
-              placeholder="Escriba el contenido…"
+          <CmsFormField label={locale === "es" ? "Contenido (bloques ES)" : "Content (EN blocks)"}>
+            <NewsBlockEditor
+              blocks={form[blocksField]}
+              onChange={(next) => patch({ [blocksField]: next })}
             />
           </CmsFormField>
         </div>

@@ -17,6 +17,7 @@ export interface NewsArticle {
   slug: string;
   summary: string;
   content: string;
+  content_blocks?: import("@/src/lib/newsBlocks").NewsBlock[];
   featured_image: MediaAssetLite | null;
   category: NewsCategory;
   author_name: string;
@@ -32,6 +33,8 @@ export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "es
 
 export interface CmsDocument {
   id: number;
+  language?: "es" | "en";
+  resource_key?: string;
   title: string;
   slug: string;
   file: string;

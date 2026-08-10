@@ -13,6 +13,7 @@ from apps.cms.models import (
     DOCUMENT_MAX_BYTES,
     Document,
     DocumentCategory,
+    DocumentLanguage,
     News,
     NewsCategory,
     PublishStatus,
@@ -28,20 +29,26 @@ def make_document(**overrides) -> Document:
         "title": "Documento",
         "title_es": "Documento",
         "slug": "documento",
-        "file_es": pdf_file(),
+        "language": DocumentLanguage.ES,
+        "resource_key": "documento",
+        "file": pdf_file(),
         "category": DocumentCategory.INSTITUCIONAL,
         "status": PublishStatus.PUBLISHED,
         "published_at": timezone.now(),
     }
     data.update(overrides)
+    if "resource_key" not in overrides:
+        data["resource_key"] = data["slug"]
     return Document.objects.create(**data)
 
 
 class DocumentModelTests(TestCase):
-    def test_publish_requires_file_or_external_url_es(self):
+    def test_publish_requires_file_or_external_url(self):
         doc = Document(
             title="Sin archivo",
             slug="sin-archivo",
+            language=DocumentLanguage.ES,
+            resource_key="sin-archivo",
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
         )
@@ -49,25 +56,35 @@ class DocumentModelTests(TestCase):
             doc.full_clean()
 
     def test_draft_allows_missing_file_and_url(self):
-        doc = Document(title="Borrador", slug="borrador", status=PublishStatus.DRAFT)
+        doc = Document(
+            title="Borrador",
+            slug="borrador",
+            language=DocumentLanguage.ES,
+            resource_key="borrador",
+            status=PublishStatus.DRAFT,
+        )
         doc.full_clean()
 
-    def test_rejects_file_and_external_url_es_together(self):
+    def test_rejects_file_and_external_url_together(self):
         doc = Document(
             title="Doble fuente",
             slug="doble-fuente",
-            file_es=pdf_file(),
-            external_url_es="https://example.com/doc.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="doble-fuente",
+            file=pdf_file(),
+            external_url="https://example.com/doc.pdf",
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
             doc.full_clean()
 
-    def test_external_url_es_only_sets_file_type_from_extension(self):
+    def test_external_url_only_sets_file_type_from_extension(self):
         doc = Document(
             title="Externo",
             slug="externo",
-            external_url_es="https://example.com/report.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="externo",
+            external_url="https://example.com/report.pdf",
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
         )
@@ -81,7 +98,9 @@ class DocumentModelTests(TestCase):
         doc = Document(
             title="Grande",
             slug="grande",
-            file_es=pdf_file(size=DOCUMENT_MAX_BYTES + 1),
+            language=DocumentLanguage.ES,
+            resource_key="grande",
+            file=pdf_file(size=DOCUMENT_MAX_BYTES + 1),
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
@@ -91,7 +110,21 @@ class DocumentModelTests(TestCase):
         doc = Document(
             title="Exe",
             slug="exe",
-            file_es=SimpleUploadedFile("bad.exe", b"x", content_type="application/octet-stream"),
+            language=DocumentLanguage.ES,
+            resource_key="exe",
+            file=SimpleUploadedFile("bad.exe", b"x", content_type="application/octet-stream"),
+            status=PublishStatus.DRAFT,
+        )
+        with self.assertRaises(ValidationError):
+            doc.full_clean()
+
+    def test_resource_key_required(self):
+        doc = Document(
+            title="Sin key",
+            slug="sin-key",
+            language=DocumentLanguage.ES,
+            resource_key="",
+            external_url="https://example.com/a.pdf",
             status=PublishStatus.DRAFT,
         )
         with self.assertRaises(ValidationError):
@@ -107,7 +140,9 @@ class DocumentApiTests(TestCase):
             title="Privado",
             title_es="Privado",
             slug="privado",
-            file_es=pdf_file(),
+            language=DocumentLanguage.ES,
+            resource_key="privado",
+            file=pdf_file(),
             category=DocumentCategory.TECNICOS,
             status=PublishStatus.DRAFT,
         )
@@ -120,7 +155,9 @@ class DocumentApiTests(TestCase):
             title="Futuro",
             title_es="Futuro",
             slug="futuro",
-            file_es=pdf_file(),
+            language=DocumentLanguage.ES,
+            resource_key="futuro",
+            file=pdf_file(),
             category=DocumentCategory.BIBLIOTECA,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now() + timezone.timedelta(days=1),
@@ -135,17 +172,76 @@ class DocumentApiTests(TestCase):
         slugs = [item["slug"] for item in response.json()["results"]]
         self.assertIn("visible", slugs)
 
+    def test_public_api_filters_by_language(self):
+        Document.objects.create(
+            title="Guía ES",
+            title_es="Guía ES",
+            slug="guia-es",
+            language=DocumentLanguage.ES,
+            resource_key="guia",
+            external_url="https://example.com/es.pdf",
+            category=DocumentCategory.BIBLIOTECA,
+            status=PublishStatus.PUBLISHED,
+            published_at=timezone.now(),
+        )
+        Document.objects.create(
+            title="Guide EN",
+            title_en="Guide EN",
+            slug="guia-en",
+            language=DocumentLanguage.EN,
+            resource_key="guia",
+            external_url="https://example.com/en.pdf",
+            category=DocumentCategory.BIBLIOTECA,
+            status=PublishStatus.PUBLISHED,
+            published_at=timezone.now(),
+        )
+        es = self.client.get("/api/v1/cms/documents/?lang=es")
+        en = self.client.get("/api/v1/cms/documents/?lang=en")
+        es_slugs = [item["slug"] for item in es.json()["results"]]
+        en_slugs = [item["slug"] for item in en.json()["results"]]
+        self.assertIn("guia-es", es_slugs)
+        self.assertNotIn("guia-en", es_slugs)
+        self.assertIn("guia-en", en_slugs)
+        self.assertNotIn("guia-es", en_slugs)
+
     def test_detail_by_slug(self):
         make_document(
             slug="detalle-doc",
             title="Detalle ES",
             title_es="Detalle ES",
-            title_en="Detail EN",
-            description_en="Summary EN",
         )
-        response = self.client.get("/api/v1/cms/documents/detalle-doc/?lang=en")
+        response = self.client.get("/api/v1/cms/documents/detalle-doc/?lang=es")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["title"], "Detail EN")
+        self.assertEqual(response.json()["title"], "Detalle ES")
+        self.assertEqual(response.json()["language"], "es")
+
+    def test_detail_en_uses_en_row_slug(self):
+        Document.objects.create(
+            title="Detalle ES",
+            title_es="Detalle ES",
+            slug="detalle-es",
+            language=DocumentLanguage.ES,
+            resource_key="detalle",
+            external_url="https://example.com/es.pdf",
+            status=PublishStatus.PUBLISHED,
+            published_at=timezone.now(),
+        )
+        Document.objects.create(
+            title="Detail EN",
+            title_en="Detail EN",
+            slug="detalle-en",
+            language=DocumentLanguage.EN,
+            resource_key="detalle",
+            external_url="https://example.com/en.pdf",
+            status=PublishStatus.PUBLISHED,
+            published_at=timezone.now(),
+        )
+        response = self.client.get("/api/v1/cms/documents/detalle-en/?lang=en")
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["title"], "Detail EN")
+        self.assertEqual(payload["language"], "en")
+        self.assertEqual(payload["external_url"], "https://example.com/en.pdf")
 
     def test_detail_not_found(self):
         response = self.client.get("/api/v1/cms/documents/no-existe/")
@@ -156,7 +252,9 @@ class DocumentApiTests(TestCase):
             title="Borrador",
             title_es="Borrador",
             slug="borrador-detalle",
-            file_es=pdf_file(),
+            language=DocumentLanguage.ES,
+            resource_key="borrador-detalle",
+            file=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         response = self.client.get("/api/v1/cms/documents/borrador-detalle/")
@@ -184,12 +282,14 @@ class DocumentApiTests(TestCase):
         slugs = [item["slug"] for item in response.json()["results"]]
         self.assertEqual(slugs[:2], ["primero", "segundo"])
 
-    def test_external_url_es_document_exposed(self):
+    def test_external_url_document_exposed(self):
         Document.objects.create(
             title="Externo",
             title_es="Externo",
             slug="externo-api",
-            external_url_es="https://example.com/study.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="externo-api",
+            external_url="https://example.com/study.pdf",
             category=DocumentCategory.ESTUDIOS,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
@@ -200,6 +300,7 @@ class DocumentApiTests(TestCase):
         self.assertEqual(payload["external_url"], "https://example.com/study.pdf")
         self.assertFalse(payload["file"])
         self.assertEqual(payload["file_type"], "pdf")
+        self.assertTrue(payload["has_resource"])
 
     def test_internal_file_document_exposed(self):
         doc = make_document(slug="interno-api")
@@ -208,6 +309,7 @@ class DocumentApiTests(TestCase):
         payload = response.json()
         self.assertTrue(payload["file"])
         self.assertEqual(payload["external_url"], "")
+        self.assertTrue(payload["has_resource"])
 
 
 def admin_request(user):
@@ -240,6 +342,8 @@ class DocumentAdminPublishTests(TestCase):
             title="Sin fuente",
             title_es="Sin fuente",
             slug="sin-fuente",
+            language=DocumentLanguage.ES,
+            resource_key="sin-fuente",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -252,7 +356,9 @@ class DocumentAdminPublishTests(TestCase):
             title="Con archivo",
             title_es="Con archivo",
             slug="con-archivo",
-            file_es=pdf_file(),
+            language=DocumentLanguage.ES,
+            resource_key="con-archivo",
+            file=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -261,12 +367,14 @@ class DocumentAdminPublishTests(TestCase):
         self.assertIsNotNone(doc.published_at)
         self.assertEqual(doc.updated_by, self.user)
 
-    def test_can_publish_with_external_url_es(self):
+    def test_can_publish_with_external_url(self):
         doc = Document.objects.create(
             title="Externo",
             title_es="Externo",
             slug="externo-admin",
-            external_url_es="https://example.com/study.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="externo-admin",
+            external_url="https://example.com/study.pdf",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -279,8 +387,10 @@ class DocumentAdminPublishTests(TestCase):
             title="Doble fuente",
             title_es="Doble fuente",
             slug="doble-fuente-admin",
-            file_es=pdf_file(),
-            external_url_es="https://example.com/doc.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="doble-fuente-admin",
+            file=pdf_file(),
+            external_url="https://example.com/doc.pdf",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(pk=doc.pk))
@@ -292,20 +402,26 @@ class DocumentAdminPublishTests(TestCase):
             title="Valido archivo",
             title_es="Valido archivo",
             slug="valido-archivo",
-            file_es=pdf_file(),
+            language=DocumentLanguage.ES,
+            resource_key="valido-archivo",
+            file=pdf_file(),
             status=PublishStatus.DRAFT,
         )
         valid_url = Document.objects.create(
             title="Valido url",
             title_es="Valido url",
             slug="valido-url",
-            external_url_es="https://example.com/report.pdf",
+            language=DocumentLanguage.ES,
+            resource_key="valido-url",
+            external_url="https://example.com/report.pdf",
             status=PublishStatus.DRAFT,
         )
         invalid = Document.objects.create(
             title="Invalido",
             title_es="Invalido",
             slug="invalido",
+            language=DocumentLanguage.ES,
+            resource_key="invalido",
             status=PublishStatus.DRAFT,
         )
         self._publish(Document.objects.filter(

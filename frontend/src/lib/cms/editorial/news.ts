@@ -15,6 +15,8 @@ export type NewsWritePayload = Partial<
     | "content"
     | "content_es"
     | "content_en"
+    | "content_blocks_es"
+    | "content_blocks_en"
     | "featured_image"
     | "category"
     | "author_name"

@@ -189,6 +189,8 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "content",
             "content_es",
             "content_en",
+            "content_blocks_es",
+            "content_blocks_en",
             "featured_image",
             "featured_image_detail",
             "category",
@@ -255,25 +257,22 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
 
 class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
-    cover_image_es_detail = MediaAssetNestedSerializer(source="cover_image_es", read_only=True)
-    cover_image_en_detail = MediaAssetNestedSerializer(source="cover_image_en", read_only=True)
-    file_es_url = serializers.SerializerMethodField()
-    file_en_url = serializers.SerializerMethodField()
+    cover_image_detail = MediaAssetNestedSerializer(source="cover_image", read_only=True)
+    file_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
         fields = (
             "id",
+            "language",
+            "resource_key",
             "title",
             "title_es",
             "title_en",
             "slug",
-            "file_es",
-            "file_es_url",
-            "file_en",
-            "file_en_url",
-            "external_url_es",
-            "external_url_en",
+            "file",
+            "file_url",
+            "external_url",
             "description",
             "description_es",
             "description_en",
@@ -281,10 +280,8 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "is_featured",
             "order",
             "document_date",
-            "cover_image_es",
-            "cover_image_es_detail",
-            "cover_image_en",
-            "cover_image_en_detail",
+            "cover_image",
+            "cover_image_detail",
             "file_type",
             "file_size_bytes",
             "seo_title",
@@ -312,14 +309,13 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "created_by_name",
             "updated_by",
             "updated_by_name",
-            "cover_image_es_detail",
-            "cover_image_en_detail",
-            "file_es_url",
-            "file_en_url",
+            "cover_image_detail",
+            "file_url",
         )
         extra_kwargs = {
             "title": {"required": False, "allow_blank": True},
             "slug": {"required": False, "allow_blank": True},
+            "resource_key": {"required": False, "allow_blank": True},
         }
 
     def _absolute_file_url(self, file_field) -> str | None:
@@ -331,11 +327,8 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             return request.build_absolute_uri(url)
         return url
 
-    def get_file_es_url(self, obj: Document) -> str | None:
-        return self._absolute_file_url(obj.file_es)
-
-    def get_file_en_url(self, obj: Document) -> str | None:
-        return self._absolute_file_url(obj.file_en)
+    def get_file_url(self, obj: Document) -> str | None:
+        return self._absolute_file_url(obj.file)
 
     def _document_candidate(self, attrs: dict) -> Document:
         if self.instance is not None:
@@ -357,13 +350,34 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
 
-        for key in ("file_es", "file_en"):
-            uploaded = attrs.get(key)
-            if uploaded is not None:
-                try:
-                    validate_upload_file(uploaded)
-                except DjangoValidationError as exc:
-                    raise serializers.ValidationError({key: exc.messages}) from exc
+        uploaded = attrs.get("file")
+        if uploaded is not None:
+            try:
+                validate_upload_file(uploaded)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError({"file": exc.messages}) from exc
+
+        # Sync title into language-specific modeltranslation column when present.
+        language = attrs.get("language") or getattr(self.instance, "language", "es")
+        title = attrs.get("title")
+        if title is not None:
+            if language == "en":
+                attrs.setdefault("title_en", title)
+            else:
+                attrs.setdefault("title_es", title)
+        description = attrs.get("description")
+        if description is not None:
+            if language == "en":
+                attrs.setdefault("description_en", description)
+            else:
+                attrs.setdefault("description_es", description)
+
+        if not attrs.get("resource_key") and not (self.instance and self.instance.resource_key):
+            slug = attrs.get("slug") or (self.instance.slug if self.instance else "")
+            title_for_key = attrs.get("title") or (self.instance.title if self.instance else "")
+            key_source = slug or slugify(str(title_for_key))
+            if key_source:
+                attrs["resource_key"] = key_source
 
         candidate = self._document_candidate(attrs)
         try:
@@ -452,6 +466,8 @@ class SectorNestedSerializer(serializers.ModelSerializer):
 
 class SuccessStoryAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     logo_detail = MediaAssetNestedSerializer(source="logo", read_only=True)
+    featured_image_detail = MediaAssetNestedSerializer(source="featured_image", read_only=True)
+    person_photo_detail = MediaAssetNestedSerializer(source="person_photo", read_only=True)
     sector_detail = SectorNestedSerializer(source="sector", read_only=True)
     image_url = serializers.SerializerMethodField()
 
@@ -476,6 +492,12 @@ class SuccessStoryAdminSerializer(EditorialAuditMixin, serializers.ModelSerializ
             "image_url",
             "logo",
             "logo_detail",
+            "featured_image",
+            "featured_image_detail",
+            "person_photo",
+            "person_photo_detail",
+            "person_name",
+            "person_role",
             "country_origin",
             "investment_amount",
             "jobs_generated",
@@ -506,6 +528,8 @@ class SuccessStoryAdminSerializer(EditorialAuditMixin, serializers.ModelSerializ
             "updated_by",
             "updated_by_name",
             "logo_detail",
+            "featured_image_detail",
+            "person_photo_detail",
             "sector_detail",
             "image_url",
         )

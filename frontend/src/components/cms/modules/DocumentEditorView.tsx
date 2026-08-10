@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CmsConfirmDialog } from "@/src/components/cms/editor/CmsConfirmDialog";
 import { CmsEditorLayout } from "@/src/components/cms/editor/CmsEditorLayout";
@@ -11,7 +11,6 @@ import {
   cmsTextareaClass,
   CmsFormField,
 } from "@/src/components/cms/editor/CmsFormField";
-import { CmsLocaleTabs, localeField, type CmsLocale } from "@/src/components/cms/editor/CmsLocaleTabs";
 import { CmsMediaField } from "@/src/components/cms/editor/CmsMediaPicker";
 import { CmsSaveBar } from "@/src/components/cms/editor/CmsSaveBar";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
@@ -20,6 +19,7 @@ import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { CmsApiError } from "@/src/lib/cms/api";
 import {
   createDocument,
+  createEnglishDocumentVersion,
   deleteDocument,
   getDocument,
   publishDocument,
@@ -38,94 +38,75 @@ const CATEGORY_OPTIONS = [
 ];
 
 interface DocFormState {
-  title_es: string;
-  title_en: string;
-  description_es: string;
-  description_en: string;
+  language: "es" | "en";
+  resource_key: string;
+  title: string;
+  slug: string;
+  description: string;
   category: string;
-  external_url_es: string;
-  external_url_en: string;
+  external_url: string;
   document_date: string;
   is_featured: boolean;
-  cover_image_es: number | null;
-  cover_image_en: number | null;
-  cover_image_es_detail: MediaAsset | null;
-  cover_image_en_detail: MediaAsset | null;
+  cover_image: number | null;
+  cover_image_detail: MediaAsset | null;
   status: DocumentItem["status"];
   updated_at: string | null;
   updated_by_name: string | null;
-  file_es_url: string | null;
-  file_en_url: string | null;
+  file_url: string | null;
 }
 
 const emptyForm = (): DocFormState => ({
-  title_es: "",
-  title_en: "",
-  description_es: "",
-  description_en: "",
+  language: "es",
+  resource_key: "",
+  title: "",
+  slug: "",
+  description: "",
   category: "biblioteca",
-  external_url_es: "",
-  external_url_en: "",
+  external_url: "",
   document_date: "",
   is_featured: false,
-  cover_image_es: null,
-  cover_image_en: null,
-  cover_image_es_detail: null,
-  cover_image_en_detail: null,
+  cover_image: null,
+  cover_image_detail: null,
   status: "draft",
   updated_at: null,
   updated_by_name: null,
-  file_es_url: null,
-  file_en_url: null,
+  file_url: null,
 });
 
 function docToForm(item: DocumentItem): DocFormState {
   return {
-    title_es: item.title_es ?? "",
-    title_en: item.title_en ?? "",
-    description_es: item.description_es ?? "",
-    description_en: item.description_en ?? "",
+    language: item.language || "es",
+    resource_key: item.resource_key || "",
+    title: item.title || item.title_es || item.title_en || "",
+    slug: item.slug || "",
+    description: item.description || item.description_es || item.description_en || "",
     category: item.category,
-    external_url_es: item.external_url_es ?? "",
-    external_url_en: item.external_url_en ?? "",
+    external_url: item.external_url || "",
     document_date: item.document_date ?? "",
     is_featured: item.is_featured,
-    cover_image_es: item.cover_image_es,
-    cover_image_en: item.cover_image_en,
-    cover_image_es_detail: item.cover_image_es_detail,
-    cover_image_en_detail: item.cover_image_en_detail,
+    cover_image: item.cover_image,
+    cover_image_detail: item.cover_image_detail,
     status: item.status,
     updated_at: item.updated_at,
     updated_by_name: item.updated_by_name,
-    file_es_url: item.file_es_url,
-    file_en_url: item.file_en_url,
+    file_url: item.file_url,
   };
 }
 
 function formToPayload(form: DocFormState): DocumentWritePayload {
   return {
-    title_es: form.title_es,
-    title_en: form.title_en,
-    description_es: form.description_es,
-    description_en: form.description_en,
+    language: form.language,
+    resource_key: form.resource_key || undefined,
+    title: form.title,
+    slug: form.slug || undefined,
+    description: form.description,
     category: form.category,
-    external_url_es: form.external_url_es,
-    external_url_en: form.external_url_en,
+    external_url: form.external_url,
     document_date: form.document_date || null,
     is_featured: form.is_featured,
-    cover_image_es: form.cover_image_es,
-    cover_image_en: form.cover_image_en,
+    cover_image: form.cover_image,
     status: "draft",
   };
-}
-
-function toastApiError(toast: ReturnType<typeof useCmsToast>, err: unknown, fallback: string) {
-  if (err instanceof CmsApiError) {
-    const fieldKey = Object.keys(err.fieldErrors)[0];
-    toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
-  } else {
-    toast.error(fallback);
-  }
 }
 
 interface DocumentEditorViewProps {
@@ -137,18 +118,18 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
   const { user } = useCmsAuth();
   const toast = useCmsToast();
   const isNew = documentId === undefined;
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const [locale, setLocale] = useState<CmsLocale>("es");
   const [form, setForm] = useState<DocFormState>(emptyForm);
   const { dirty, markClean } = useEditorDirty(form);
-  const [fileEs, setFileEs] = useState<File | null>(null);
-  const [fileEn, setFileEn] = useState<File | null>(null);
   const [loading, setLoading] = useState(!isNew);
   const [loadError, setLoadError] = useState(false);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [creatingEn, setCreatingEn] = useState(false);
 
   useEffect(() => {
     if (isNew) markClean(emptyForm());
@@ -159,6 +140,7 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
     let cancelled = false;
     (async () => {
       setLoading(true);
+      setLoadError(false);
       try {
         const item = await getDocument(documentId);
         if (!cancelled) {
@@ -183,47 +165,53 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
 
   const persist = async (): Promise<number> => {
     const payload = formToPayload(form);
-    const files = { file_es: fileEs ?? undefined, file_en: fileEn ?? undefined };
+    const files = pendingFile ? { file: pendingFile } : {};
     if (isNew) {
       const created = await createDocument(payload, files);
+      setPendingFile(null);
       return created.id;
     }
-    await updateDocument(documentId!, payload, files);
-    return documentId!;
+    const updated = await updateDocument(documentId!, payload, files);
+    setPendingFile(null);
+    return updated.id;
   };
 
   const handleSaveDraft = async () => {
+    if (form.external_url.trim() && pendingFile) {
+      toast.error("Elija archivo o URL externa, no ambos.");
+      return;
+    }
     setSaving(true);
     try {
       const id = await persist();
       toast.success("Borrador guardado.");
-      if (isNew) router.replace(`/cms/documentos/${id}`);
-      else {
+      if (isNew) {
+        router.replace(`/cms/documentos/${id}`);
+      } else {
         const refreshed = await getDocument(id);
         const next = docToForm(refreshed);
         setForm(next);
         markClean(next);
-        setFileEs(null);
-        setFileEn(null);
       }
     } catch (err) {
-      toastApiError(toast, err, "No se pudo guardar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo guardar.");
+      }
     } finally {
       setSaving(false);
     }
   };
 
   const handlePublish = async () => {
-    if (!form.title_es.trim()) {
-      toast.error("El título en español es obligatorio.");
-      setLocale("es");
+    if (!form.title.trim()) {
+      toast.error("El título es obligatorio para publicar.");
       return;
     }
-    const hasEsResource =
-      Boolean(fileEs) || Boolean(form.file_es_url) || Boolean(form.external_url_es.trim());
-    if (!hasEsResource) {
-      toast.error("Suba un archivo en español o indique URL externa ES antes de publicar.");
-      setLocale("es");
+    if (!form.file_url && !pendingFile && !form.external_url.trim()) {
+      toast.error("Un documento publicado necesita archivo o URL externa.");
       return;
     }
     setPublishing(true);
@@ -236,9 +224,28 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
       toast.success("Documento publicado.");
       if (isNew) router.replace(`/cms/documentos/${id}`);
     } catch (err) {
-      toastApiError(toast, err, "No se pudo publicar.");
+      if (err instanceof CmsApiError) {
+        const fieldKey = Object.keys(err.fieldErrors)[0];
+        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
+      } else {
+        toast.error("No se pudo publicar.");
+      }
     } finally {
       setPublishing(false);
+    }
+  };
+
+  const handleCreateEn = async () => {
+    if (!documentId || form.language !== "es") return;
+    setCreatingEn(true);
+    try {
+      const sibling = await createEnglishDocumentVersion(documentId);
+      toast.success("Versión EN creada (sin copiar PDF).");
+      router.push(`/cms/documentos/${sibling.id}`);
+    } catch (err) {
+      toast.error(err instanceof CmsApiError ? err.message : "No se pudo crear la versión EN.");
+    } finally {
+      setCreatingEn(false);
     }
   };
 
@@ -260,16 +267,16 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
   if (loading) return <CmsLoadingState label="Cargando documento…" />;
   if (loadError) return <CmsErrorState onRetry={() => router.refresh()} />;
 
-  const titleField = localeField("title", locale) as keyof DocFormState;
-  const descField = localeField("description", locale) as keyof DocFormState;
-  const externalField = locale === "es" ? "external_url_es" : "external_url_en";
-  const fileUrl = locale === "es" ? form.file_es_url : form.file_en_url;
-  const pendingFile = locale === "es" ? fileEs : fileEn;
+  const userCanSave = isNew ? canAdd(user, "cms", "document") : canChange(user, "cms", "document");
+  const userCanPublish = canPublish(user);
+  const userCanDelete = !isNew && canDelete(user, "cms", "document");
+  const langLabel = form.language === "en" ? "English" : "Español";
 
   return (
     <>
       <CmsEditorLayout
         title={isNew ? "Nuevo documento" : "Editar documento"}
+        description={isNew ? "Una versión por idioma (ES o EN)." : form.title}
         backHref="/cms/documentos"
         dirty={dirty}
         sidebar={
@@ -278,6 +285,12 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
             updatedAt={form.updated_at}
             updatedBy={form.updated_by_name}
           >
+            <CmsMediaField
+              label={form.language === "en" ? "Cover EN" : "Portada"}
+              asset={form.cover_image_detail}
+              onSelect={(asset) => patch({ cover_image: asset.id, cover_image_detail: asset })}
+              onClear={() => patch({ cover_image: null, cover_image_detail: null })}
+            />
             <CmsFormField label="Categoría" htmlFor="doc-category">
               <select
                 id="doc-category"
@@ -301,89 +314,124 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
               />
               Destacado
             </label>
+            {!isNew && form.language === "es" ? (
+              <button
+                type="button"
+                disabled={creatingEn}
+                onClick={() => void handleCreateEn()}
+                className="mt-2 w-full rounded-lg border border-[#252A58]/20 px-3 py-2 text-sm font-semibold text-[#252A58] hover:bg-slate-50 disabled:opacity-50"
+              >
+                {creatingEn ? "Creando…" : "Crear versión en inglés"}
+              </button>
+            ) : null}
           </CmsEditorSidebar>
         }
       >
-        <CmsLocaleTabs locale={locale} onChange={setLocale} />
+        <div className="space-y-4 rounded-xl border border-[#334E88]/10 bg-white p-5">
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-[#252A58] px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+              {form.language === "en" ? "EN" : "ES"} · {langLabel}
+            </span>
+            {form.resource_key ? (
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                resource_key: {form.resource_key}
+              </span>
+            ) : null}
+          </div>
 
-        <div className="mt-4 space-y-4 rounded-xl border border-[#334E88]/10 bg-white p-5">
-          <CmsFormField label="Título" required={locale === "es"} htmlFor="doc-title">
+          {isNew ? (
+            <CmsFormField label="Idioma" htmlFor="doc-lang">
+              <select
+                id="doc-lang"
+                value={form.language}
+                onChange={(e) => patch({ language: e.target.value === "en" ? "en" : "es" })}
+                className={cmsSelectClass}
+              >
+                <option value="es">Español</option>
+                <option value="en">English</option>
+              </select>
+            </CmsFormField>
+          ) : null}
+
+          <CmsFormField label="resource_key / grupo" htmlFor="doc-key">
+            <input
+              id="doc-key"
+              value={form.resource_key}
+              onChange={(e) => patch({ resource_key: e.target.value })}
+              className={cmsInputClass}
+              placeholder="estudio-turismo-2026"
+              disabled={!isNew && Boolean(form.resource_key)}
+            />
+          </CmsFormField>
+
+          <CmsFormField label="Título" required htmlFor="doc-title">
             <input
               id="doc-title"
-              value={form[titleField] as string}
-              onChange={(e) => patch({ [titleField]: e.target.value })}
+              value={form.title}
+              onChange={(e) => patch({ title: e.target.value })}
               className={cmsInputClass}
             />
           </CmsFormField>
+
+          <CmsFormField label="Slug" htmlFor="doc-slug">
+            <input
+              id="doc-slug"
+              value={form.slug}
+              onChange={(e) => patch({ slug: e.target.value })}
+              className={cmsInputClass}
+              placeholder="se genera desde el título si se deja vacío"
+            />
+          </CmsFormField>
+
           <CmsFormField label="Descripción" htmlFor="doc-desc">
             <textarea
               id="doc-desc"
-              value={form[descField] as string}
-              onChange={(e) => patch({ [descField]: e.target.value })}
+              value={form.description}
+              onChange={(e) => patch({ description: e.target.value })}
               className={cmsTextareaClass}
               rows={4}
             />
           </CmsFormField>
 
           <CmsFormField
-            label={locale === "es" ? "Archivo PDF (español)" : "File (English)"}
+            label={form.language === "en" ? "File (EN PDF)" : "Archivo PDF (ES)"}
             htmlFor="doc-file"
           >
-            {fileUrl && !pendingFile ? (
+            <input
+              id="doc-file"
+              ref={fileRef}
+              type="file"
+              accept=".pdf,.docx,.xlsx,.pptx,.zip"
+              onChange={(e) => setPendingFile(e.target.files?.[0] ?? null)}
+              className="block w-full text-sm"
+            />
+            {form.file_url && !pendingFile ? (
               <a
-                href={fileUrl}
+                href={form.file_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mb-2 block text-sm text-[#334E88] underline"
+                className="mt-2 inline-block text-sm text-[#35A963] underline"
               >
                 Ver archivo actual
               </a>
             ) : null}
-            <input
-              id="doc-file"
-              type="file"
-              accept=".pdf,.docx,.xlsx,.pptx,.zip"
-              onChange={(e) => {
-                const f = e.target.files?.[0] ?? null;
-                if (locale === "es") setFileEs(f);
-                else setFileEn(f);
-              }}
-              className="w-full text-sm"
-            />
           </CmsFormField>
 
           <CmsFormField
-            label={locale === "es" ? "URL externa (español)" : "External URL (English)"}
+            label={form.language === "en" ? "External URL (EN)" : "URL externa (ES)"}
             htmlFor="doc-url"
           >
             <input
               id="doc-url"
-              value={form[externalField]}
-              onChange={(e) => patch({ [externalField]: e.target.value })}
+              value={form.external_url}
+              onChange={(e) => patch({ external_url: e.target.value })}
               className={cmsInputClass}
               placeholder="https://"
             />
-            <p className="mt-1 text-xs text-[#252A58]/50">
-              Use archivo o URL externa por idioma, no ambos.
-            </p>
           </CmsFormField>
-
-          <CmsMediaField
-            label={locale === "es" ? "Portada (español)" : "Cover (English)"}
-            asset={
-              locale === "es" ? form.cover_image_es_detail : form.cover_image_en_detail
-            }
-            onSelect={(asset) =>
-              locale === "es"
-                ? patch({ cover_image_es: asset.id, cover_image_es_detail: asset })
-                : patch({ cover_image_en: asset.id, cover_image_en_detail: asset })
-            }
-            onClear={() =>
-              locale === "es"
-                ? patch({ cover_image_es: null, cover_image_es_detail: null })
-                : patch({ cover_image_en: null, cover_image_en_detail: null })
-            }
-          />
+          <p className="text-xs text-slate-500">
+            Use archivo o URL externa para este idioma — no ambos.
+          </p>
         </div>
 
         <CmsSaveBar
@@ -392,16 +440,21 @@ export function DocumentEditorView({ documentId }: DocumentEditorViewProps) {
           onDelete={() => setConfirmDelete(true)}
           saving={saving}
           publishing={publishing}
-          canSave={isNew ? canAdd(user, "cms", "document") : canChange(user, "cms", "document")}
-          canPublish={canPublish(user)}
-          canDelete={!isNew && canDelete(user, "cms", "document")}
+          canSave={userCanSave}
+          canPublish={userCanPublish}
+          canDelete={userCanDelete}
+          statusLabel={
+            form.status === "published"
+              ? "Este documento está publicado."
+              : "Los cambios se guardan como borrador."
+          }
         />
       </CmsEditorLayout>
 
       <CmsConfirmDialog
         open={confirmDelete}
         title="Eliminar documento"
-        description="¿Confirma que desea eliminar este documento?"
+        description="¿Confirma que desea eliminar esta versión del documento?"
         confirmLabel="Eliminar"
         variant="danger"
         loading={deleting}

@@ -111,6 +111,10 @@ export interface SuccessStory {
   content: string;
   image: string | null;
   logo: import("@/src/types/cms").MediaAssetLite | null;
+  featured_image?: import("@/src/types/cms").MediaAssetLite | null;
+  person_photo?: import("@/src/types/cms").MediaAssetLite | null;
+  person_name?: string;
+  person_role?: string;
   country_origin: string;
   investment_amount: string | null;
   jobs_generated: number | null;

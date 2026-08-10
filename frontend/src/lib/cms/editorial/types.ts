@@ -47,6 +47,8 @@ export interface NewsItem extends EditorialAudit {
   content: string;
   content_es: string;
   content_en: string;
+  content_blocks_es: unknown[];
+  content_blocks_en: unknown[];
   featured_image: number | null;
   featured_image_detail: MediaAsset | null;
   category: string;
@@ -66,16 +68,15 @@ export interface NewsItem extends EditorialAudit {
 
 export interface DocumentItem extends EditorialAudit {
   id: number;
+  language: "es" | "en";
+  resource_key: string;
   title: string;
   title_es: string;
   title_en: string;
   slug: string;
-  file_es: string | null;
-  file_es_url: string | null;
-  file_en: string | null;
-  file_en_url: string | null;
-  external_url_es: string;
-  external_url_en: string;
+  file: string | null;
+  file_url: string | null;
+  external_url: string;
   description: string;
   description_es: string;
   description_en: string;
@@ -83,10 +84,8 @@ export interface DocumentItem extends EditorialAudit {
   is_featured: boolean;
   order: number;
   document_date: string | null;
-  cover_image_es: number | null;
-  cover_image_en: number | null;
-  cover_image_es_detail: MediaAsset | null;
-  cover_image_en_detail: MediaAsset | null;
+  cover_image: number | null;
+  cover_image_detail: MediaAsset | null;
   file_type: string;
   file_size_bytes: number | null;
   seo_title: string;
@@ -289,6 +288,12 @@ export interface SuccessStoryItem extends EditorialAudit {
   image_url: string | null;
   logo: number | null;
   logo_detail: MediaAsset | null;
+  featured_image: number | null;
+  featured_image_detail: MediaAsset | null;
+  person_photo: number | null;
+  person_photo_detail: MediaAsset | null;
+  person_name: string;
+  person_role: string;
   country_origin: string;
   investment_amount: string;
   jobs_generated: number | null;

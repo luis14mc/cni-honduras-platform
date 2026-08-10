@@ -60,16 +60,51 @@ export function DocumentsListView() {
 
   const columns: CmsColumn<DocumentItem>[] = [
     {
+      key: "cover",
+      header: "Portada",
+      render: (row) =>
+        row.cover_image_detail?.file_url || row.cover_image_detail?.file ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={row.cover_image_detail.file_url || row.cover_image_detail.file || ""}
+            alt=""
+            className="h-10 w-10 rounded object-cover"
+          />
+        ) : (
+          <span className="text-xs text-slate-400">—</span>
+        ),
+    },
+    {
       key: "title",
       header: "Título",
       render: (row) => (
-        <span className="font-medium">{row.title_es || row.title || "Sin título"}</span>
+        <span className="font-medium">{row.title || row.title_es || "Sin título"}</span>
+      ),
+    },
+    {
+      key: "language",
+      header: "Idioma",
+      render: (row) => (
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+            row.language === "en" ? "bg-sky-100 text-sky-800" : "bg-emerald-100 text-emerald-800"
+          }`}
+        >
+          {(row.language || "es").toUpperCase()}
+        </span>
       ),
     },
     {
       key: "category",
       header: "Categoría",
       render: (row) => row.category,
+    },
+    {
+      key: "resource_key",
+      header: "Grupo / Recurso",
+      render: (row) => (
+        <span className="font-mono text-xs text-slate-600">{row.resource_key || "—"}</span>
+      ),
     },
     {
       key: "status",

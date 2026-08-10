@@ -50,9 +50,13 @@ class DocumentViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     lookup_field = "slug"
 
     def get_queryset(self):
+        from apps.core.api import resolve_lang
+
+        lang = resolve_lang(self.request)
         queryset = (
             Document.objects.published()
-            .select_related("cover_image_es", "cover_image_en")
+            .filter(language=lang)
+            .select_related("cover_image")
             .order_by(*Document._meta.ordering)
         )
         category = self.request.query_params.get("category")
