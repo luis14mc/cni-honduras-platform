@@ -248,7 +248,7 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Doc",
                 "slug": "doc-1",
-                "external_url": "https://example.com/file.pdf",
+                "external_url_es": "https://example.com/file.pdf",
                 "status": PublishStatus.DRAFT,
             },
             token=token,
@@ -278,8 +278,8 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Ambos",
                 "slug": "doc-both",
-                "external_url": "https://example.com/a.pdf",
-                "file": upload,
+                "external_url_es": "https://example.com/a.pdf",
+                "file_es": upload,
                 "status": PublishStatus.DRAFT,
             },
             format="multipart",
@@ -310,7 +310,7 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "PDF local",
                 "slug": "doc-pdf",
-                "file": upload,
+                "file_es": upload,
                 "status": PublishStatus.DRAFT,
             },
             format="multipart",
@@ -327,7 +327,7 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             {
                 "title_es": "Malicioso",
                 "slug": "doc-bad",
-                "file": upload,
+                "file_es": upload,
                 "status": PublishStatus.DRAFT,
             },
             format="multipart",
@@ -347,7 +347,7 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
                 {
                     "title_es": "Grande",
                     "slug": "doc-big",
-                    "file": upload,
+                    "file_es": upload,
                     "status": PublishStatus.DRAFT,
                 },
                 format="multipart",
@@ -361,13 +361,13 @@ class CMSAdminDocumentTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         doc = Document.all_objects.create(
             title="X",
             slug="x-doc",
-            external_url="https://example.com/a.pdf",
+            external_url_es="https://example.com/a.pdf",
             status=PublishStatus.DRAFT,
         )
         upload = SimpleUploadedFile("a.pdf", b"%PDF", content_type="application/pdf")
         res = self.client.patch(
             reverse("api-v1:cms-admin:documents-detail", args=[doc.id]),
-            {"file": upload, "external_url": "https://example.com/a.pdf"},
+            {"file_es": upload, "external_url_es": "https://example.com/a.pdf"},
             format="multipart",
             HTTP_X_CSRFTOKEN=token,
         )

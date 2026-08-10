@@ -280,7 +280,7 @@ class CMSAdminDashboardTests(CMSAdminTestCase):
         News.objects.create(title="Borrador", slug="draft", status=PublishStatus.DRAFT)
         Document.objects.create(
             title="Doc pub", slug="doc-pub", status=PublishStatus.PUBLISHED,
-            published_at=now, external_url="https://example.com/a.pdf",
+            published_at=now, external_url_es="https://example.com/a.pdf",
         )
         SiteBanner.objects.create(
             title="Banner", placement=BannerPlacement.SITE_TOP,

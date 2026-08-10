@@ -115,7 +115,7 @@ class CMSPublicIntegrationSmokeS2T4Tests(CMSAdminEditorialTestMixin, CMSAdminTes
             {
                 "title_es": "Doc smoke",
                 "slug": "smoke-s2t4-doc",
-                "external_url": "https://example.com/smoke.pdf",
+                "external_url_es": "https://example.com/smoke.pdf",
                 "status": PublishStatus.DRAFT,
             },
             token=token,

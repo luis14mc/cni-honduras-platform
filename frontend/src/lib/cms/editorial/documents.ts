@@ -1,4 +1,5 @@
-import { CMS_API_BASE, clearInMemoryCsrfToken, cmsDelete, cmsGet, cmsPatch, cmsPost, ensureCsrfToken } from "@/src/lib/cms/api";
+import { CmsApiError, CMS_API_BASE, clearInMemoryCsrfToken, cmsDelete, cmsGet, cmsPatch, cmsPost, ensureCsrfToken } from "@/src/lib/cms/api";
+import { parseCmsErrorBody } from "@/src/lib/cms/errors";
 import type { DocumentItem, ListParams, PaginatedResponse } from "@/src/lib/cms/editorial/types";
 import { buildListQuery } from "@/src/lib/cms/editorial/types";
 
@@ -9,7 +10,8 @@ export type DocumentWritePayload = Partial<
     | "title_es"
     | "title_en"
     | "slug"
-    | "external_url"
+    | "external_url_es"
+    | "external_url_en"
     | "description"
     | "description_es"
     | "description_en"
@@ -17,7 +19,8 @@ export type DocumentWritePayload = Partial<
     | "is_featured"
     | "order"
     | "document_date"
-    | "cover_image"
+    | "cover_image_es"
+    | "cover_image_en"
     | "seo_title"
     | "seo_title_es"
     | "seo_title_en"
@@ -27,6 +30,11 @@ export type DocumentWritePayload = Partial<
     | "status"
   >
 >;
+
+export type DocumentUploadFiles = {
+  file_es?: File;
+  file_en?: File;
+};
 
 export async function listDocuments(
   params: ListParams = {},
@@ -40,10 +48,10 @@ export async function getDocument(id: number): Promise<DocumentItem> {
 
 export async function createDocument(
   payload: DocumentWritePayload,
-  file?: File,
+  files: DocumentUploadFiles = {},
 ): Promise<DocumentItem> {
-  if (file) {
-    return uploadDocumentMultipart("POST", "/documents/", payload, file);
+  if (files.file_es || files.file_en) {
+    return uploadDocumentMultipart("POST", "/documents/", payload, files);
   }
   return cmsPost<DocumentItem>("/documents/", { status: "draft", ...payload });
 }
@@ -51,10 +59,10 @@ export async function createDocument(
 export async function updateDocument(
   id: number,
   payload: DocumentWritePayload,
-  file?: File,
+  files: DocumentUploadFiles = {},
 ): Promise<DocumentItem> {
-  if (file) {
-    return uploadDocumentMultipart("PATCH", `/documents/${id}/`, payload, file);
+  if (files.file_es || files.file_en) {
+    return uploadDocumentMultipart("PATCH", `/documents/${id}/`, payload, files);
   }
   return cmsPatch<DocumentItem>(`/documents/${id}/`, payload);
 }
@@ -63,11 +71,12 @@ async function uploadDocumentMultipart(
   method: "POST" | "PATCH",
   path: string,
   payload: DocumentWritePayload,
-  file: File,
+  files: DocumentUploadFiles,
 ): Promise<DocumentItem> {
   const csrf = await ensureCsrfToken();
   const form = new FormData();
-  form.append("file", file);
+  if (files.file_es) form.append("file_es", files.file_es);
+  if (files.file_en) form.append("file_en", files.file_en);
   for (const [key, value] of Object.entries(payload)) {
     if (value !== undefined && value !== null) {
       form.append(key, String(value));
@@ -83,17 +92,15 @@ async function uploadDocumentMultipart(
   });
 
   if (!response.ok) {
-    if (response.status === 403) {
-      clearInMemoryCsrfToken();
-    }
-    let detail = response.statusText;
+    if (response.status === 403) clearInMemoryCsrfToken();
+    let body: unknown = null;
     try {
-      const body = await response.json();
-      if (body?.detail) detail = body.detail;
+      body = await response.json();
     } catch {
       // ignore
     }
-    throw new Error(detail);
+    const parsed = parseCmsErrorBody(body, response.status);
+    throw new CmsApiError(parsed.message, response.status, parsed.fieldErrors);
   }
   return response.json() as Promise<DocumentItem>;
 }

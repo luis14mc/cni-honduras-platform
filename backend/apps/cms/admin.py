@@ -154,8 +154,9 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
 
     fieldsets = (
         (None, {"fields": ("title", "slug", "status", "published_at", "category", "is_featured", "order", "document_date")}),
-        ("Archivo", {"fields": ("file", "external_url", "file_type", "file_size_bytes", "file_link")}),
-        ("Portada", {"fields": ("cover_image", "cover_image_preview")}),
+        ("Archivo ES", {"fields": ("file_es", "external_url_es", "file_type", "file_size_bytes", "file_link")}),
+        ("Archivo EN", {"fields": ("file_en", "external_url_en")}),
+        ("Portada", {"fields": ("cover_image_es", "cover_image_en", "cover_image_preview")}),
         ("Descripción", {"fields": ("description",)}),
         ("SEO", {"fields": ("seo_title", "seo_description")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
@@ -163,21 +164,24 @@ class DocumentAdmin(EditorialAdminMixin, TranslationAdmin):
 
     @admin.display(description="Vista previa")
     def cover_image_preview(self, obj):
-        if obj.cover_image_id and obj.cover_image.file:
+        if obj.cover_image_es_id and obj.cover_image_es.file:
             return format_html(
                 '<img src="{}" alt="" style="max-height:120px;max-width:240px;border-radius:4px;" />',
-                obj.cover_image.file.url,
+                obj.cover_image_es.file.url,
             )
         return "—"
 
     @admin.display(description="Enlace")
     def file_link(self, obj):
-        if obj.file:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>', obj.file.url)
-        if obj.external_url:
+        if obj.file_es:
             return format_html(
-                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa</a>',
-                obj.external_url,
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir archivo ES</a>',
+                obj.file_es.url,
+            )
+        if obj.external_url_es:
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener noreferrer">Abrir URL externa ES</a>',
+                obj.external_url_es,
             )
         return "—"
 
