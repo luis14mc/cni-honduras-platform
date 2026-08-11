@@ -88,10 +88,19 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 
 ## 7. Success Story
 
-1. Create + publish case
-2. MediaPicker independiente: Logo, Imagen principal, Foto de la persona
-3. Campos `person_name` / `person_role`
-4. Public investment API lists published story
+1. Crear borrador incompleto (EN vacío OK) → guardar sin despublicar luego
+2. MediaPicker independiente: Logo ≠ Featured ≠ Person photo
+3. Campos `person_name` / `person_role` + sector
+4. Publicar → `status=published` + `published_at`
+5. Guardar contenido publicado **no** vuelve a draft
+6. Listado CMS: miniatura, empresa, acciones publicar/archivar/despublicar
+7. Home: cover=`featured_image`, avatar=`person_photo`, logo separado (sin redesign)
+8. Detalle `/portafolio/casos/[slug]`: hero estático; featured en cuerpo; testimonio con foto
+9. `?lang=es|en` resuelve campos traducibles del mismo registro
+
+### QA mañana (S2-T7)
+- CMS create → 3 medias → publish → home featured → detalle ES/EN
+- Verificar que logo nunca aparece como cover ni person_photo como logo
 
 ## Scope note — Opportunities
 

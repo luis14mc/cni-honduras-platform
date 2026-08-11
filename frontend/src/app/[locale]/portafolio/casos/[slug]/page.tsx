@@ -15,7 +15,11 @@ import {
   successStoryDetailHref,
   successStoryHasCover,
   successStoryHasLogo,
+  successStoryHasPersonPhoto,
   successStoryLogoImage,
+  successStoryPersonPhoto,
+  successStoryPersonRole,
+  successStoryDisplayName,
 } from "@/src/lib/cmsSuccessStories";
 
 const copy = {
@@ -53,11 +57,15 @@ export async function generateMetadata({
       slugPath: `/portafolio/casos/${slug}`,
       title: story.title,
       description: story.summary,
-      image: story.image,
+      image: successStoryCoverImage(story) || undefined,
     });
   } catch {
     return {};
   }
+}
+
+function isRichHtml(content: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(content);
 }
 
 function paragraphs(content: string): string[] {
@@ -93,6 +101,7 @@ export default async function CasoDetallePage({
   }
 
   const body = paragraphs(story.content);
+  const rich = isRichHtml(story.content);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
@@ -128,6 +137,12 @@ export default async function CasoDetallePage({
             {c.back}
           </Link>
           <h1 className="text-4xl font-extrabold text-white md:text-5xl">{story.title}</h1>
+          {story.company_name ? (
+            <p className="mt-2 text-sm font-semibold uppercase tracking-widest text-white/70">
+              {story.company_name}
+              {story.sector ? ` · ${story.sector.name}` : ""}
+            </p>
+          ) : null}
           {story.summary && <p className="mt-4 text-lg text-white/80">{story.summary}</p>}
         </div>
       </header>
@@ -144,11 +159,18 @@ export default async function CasoDetallePage({
             />
           </div>
         ) : null}
-        <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
-          {(body.length > 0 ? body : [story.content]).map((item) => (
-            <p key={item.slice(0, 48)}>{item}</p>
-          ))}
-        </div>
+        {rich ? (
+          <div
+            className="prose prose-lg max-w-none text-[#0E7A7C] prose-headings:text-[#252A58]"
+            dangerouslySetInnerHTML={{ __html: story.content }}
+          />
+        ) : (
+          <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
+            {(body.length > 0 ? body : [story.content]).map((item) => (
+              <p key={item.slice(0, 48)}>{item}</p>
+            ))}
+          </div>
+        )}
 
         <dl className="mt-10 grid gap-4 rounded-xl bg-white p-8 shadow-sm sm:grid-cols-2">
           {story.company_name && (
@@ -183,12 +205,28 @@ export default async function CasoDetallePage({
           )}
         </dl>
 
-        {story.testimonial_quote && (
-          <blockquote className="mt-10 border-l-4 border-[#35A963] bg-white p-8 italic text-[#252A58]">
-            &ldquo;{story.testimonial_quote}&rdquo;
-            {story.testimonial_author && (
-              <footer className="mt-4 not-italic text-sm text-[#0E7A7C]">— {story.testimonial_author}</footer>
-            )}
+        {(story.testimonial_quote || successStoryHasPersonPhoto(story)) && (
+          <blockquote className="mt-10 flex gap-5 border-l-4 border-[#35A963] bg-white p-8 text-[#252A58]">
+            {successStoryHasPersonPhoto(story) ? (
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full">
+                <Image
+                  src={successStoryPersonPhoto(story)!}
+                  alt={successStoryDisplayName(story)}
+                  fill
+                  className="object-cover"
+                  sizes="64px"
+                />
+              </div>
+            ) : null}
+            <div>
+              {story.testimonial_quote ? (
+                <p className="italic">&ldquo;{story.testimonial_quote}&rdquo;</p>
+              ) : null}
+              <footer className="mt-4 not-italic text-sm text-[#0E7A7C]">
+                — {successStoryDisplayName(story)}
+                {successStoryPersonRole(story) ? `, ${successStoryPersonRole(story)}` : ""}
+              </footer>
+            </div>
           </blockquote>
         )}
       </article>

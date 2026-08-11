@@ -83,7 +83,7 @@ class SuccessStoryViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = (
             SuccessStory.objects.published()
-            .select_related("sector", "logo")
+            .select_related("sector", "logo", "featured_image", "person_photo")
             .order_by(*SuccessStory._meta.ordering)
         )
         sector_slug = self.request.query_params.get("sector")
