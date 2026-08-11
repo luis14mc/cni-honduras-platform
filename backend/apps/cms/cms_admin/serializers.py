@@ -323,6 +323,9 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     cover_image_detail = MediaAssetNestedSerializer(source="cover_image", read_only=True)
     file_url = serializers.SerializerMethodField()
+    sibling_languages = serializers.SerializerMethodField()
+    sibling_id = serializers.SerializerMethodField()
+    clear_file = serializers.BooleanField(required=False, write_only=True, default=False)
 
     class Meta:
         model = Document
@@ -336,6 +339,7 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "slug",
             "file",
             "file_url",
+            "clear_file",
             "external_url",
             "description",
             "description_es",
@@ -362,6 +366,8 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "created_by_name",
             "updated_by",
             "updated_by_name",
+            "sibling_languages",
+            "sibling_id",
         )
         read_only_fields = (
             "id",
@@ -375,11 +381,14 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "updated_by_name",
             "cover_image_detail",
             "file_url",
+            "sibling_languages",
+            "sibling_id",
         )
         extra_kwargs = {
             "title": {"required": False, "allow_blank": True},
             "slug": {"required": False, "allow_blank": True},
             "resource_key": {"required": False, "allow_blank": True},
+            "file": {"required": False, "allow_null": True},
         }
 
     def _absolute_file_url(self, file_field) -> str | None:
@@ -393,6 +402,27 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
     def get_file_url(self, obj: Document) -> str | None:
         return self._absolute_file_url(obj.file)
+
+    def _sibling_entry(self, obj: Document) -> dict[str, int]:
+        cache = self.context.get("sibling_map")
+        if cache is not None:
+            return cache.get(obj.resource_key or "", {})
+        if not obj.resource_key:
+            return {}
+        return {
+            row["language"]: row["id"]
+            for row in Document.all_objects.filter(resource_key=obj.resource_key).values(
+                "id", "language"
+            )
+        }
+
+    def get_sibling_languages(self, obj: Document) -> list[str]:
+        return sorted(self._sibling_entry(obj).keys())
+
+    def get_sibling_id(self, obj: Document) -> int | None:
+        siblings = self._sibling_entry(obj)
+        other = "en" if obj.language == "es" else "es"
+        return siblings.get(other)
 
     def _document_candidate(self, attrs: dict) -> Document:
         if self.instance is not None:
@@ -413,6 +443,7 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
+        clear_file = attrs.pop("clear_file", False)
 
         uploaded = attrs.get("file")
         if uploaded is not None:
@@ -420,6 +451,21 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
                 validate_upload_file(uploaded)
             except DjangoValidationError as exc:
                 raise serializers.ValidationError({"file": exc.messages}) from exc
+
+        # Switching to external URL clears the stored file when requested or implied.
+        external = attrs.get("external_url")
+        if external is not None and str(external).strip():
+            if uploaded:
+                raise serializers.ValidationError(
+                    {
+                        "file": "Seleccione un archivo subido o una URL externa, no ambos.",
+                        "external_url": "Seleccione un archivo subido o una URL externa, no ambos.",
+                    }
+                )
+            if clear_file or (self.instance and self.instance.has_uploaded_file() and "file" not in attrs):
+                attrs["file"] = None
+        elif clear_file:
+            attrs["file"] = None
 
         # Sync title into language-specific modeltranslation column when present.
         language = attrs.get("language") or getattr(self.instance, "language", "es")

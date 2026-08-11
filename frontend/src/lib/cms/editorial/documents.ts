@@ -21,7 +21,9 @@ export type DocumentWritePayload = Partial<
     | "seo_description"
     | "status"
   >
->;
+> & {
+  clear_file?: boolean;
+};
 
 export type DocumentUploadFiles = {
   file?: File;
@@ -62,6 +64,10 @@ export async function createEnglishDocumentVersion(id: number): Promise<Document
   return cmsPost<DocumentItem>(`/documents/${id}/create-english-version/`, {});
 }
 
+export async function createSpanishDocumentVersion(id: number): Promise<DocumentItem> {
+  return cmsPost<DocumentItem>(`/documents/${id}/create-spanish-version/`, {});
+}
+
 async function uploadDocumentMultipart(
   method: "POST" | "PATCH",
   path: string,
@@ -100,4 +106,19 @@ export async function publishDocument(id: number): Promise<DocumentItem> {
 
 export async function unpublishDocument(id: number): Promise<DocumentItem> {
   return cmsPost<DocumentItem>(`/documents/${id}/unpublish/`, {});
+}
+
+export async function archiveDocument(id: number): Promise<DocumentItem> {
+  return cmsPost<DocumentItem>(`/documents/${id}/archive/`, {});
+}
+
+/** Client-side XOR for file vs external URL before hitting the API. */
+export function documentResourceConflict(opts: {
+  hasFile: boolean;
+  externalUrl: string;
+}): string | null {
+  if (opts.hasFile && opts.externalUrl.trim()) {
+    return "Elija archivo o URL externa, no ambos.";
+  }
+  return null;
 }

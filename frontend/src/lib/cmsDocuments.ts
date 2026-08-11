@@ -1,16 +1,19 @@
 import { designImages } from "@/src/lib/designAssets";
 import type { Locale } from "@/src/i18n/config";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import type { CmsDocument } from "@/src/types/cms";
 
 /** URL de apertura/descarga: archivo del CMS o URL externa. */
 export function documentOpenUrl(doc: CmsDocument): string | null {
-  if (doc.file) return doc.file;
+  const fileUrl = resolveMediaFileUrl(doc.file_url || doc.file);
+  if (fileUrl) return fileUrl;
   if (doc.external_url) return doc.external_url;
   return null;
 }
 
 export function isExternalDocument(doc: CmsDocument): boolean {
-  return !doc.file && Boolean(doc.external_url);
+  const hasFile = Boolean(resolveMediaFileUrl(doc.file_url || doc.file));
+  return !hasFile && Boolean(doc.external_url);
 }
 
 export function documentLinkTarget(_doc: CmsDocument): "_blank" {
@@ -46,7 +49,7 @@ export function formatDocumentDate(locale: Locale, value: string): string {
 
 /** Fallback institucional cuando no hay portada en CMS. */
 export function documentCoverImage(doc: CmsDocument): string | null {
-  return doc.cover_image?.file ?? null;
+  return resolveMediaFileUrl(doc.cover_image?.file_url || doc.cover_image?.file);
 }
 
 export function documentCoverFallback(): string {
