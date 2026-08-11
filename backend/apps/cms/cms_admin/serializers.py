@@ -228,31 +228,90 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             "slug": {"required": False, "allow_blank": True},
         }
 
+    def _normalize_blocks(self, blocks):
+        if blocks is None:
+            return None
+        if not isinstance(blocks, list):
+            raise serializers.ValidationError("content_blocks debe ser una lista.")
+        normalized = []
+        for idx, block in enumerate(blocks):
+            if not isinstance(block, dict) or "type" not in block:
+                raise serializers.ValidationError(
+                    {f"item_{idx}": "Cada bloque debe ser un objeto con type."}
+                )
+            item = dict(block)
+            if not item.get("id"):
+                item["id"] = f"b-{idx}-{slugify(str(item.get('type', 'block')))}-{timezone.now().timestamp()}"
+            # preview_url is transient — resolved on read from MediaAsset
+            item.pop("preview_url", None)
+            normalized.append(item)
+        return normalized
+
+    def _enrich_blocks(self, blocks):
+        from apps.media_library.serializers import absolute_file_url
+
+        if not blocks:
+            return []
+        media_ids = [
+            b.get("media_id")
+            for b in blocks
+            if isinstance(b, dict) and b.get("type") == "image" and b.get("media_id")
+        ]
+        assets = {
+            a.id: a for a in MediaAsset.objects.filter(id__in=media_ids)
+        } if media_ids else {}
+        enriched = []
+        for block in blocks:
+            if not isinstance(block, dict):
+                continue
+            item = dict(block)
+            if item.get("type") == "image" and item.get("media_id") in assets:
+                asset = assets[item["media_id"]]
+                item["preview_url"] = absolute_file_url(asset.file, self.context)
+                if not item.get("alt"):
+                    item["alt"] = asset.alt_text or ""
+            enriched.append(item)
+        return enriched
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["content_blocks_es"] = self._enrich_blocks(instance.content_blocks_es or [])
+        data["content_blocks_en"] = self._enrich_blocks(instance.content_blocks_en or [])
+        return data
+
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        if not attrs.get("slug") and not (self.instance and self.instance.slug):
-            title = (
-                attrs.get("title_es")
-                or attrs.get("title")
-                or (getattr(self.instance, "title_es", "") if self.instance else "")
-                or (getattr(self.instance, "title", "") if self.instance else "")
+        for key in ("content_blocks_es", "content_blocks_en"):
+            if key in attrs:
+                attrs[key] = self._normalize_blocks(attrs[key])
+
+        title_es = (
+            attrs.get("title_es")
+            if "title_es" in attrs
+            else (getattr(self.instance, "title_es", "") if self.instance else "")
+        )
+        title = attrs.get("title") if "title" in attrs else (getattr(self.instance, "title", "") if self.instance else "")
+        effective_title = (title_es or title or "").strip()
+
+        if self.instance is None and not effective_title:
+            raise serializers.ValidationError(
+                {"title_es": "El título en español es obligatorio."}
             )
-            if str(title).strip():
+
+        if not attrs.get("slug") and not (self.instance and self.instance.slug):
+            if effective_title:
                 attrs["slug"] = unique_slug_for_model(
                     News,
-                    slugify(str(title)),
+                    slugify(effective_title),
                     getattr(self.instance, "pk", None),
                 )
+
         instance = self.instance
         status = attrs.get("status", getattr(instance, "status", PublishStatus.DRAFT))
-        if status == PublishStatus.PUBLISHED:
-            title = attrs.get("title_es", getattr(instance, "title_es", "")) or attrs.get(
-                "title", getattr(instance, "title", "")
+        if status == PublishStatus.PUBLISHED and not effective_title:
+            raise serializers.ValidationError(
+                {"title_es": "El título en español es obligatorio para publicar."}
             )
-            if not str(title).strip():
-                raise serializers.ValidationError(
-                    {"title_es": "El título en español es obligatorio para publicar."}
-                )
         return attrs
 
 
@@ -578,7 +637,10 @@ def apply_publish(obj, user, published_at=None) -> None:
     obj.status = PublishStatus.PUBLISHED
     obj.published_at = published_at or timezone.now()
     obj.updated_by = user
-    obj.full_clean()
+    try:
+        obj.full_clean()
+    except DjangoValidationError as exc:
+        raise serializers.ValidationError(exc.message_dict) from exc
     obj.save()
 
 
@@ -586,7 +648,10 @@ def apply_archive(obj, user) -> None:
     assert_status_change_allowed(user, PublishStatus.ARCHIVED, obj.status)
     obj.status = PublishStatus.ARCHIVED
     obj.updated_by = user
-    obj.full_clean()
+    try:
+        obj.full_clean()
+    except DjangoValidationError as exc:
+        raise serializers.ValidationError(exc.message_dict) from exc
     obj.save()
 
 

@@ -95,8 +95,50 @@ export function createEmptyBlock(type: NewsBlockType): NewsBlock {
 
 export function ensureBlocks(raw: unknown): NewsBlock[] {
   if (!Array.isArray(raw)) return [];
-  return raw.filter((item): item is NewsBlock => {
-    return Boolean(item && typeof item === "object" && "type" in item && "id" in item);
+  const out: NewsBlock[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object" || !("type" in item)) continue;
+    const block = { ...(item as NewsBlock) };
+    if (!block.id || typeof block.id !== "string") {
+      block.id = newBlockId();
+    }
+    out.push(block);
+  }
+  return out;
+}
+
+/** Persistable shape — drop transient preview_url (resolved from MediaAsset on read). */
+export function serializeBlocksForSave(blocks: NewsBlock[]): NewsBlock[] {
+  return ensureBlocks(blocks).map((block) => {
+    if (block.type === "image") {
+      const { preview_url, ...rest } = block;
+      void preview_url;
+      return rest as NewsBlock;
+    }
+    return block;
+  });
+}
+
+export function blocksHaveRenderableContent(blocks: NewsBlock[]): boolean {
+  return blocks.some((block) => {
+    switch (block.type) {
+      case "paragraph":
+        return Boolean(block.html?.replace(/<[^>]+>/g, "").trim());
+      case "heading":
+        return Boolean(block.text?.trim());
+      case "image":
+        return Boolean(block.media_id);
+      case "list":
+        return block.items.some((item) => item.trim());
+      case "quote":
+        return Boolean(block.text?.trim());
+      case "divider":
+        return true;
+      case "button":
+        return Boolean(block.label?.trim() && block.url?.trim());
+      default:
+        return false;
+    }
   });
 }
 

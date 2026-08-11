@@ -54,7 +54,14 @@ export function NewsBlocksRenderer({ blocks, mediaUrls = {} }: Props) {
             return (
               <figure key={block.id} className="space-y-2">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-100">
-                  <Image src={src} alt={block.alt || ""} fill className="object-cover" sizes="(max-width:768px) 100vw, 720px" />
+                  <Image
+                    src={src}
+                    alt={block.alt || ""}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width:768px) 100vw, 720px"
+                    unoptimized
+                  />
                 </div>
                 {block.caption ? (
                   <figcaption className="text-center text-sm text-slate-500">{block.caption}</figcaption>

@@ -59,7 +59,8 @@ class NewsSerializer(serializers.ModelSerializer):
 
         request = self.context.get("request")
         lang = resolve_lang(request) if request is not None else "es"
-        blocks = list(obj.content_blocks_en if lang == "en" else obj.content_blocks_es or [])
+        raw = obj.content_blocks_en if lang == "en" else obj.content_blocks_es
+        blocks = list(raw or [])
         media_ids = [
             block.get("media_id")
             for block in blocks
