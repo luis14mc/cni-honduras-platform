@@ -48,12 +48,20 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 
 ## 4. News (bloques ES/EN → publish → público)
 
-1. `/cms/noticias/nueva` — título ES + bloques (párrafo, heading, imagen, lista…)
-2. Guardar draft — slug auto-generado
-3. Tab English — bloques EN independientes; guardar sin borrar ES
-4. Publish — status published + `published_at`
-5. Público `/es/prensa/{slug}` renderiza bloques; `/en/…` usa bloques EN
-6. Editar solo ES — `content_blocks_en` intacto
+### Flujo operativo obligatorio
+
+1. `/cms/noticias/nueva` — título ES (obligatorio), slug auto, resumen, imagen destacada, bloques
+2. Guardar borrador — toast + redirect a `/cms/noticias/{id}`; recargar conserva datos
+3. Tab English — bloques EN independientes; guardar ES no borra EN
+4. Agregar/reordenar (drag)/duplicar/eliminar bloques; imagen vía MediaPicker persiste `media_id`
+5. Publicar — `status=published`, `published_at` set; errores de campo visibles (no genérico)
+6. Público `/es/prensa/{slug}` — featured image + blocks; `/en/…` usa bloques EN
+7. Editar noticia ya publicada y guardar — **no** debe despublicar
+
+### Bug corregido (S2-T5)
+
+- **Causa:** cada save forzaba `status: "draft"` (despublicaba); `full_clean` en publish → 500 sin field errors; `ensureBlocks` descartaba bloques sin `id`.
+- **Fix:** no forzar draft al guardar publicados; `apply_publish` → 400 ValidationError; normalizar ids de bloques.
 
 ## 5. Document (registros independientes por idioma)
 

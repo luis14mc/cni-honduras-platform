@@ -106,13 +106,19 @@ class CMSModelPermission(BasePermission):
 
 
 def assert_status_change_allowed(user, new_status: str, current_status: str | None = None) -> None:
-    """Raise ``PermissionDenied`` when a non-publisher tries to publish/archive."""
+    """Raise ``PermissionDenied`` when a non-publisher tries to publish/archive/unpublish."""
 
     from rest_framework.exceptions import PermissionDenied
 
     if new_status in (PublishStatus.PUBLISHED, PublishStatus.ARCHIVED):
         if new_status != current_status and not can_publish(user):
             raise PermissionDenied("No tiene permiso para publicar o archivar contenido.")
+    if (
+        new_status == PublishStatus.DRAFT
+        and current_status == PublishStatus.PUBLISHED
+        and not can_publish(user)
+    ):
+        raise PermissionDenied("No tiene permiso para despublicar contenido.")
 
 
 def can_manage_users(user) -> bool:

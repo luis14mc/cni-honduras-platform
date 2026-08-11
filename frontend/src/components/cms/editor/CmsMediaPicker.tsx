@@ -16,6 +16,7 @@ import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsApiError } from "@/src/lib/cms/api";
 import { listMedia, uploadMedia } from "@/src/lib/cms/editorial/media";
 import type { MediaAsset, MediaType } from "@/src/lib/cms/editorial/types";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import { cn } from "@/src/lib/utils";
 
 interface CmsMediaPickerProps {
@@ -344,7 +345,7 @@ export function CmsMediaPicker({
 }
 
 function MediaThumb({ asset, size }: { asset: MediaAsset; size: number }) {
-  const url = asset.file_url;
+  const url = resolveMediaFileUrl(asset.file_url || asset.file);
   if (asset.media_type === "image" && url) {
     return (
       <div

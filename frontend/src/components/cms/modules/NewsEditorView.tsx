@@ -28,9 +28,14 @@ import {
   type NewsWritePayload,
 } from "@/src/lib/cms/editorial/news";
 import type { MediaAsset, NewsItem } from "@/src/lib/cms/editorial/types";
-import { ensureBlocks, type NewsBlock } from "@/src/lib/newsBlocks";
+import {
+  ensureBlocks,
+  serializeBlocksForSave,
+  type NewsBlock,
+} from "@/src/lib/newsBlocks";
 import { useEditorDirty } from "@/src/lib/cms/useEditorDirty";
 import { canAdd, canChange, canDelete, canPublish } from "@/src/lib/cms/permissions";
+import { slugifyFromTitle } from "@/src/lib/cms/slugify";
 
 const CATEGORY_OPTIONS = [
   { value: "news", label: "Noticia" },
@@ -43,6 +48,7 @@ const CATEGORY_OPTIONS = [
 interface NewsFormState {
   title_es: string;
   title_en: string;
+  slug: string;
   summary_es: string;
   summary_en: string;
   content_es: string;
@@ -59,11 +65,13 @@ interface NewsFormState {
   status: NewsItem["status"];
   updated_at: string | null;
   updated_by_name: string | null;
+  slugManual: boolean;
 }
 
 const emptyForm = (): NewsFormState => ({
   title_es: "",
   title_en: "",
+  slug: "",
   summary_es: "",
   summary_en: "",
   content_es: "",
@@ -80,12 +88,14 @@ const emptyForm = (): NewsFormState => ({
   status: "draft",
   updated_at: null,
   updated_by_name: null,
+  slugManual: false,
 });
 
 function newsToForm(item: NewsItem): NewsFormState {
   return {
     title_es: item.title_es ?? "",
     title_en: item.title_en ?? "",
+    slug: item.slug ?? "",
     summary_es: item.summary_es ?? "",
     summary_en: item.summary_en ?? "",
     content_es: item.content_es ?? "",
@@ -102,27 +112,45 @@ function newsToForm(item: NewsItem): NewsFormState {
     status: item.status,
     updated_at: item.updated_at,
     updated_by_name: item.updated_by_name,
+    slugManual: true,
   };
 }
 
-function formToPayload(form: NewsFormState): NewsWritePayload {
-  return {
+function formToPayload(form: NewsFormState, opts: { forceDraft?: boolean } = {}): NewsWritePayload {
+  const payload: NewsWritePayload = {
     title_es: form.title_es,
     title_en: form.title_en,
     summary_es: form.summary_es,
     summary_en: form.summary_en,
     content_es: form.content_es,
     content_en: form.content_en,
-    content_blocks_es: form.content_blocks_es,
-    content_blocks_en: form.content_blocks_en,
+    content_blocks_es: serializeBlocksForSave(form.content_blocks_es),
+    content_blocks_en: serializeBlocksForSave(form.content_blocks_en),
     category: form.category,
     author_name: form.author_name,
     source: form.source,
     external_url: form.external_url,
     is_featured: form.is_featured,
     featured_image: form.featured_image,
-    status: "draft",
   };
+  if (form.slug.trim()) {
+    payload.slug = form.slug.trim();
+  }
+  // Never force-unpublish a live article on content save.
+  if (opts.forceDraft || form.status === "draft") {
+    payload.status = "draft";
+  }
+  return payload;
+}
+
+function toastCmsError(err: unknown, fallback: string, toast: ReturnType<typeof useCmsToast>) {
+  if (err instanceof CmsApiError) {
+    const fieldKey = Object.keys(err.fieldErrors)[0];
+    const fieldMsg = fieldKey ? err.fieldErrors[fieldKey]?.[0] : undefined;
+    toast.error(fieldMsg ? `${fieldKey}: ${fieldMsg}` : err.message || fallback);
+    return;
+  }
+  toast.error(fallback);
 }
 
 interface NewsEditorViewProps {
@@ -179,36 +207,42 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
     setForm((prev) => ({ ...prev, ...partial }));
   }, []);
 
-  const persist = async (): Promise<number> => {
-    const payload = formToPayload(form);
+  const onTitleEsChange = (value: string) => {
+    setForm((prev) => {
+      const next = { ...prev, title_es: value };
+      if (!prev.slugManual) {
+        next.slug = slugifyFromTitle(value);
+      }
+      return next;
+    });
+  };
+
+  const persist = async (opts: { forceDraft?: boolean } = {}): Promise<NewsItem> => {
+    const payload = formToPayload(form, opts);
     if (isNew) {
-      const created = await createNews(payload);
-      return created.id;
+      return createNews({ ...payload, status: "draft" });
     }
-    await updateNews(newsId!, payload);
-    return newsId!;
+    return updateNews(newsId!, payload);
   };
 
   const handleSaveDraft = async () => {
+    if (!form.title_es.trim()) {
+      toast.error("title_es: El título en español es obligatorio.");
+      setLocale("es");
+      return;
+    }
     setSaving(true);
     try {
-      const id = await persist();
-      toast.success("Borrador guardado.");
+      const saved = await persist({ forceDraft: form.status !== "published" });
+      const next = newsToForm(saved);
+      setForm(next);
+      markClean(next);
+      toast.success(form.status === "published" ? "Cambios guardados." : "Borrador guardado.");
       if (isNew) {
-        router.replace(`/cms/noticias/${id}`);
-      } else {
-        const refreshed = await getNews(id);
-        const next = newsToForm(refreshed);
-        setForm(next);
-        markClean(next);
+        router.replace(`/cms/noticias/${saved.id}`);
       }
     } catch (err) {
-      if (err instanceof CmsApiError) {
-        const fieldKey = Object.keys(err.fieldErrors)[0];
-        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
-      } else {
-        toast.error("No se pudo guardar.");
-      }
+      toastCmsError(err, "No se pudo guardar.", toast);
     } finally {
       setSaving(false);
     }
@@ -216,26 +250,23 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
 
   const handlePublish = async () => {
     if (!form.title_es.trim()) {
-      toast.error("El título en español es obligatorio para publicar.");
+      toast.error("title_es: El título en español es obligatorio para publicar.");
       setLocale("es");
       return;
     }
     setPublishing(true);
     try {
-      const id = await persist();
-      const published = await publishNews(id);
+      // Save content without forcing draft status, then publish action.
+      const saved = await persist();
+      const published =
+        saved.status === "published" ? saved : await publishNews(saved.id);
       const next = newsToForm(published);
       setForm(next);
       markClean(next);
       toast.success("Noticia publicada.");
-      if (isNew) router.replace(`/cms/noticias/${id}`);
+      if (isNew) router.replace(`/cms/noticias/${published.id}`);
     } catch (err) {
-      if (err instanceof CmsApiError) {
-        const fieldKey = Object.keys(err.fieldErrors)[0];
-        toast.error(fieldKey ? (err.fieldErrors[fieldKey]?.[0] ?? err.message) : err.message);
-      } else {
-        toast.error("No se pudo publicar.");
-      }
+      toastCmsError(err, "No se pudo publicar.", toast);
     } finally {
       setPublishing(false);
     }
@@ -249,7 +280,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
       toast.success("Noticia eliminada.");
       router.push("/cms/noticias");
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "No se pudo eliminar.");
+      toastCmsError(err, "No se pudo eliminar.", toast);
     } finally {
       setDeleting(false);
       setConfirmDelete(false);
@@ -288,6 +319,15 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
               }
               onClear={() => patch({ featured_image: null, featured_image_detail: null })}
             />
+            <CmsFormField label="Slug" htmlFor="news-slug">
+              <input
+                id="news-slug"
+                value={form.slug}
+                onChange={(e) => patch({ slug: e.target.value, slugManual: true })}
+                className={cmsInputClass}
+                placeholder="se-genera-del-titulo"
+              />
+            </CmsFormField>
             <CmsFormField label="Categoría" htmlFor="news-category">
               <select
                 id="news-category"
@@ -331,7 +371,10 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
             <input
               id="news-title"
               value={form[titleField] as string}
-              onChange={(e) => patch({ [titleField]: e.target.value })}
+              onChange={(e) => {
+                if (locale === "es") onTitleEsChange(e.target.value);
+                else patch({ [titleField]: e.target.value });
+              }}
               className={cmsInputClass}
               placeholder={locale === "es" ? "Título de la noticia" : "News title"}
             />
@@ -357,7 +400,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
 
         <CmsSaveBar
           onSaveDraft={() => void handleSaveDraft()}
-          onPublish={() => void handlePublish()}
+          onPublish={userCanPublish ? () => void handlePublish() : undefined}
           onDelete={() => setConfirmDelete(true)}
           saving={saving}
           publishing={publishing}
@@ -366,7 +409,7 @@ export function NewsEditorView({ newsId }: NewsEditorViewProps) {
           canDelete={userCanDelete}
           statusLabel={
             form.status === "published"
-              ? "Esta noticia está publicada."
+              ? "Esta noticia está publicada. Guardar conserva el estado publicado."
               : "Los cambios se guardan como borrador."
           }
         />
