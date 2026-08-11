@@ -53,6 +53,7 @@ class NewsEndToEndTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         )
         self.assertEqual(patch_es.status_code, status.HTTP_200_OK, patch_es.content)
         self.assertEqual(len(patch_es.json()["content_blocks_es"]), 2)
+        self.assertEqual(patch_es.json()["content_blocks_es"][0]["id"], "es-1")
         self.assertEqual(patch_es.json().get("content_blocks_en") or [], [])
 
         # PATCH EN independently
@@ -70,10 +71,12 @@ class NewsEndToEndTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertEqual(patch_en.status_code, status.HTTP_200_OK, patch_en.content)
         en_body = patch_en.json()
         self.assertEqual(len(en_body["content_blocks_en"]), 2)
+        self.assertEqual(en_body["content_blocks_en"][0]["id"], "en-1")
         self.assertEqual(len(en_body["content_blocks_es"]), 2)
+        self.assertEqual(en_body["content_blocks_es"][0]["id"], "es-1")
         self.assertIn("ES actualizado", en_body["content_blocks_es"][0]["html"])
 
-        # PATCH ES again must not wipe EN
+        # PATCH ES again must not wipe EN and must keep provided ids
         patch_es2 = self._patch(
             reverse("api-v1:cms-admin:news-detail", args=[news_id]),
             {
@@ -85,6 +88,8 @@ class NewsEndToEndTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         )
         self.assertEqual(patch_es2.status_code, status.HTTP_200_OK)
         self.assertEqual(len(patch_es2.json()["content_blocks_en"]), 2)
+        self.assertEqual(patch_es2.json()["content_blocks_en"][0]["id"], "en-1")
+        self.assertEqual(patch_es2.json()["content_blocks_es"][0]["id"], "es-1")
 
         # Publish
         pub = self.client.post(

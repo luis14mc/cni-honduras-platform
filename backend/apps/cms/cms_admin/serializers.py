@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import mimetypes
+import uuid
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -240,8 +241,12 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
                     {f"item_{idx}": "Cada bloque debe ser un objeto con type."}
                 )
             item = dict(block)
-            if not item.get("id"):
-                item["id"] = f"b-{idx}-{slugify(str(item.get('type', 'block')))}-{timezone.now().timestamp()}"
+            # Preserve client/persisted ids; assign once for legacy blocks without id.
+            existing_id = item.get("id")
+            if not isinstance(existing_id, str) or not existing_id.strip():
+                item["id"] = f"b-{idx}-{slugify(str(item.get('type', 'block')))}-{uuid.uuid4().hex[:12]}"
+            else:
+                item["id"] = existing_id.strip()
             # preview_url is transient — resolved on read from MediaAsset
             item.pop("preview_url", None)
             normalized.append(item)

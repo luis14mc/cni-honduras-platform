@@ -24,6 +24,15 @@ BLOCKS_ES = [{"type": "paragraph", "text": "Bloque ES"}]
 BLOCKS_EN = [{"type": "paragraph", "text": "Block EN"}]
 
 
+def _block_content(blocks):
+    """Compare block payloads ignoring auto-assigned ids and read-only preview_url."""
+    cleaned = []
+    for block in blocks or []:
+        item = {k: v for k, v in block.items() if k not in {"id", "preview_url"}}
+        cleaned.append(item)
+    return cleaned
+
+
 class HeroBannerImageTests(CMSAdminTestCase):
     def setUp(self):
         from rest_framework.test import APIClient
@@ -260,8 +269,11 @@ class NewsContentBlocksTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             token=token,
         )
         self.assertEqual(create.status_code, status.HTTP_201_CREATED, create.content)
-        news_id = create.json()["id"]
-        self.assertEqual(create.json()["content_blocks_es"], BLOCKS_ES)
+        created = create.json()
+        news_id = created["id"]
+        self.assertEqual(_block_content(created["content_blocks_es"]), BLOCKS_ES)
+        es_id = created["content_blocks_es"][0]["id"]
+        self.assertTrue(es_id)
 
         patch_en = self._patch(
             reverse("api-v1:cms-admin:news-detail", args=[news_id]),
@@ -269,8 +281,26 @@ class NewsContentBlocksTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             token=token,
         )
         self.assertEqual(patch_en.status_code, status.HTTP_200_OK, patch_en.content)
-        self.assertEqual(patch_en.json()["content_blocks_es"], BLOCKS_ES)
-        self.assertEqual(patch_en.json()["content_blocks_en"], BLOCKS_EN)
+        patched_en = patch_en.json()
+        self.assertEqual(_block_content(patched_en["content_blocks_es"]), BLOCKS_ES)
+        self.assertEqual(patched_en["content_blocks_es"][0]["id"], es_id)
+        self.assertEqual(_block_content(patched_en["content_blocks_en"]), BLOCKS_EN)
+        en_id = patched_en["content_blocks_en"][0]["id"]
+        self.assertTrue(en_id)
+
+        # Re-save EN with its persisted id — id must remain stable
+        patch_en_stable = self._patch(
+            reverse("api-v1:cms-admin:news-detail", args=[news_id]),
+            {
+                "content_blocks_en": [
+                    {"id": en_id, "type": "paragraph", "text": "Block EN"},
+                ],
+            },
+            token=token,
+        )
+        self.assertEqual(patch_en_stable.status_code, status.HTTP_200_OK)
+        self.assertEqual(patch_en_stable.json()["content_blocks_en"][0]["id"], en_id)
+        self.assertEqual(patch_en_stable.json()["content_blocks_es"][0]["id"], es_id)
 
         pub = self.client.post(
             reverse("api-v1:cms-admin:news-publish", args=[news_id]),
@@ -281,11 +311,11 @@ class NewsContentBlocksTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
 
         public_es = self.client.get("/api/v1/cms/news/noticia-bloques/?lang=es")
         self.assertEqual(public_es.status_code, status.HTTP_200_OK)
-        self.assertEqual(public_es.json()["content_blocks"], BLOCKS_ES)
+        self.assertEqual(_block_content(public_es.json()["content_blocks"]), BLOCKS_ES)
 
         public_en = self.client.get("/api/v1/cms/news/noticia-bloques/?lang=en")
         self.assertEqual(public_en.status_code, status.HTTP_200_OK)
-        self.assertEqual(public_en.json()["content_blocks"], BLOCKS_EN)
+        self.assertEqual(_block_content(public_en.json()["content_blocks"]), BLOCKS_EN)
 
         patch_es = self._patch(
             reverse("api-v1:cms-admin:news-detail", args=[news_id]),
@@ -299,10 +329,12 @@ class NewsContentBlocksTests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertEqual(patch_es.status_code, status.HTTP_200_OK, patch_es.content)
         body = patch_es.json()
         self.assertEqual(
-            body["content_blocks_es"],
+            _block_content(body["content_blocks_es"]),
             [{"type": "paragraph", "text": "Bloque ES actualizado"}],
         )
-        self.assertEqual(body["content_blocks_en"], BLOCKS_EN)
+        self.assertEqual(_block_content(body["content_blocks_en"]), BLOCKS_EN)
+        self.assertEqual(body["content_blocks_en"][0]["id"], en_id)
 
         news = News.all_objects.get(pk=news_id)
-        self.assertEqual(news.content_blocks_en, BLOCKS_EN)
+        self.assertEqual(_block_content(news.content_blocks_en), BLOCKS_EN)
+        self.assertEqual(news.content_blocks_en[0]["id"], en_id)
