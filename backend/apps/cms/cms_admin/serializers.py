@@ -630,7 +630,6 @@ class SuccessStoryAdminSerializer(EditorialAuditMixin, serializers.ModelSerializ
         )
         read_only_fields = (
             "id",
-            "slug",
             "created_at",
             "updated_at",
             "created_by",
@@ -645,21 +644,27 @@ class SuccessStoryAdminSerializer(EditorialAuditMixin, serializers.ModelSerializ
         )
         extra_kwargs = {
             "title": {"required": False, "allow_blank": True},
+            "slug": {"required": False, "allow_blank": True},
         }
 
     def get_image_url(self, obj: SuccessStory) -> str | None:
-        if obj.logo_id and obj.logo.file:
-            request = self.context.get("request")
-            url = obj.logo.file.url
+        """List thumbnail: featured_image, then logo, then legacy image file."""
+        request = self.context.get("request")
+
+        def abs_url(file_field) -> str | None:
+            if not file_field:
+                return None
+            url = file_field.url
             if request and url.startswith("/"):
                 return request.build_absolute_uri(url)
             return url
+
+        if obj.featured_image_id and obj.featured_image and obj.featured_image.file:
+            return abs_url(obj.featured_image.file)
+        if obj.logo_id and obj.logo and obj.logo.file:
+            return abs_url(obj.logo.file)
         if obj.image:
-            request = self.context.get("request")
-            url = obj.image.url
-            if request and url.startswith("/"):
-                return request.build_absolute_uri(url)
-            return url
+            return abs_url(obj.image)
         return None
 
     def validate(self, attrs):

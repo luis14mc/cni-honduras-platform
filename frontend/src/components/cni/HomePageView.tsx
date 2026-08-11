@@ -13,15 +13,9 @@ import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
 import { ledgerHomeShell } from "@/src/lib/themes/ledger-home";
 import { designImages } from "@/src/lib/designAssets";
 import { newsCardImage } from "@/src/lib/cmsNews";
-import {
-  formatSuccessStoryInvestment,
-  formatSuccessStoryJobs,
-  successStoryCoverImage,
+  import {
+  mapSuccessStoryToCard,
   successStoryDetailHref,
-  successStoryDisplayName,
-  successStoryInitials,
-  successStoryLogoImage,
-  successStoryQuote,
 } from "@/src/lib/cmsSuccessStories";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
 import { cn } from "@/src/lib/utils";
@@ -232,28 +226,7 @@ export function HomePageView({
 
   const testimonialCards =
     featuredStoriesStatus === "ok"
-      ? featuredStories.slice(0, 2).map((story) => {
-          const investment = formatSuccessStoryInvestment(locale, story.investment_amount);
-          const jobs = formatSuccessStoryJobs(locale, story.jobs_generated);
-          return {
-            slug: story.slug,
-            name: successStoryDisplayName(story),
-            role: story.person_role || story.company_name,
-            authorName: story.testimonial_author,
-            authorRole: story.person_role || story.company_name,
-            quote: successStoryQuote(story),
-            caseTitle: story.title,
-            photo: successStoryCoverImage(story),
-            logo: successStoryLogoImage(story),
-            initials: successStoryInitials(story),
-            logoAlt: story.title,
-            sectorName: story.sector?.name ?? null,
-            sectorColor: story.sector?.color_hex || null,
-            country: story.country_origin || null,
-            investment,
-            jobs,
-          };
-        })
+      ? featuredStories.slice(0, 2).map((story) => mapSuccessStoryToCard(story, locale))
       : [];
 
   const caseHref = (slug: string) => successStoryDetailHref(locale, slug);
@@ -1604,9 +1577,9 @@ export function HomePageView({
                   <div className="mt-6 flex flex-wrap items-end justify-between gap-5 border-t border-cni-primary/10 pt-5">
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-cni-primary/10 ring-2 ring-white shadow-sm">
-                        {testimonialCards[0].photo ? (
+                        {testimonialCards[0].personPhoto ? (
                           <Image
-                            src={testimonialCards[0].photo}
+                            src={testimonialCards[0].personPhoto}
                             alt={testimonialCards[0].authorName || testimonialCards[0].name}
                             fill
                             sizes="48px"
@@ -1710,9 +1683,9 @@ export function HomePageView({
                   <div className="mt-5 flex items-center justify-between gap-3 border-t border-cni-primary/10 pt-4">
                     <div className="flex min-w-0 items-center gap-3">
                       <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-cni-primary/10 ring-2 ring-white shadow-sm">
-                        {card.photo ? (
+                        {card.personPhoto ? (
                           <Image
-                            src={card.photo}
+                            src={card.personPhoto}
                             alt={card.authorName || card.name}
                             fill
                             sizes="40px"
