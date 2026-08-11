@@ -10,6 +10,7 @@ import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getDocuments } from "@/src/services/cms";
 import {
   documentActionLabel,
+  documentCoverImage,
   documentLinkRel,
   documentLinkTarget,
   documentOpenUrl,
@@ -175,9 +176,9 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
                   className="group flex flex-col items-center overflow-hidden rounded-xl bg-white shadow-sm transition-shadow hover:shadow-md md:flex-row"
                 >
                   <div className="relative flex h-48 w-full shrink-0 flex-col items-center justify-center overflow-hidden bg-[#24436B] p-6 text-center md:w-64">
-                    {doc.cover_image?.file ? (
+                    {doc.cover_image ? (
                       <img
-                        src={doc.cover_image.file}
+                        src={documentCoverImage(doc) || doc.cover_image.file}
                         alt={doc.cover_image.alt_text || doc.title}
                         className="absolute inset-0 h-full w-full object-cover"
                       />

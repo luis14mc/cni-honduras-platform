@@ -31,17 +31,28 @@ const baseDoc: CmsDocument = {
 };
 
 describe("documentOpenUrl", () => {
-  it("prefers internal file URL", () => {
-    expect(documentOpenUrl(baseDoc)).toBe(baseDoc.file);
+  it("prefers absolute file_url over relative file", () => {
+    const doc = {
+      ...baseDoc,
+      file: "/media/documents/2026/01/guia.pdf",
+      file_url: "https://api.example.com/media/documents/2026/01/guia.pdf",
+    };
+    expect(documentOpenUrl(doc)).toBe(doc.file_url);
+  });
+
+  it("resolves relative file when file_url missing", () => {
+    const url = documentOpenUrl(baseDoc);
+    expect(url).toBeTruthy();
+    expect(url).toContain("/media/documents/2026/01/guia.pdf");
   });
 
   it("uses external URL when no file", () => {
-    const doc = { ...baseDoc, file: "", external_url: "https://example.com/study.pdf" };
+    const doc = { ...baseDoc, file: "", file_url: null, external_url: "https://example.com/study.pdf" };
     expect(documentOpenUrl(doc)).toBe("https://example.com/study.pdf");
   });
 
   it("returns null when neither source exists", () => {
-    const doc = { ...baseDoc, file: "", external_url: "" };
+    const doc = { ...baseDoc, file: "", file_url: null, external_url: "" };
     expect(documentOpenUrl(doc)).toBeNull();
   });
 });

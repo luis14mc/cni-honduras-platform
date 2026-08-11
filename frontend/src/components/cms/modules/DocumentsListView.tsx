@@ -14,8 +14,40 @@ import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { listDocuments } from "@/src/lib/cms/editorial/documents";
 import type { DocumentItem, PublishStatus } from "@/src/lib/cms/editorial/types";
 import { canAdd } from "@/src/lib/cms/permissions";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 
 const PAGE_SIZE = 20;
+
+function LanguageBadge({ language }: { language: string }) {
+  const isEn = language === "en";
+  return (
+    <span
+      className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+        isEn ? "bg-sky-100 text-sky-800" : "bg-emerald-100 text-emerald-800"
+      }`}
+    >
+      {(language || "es").toUpperCase()}
+    </span>
+  );
+}
+
+function SiblingIndicator({ row }: { row: DocumentItem }) {
+  const langs = new Set(row.sibling_languages ?? [row.language]);
+  const hasEs = langs.has("es");
+  const hasEn = langs.has("en");
+  if (row.language === "en") {
+    return (
+      <span className={`text-xs font-medium ${hasEs ? "text-emerald-700" : "text-amber-700"}`}>
+        EN | {hasEs ? "ES disponible" : "ES pendiente"}
+      </span>
+    );
+  }
+  return (
+    <span className={`text-xs font-medium ${hasEn ? "text-emerald-700" : "text-amber-700"}`}>
+      ES | {hasEn ? "EN disponible" : "EN pendiente"}
+    </span>
+  );
+}
 
 export function DocumentsListView() {
   const router = useRouter();
@@ -23,6 +55,7 @@ export function DocumentsListView() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState<"" | PublishStatus>("");
+  const [language, setLanguage] = useState<"" | "es" | "en">("");
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<DocumentItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -43,6 +76,7 @@ export function DocumentsListView() {
         page_size: PAGE_SIZE,
         search: debouncedSearch || undefined,
         status: status || undefined,
+        language: language || undefined,
       });
       setRows(data.results);
       setTotal(data.count);
@@ -51,7 +85,7 @@ export function DocumentsListView() {
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, status]);
+  }, [page, debouncedSearch, status, language]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -62,17 +96,17 @@ export function DocumentsListView() {
     {
       key: "cover",
       header: "Portada",
-      render: (row) =>
-        row.cover_image_detail?.file_url || row.cover_image_detail?.file ? (
+      render: (row) => {
+        const src = resolveMediaFileUrl(
+          row.cover_image_detail?.file_url || row.cover_image_detail?.file,
+        );
+        return src ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={row.cover_image_detail.file_url || row.cover_image_detail.file || ""}
-            alt=""
-            className="h-10 w-10 rounded object-cover"
-          />
+          <img src={src} alt="" className="h-10 w-10 rounded object-cover" />
         ) : (
           <span className="text-xs text-slate-400">—</span>
-        ),
+        );
+      },
     },
     {
       key: "title",
@@ -84,15 +118,7 @@ export function DocumentsListView() {
     {
       key: "language",
       header: "Idioma",
-      render: (row) => (
-        <span
-          className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-            row.language === "en" ? "bg-sky-100 text-sky-800" : "bg-emerald-100 text-emerald-800"
-          }`}
-        >
-          {(row.language || "es").toUpperCase()}
-        </span>
-      ),
+      render: (row) => <LanguageBadge language={row.language || "es"} />,
     },
     {
       key: "category",
@@ -100,21 +126,40 @@ export function DocumentsListView() {
       render: (row) => row.category,
     },
     {
-      key: "resource_key",
-      header: "Grupo / Recurso",
-      render: (row) => (
-        <span className="font-mono text-xs text-slate-600">{row.resource_key || "—"}</span>
-      ),
-    },
-    {
       key: "status",
       header: "Estado",
       render: (row) => <CmsStatusBadge status={row.status} />,
     },
     {
+      key: "resource_key",
+      header: "Grupo / Recurso",
+      render: (row) => (
+        <div className="space-y-1">
+          <div className="font-mono text-xs text-slate-600">{row.resource_key || "—"}</div>
+          <SiblingIndicator row={row} />
+        </div>
+      ),
+    },
+    {
       key: "updated",
       header: "Actualizado",
       render: (row) => new Date(row.updated_at).toLocaleDateString("es-HN"),
+    },
+    {
+      key: "actions",
+      header: "Acciones",
+      render: (row) => (
+        <button
+          type="button"
+          className="text-sm font-semibold text-[#35A963] hover:underline"
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/cms/documentos/${row.id}`);
+          }}
+        >
+          Editar
+        </button>
+      ),
     },
   ];
 
@@ -122,7 +167,7 @@ export function DocumentsListView() {
     <>
       <CmsSectionHeader
         title="Documentos"
-        description="Biblioteca de documentos institucionales y técnicos."
+        description="Cada idioma es un registro independiente (resource_key compartido)."
         actions={
           canAdd(user, "cms", "document") ? (
             <Link
@@ -148,7 +193,20 @@ export function DocumentsListView() {
           setPage(1);
         }}
         searchPlaceholder="Buscar documentos…"
-      />
+      >
+        <select
+          value={language}
+          onChange={(e) => {
+            setLanguage((e.target.value || "") as "" | "es" | "en");
+            setPage(1);
+          }}
+          className="rounded-lg border border-[#334E88]/20 bg-white px-3 py-2 text-sm text-[#252A58] focus:border-[#334E88] focus:outline-none focus:ring-2 focus:ring-[#334E88]/20"
+        >
+          <option value="">Todos los idiomas</option>
+          <option value="es">ES</option>
+          <option value="en">EN</option>
+        </select>
+      </CmsFilterBar>
 
       <CmsDataTable
         columns={columns}

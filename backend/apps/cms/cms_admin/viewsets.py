@@ -90,6 +90,14 @@ class EditorialFilterMixin:
         if placement:
             queryset = queryset.filter(placement=placement)
 
+        language = (params.get("language") or "").strip().lower()
+        if language in {"es", "en"}:
+            queryset = queryset.filter(language=language)
+
+        resource_key = (params.get("resource_key") or "").strip()
+        if resource_key:
+            queryset = queryset.filter(resource_key=resource_key)
+
         return queryset.order_by(*queryset.model._meta.ordering)
 
 
@@ -247,26 +255,65 @@ class DocumentAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
     model_name = "document"
     search_fields = ("title", "title_es", "title_en", "slug", "resource_key")
 
-    @action(detail=True, methods=["post"], url_path="create-english-version")
-    def create_english_version(self, request, pk=None):
-        """Create an EN sibling sharing resource_key — does not copy PDF/cover."""
-        source = self.get_object()
-        if source.language != "es":
-            raise ValidationError({"language": "Solo se puede clonar desde una versión en español."})
-        if Document.all_objects.filter(resource_key=source.resource_key, language="en").exists():
-            raise ValidationError({"language": "Ya existe una versión en inglés para este recurso."})
+    def list(self, request, *args, **kwargs):
+        qs = self.filter_queryset(self.get_queryset())
+        page, paginator = self.paginate_list(request, qs)
+        keys = {doc.resource_key for doc in page if doc.resource_key}
+        sibling_map: dict[str, dict[str, int]] = {}
+        if keys:
+            for row in Document.all_objects.filter(resource_key__in=keys).values(
+                "id", "resource_key", "language"
+            ):
+                sibling_map.setdefault(row["resource_key"], {})[row["language"]] = row["id"]
+        serializer = self.get_serializer(
+            page, many=True, context={**self.get_serializer_context(), "sibling_map": sibling_map}
+        )
+        return paginator.get_paginated_response(serializer.data)
 
-        en_slug = unique_slug_for_model(Document, f"{source.slug}-en", None)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        sibling_map: dict[str, dict[str, int]] = {}
+        if instance.resource_key:
+            for row in Document.all_objects.filter(resource_key=instance.resource_key).values(
+                "id", "resource_key", "language"
+            ):
+                sibling_map.setdefault(row["resource_key"], {})[row["language"]] = row["id"]
+        serializer = self.get_serializer(
+            instance, context={**self.get_serializer_context(), "sibling_map": sibling_map}
+        )
+        return Response(serializer.data)
+
+    def _create_translated_sibling(self, request, target_language: str):
+        """Create a sibling row sharing resource_key — never copies file/cover/URL/title."""
+        source = self.get_object()
+        if source.language == target_language:
+            raise ValidationError(
+                {"language": f"El documento ya está en {target_language}."}
+            )
+        if target_language not in {"es", "en"}:
+            raise ValidationError({"language": "Idioma de destino inválido."})
+        if Document.all_objects.filter(
+            resource_key=source.resource_key, language=target_language
+        ).exists():
+            label = "inglés" if target_language == "en" else "español"
+            raise ValidationError(
+                {"language": f"Ya existe una versión en {label} para este recurso."}
+            )
+
+        suffix = "-en" if target_language == "en" else "-es"
+        sibling_slug = unique_slug_for_model(Document, f"{source.slug}{suffix}", None)
         sibling = Document(
-            language="en",
+            language=target_language,
             resource_key=source.resource_key,
             title="",
             title_en="",
             title_es="",
-            slug=en_slug,
+            slug=sibling_slug,
             description="",
+            description_en="",
+            description_es="",
             category=source.category,
-            is_featured=False,
+            is_featured=source.is_featured,
             order=source.order,
             document_date=source.document_date,
             status=PublishStatus.DRAFT,
@@ -274,8 +321,23 @@ class DocumentAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
             updated_by=request.user,
         )
         sibling.save()
-        serializer = self.get_serializer(sibling)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(self.get_serializer(sibling).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path="create-english-version")
+    def create_english_version(self, request, pk=None):
+        if self.get_object().language != "es":
+            raise ValidationError(
+                {"language": "Solo se puede crear la versión EN desde un documento en español."}
+            )
+        return self._create_translated_sibling(request, "en")
+
+    @action(detail=True, methods=["post"], url_path="create-spanish-version")
+    def create_spanish_version(self, request, pk=None):
+        if self.get_object().language != "en":
+            raise ValidationError(
+                {"language": "Solo se puede crear la versión ES desde un documento en inglés."}
+            )
+        return self._create_translated_sibling(request, "es")
 
 
 @method_decorator(csrf_protect, name="dispatch")

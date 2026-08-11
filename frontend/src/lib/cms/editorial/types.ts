@@ -96,6 +96,8 @@ export interface DocumentItem extends EditorialAudit {
   seo_description_en: string;
   status: PublishStatus;
   published_at: string | null;
+  sibling_languages?: string[];
+  sibling_id?: number | null;
 }
 
 export interface BannerItem extends EditorialAudit {
@@ -317,6 +319,8 @@ export interface ListParams {
   media_type?: MediaType | "";
   category?: string;
   placement?: string;
+  language?: "es" | "en" | "";
+  resource_key?: string;
   date_from?: string;
   date_to?: string;
   is_active?: boolean | "";
@@ -336,6 +340,8 @@ export function buildListQuery(params: ListParams): string {
   if (params.media_type) qs.set("media_type", params.media_type);
   if (params.category) qs.set("category", params.category);
   if (params.placement) qs.set("placement", params.placement);
+  if (params.language) qs.set("language", params.language);
+  if (params.resource_key) qs.set("resource_key", params.resource_key);
   if (params.date_from) qs.set("date_from", params.date_from);
   if (params.date_to) qs.set("date_to", params.date_to);
   if (params.is_active === true) qs.set("is_active", "true");

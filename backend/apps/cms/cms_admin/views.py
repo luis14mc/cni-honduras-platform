@@ -162,9 +162,23 @@ class DashboardView(APIView):
                 en_q |= Q(**{f"{field}_en": ""}) | Q(**{f"{field}_en__isnull": True})
             return q.filter(en_q).count()
 
+        # Documents are language rows — missing EN = ES resource_key without EN sibling.
+        editorial_statuses = [draft, PublishStatus.PUBLISHED]
+        es_keys = set(
+            Document.all_objects.filter(
+                language="es", status__in=editorial_statuses
+            ).values_list("resource_key", flat=True)
+        )
+        en_keys = set(
+            Document.all_objects.filter(
+                language="en", status__in=editorial_statuses
+            ).values_list("resource_key", flat=True)
+        )
+        missing_document_en = len(es_keys - en_keys)
+
         missing_translation = (
             missing_en(News, ("title", "summary"))
-            + missing_en(Document, ("title", "description"))
+            + missing_document_en
             + missing_en(SuccessStory, ("title", "summary"))
             + missing_en(Page, ("title", "content"))
         )

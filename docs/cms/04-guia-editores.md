@@ -2,16 +2,37 @@
 
 ## Acceso
 
-1. Ingrese a `/admin/` con su usuario staff.
+1. Ingrese a `/cms` (Next CMS) o `/admin/` (Django Admin) con usuario staff.
 2. Use el grupo **Editor** para crear y modificar contenido.
-3. Use el grupo **Publicador** para cambiar el estado a *Publicado*.
+3. Use el grupo **Publicador** / permiso `can_publish` para publicar.
 
 ## Idiomas
 
-Los modelos editoriales tienen pestañas **Español** y **English** en Django Admin (django-modeltranslation).
+### Noticias, páginas, banners, casos
 
-- Si falta traducción EN, el sitio muestra automáticamente el texto en ES (fallback).
-- El **slug** es único y compartido entre idiomas (`/es/prensa/foo` ↔ `/en/prensa/foo`).
+Siguen usando campos traducibles (ES/EN) en el mismo registro cuando aplica.
+
+### Documentos / Recursos (modelo por idioma)
+
+Cada versión lingüística es un **registro independiente**:
+
+| Campo | Rol |
+|-------|-----|
+| `language` | `es` o `en` |
+| `resource_key` | Clave compartida del grupo (p. ej. `estudio-turismo-2026`) |
+| `file` / `external_url` | Recurso de **esa** versión (XOR) |
+| `cover_image` | Portada de **esa** versión |
+
+No use `file_es` / `file_en` en la misma fila.
+
+Flujo recomendado en `/cms/documentos`:
+
+1. Crear versión ES (o EN) con su PDF o URL.
+2. Usar **Crear versión en inglés/español** para el sibling (copia `resource_key`, categoría y orden; **no** copia archivo ni portada ni título).
+3. Completar título/slug/archivo de la versión nueva.
+4. Publicar cada idioma por separado.
+
+La API pública filtra por `?lang=es|en` **sin** fallback cruzado.
 
 ## Flujo editorial
 
@@ -21,7 +42,7 @@ Los modelos editoriales tienen pestañas **Español** y **English** en Django Ad
 | Publicado | Sí (si `published_at` ≤ ahora) |
 | Archivado | No |
 
-Acciones masivas *Publicar*, *Marcar como borrador* y *Archivar* están disponibles solo para usuarios con permiso `cms.can_publish`.
+Documentos en borrador pueden guardarse **sin** archivo/URL. Publicar exige archivo **o** URL externa.
 
 ## Tipos de contenido
 
@@ -29,12 +50,13 @@ Acciones masivas *Publicar*, *Marcar como borrador* y *Archivar* están disponib
 
 - Categoría: use `press_release` para comunicados oficiales.
 - Marque *Destacado* para la sala de prensa y el home.
+- Contenido por bloques ES/EN independientes.
 
 ### Documentos (`Document`)
 
 - Categorías: `institucional`, `tecnicos`, `biblioteca`, `estudios`.
-- Extensiones permitidas: pdf, docx, xlsx, pptx, zip (máx. 25 MB).
-- Suba el archivo real; el sitio enlaza directamente a `/media/...`.
+- Extensiones: pdf, docx, xlsx, pptx, zip (máx. 25 MB).
+- Unique: (`resource_key`, `language`).
 
 ### Casos de éxito (`SuccessStory`)
 
@@ -60,4 +82,4 @@ python manage.py update_translation_fields
 
 ## Soporte
 
-Para contenido EN prioritario, complete las pestañas English antes de publicar.
+Para Documentos, complete el sibling EN/ES con su propio archivo antes de publicar cada idioma.

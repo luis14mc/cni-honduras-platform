@@ -66,11 +66,20 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 ## 5. Document (registros independientes por idioma)
 
 1. Crear documento `language=es` con PDF o URL + portada + `resource_key`
-2. Acción **Crear versión en inglés** — mismo `resource_key`, slug distinto, **sin** copiar PDF
-3. Completar título/archivo EN en el registro hermano
-4. Listado muestra badges ES/EN, grupo/recurso, portada
-5. Público `?lang=es` solo filas ES; `?lang=en` solo filas EN
-6. Documentos legacy migrados → `language=es`
+2. Acción **Crear versión en inglés** — mismo `resource_key`, slug distinto, **sin** copiar PDF/portada/título
+3. Desde EN: acción **Crear versión en español** (simétrico)
+4. Completar título/archivo de la versión hermana
+5. Listado: badges ES/EN, filtro idioma, indicador `ES | EN disponible/pendiente`, portada, acciones
+6. Toggle recurso: archivo XOR URL; quitar archivo sin perder al PATCH de metadatos
+7. Público `?lang=es` solo ES; `?lang=en` solo EN (sin fallback)
+8. Documentos legacy migrados → `language=es` (`cms.0008`)
+
+### QA mañana (S2-T6)
+
+- CMS create ES → sibling EN → publish ambos
+- Portadas distintas por idioma
+- `/es/recursos` vs `/en/recursos` muestran versiones correctas
+- Descarga `file_url` absoluta funciona en preview Vercel
 
 ## 6. Banner
 
