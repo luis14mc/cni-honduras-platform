@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
@@ -23,9 +24,18 @@ def _image_asset(title: str) -> MediaAsset:
 
 
 class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
+    """Success stories are managed by the Inversiones role (not Editor)."""
+
+    def _login_investments(self) -> str:
+        return self._login("invest", "pw-invest-123")
+
+    def _grant_publish(self) -> None:
+        """Inversiones can edit stories; publishing still needs cms.can_publish."""
+        perm = Permission.objects.get(codename="can_publish")
+        self.investments.user_permissions.add(perm)
+
     def test_create_draft_with_distinct_media(self):
-        self._login("editor", "pw-editor-123")
-        token = self._csrf()
+        token = self._login_investments()
         logo = _image_asset("logo")
         featured = _image_asset("featured")
         person = _image_asset("person")
@@ -59,8 +69,7 @@ class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertNotEqual(body["featured_image"], body["person_photo"])
 
     def test_patch_es_does_not_wipe_en_and_keeps_media(self):
-        self._login("editor", "pw-editor-123")
-        token = self._csrf()
+        token = self._login_investments()
         logo = _image_asset("logo2")
         featured = _image_asset("featured2")
         person = _image_asset("person2")
@@ -108,8 +117,8 @@ class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertEqual(en_body["title_en"], "Case EN updated")
 
     def test_publish_and_public_payload_includes_media(self):
-        self._login("editor", "pw-editor-123")
-        token = self._csrf()
+        self._grant_publish()
+        token = self._login_investments()
         featured = _image_asset("pub-featured")
         logo = _image_asset("pub-logo")
         person = _image_asset("pub-person")
@@ -154,8 +163,7 @@ class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertEqual(detail_en.status_code, status.HTTP_200_OK)
 
     def test_content_save_does_not_unpublish(self):
-        self._login("editor", "pw-editor-123")
-        token = self._csrf()
+        token = self._login_investments()
         story = SuccessStory.objects.create(
             title="Ya publicado",
             title_es="Ya publicado",
@@ -176,8 +184,8 @@ class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
         self.assertIsNotNone(story.published_at)
 
     def test_publish_without_content_returns_400(self):
-        self._login("editor", "pw-editor-123")
-        token = self._csrf()
+        self._grant_publish()
+        token = self._login_investments()
         story = SuccessStory.objects.create(
             title="Sin contenido",
             title_es="Sin contenido",
@@ -192,3 +200,13 @@ class SuccessStoryS2T7Tests(CMSAdminEditorialTestMixin, CMSAdminTestCase):
             HTTP_X_CSRFTOKEN=token,
         )
         self.assertEqual(pub.status_code, status.HTTP_400_BAD_REQUEST, pub.content)
+
+    def test_editor_cannot_manage_success_stories(self):
+        """Regression: Editor role has CMS content, not investment.successstory."""
+        token = self._login("editor", "pw-editor-123")
+        res = self._post(
+            reverse("api-v1:cms-admin:success-stories-list"),
+            {"title_es": "No permitido", "status": PublishStatus.DRAFT},
+            token=token,
+        )
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
