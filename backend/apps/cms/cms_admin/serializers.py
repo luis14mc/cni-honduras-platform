@@ -73,21 +73,30 @@ class MediaAssetNestedSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "file_url", "file_size_bytes", "mime_type", "created_at")
 
     def get_file_url(self, obj: MediaAsset) -> str | None:
-        if obj.file:
-            request = self.context.get("request")
+        if not obj.file:
+            return None
+        try:
             url = obj.file.url
-            if request and url.startswith("/"):
-                return request.build_absolute_uri(url)
-            return url
-        return None
+        except (OSError, ValueError):
+            # DB points at a name that storage cannot resolve (orphaned Render disk, etc.)
+            return None
+        request = self.context.get("request")
+        if request and url.startswith("/"):
+            return request.build_absolute_uri(url)
+        return url
 
     def get_file_size_bytes(self, obj: MediaAsset) -> int | None:
-        if obj.file and hasattr(obj.file, "size"):
+        if not obj.file:
+            return None
+        # FieldFile.size is a property that hits storage; hasattr() already raises
+        # FileNotFoundError when the blob is missing — never use hasattr here.
+        try:
             return obj.file.size
-        return None
+        except (FileNotFoundError, OSError, ValueError):
+            return None
 
     def get_mime_type(self, obj: MediaAsset) -> str | None:
-        if not obj.file:
+        if not obj.file or not obj.file.name:
             return None
         guessed, _ = mimetypes.guess_type(obj.file.name)
         return guessed
@@ -255,7 +264,7 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     def _enrich_blocks(self, blocks):
         from apps.media_library.serializers import absolute_file_url
 
-        if not blocks:
+        if not blocks or not isinstance(blocks, list):
             return []
         media_ids = [
             b.get("media_id")
@@ -272,7 +281,10 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
             item = dict(block)
             if item.get("type") == "image" and item.get("media_id") in assets:
                 asset = assets[item["media_id"]]
-                item["preview_url"] = absolute_file_url(asset.file, self.context)
+                try:
+                    item["preview_url"] = absolute_file_url(asset.file, self.context)
+                except (OSError, ValueError):
+                    item["preview_url"] = None
                 if not item.get("alt"):
                     item["alt"] = asset.alt_text or ""
             enriched.append(item)
@@ -280,8 +292,9 @@ class NewsAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["content_blocks_es"] = self._enrich_blocks(instance.content_blocks_es or [])
-        data["content_blocks_en"] = self._enrich_blocks(instance.content_blocks_en or [])
+        # Legacy rows may store NULL instead of [] for JSON block columns.
+        data["content_blocks_es"] = self._enrich_blocks(instance.content_blocks_es)
+        data["content_blocks_en"] = self._enrich_blocks(instance.content_blocks_en)
         return data
 
     def validate(self, attrs):
