@@ -58,6 +58,7 @@ function sampleItem(overrides: Partial<OpportunityItem> = {}): OpportunityItem {
         note_en: "Validate",
         icon: "",
         order: 0,
+        is_public: true,
       },
     ],
     fund_uses: [
@@ -95,6 +96,7 @@ describe("opportunity form mapping", () => {
     expect(payload.title_es).toBe("El Cajón");
     expect(payload.title_en).toBe("El Cajon");
     expect(payload.metrics?.[0].label_en).toBe("IRR");
+    expect(payload.metrics?.[0].is_public).toBe(true);
     expect(payload.fund_uses?.[0].amount).toBe("500000.00");
     expect(payload).not.toHaveProperty("status");
   });

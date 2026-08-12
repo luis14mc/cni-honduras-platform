@@ -20,7 +20,7 @@ from .models import (
 class OpportunityMetricInline(admin.TabularInline):
     model = OpportunityMetric
     extra = 0
-    fields = ("order", "label", "value", "note", "icon")
+    fields = ("order", "label", "value", "note", "icon", "is_public")
 
 
 class OpportunityFundUseInline(admin.TabularInline):

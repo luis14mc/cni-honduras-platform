@@ -20,30 +20,28 @@ const copy = {
     listEyebrow: "Portafolio",
     listTitle: "Oportunidades de inversión",
     listDescription:
-      "Fichas estructuradas con código, sector, métricas clave y uso de fondos. El contenido proviene del CMS.",
+      "Una selección de oportunidades priorizadas. Para información detallada, contacte al equipo del CNI.",
     empty: "No hay oportunidades publicadas en este momento.",
     error: "No se pudieron cargar las oportunidades. Intente de nuevo más tarde.",
     cta: "Ver oportunidad",
-    featuredMetrics: "Métricas clave",
   },
   en: {
     listEyebrow: "Portfolio",
     listTitle: "Investment opportunities",
     listDescription:
-      "Structured opportunity cards with code, sector, key metrics, and use of funds. Content comes from the CMS.",
+      "A selection of priority opportunities. For detailed information, contact the CNI team.",
     empty: "There are no published opportunities at this time.",
     error: "Opportunities could not be loaded. Please try again later.",
     cta: "View opportunity",
-    featuredMetrics: "Key metrics",
   },
 } as const;
 
 function brief(opp: InvestmentOpportunity): string {
-  return (opp.summary || opp.opportunity_description || opp.description || "").trim();
+  return (opp.summary || "").trim();
 }
 
-function topMetrics(opp: InvestmentOpportunity) {
-  return (opp.metrics ?? []).slice(0, 3);
+function cardMetrics(opp: InvestmentOpportunity) {
+  return (opp.metrics ?? []).slice(0, 2);
 }
 
 export default async function OportunidadesPage({
@@ -113,7 +111,8 @@ export default async function OportunidadesPage({
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {opportunities.map((opp) => {
-              const metrics = topMetrics(opp);
+              const metrics = cardMetrics(opp);
+              const text = brief(opp);
               return (
                 <article
                   key={opp.id}
@@ -128,22 +127,19 @@ export default async function OportunidadesPage({
                     ) : null}
                   </div>
                   <h3 className="mt-4 text-xl font-bold text-[#252A58]">{opp.title}</h3>
-                  {brief(opp) ? (
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-[#0E7A7C] line-clamp-4">
-                      {brief(opp)}
+                  {text ? (
+                    <p className="mt-3 flex-1 text-sm leading-relaxed text-[#0E7A7C] line-clamp-3">
+                      {text}
                     </p>
                   ) : null}
                   {metrics.length > 0 ? (
-                    <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {metrics.map((m) => (
                         <div key={m.id} className="border-t border-[#dce9ff]/40 pt-3">
-                          <dt className="text-[10px] font-bold uppercase tracking-wide text-[#b6c2d3]">
+                          <dd className="text-sm font-semibold text-[#252A58]">{m.value || "—"}</dd>
+                          <dt className="mt-1 text-[10px] font-bold uppercase tracking-wide text-[#b6c2d3]">
                             {m.label}
                           </dt>
-                          <dd className="mt-1 text-sm font-semibold text-[#252A58]">{m.value || "—"}</dd>
-                          {m.note ? (
-                            <p className="mt-0.5 text-[11px] text-[#0E7A7C]">{m.note}</p>
-                          ) : null}
                         </div>
                       ))}
                     </dl>

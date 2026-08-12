@@ -527,6 +527,19 @@ export function OpportunityEditorView({ opportunityId }: OpportunityEditorViewPr
                           placeholder="p. ej. trending_up"
                         />
                       </CmsFormField>
+                      <label className="flex items-center gap-2 text-sm text-[#252A58] md:col-span-2">
+                        <input
+                          type="checkbox"
+                          checked={metric.is_public}
+                          onChange={(e) => {
+                            const next = [...form.metrics];
+                            next[index] = { ...metric, is_public: e.target.checked };
+                            patch({ metrics: next });
+                          }}
+                          className="rounded border-[#334E88]/30"
+                        />
+                        Mostrar en sitio público (máx. 4 destacadas)
+                      </label>
                     </div>
                   </li>
                 ))}

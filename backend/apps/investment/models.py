@@ -176,6 +176,11 @@ class OpportunityMetric(models.Model):
     note = models.CharField(max_length=255, blank=True, default="")
     icon = models.CharField(max_length=64, blank=True, default="")
     order = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Si es verdadero, la métrica puede aparecer en la API/página pública (máx. 4).",
+    )
 
     class Meta:
         ordering = ("order", "id")

@@ -36,7 +36,7 @@ class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModel
         queryset = (
             InvestmentOpportunity.objects.published()
             .select_related("sector", "department", "region")
-            .prefetch_related("metrics", "fund_uses")
+            .prefetch_related("metrics")
             .filter(Q(sector__isnull=True) | Q(sector__is_active=True))
             .order_by(*InvestmentOpportunity._meta.ordering)
         )

@@ -332,17 +332,17 @@ class OpportunityPublicS2T8Tests(OpportunityS2T8Mixin, CMSAdminTestCase):
             title_es="El Cajón",
             title_en="El Cajon Resort",
             slug="el-cajon-public",
-            description="Descripción ES",
-            description_es="Descripción ES",
-            description_en="Description EN",
-            target_customer_es="Inversionistas hotelero",
-            target_customer_en="Hospitality investors",
-            market_demand_es="Demanda turística",
-            market_demand_en="Tourism demand",
+            description="Descripción interna completa no pública",
+            description_es="Descripción interna completa no pública",
+            description_en="Full internal description not public",
+            target_customer_es="Inversionistas hotelero confidencial",
+            target_customer_en="Confidential hospitality investors",
+            market_demand_es="Demanda turística confidencial",
+            market_demand_en="Confidential tourism demand",
             value_proposition_es="ESG y naturaleza",
             value_proposition_en="ESG and nature",
-            summary_es="Resumen breve",
-            summary_en="Short summary",
+            summary_es="Resumen breve público",
+            summary_en="Short public summary",
             sector=self.sector,
             status=PublishStatus.PUBLISHED,
             published_at=timezone.now(),
@@ -357,6 +357,16 @@ class OpportunityPublicS2T8Tests(OpportunityS2T8Mixin, CMSAdminTestCase):
             value_es="USD 6.3M",
             value_en="USD 6.3M",
             order=0,
+            is_public=True,
+        )
+        OpportunityMetric.objects.create(
+            opportunity=self.published,
+            label="TIR interna",
+            label_es="TIR interna",
+            label_en="Internal IRR",
+            value="14%–19%",
+            order=1,
+            is_public=False,
         )
         OpportunityFundUse.objects.create(
             opportunity=self.published,
@@ -384,23 +394,66 @@ class OpportunityPublicS2T8Tests(OpportunityS2T8Mixin, CMSAdminTestCase):
         self.assertIn("el-cajon-public", slugs)
         self.assertNotIn("draft-hidden", slugs)
 
-    def test_public_detail_and_lang(self):
+    def test_public_detail_teaser_and_lang(self):
         res_es = self.client.get("/api/v1/investment/opportunities/el-cajon-public/?lang=es")
         self.assertEqual(res_es.status_code, status.HTTP_200_OK)
         body_es = res_es.json()
         self.assertEqual(body_es["code"], "OC-CNI-T002")
         self.assertEqual(body_es["title"], "El Cajón")
-        self.assertEqual(body_es["opportunity_description"], "Descripción ES")
+        self.assertEqual(body_es["summary"], "Resumen breve público")
+        self.assertEqual(body_es["value_proposition"], "ESG y naturaleza")
         self.assertEqual(len(body_es["metrics"]), 1)
         self.assertEqual(body_es["metrics"][0]["label"], "Monto")
-        self.assertEqual(len(body_es["fund_uses"]), 1)
         self.assertIsNotNone(body_es["published_at"])
+        self.assertNotIn("fund_uses", body_es)
+        self.assertNotIn("target_customer", body_es)
+        self.assertNotIn("market_demand", body_es)
+        self.assertNotIn("opportunity_description", body_es)
+        self.assertNotIn("description", body_es)
 
         res_en = self.client.get("/api/v1/investment/opportunities/el-cajon-public/?lang=en")
         self.assertEqual(res_en.status_code, status.HTTP_200_OK)
         body_en = res_en.json()
         self.assertEqual(body_en["title"], "El Cajon Resort")
-        self.assertEqual(body_en["opportunity_description"], "Description EN")
-        self.assertEqual(body_en["target_customer"], "Hospitality investors")
+        self.assertEqual(body_en["summary"], "Short public summary")
+        self.assertEqual(body_en["value_proposition"], "ESG and nature")
         self.assertEqual(body_en["metrics"][0]["label"], "Amount")
-        self.assertEqual(body_en["fund_uses"][0]["component"], "Land")
+        self.assertNotIn("fund_uses", body_en)
+        self.assertNotIn("target_customer", body_en)
+
+    def test_public_hides_internal_metrics_and_capex(self):
+        res = self.client.get("/api/v1/investment/opportunities/el-cajon-public/?lang=es")
+        body = res.json()
+        labels = [m["label"] for m in body["metrics"]]
+        self.assertEqual(labels, ["Monto"])
+        self.assertNotIn("TIR interna", labels)
+        self.assertNotIn("fund_uses", body)
+
+    def test_admin_still_returns_full_dossier(self):
+        self._login("invest", "pw-invest-123")
+        res = self.client.get(
+            reverse("api-v1:cms-admin:opportunities-detail", args=[self.published.pk])
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        body = res.json()
+        self.assertIn("fund_uses", body)
+        self.assertEqual(len(body["fund_uses"]), 1)
+        self.assertIn("target_customer_es", body)
+        self.assertEqual(body["target_customer_es"], "Inversionistas hotelero confidencial")
+        self.assertEqual(len(body["metrics"]), 2)
+        public_flags = {m["label_es"]: m["is_public"] for m in body["metrics"]}
+        self.assertTrue(public_flags["Monto"])
+        self.assertFalse(public_flags["TIR interna"])
+
+    def test_public_metric_limit_four(self):
+        for i in range(6):
+            OpportunityMetric.objects.create(
+                opportunity=self.published,
+                label=f"M{i}",
+                label_es=f"M{i}",
+                value=str(i),
+                order=10 + i,
+                is_public=True,
+            )
+        res = self.client.get("/api/v1/investment/opportunities/el-cajon-public/")
+        self.assertEqual(len(res.json()["metrics"]), 4)

@@ -14,75 +14,40 @@ const copy = {
     back: "Volver a oportunidades",
     code: "Código",
     sector: "Sector",
-    description: "Descripción de la oportunidad",
-    target: "Cliente / comprador objetivo",
-    market: "Mercado / demanda",
+    description: "La oportunidad",
     value: "Propuesta de valor",
-    metrics: "Métricas clave",
-    fundUses: "Uso de fondos / CAPEX",
-    component: "Componente",
-    amount: "Monto",
-    note: "Nota",
-    cta: "Contactar al CNI",
+    metrics: "Datos clave",
+    cta: "Contactar al equipo del CNI",
+    ctaAlt: "Conocer más sobre esta oportunidad",
+    ctaLead:
+      "¿Está interesado en conocer más detalles sobre esta oportunidad de inversión? Nuestro equipo puede brindarle información adicional y acompañamiento.",
     heroEyebrow: "Oportunidades",
-    heroTitle: "Ficha de inversión",
-    heroDescription: "Información estructurada para evaluación de la oportunidad.",
+    heroTitle: "Oportunidad de inversión",
+    heroDescription: "Información resumida para descubrir oportunidades priorizadas por el CNI.",
   },
   en: {
     back: "Back to opportunities",
     code: "Code",
     sector: "Sector",
-    description: "Opportunity description",
-    target: "Target customer / buyer",
-    market: "Market / demand",
+    description: "The opportunity",
     value: "Value proposition",
-    metrics: "Key metrics",
-    fundUses: "Use of funds / CAPEX",
-    component: "Component",
-    amount: "Amount",
-    note: "Note",
-    cta: "Contact the CNI",
+    metrics: "Key figures",
+    cta: "Contact the CNI team",
+    ctaAlt: "Learn more about this opportunity",
+    ctaLead:
+      "Interested in learning more about this investment opportunity? Our team can provide additional information and support.",
     heroEyebrow: "Opportunities",
-    heroTitle: "Investment profile",
-    heroDescription: "Structured information for opportunity evaluation.",
+    heroTitle: "Investment opportunity",
+    heroDescription: "A short overview of priority opportunities promoted by CNI.",
   },
 } as const;
-
-function formatAmount(value: string | null | undefined, locale: Locale): string {
-  if (value == null || value === "") return "—";
-  const num = Number(value);
-  if (Number.isFinite(num)) {
-    return new Intl.NumberFormat(locale === "en" ? "en-US" : "es-HN", {
-      style: "currency",
-      currency: "USD",
-      maximumFractionDigits: 1,
-    }).format(num);
-  }
-  return value;
-}
 
 function paragraphs(text: string): string[] {
   return text
     .split(/\n{2,}/)
     .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function RichBlock({ title, body }: { title: string; body: string }) {
-  if (!body.trim()) return null;
-  const parts = paragraphs(body);
-  return (
-    <section className="space-y-3">
-      <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{title}</h2>
-      <div className="space-y-3 text-base leading-relaxed text-[#252A58]">
-        {parts.map((p) => (
-          <p key={p.slice(0, 48)} className="whitespace-pre-line">
-            {p}
-          </p>
-        ))}
-      </div>
-    </section>
-  );
+    .filter(Boolean)
+    .slice(0, 3);
 }
 
 export async function generateMetadata({
@@ -98,7 +63,7 @@ export async function generateMetadata({
       locale,
       slugPath: `/crecer/oportunidades/${slug}`,
       title: opp.title,
-      description: opp.summary || opp.description,
+      description: opp.summary,
     });
   } catch {
     return {};
@@ -123,9 +88,10 @@ export default async function OpportunityDetailPage({
     notFound();
   }
 
-  const description = opp.opportunity_description || opp.description || "";
-  const metrics = opp.metrics ?? [];
-  const fundUses = opp.fund_uses ?? [];
+  const summary = (opp.summary || "").trim();
+  const valueProp = (opp.value_proposition || "").trim();
+  const metrics = (opp.metrics ?? []).slice(0, 4);
+  const contactHref = L(`/contacto?opportunity=${encodeURIComponent(opp.slug)}`);
 
   return (
     <div className="flex flex-1 flex-col bg-[#f8f9ff]">
@@ -150,14 +116,10 @@ export default async function OpportunityDetailPage({
 
         <header className="mt-8 space-y-3 border-b border-[#dce9ff]/40 pb-8">
           <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-widest text-[#0E7A7C]">
+            {opp.sector?.name ? <span>{opp.sector.name}</span> : null}
             {opp.code ? (
               <span className="font-mono">
                 {t.code}: {opp.code}
-              </span>
-            ) : null}
-            {opp.sector?.name ? (
-              <span>
-                {t.sector}: {opp.sector.name}
               </span>
             ) : null}
           </div>
@@ -166,30 +128,29 @@ export default async function OpportunityDetailPage({
           </h1>
         </header>
 
-        <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-2">
-          <div className="space-y-10">
-            <RichBlock title={t.description} body={description} />
-            <RichBlock title={t.target} body={opp.target_customer || ""} />
-          </div>
-          <div className="space-y-10">
-            <RichBlock title={t.market} body={opp.market_demand || ""} />
-            <RichBlock title={t.value} body={opp.value_proposition || ""} />
-          </div>
-        </div>
+        {summary ? (
+          <section className="mt-10 max-w-3xl space-y-4">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">
+              {t.description}
+            </h2>
+            {paragraphs(summary).map((p) => (
+              <p key={p.slice(0, 40)} className="text-base leading-relaxed text-[#252A58]">
+                {p}
+              </p>
+            ))}
+          </section>
+        ) : null}
 
         {metrics.length > 0 ? (
-          <section className="mt-14">
+          <section className="mt-12">
             <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{t.metrics}</h2>
-            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {metrics.map((m) => (
-                <div
-                  key={m.id}
-                  className="border border-[#dce9ff]/40 bg-white p-5"
-                >
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-[#b6c2d3]">
+                <div key={m.id} className="border border-[#dce9ff]/40 bg-white p-5">
+                  <p className="text-xl font-bold text-[#252A58]">{m.value || "—"}</p>
+                  <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-[#b6c2d3]">
                     {m.label}
                   </p>
-                  <p className="mt-2 text-xl font-bold text-[#252A58]">{m.value || "—"}</p>
                   {m.note ? <p className="mt-1 text-sm text-[#0E7A7C]">{m.note}</p> : null}
                 </div>
               ))}
@@ -197,55 +158,30 @@ export default async function OpportunityDetailPage({
           </section>
         ) : null}
 
-        {fundUses.length > 0 ? (
-          <section className="mt-14">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{t.fundUses}</h2>
-            <div className="mt-6 overflow-x-auto">
-              <table className="min-w-full border-collapse text-left text-sm">
-                <thead>
-                  <tr className="border-b border-[#dce9ff]/50 text-[11px] font-bold uppercase tracking-wide text-[#b6c2d3]">
-                    <th className="px-3 py-3">{t.component}</th>
-                    <th className="px-3 py-3">{t.amount}</th>
-                    <th className="hidden px-3 py-3 md:table-cell">{t.note}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {fundUses.map((row) => (
-                    <tr key={row.id} className="border-b border-[#dce9ff]/30 bg-white">
-                      <td className="px-3 py-3 font-semibold text-[#252A58]">{row.component}</td>
-                      <td className="px-3 py-3 whitespace-nowrap text-[#252A58]">
-                        {formatAmount(row.amount, locale)}
-                      </td>
-                      <td className="hidden px-3 py-3 text-[#0E7A7C] md:table-cell">
-                        {row.description || "—"}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <ul className="mt-4 space-y-3 md:hidden">
-              {fundUses.map((row) => (
-                <li key={`m-${row.id}`} className="border border-[#dce9ff]/40 bg-white p-4">
-                  <p className="font-semibold text-[#252A58]">{row.component}</p>
-                  <p className="mt-1 text-sm text-[#252A58]">{formatAmount(row.amount, locale)}</p>
-                  {row.description ? (
-                    <p className="mt-2 text-sm text-[#0E7A7C]">{row.description}</p>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
+        {valueProp ? (
+          <section className="mt-12 max-w-3xl space-y-3">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">{t.value}</h2>
+            <p className="text-base leading-relaxed text-[#252A58]">{valueProp}</p>
           </section>
         ) : null}
 
-        <div className="mt-14">
-          <Link
-            href={L("/contacto")}
-            className="inline-flex items-center justify-center rounded-md bg-[#252A58] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#0E7A7C]"
-          >
-            {t.cta}
-          </Link>
-        </div>
+        <section className="mt-14 max-w-2xl space-y-5 border-t border-[#dce9ff]/40 pt-10">
+          <p className="text-base leading-relaxed text-[#0E7A7C]">{t.ctaLead}</p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={contactHref}
+              className="inline-flex items-center justify-center rounded-md bg-[#252A58] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#0E7A7C]"
+            >
+              {t.cta}
+            </Link>
+            <Link
+              href={contactHref}
+              className="inline-flex items-center justify-center rounded-md border border-[#334E88]/30 px-8 py-3 text-xs font-bold uppercase tracking-widest text-[#334E88] transition hover:bg-[#334E88]/5"
+            >
+              {t.ctaAlt}
+            </Link>
+          </div>
+        </section>
       </Section>
     </div>
   );

@@ -66,6 +66,7 @@ export interface OpportunityMetric {
   note: string;
   icon: string;
   order: number;
+  is_public?: boolean;
 }
 
 export interface OpportunityFundUse {
@@ -82,14 +83,15 @@ export interface InvestmentOpportunity {
   title: string;
   slug: string;
   summary: string;
-  description: string;
+  /** Not returned by the public teaser API — kept optional for admin/legacy. */
+  description?: string;
   opportunity_description?: string;
-  target_customer: string;
-  market_demand: string;
-  value_proposition: string;
+  target_customer?: string;
+  market_demand?: string;
+  value_proposition?: string;
   sector: SectorLite | null;
-  department: DepartmentLite | null;
-  region: CNIRegion | null;
+  department?: DepartmentLite | null;
+  region?: CNIRegion | null;
   estimated_investment: string | null;
   estimated_jobs: number | null;
   status: OpportunityStatus;

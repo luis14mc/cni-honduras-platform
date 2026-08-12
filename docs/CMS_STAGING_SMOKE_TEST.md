@@ -111,16 +111,21 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 
 Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC-CNI-T002`, Turismo).
 
+**CMS / Admin API** conserva la ficha completa (CAPEX, cliente, mercado, métricas internas).
+
+**Público** es un teaser comercial: código, sector, título, resumen, propuesta corta, máx. 4 métricas con `is_public`, CTA a `/contacto?opportunity=<slug>`.
+
 1. Rol **Inversiones**: create draft incompleto (sin EN) en `/cms/oportunidades`
-2. Completar código, sector, título ES, descripción ES; métricas dinámicas N; CAPEX N filas
+2. Completar código, sector, título ES, descripción ES; métricas N (marcar 3–4 `is_public`); CAPEX N filas
 3. Guardar ES no debe borrar EN (y viceversa)
 4. Publish con `cms.can_publish` → `status=published`, `published_at` set
-5. Publish inválido (sin código/sector/título/desc ES) → HTTP 400 con errores de campo
-6. Editar publicada → sigue publicada (no vuelve a draft)
-7. Editor sin permiso investment → 403
-8. Público: `GET /api/v1/investment/opportunities/?lang=es|en` solo published
-9. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; cuerpo CMS (código, métricas, CAPEX)
-10. Hero de página **no** viene del CMS
+5. Publish inválido → HTTP 400
+6. Público: `GET /api/v1/investment/opportunities/?lang=` **sin** `fund_uses` / `target_customer` / `market_demand` / métricas internas
+7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
+8. Admin retrieve sí incluye CAPEX y métricas internas
+
+### CI fix (run #49)
+Migración `0006` renombraba `status`→`lifecycle_status` y recreaba `status` con el mismo nombre de índice PostgreSQL (`…_status_3c5c08c7`). Se renombra el índice legacy antes de `AddField(status)`.
 
 ## 10. Page
 

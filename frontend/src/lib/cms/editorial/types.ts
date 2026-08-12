@@ -178,6 +178,7 @@ export interface OpportunityMetricItem {
   note_en: string;
   icon: string;
   order: number;
+  is_public: boolean;
 }
 
 export interface OpportunityFundUseItem {

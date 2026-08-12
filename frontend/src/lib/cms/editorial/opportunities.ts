@@ -93,6 +93,7 @@ export type OpportunityFormMetric = {
   note_en: string;
   icon: string;
   order: number;
+  is_public: boolean;
 };
 
 export type OpportunityFormFundUse = {
@@ -189,6 +190,7 @@ export function opportunityToForm(item: OpportunityItem): OpportunityFormState {
       note_en: m.note_en ?? "",
       icon: m.icon ?? "",
       order: m.order ?? index,
+      is_public: Boolean(m.is_public),
     })),
     fund_uses: (item.fund_uses ?? []).map((f, index) => ({
       id: f.id,
@@ -220,6 +222,7 @@ export function opportunityFormToPayload(form: OpportunityFormState): Opportunit
     note_en: m.note_en,
     icon: m.icon,
     order: m.order ?? index,
+    is_public: Boolean(m.is_public),
   }));
   const fund_uses: OpportunityFundUseItem[] = form.fund_uses.map((f, index) => ({
     id: f.id ?? null,
@@ -267,6 +270,7 @@ export function emptyMetric(order = 0): OpportunityFormMetric {
     note_en: "",
     icon: "",
     order,
+    is_public: false,
   };
 }
 

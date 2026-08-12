@@ -45,6 +45,19 @@ class Migration(migrations.Migration):
             old_name="status",
             new_name="lifecycle_status",
         ),
+        # PostgreSQL keeps the auto index name from the old ``status`` column after
+        # RenameField. Rename it so AddField(status, db_index=True) does not collide
+        # (CI DuplicateTable: investment_investmentopportunity_status_3c5c08c7).
+        migrations.RunSQL(
+            sql=(
+                'ALTER INDEX IF EXISTS "investment_investmentopportunity_status_3c5c08c7" '
+                'RENAME TO "investment_investmentopportunity_lifecycle_status_idx"'
+            ),
+            reverse_sql=(
+                'ALTER INDEX IF EXISTS "investment_investmentopportunity_lifecycle_status_idx" '
+                'RENAME TO "investment_investmentopportunity_status_3c5c08c7"'
+            ),
+        ),
         migrations.AddField(
             model_name="investmentopportunity",
             name="code",

@@ -22,11 +22,10 @@ multimedia, usuarios/roles.
 ### Oportunidades de inversión (S2-T8)
 
 - Un registro bilingüe (`modeltranslation`); no filas ES/EN separadas.
-- Campos narrativos: descripción, cliente objetivo, mercado/demanda, propuesta de valor.
-- `OpportunityMetric` y `OpportunityFundUse` relacionados (N filas ordenables).
-- Draft incompleto permitido; publish exige código + sector + título ES + descripción ES.
-- Rol Inversiones: CRUD; publicación con `cms.can_publish`.
-- Público: `/api/v1/investment/opportunities/` y detalle por slug; hero de página estático.
+- CMS/Admin API: ficha completa (descripción, cliente, mercado, propuesta, métricas, CAPEX).
+- `OpportunityMetric.is_public` selecciona hasta 4 métricas para el teaser público.
+- API pública: solo teaser — **sin** CAPEX ni narrativa interna.
+- Frontend público: teaser + CTA a contacto; hero de página estático.
 
 `SiteBanner` queda limitado a barras no estructurales (`site_top`, `footer`).
 El placement `home_hero` es legacy y no alimenta el sitio público.

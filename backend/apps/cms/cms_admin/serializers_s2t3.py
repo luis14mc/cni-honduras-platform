@@ -110,6 +110,7 @@ class OpportunityMetricAdminSerializer(serializers.ModelSerializer):
             "note_en",
             "icon",
             "order",
+            "is_public",
         )
         extra_kwargs = {
             "label": {"required": False, "allow_blank": True},
