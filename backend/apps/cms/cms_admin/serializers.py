@@ -73,17 +73,9 @@ class MediaAssetNestedSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "file_url", "file_size_bytes", "mime_type", "created_at")
 
     def get_file_url(self, obj: MediaAsset) -> str | None:
-        if not obj.file:
-            return None
-        try:
-            url = obj.file.url
-        except (OSError, ValueError):
-            # DB points at a name that storage cannot resolve (orphaned Render disk, etc.)
-            return None
-        request = self.context.get("request")
-        if request and url.startswith("/"):
-            return request.build_absolute_uri(url)
-        return url
+        from apps.media_library.serializers import absolute_file_url
+
+        return absolute_file_url(obj.file, self.context)
 
     def get_file_size_bytes(self, obj: MediaAsset) -> int | None:
         if not obj.file:
@@ -405,13 +397,9 @@ class DocumentAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
         }
 
     def _absolute_file_url(self, file_field) -> str | None:
-        if not file_field:
-            return None
-        request = self.context.get("request")
-        url = file_field.url
-        if request and url.startswith("/"):
-            return request.build_absolute_uri(url)
-        return url
+        from apps.media_library.serializers import absolute_file_url
+
+        return absolute_file_url(file_field, self.context)
 
     def get_file_url(self, obj: Document) -> str | None:
         return self._absolute_file_url(obj.file)

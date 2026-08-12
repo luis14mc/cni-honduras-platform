@@ -1,202 +1,118 @@
-# Almacenamiento persistente de media (S3-compatible)
+# Almacenamiento portable de media (S3-compatible)
 
-Este documento describe cómo configurar almacenamiento externo para archivos
-**media** de Django (imágenes, PDFs, documentos) en Render y otros entornos
-donde el disco del contenedor es efímero.
+Arquitectura de media **independiente del proveedor**: local, staging, Render,
+Vercel+backend remoto, AWS, Cloudflare R2, MinIO, DigitalOcean Spaces u otros
+S3-compatible. La infraestructura se decide **solo por variables de entorno**.
 
-## Arquitectura
+## Principio
 
 ```text
-Django Admin / API upload
-        │
-        ▼
-  default storage (STORAGES["default"])
-        │
-        ├── Desarrollo local (USE_S3_STORAGE=false)
-        │     └── FileSystemStorage → backend/media/
-        │
-        └── Render / staging / prod (USE_S3_STORAGE=true)
-              ├── Escritura/API → AWS_S3_ENDPOINT_URL (boto3)
-              └── Lectura pública → AWS_S3_CUSTOM_DOMAIN (HTTPS)
-                    └── Objetos bajo prefijo media/
-
-Static files (collectstatic) → STORAGES["staticfiles"] → filesystem (sin cambios en S1-T6)
+Frontend  ──consume──►  file_url (URL usable en el navegador)
+                              ▲
+                              │
+Backend storage (.url) ───────┘
+  ├── FileSystemStorage (local)
+  └── S3Storage / django-storages (remoto persistente)
 ```
 
-**Alcance S1-T6:** solo **media**. Los archivos estáticos (`/static/`) no se mueven a S3.
+- El frontend **no** debe saber dónde vive el archivo (hostname, `/media/`, Render, R2…).
+- El backend entrega `file_url` absoluto cuando es posible (CDN, bucket público, URL firmada o `http://localhost:8000/media/...`).
+- Helper frontend único: `resolveMediaFileUrl` (`file_url || file`).
+
+## Modos
+
+| `USE_S3_STORAGE` | Backend | Uso |
+|------------------|---------|-----|
+| `false` (default) | `FileSystemStorage` | Desarrollo local |
+| `true` | `storages.backends.s3.S3Storage` | Staging / producción / cualquier PaaS con disco efímero |
+
+**No** hay detección por hostname (`render.com`, `vercel.app`, etc.).
+
+Si `DEBUG=false` y el storage activo sigue siendo FileSystemStorage, el backend emite un **warning** (sin secretos) recomendando `USE_S3_STORAGE=true`.
 
 ## Variables de entorno
 
+Los nombres `AWS_*` son la convención de **django-storages**; el proveedor **no** tiene que ser AWS.
+
 ### Activación
-
-| Variable | Requerida | Descripción |
-|----------|-----------|-------------|
-| `USE_S3_STORAGE` | Sí (prod) | `true` habilita S3; omitida o `false` usa disco local |
-
-### Credenciales y bucket (requeridas si `USE_S3_STORAGE=true`)
-
-| Variable | Descripción |
-|----------|-------------|
-| `AWS_ACCESS_KEY_ID` | Access key del proveedor |
-| `AWS_SECRET_ACCESS_KEY` | Secret key |
-| `AWS_STORAGE_BUCKET_NAME` | Nombre del bucket |
-| `AWS_S3_ENDPOINT_URL` | Endpoint **S3 API** para boto3 (escritura/lectura autenticada) |
-| `AWS_S3_REGION_NAME` | Región (`auto` suele funcionar en R2) |
-| `AWS_S3_CUSTOM_DOMAIN` | Dominio **público de lectura** (requerido en R2 con URLs sin firma) |
-
-### Comportamiento recomendado
 
 | Variable | Default | Descripción |
 |----------|---------|-------------|
-| `AWS_QUERYSTRING_AUTH` | `false` | URLs públicas sin firma temporal |
-| `AWS_S3_FILE_OVERWRITE` | `false` | Evita sobrescribir archivos con el mismo nombre |
-| `AWS_S3_ADDRESSING_STYLE` | (vacío) | `path` recomendado para R2/minio |
-| `AWS_DEFAULT_ACL` | (vacío) | Dejar vacío en R2; no usar ACLs incompatibles |
+| `USE_S3_STORAGE` | `false` | `true` → object storage S3-compatible |
 
-### Endpoint S3 vs dominio público
+### Requeridas si `USE_S3_STORAGE=true`
 
-| Uso | Variable | Ejemplo |
-|-----|----------|---------|
-| **Escritura / API boto3** | `AWS_S3_ENDPOINT_URL` | `https://<account-id>.r2.cloudflarestorage.com` |
-| **Lectura pública (URLs en API)** | `AWS_S3_CUSTOM_DOMAIN` | `pub-xxxxx.r2.dev` o `media.example.com` |
+| Variable | Descripción |
+|----------|-------------|
+| `AWS_ACCESS_KEY_ID` | Access key |
+| `AWS_SECRET_ACCESS_KEY` | Secret key |
+| `AWS_STORAGE_BUCKET_NAME` | Bucket |
+| `AWS_S3_ENDPOINT_URL` | Endpoint **API** S3 (escrituras boto3) |
+| `AWS_S3_REGION_NAME` | Región (`auto` en varios proveedores) |
 
-**No usar** `AWS_S3_ENDPOINT_URL` como base de `MEDIA_URL` en Cloudflare R2 cuando
-`AWS_QUERYSTRING_AUTH=false`: ese endpoint es privado de API y los archivos no serán
-accesibles públicamente.
+### Lectura pública / URLs
 
-En proveedores S3 cuyo endpoint **sí** sirve lectura pública directa, el backend puede
-derivar `MEDIA_URL` desde endpoint + bucket. R2 **no** entra en ese caso.
+| Variable | Default | Descripción |
+|----------|---------|-------------|
+| `AWS_S3_CUSTOM_DOMAIN` | (vacío) | Dominio público CDN/bucket → `https://{domain}/` (recomendado) |
+| `AWS_QUERYSTRING_AUTH` | `false` | `true` → URLs firmadas por objeto; `MEDIA_URL` relativa |
+| `AWS_S3_FILE_OVERWRITE` | `false` | No sobrescribir nombres |
+| `AWS_S3_ADDRESSING_STYLE` | (vacío) | `path` habitual en MinIO / algunos R2 |
+| `AWS_DEFAULT_ACL` | (vacío) | Dejar vacío si el proveedor no usa ACLs |
 
-### Desarrollo local (sin S3)
+### Local
 
 ```env
 USE_S3_STORAGE=false
 DJANGO_MEDIA_URL=/media/
 DJANGO_MEDIA_ROOT_REL=media
+DJANGO_DEBUG=True
 ```
 
-Django sirve `/media/` en `DEBUG=True` vía `config.urls`.
+Django sirve `/media/` solo con `DEBUG=True` (`config.urls`).
 
-## Configuración genérica S3-compatible
-
-1. Crear bucket dedicado para media institucional pública.
-2. Habilitar acceso público de lectura **solo** para el prefijo `media/` (o todo el bucket si es exclusivo de media).
-3. Configurar CORS si el frontend sube directamente (no aplica a subidas vía Django Admin).
-4. En Render, definir las variables anteriores.
-5. Desplegar con `USE_S3_STORAGE=true`.
-
-Si falta alguna variable requerida, Django **falla al arrancar** con un mensaje que lista los nombres faltantes (sin exponer secretos).
-
-## Cloudflare R2 (orientativo)
-
-R2 separa el **endpoint S3 privado** del **dominio público de lectura**. Con
-`AWS_QUERYSTRING_AUTH=false` (recomendado para media institucional pública), **debes**
-definir `AWS_S3_CUSTOM_DOMAIN` con:
-
-- el dominio público `*.r2.dev` asignado al bucket en el panel de R2, **o**
-- un dominio personalizado configurado en Cloudflare.
-
-Valores de ejemplo (sustituir por los de tu cuenta):
+### Remoto (ejemplo genérico)
 
 ```env
 USE_S3_STORAGE=true
-AWS_ACCESS_KEY_ID=<r2-access-key-id>
-AWS_SECRET_ACCESS_KEY=<r2-secret-access-key>
-AWS_STORAGE_BUCKET_NAME=<your-bucket-name>
-AWS_S3_ENDPOINT_URL=https://<account-id>.r2.cloudflarestorage.com
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_STORAGE_BUCKET_NAME=...
+AWS_S3_ENDPOINT_URL=https://s3.example.com
 AWS_S3_REGION_NAME=auto
-AWS_S3_ADDRESSING_STYLE=path
+AWS_S3_CUSTOM_DOMAIN=cdn.example.com
 AWS_QUERYSTRING_AUTH=false
 AWS_S3_FILE_OVERWRITE=false
-AWS_DEFAULT_ACL=
-AWS_S3_CUSTOM_DOMAIN=<pub-xxxxx.r2.dev-or-media.example.com>
 ```
 
-Si falta `AWS_S3_CUSTOM_DOMAIN` con endpoint R2 y URLs sin firma, Django **falla al
-arrancar** con un mensaje claro (sin exponer credenciales).
+`file_url` en API será del estilo `https://cdn.example.com/media/...`.
 
-En R2:
+## Resolución de `MEDIA_URL` (backend)
 
-1. Crear bucket.
-2. Crear API token con permiso de lectura/escritura sobre ese bucket.
-3. Habilitar acceso público y copiar el dominio `r2.dev`, **o** configurar custom domain.
-4. Definir `AWS_S3_CUSTOM_DOMAIN` con ese dominio público (no el endpoint API).
-5. Definir `AWS_S3_ENDPOINT_URL` solo para la API S3 de escritura.
+1. Sin S3 → `DJANGO_MEDIA_URL` (`/media/`).
+2. Con S3 + `AWS_S3_CUSTOM_DOMAIN` → `https://{domain}/`.
+3. Con S3 + `AWS_QUERYSTRING_AUTH=true` → base relativa; cada `.url` es absoluta firmada.
+4. Con S3 sin dominio custom y sin firma → `{endpoint}/{bucket}/media/` (solo si el endpoint sirve lecturas públicas).
 
-## Render
+## Frontend
 
-1. Servicio Web (backend) → **Environment**.
-2. Añadir variables de la sección anterior.
-3. **Start Command:** dejar vacío para usar `backend/scripts/start.sh` del Dockerfile, o `./scripts/start.sh`.
-4. Redeploy.
+- `frontend/src/lib/mediaUrl.ts` → `resolveMediaFileUrl`
+- Prefiere `file_url`; resuelve `file` relativo solo como legado (prefijo origen API).
+- Previews CMS (`CmsMediaImage`, Multimedia, MediaPicker): si la URL falla → placeholder **Archivo no disponible** (sin ícono roto del navegador).
 
-El script de arranque ejecuta:
+## Formatos de imagen
 
-- `migrate --noinput`
-- `import_institutional_links` (idempotente; no afecta media)
-- Gunicorn
-
-No ejecuta `makemigrations` ni `collectstatic` de media.
+JPG, JPEG, PNG, WEBP, GIF, SVG (WebP recomendado, no obligatorio). Sin conversión automática en este cambio.
 
 ## Pruebas
 
-### Subida desde Django Admin
+- Backend: filesystem local, URL S3 mockeada, formatos de imagen, `file_url` absoluto, media huérfana tolerada.
+- Frontend: `file_url` absoluto, `file` relativo, placeholder, extensiones soportadas.
+- CI: sin requests reales a proveedores externos.
 
-1. `/admin/` → Document / Media asset / News image.
-2. Subir archivo.
-3. Verificar URL pública HTTPS en detalle del objeto.
+## Referencias
 
-### Después de redeploy
-
-1. Redeploy en Render (o reinicio del contenedor).
-2. Abrir la misma URL del archivo.
-3. Debe seguir accesible (persistencia en bucket).
-
-### API
-
-Endpoints que exponen archivos:
-
-- `GET /api/v1/cms/documents/` → campo `file`
-- `GET /api/v1/cms/news/` → `featured_image.file`
-- `GET /api/v1/investment/success-stories/` → `image`, `logo.file`
-
-Las URLs deben ser absolutas (`https://...`) o rutas `/media/` en local, **sin** dominios hardcodeados del API.
-
-## CORS
-
-Si el frontend carga imágenes/PDFs directamente desde el dominio del bucket o CDN, configurar CORS en el proveedor:
-
-- Orígenes: dominios del frontend (`https://test.cni.hn`, `https://cni.hn`, etc.)
-- Métodos: `GET`, `HEAD`
-- Headers: según necesidad del CDN
-
-Las subidas vía Django Admin no requieren CORS en el bucket (el backend escribe con boto3).
-
-## Rollback
-
-1. En Render, establecer `USE_S3_STORAGE=false` (o eliminar la variable).
-2. Redeploy → vuelve a FileSystemStorage local (efímero en Free tier).
-3. Los archivos ya subidos al bucket **permanecen** en el proveedor; las filas DB pueden apuntar a URLs S3 antiguas hasta re-subir o migrar.
-4. Para rollback completo: restaurar backup de DB + copiar media local si existía.
-
-## Seguridad
-
-- No commitear access keys ni `.env`.
-- Bucket dedicado solo a media pública institucional publicada.
-- `AWS_QUERYSTRING_AUTH=false` para contenido público (no usar URLs firmadas por defecto).
-- No subir documentos privados a buckets públicos sin revisión de permisos.
-- Rotar credenciales si se filtran.
-
-## Límites conocidos
-
-- Archivos subidos **antes** de activar S3 siguen en rutas locales hasta re-subirlos o migrarlos manualmente.
-- Render Free: disco local sigue siendo efímero si S3 no está habilitado.
-- Static files no están en S3 (S1-T6); `collectstatic` sigue en imagen/volumen del contenedor.
-- Tamaño máximo de upload depende de Gunicorn/Render (ajustar en bloque futuro si hace falta).
-
-## Referencias en código
-
-- `backend/config/settings/storage.py` — lógica STORAGES
-- `backend/config/settings/base.py` — integración
-- `backend/scripts/start.sh` — arranque Render
-- `docs/cms/05-deuda-tecnica-media.md` — contexto histórico
+- `backend/config/settings/storage.py`
+- `backend/apps/media_library/serializers.py` → `absolute_file_url`
+- `frontend/src/lib/mediaUrl.ts`
+- `docs/cms/05-deuda-tecnica-media.md` (histórico actualizado)

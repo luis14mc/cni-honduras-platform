@@ -4,10 +4,20 @@ from .models import MediaAsset
 
 
 def absolute_file_url(file_field, context: dict | None = None) -> str | None:
-    """Return an absolute URL for a FileField (API or S3/R2 custom domain)."""
+    """Return a browser-usable absolute URL for a FileField.
+
+    Prefer storage-native absolute URLs (CDN / S3-compatible / signed). Relative
+    paths are absolutized with the request host for local FileSystemStorage.
+    Missing/orphaned blobs return None — never raise into list serializers.
+    """
     if not file_field:
         return None
-    url = file_field.url
+    try:
+        url = file_field.url
+    except (OSError, ValueError, FileNotFoundError):
+        return None
+    if not url:
+        return None
     if url.startswith(("http://", "https://")):
         return url
     request = (context or {}).get("request")
