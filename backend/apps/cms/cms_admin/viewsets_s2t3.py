@@ -127,17 +127,15 @@ class OpportunityFilterMixin(EditorialFilterMixin):
 
 
 @method_decorator(csrf_protect, name="dispatch")
-class InvestmentOpportunityAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
+class InvestmentOpportunityAdminViewSet(
+    OpportunityFilterMixin, EditorialViewSetMixin, viewsets.ModelViewSet
+):
     queryset = InvestmentOpportunity.all_objects.select_related(
         "sector", "department", "region", "created_by", "updated_by"
     ).prefetch_related("metrics", "fund_uses")
     serializer_class = InvestmentOpportunityAdminSerializer
     app_label = "investment"
     model_name = "investmentopportunity"
-    search_fields = OpportunityFilterMixin.search_fields
-
-    def filter_queryset(self, queryset):
-        return OpportunityFilterMixin.filter_queryset(self, queryset)
 
 
 @method_decorator(csrf_protect, name="dispatch")

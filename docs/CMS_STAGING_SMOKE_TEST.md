@@ -124,11 +124,9 @@ Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC
 7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
 8. Admin retrieve sí incluye CAPEX y métricas internas
 
-### CI fix (runs #49 / #50)
-Migración `0006` renombraba `status`→`lifecycle_status` y recreaba `status` indexado.
-PostgreSQL conserva nombres de índice; faltaba renombrar también el companion
-`varchar_pattern_ops` (`…_status_3c5c08c7_like`). `0006` ahora renombra btree + `_like`
-antes de `AddField(status)`.
+### CI fix (runs #49 / #50 / #51)
+- **#49/#50:** `0006` — PostgreSQL conserva índices btree + `_like` tras `RenameField(status→lifecycle_status)`; se renombran ambos antes de `AddField(status)`.
+- **#51:** migraciones OK; 7 tests admin fallaban por `TypeError` al llamar `OpportunityFilterMixin.filter_queryset(self, …)` sin heredar el mixin (`super()` inválido). ViewSet ahora hereda `OpportunityFilterMixin` correctamente.
 
 ## 10. Page
 
