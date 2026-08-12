@@ -5,6 +5,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.cms.models import PublishStatus
 from apps.core.api import LocalizedViewSetMixin
 from apps.geo.models import Department
 
@@ -27,22 +28,26 @@ class SectorViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return Sector.objects.filter(is_active=True).order_by(*Sector._meta.ordering)
 
 
-class InvestmentOpportunityViewSet(viewsets.ReadOnlyModelViewSet):
+class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = InvestmentOpportunitySerializer
     lookup_field = "slug"
 
     def get_queryset(self):
         queryset = (
-            InvestmentOpportunity.objects.select_related("sector", "department", "region")
-            .filter(is_public=True, sector__is_active=True)
+            InvestmentOpportunity.objects.published()
+            .select_related("sector", "department", "region")
+            .prefetch_related("metrics")
+            .filter(Q(sector__isnull=True) | Q(sector__is_active=True))
             .order_by(*InvestmentOpportunity._meta.ordering)
         )
         queryset = apply_slug_filter(queryset, "sector", "sector__slug", self.request)
         queryset = apply_slug_filter(queryset, "department", "department__slug", self.request)
         queryset = apply_slug_filter(queryset, "region", "region__slug", self.request)
-        status = self.request.query_params.get("status")
-        if status:
-            queryset = queryset.filter(status=status)
+        lifecycle = self.request.query_params.get("lifecycle_status") or self.request.query_params.get(
+            "status"
+        )
+        if lifecycle in {"open", "in_progress", "closed"}:
+            queryset = queryset.filter(lifecycle_status=lifecycle)
         featured = parse_bool_param(self.request.query_params.get("featured"))
         if featured is not None:
             queryset = queryset.filter(is_featured=featured)
@@ -97,8 +102,9 @@ class SuccessStoryViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
 
 _PUBLIC_PROJECT_FILTER = Q(projects__is_public=True, projects__sector__is_active=True)
 _PUBLIC_OPPORTUNITY_FILTER = Q(
-    opportunities__is_public=True, opportunities__sector__is_active=True
-)
+    opportunities__status=PublishStatus.PUBLISHED,
+    opportunities__published_at__isnull=False,
+) & (Q(opportunities__sector__isnull=True) | Q(opportunities__sector__is_active=True))
 
 
 class MapSummaryAPIView(APIView):
@@ -138,8 +144,8 @@ class MapSummaryAPIView(APIView):
         ):
             sector_ids_by_department.setdefault(department_id, set()).add(sector_id)
         for department_id, sector_id in (
-            InvestmentOpportunity.objects.filter(
-                is_public=True,
+            InvestmentOpportunity.objects.published()
+            .filter(
                 sector__is_active=True,
                 department_id__isnull=False,
             )

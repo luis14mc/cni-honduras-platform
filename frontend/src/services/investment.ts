@@ -24,18 +24,28 @@ export function getSector(slug: string, options: LocaleOptions = {}): Promise<Se
   return apiGet<Sector>(`${BASE}/sectors/${slug}/`, localeOpts(options.locale));
 }
 
-export function getOpportunities(): Promise<InvestmentOpportunity[]> {
-  return apiGetList<InvestmentOpportunity>(`${BASE}/opportunities/`);
+export function getOpportunities(options: LocaleOptions = {}): Promise<InvestmentOpportunity[]> {
+  return apiGetList<InvestmentOpportunity>(`${BASE}/opportunities/`, localeOpts(options.locale));
 }
 
-export function getOpportunitiesBySector(sectorSlug: string): Promise<InvestmentOpportunity[]> {
+export function getOpportunitiesBySector(
+  sectorSlug: string,
+  options: LocaleOptions = {},
+): Promise<InvestmentOpportunity[]> {
   return apiGetList<InvestmentOpportunity>(
     `${BASE}/opportunities/?sector=${encodeURIComponent(sectorSlug)}`,
+    localeOpts(options.locale),
   );
 }
 
-export function getOpportunity(slug: string): Promise<InvestmentOpportunity> {
-  return apiGet<InvestmentOpportunity>(`${BASE}/opportunities/${slug}/`);
+export function getOpportunity(
+  slug: string,
+  options: LocaleOptions = {},
+): Promise<InvestmentOpportunity> {
+  return apiGet<InvestmentOpportunity>(
+    `${BASE}/opportunities/${slug}/`,
+    localeOpts(options.locale),
+  );
 }
 
 export function getProjects(): Promise<InvestmentProject[]> {

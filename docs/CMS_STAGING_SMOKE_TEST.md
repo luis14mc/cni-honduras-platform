@@ -102,19 +102,32 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 - CMS create → 3 medias → publish → home featured → detalle ES/EN
 - Verificar que logo nunca aparece como cover ni person_photo como logo
 
-## Scope note — Opportunities
-
-Opportunity **no** se rediseña en este sprint. Mantener estable; revisión posterior con ejemplos de negocio.
-
 ## 8. Sector
 
 1. Create sector, set active
 2. Public `/api/v1/investment/sectors/` includes slug
 
-## 9. Opportunity
+## 9. Opportunity (S2-T8)
 
-1. Create with sector, summary, description
-2. Set public — visible on public opportunities list
+Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC-CNI-T002`, Turismo).
+
+**CMS / Admin API** conserva la ficha completa (CAPEX, cliente, mercado, métricas internas).
+
+**Público** es un teaser comercial: código, sector, título, resumen, propuesta corta, máx. 4 métricas con `is_public`, CTA a `/contacto?opportunity=<slug>`.
+
+1. Rol **Inversiones**: create draft incompleto (sin EN) en `/cms/oportunidades`
+2. Completar código, sector, título ES, descripción ES; métricas N (marcar 3–4 `is_public`); CAPEX N filas
+3. Guardar ES no debe borrar EN (y viceversa)
+4. Publish con `cms.can_publish` → `status=published`, `published_at` set
+5. Publish inválido → HTTP 400
+6. Público: `GET /api/v1/investment/opportunities/?lang=` **sin** `fund_uses` / `target_customer` / `market_demand` / métricas internas
+7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
+8. Admin retrieve sí incluye CAPEX y métricas internas
+
+### CI fix (runs #49 / #50 / #51 / #52)
+- **#49/#50:** `0006` — PostgreSQL conserva índices btree + `_like` tras `RenameField(status→lifecycle_status)`; se renombran ambos antes de `AddField(status)`.
+- **#51:** migraciones OK; 7 tests admin fallaban por `TypeError` al llamar `OpportunityFilterMixin.filter_queryset(self, …)` sin heredar el mixin (`super()` inválido). ViewSet ahora hereda `OpportunityFilterMixin` correctamente.
+- **#52:** 1 FAIL bilingual admin — `validate()` copiaba `title_es→title` (descriptor); con idioma activo `en` (p. ej. test previo con `?lang=en`) eso escribía `title_en`. Se dejó de espejar campos base (como SuccessStory).
 
 ## 10. Page
 

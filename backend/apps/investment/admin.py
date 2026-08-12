@@ -10,9 +10,23 @@ from apps.cms.models import PublishStatus
 from .models import (
     InvestmentOpportunity,
     InvestmentProject,
+    OpportunityFundUse,
+    OpportunityMetric,
     Sector,
     SuccessStory,
 )
+
+
+class OpportunityMetricInline(admin.TabularInline):
+    model = OpportunityMetric
+    extra = 0
+    fields = ("order", "label", "value", "note", "icon", "is_public")
+
+
+class OpportunityFundUseInline(admin.TabularInline):
+    model = OpportunityFundUse
+    extra = 0
+    fields = ("order", "component", "amount", "description")
 
 
 @admin.register(Sector)
@@ -33,21 +47,65 @@ class SectorAdmin(TranslationAdmin):
 
 
 @admin.register(InvestmentOpportunity)
-class InvestmentOpportunityAdmin(admin.ModelAdmin):
-    list_display = ("title", "sector", "status", "is_public", "is_featured", "updated_at")
-    list_filter = ("status", "is_public", "is_featured", "sector")
-    search_fields = ("title", "slug", "summary", "description")
+class InvestmentOpportunityAdmin(EditorialAdminMixin, TranslationAdmin):
+    list_display = (
+        "code",
+        "title",
+        "sector",
+        "status",
+        "lifecycle_status",
+        "is_featured",
+        "order",
+        "updated_at",
+    )
+    list_filter = ("status", "lifecycle_status", "is_featured", "sector")
+    search_fields = ("code", "title", "slug", "summary", "description")
     prepopulated_fields = {"slug": ("title",)}
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = EditorialAdminMixin.readonly_fields
     autocomplete_fields = ("sector", "department", "region")
+    inlines = [OpportunityMetricInline, OpportunityFundUseInline]
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "summary", "description")}),
+        (
+            None,
+            {
+                "fields": (
+                    "code",
+                    "title",
+                    "slug",
+                    "status",
+                    "published_at",
+                    "lifecycle_status",
+                    "order",
+                    "is_featured",
+                )
+            },
+        ),
+        (
+            "Contenido",
+            {
+                "fields": (
+                    "summary",
+                    "description",
+                    "target_customer",
+                    "market_demand",
+                    "value_proposition",
+                )
+            },
+        ),
         ("Clasificación", {"fields": ("sector", "department", "region")}),
-        ("Datos", {"fields": ("estimated_investment", "estimated_jobs", "status")}),
-        ("Visibilidad", {"fields": ("is_public", "is_featured")}),
-        ("Metadatos", {"fields": ("created_at", "updated_at")}),
+        ("Legacy métricas", {"fields": ("estimated_investment", "estimated_jobs")}),
+        ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
+
+    def save_model(self, request, obj, form, change):
+        if not change and not obj.created_by:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        if obj.status == PublishStatus.PUBLISHED and not obj.published_at:
+            obj.published_at = timezone.now()
+        obj.full_clean()
+        super(EditorialAdminMixin, self).save_model(request, obj, form, change)
 
 
 @admin.register(InvestmentProject)

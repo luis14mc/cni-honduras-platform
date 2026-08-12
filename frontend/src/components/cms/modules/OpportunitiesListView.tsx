@@ -8,49 +8,45 @@ import { CmsDataTable } from "@/src/components/cms/editor/CmsDataTable";
 import type { CmsColumn } from "@/src/components/cms/editor/CmsDataTable";
 import { CmsFilterBar } from "@/src/components/cms/editor/CmsFilterBar";
 import { CmsPagination } from "@/src/components/cms/editor/CmsPagination";
+import { CmsStatusBadge } from "@/src/components/cms/editor/CmsStatusBadge";
 import { CmsSectionHeader } from "@/src/components/cms/CmsSectionHeader";
+import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
-import { listOpportunities } from "@/src/lib/cms/editorial/opportunities";
+import { CmsApiError } from "@/src/lib/cms/api";
+import {
+  archiveOpportunity,
+  listOpportunities,
+  publishOpportunity,
+  unpublishOpportunity,
+} from "@/src/lib/cms/editorial/opportunities";
+import type { OpportunityItem, PublishStatus, SectorItem } from "@/src/lib/cms/editorial/types";
 import { listSectors } from "@/src/lib/cms/editorial/sectors";
-import type { OpportunityItem, OpportunityStatus, SectorItem } from "@/src/lib/cms/editorial/types";
-import { canAdd } from "@/src/lib/cms/permissions";
-import { cn } from "@/src/lib/utils";
+import { canAdd, canChange, canPublish } from "@/src/lib/cms/permissions";
 
 const PAGE_SIZE = 20;
 
-const STATUS_OPTIONS: { value: "" | OpportunityStatus; label: string }[] = [
+const STATUS_OPTIONS: { value: "" | PublishStatus; label: string }[] = [
   { value: "", label: "Todos los estados" },
-  { value: "open", label: "Abierta" },
-  { value: "in_progress", label: "En progreso" },
-  { value: "closed", label: "Cerrada" },
-];
-
-const STATUS_LABELS: Record<OpportunityStatus, string> = {
-  open: "Abierta",
-  in_progress: "En progreso",
-  closed: "Cerrada",
-};
-
-const FEATURED_OPTIONS = [
-  { value: "", label: "Destacado: todos" },
-  { value: "true", label: "Solo destacadas" },
-  { value: "false", label: "No destacadas" },
+  { value: "draft", label: "Borrador" },
+  { value: "published", label: "Publicado" },
+  { value: "archived", label: "Archivado" },
 ];
 
 export function OpportunitiesListView() {
   const router = useRouter();
   const { user } = useCmsAuth();
+  const toast = useCmsToast();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sector, setSector] = useState("");
-  const [status, setStatus] = useState<"" | OpportunityStatus>("");
-  const [featured, setFeatured] = useState<"" | "true" | "false">("");
+  const [status, setStatus] = useState<"" | PublishStatus>("");
   const [sectors, setSectors] = useState<SectorItem[]>([]);
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState<OpportunityItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [busyId, setBusyId] = useState<number | null>(null);
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedSearch(search), 300);
@@ -73,7 +69,6 @@ export function OpportunitiesListView() {
         search: debouncedSearch || undefined,
         sector: sector || undefined,
         status: status || undefined,
-        is_featured: featured === "" ? "" : featured === "true",
       });
       setRows(data.results);
       setTotal(data.count);
@@ -82,18 +77,49 @@ export function OpportunitiesListView() {
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, sector, status, featured]);
+  }, [page, debouncedSearch, sector, status]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, [load]);
 
+  const runAction = async (
+    id: number,
+    action: "publish" | "archive" | "unpublish",
+  ) => {
+    setBusyId(id);
+    try {
+      if (action === "publish") await publishOpportunity(id);
+      if (action === "archive") await archiveOpportunity(id);
+      if (action === "unpublish") await unpublishOpportunity(id);
+      toast.success(
+        action === "publish"
+          ? "Oportunidad publicada."
+          : action === "archive"
+            ? "Oportunidad archivada."
+            : "Oportunidad despublicada.",
+      );
+      await load();
+    } catch (err) {
+      toast.error(err instanceof CmsApiError ? err.message : "No se pudo completar la acción.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const columns: CmsColumn<OpportunityItem>[] = [
+    {
+      key: "code",
+      header: "Código",
+      render: (row) => <span className="font-mono text-xs">{row.code || "—"}</span>,
+    },
     {
       key: "title",
       header: "Título",
-      render: (row) => <span className="font-medium">{row.title || "Sin título"}</span>,
+      render: (row) => (
+        <span className="font-medium">{row.title_es || row.title || "Sin título"}</span>
+      ),
     },
     {
       key: "sector",
@@ -103,23 +129,7 @@ export function OpportunitiesListView() {
     {
       key: "status",
       header: "Estado",
-      render: (row) => STATUS_LABELS[row.status] ?? row.status,
-    },
-    {
-      key: "public",
-      header: "Visibilidad",
-      render: (row) => (
-        <span
-          className={cn(
-            "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
-            row.is_public
-              ? "bg-[#32B372]/15 text-[#1a7a4a]"
-              : "bg-[#334E88]/10 text-[#334E88]",
-          )}
-        >
-          {row.is_public ? "Pública" : "Borrador"}
-        </span>
-      ),
+      render: (row) => <CmsStatusBadge status={row.status} />,
     },
     {
       key: "featured",
@@ -131,13 +141,62 @@ export function OpportunitiesListView() {
       header: "Actualizado",
       render: (row) => new Date(row.updated_at).toLocaleDateString("es-HN"),
     },
+    {
+      key: "actions",
+      header: "Acciones",
+      render: (row) => {
+        const canEdit = canChange(user, "investment", "investmentopportunity");
+        const busy = busyId === row.id;
+        return (
+          <div className="flex flex-wrap gap-1" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="rounded px-2 py-1 text-xs font-semibold text-[#334E88] hover:bg-[#334E88]/10"
+              onClick={() => router.push(`/cms/oportunidades/${row.id}`)}
+            >
+              Editar
+            </button>
+            {canEdit && canPublish(user) && row.status !== "published" ? (
+              <button
+                type="button"
+                disabled={busy}
+                className="rounded px-2 py-1 text-xs font-semibold text-[#1a7a4a] hover:bg-[#32B372]/15 disabled:opacity-50"
+                onClick={() => void runAction(row.id, "publish")}
+              >
+                Publicar
+              </button>
+            ) : null}
+            {canEdit && canPublish(user) && row.status === "published" ? (
+              <button
+                type="button"
+                disabled={busy}
+                className="rounded px-2 py-1 text-xs font-semibold text-amber-800 hover:bg-amber-50 disabled:opacity-50"
+                onClick={() => void runAction(row.id, "unpublish")}
+              >
+                Despublicar
+              </button>
+            ) : null}
+            {canEdit && canPublish(user) && row.status !== "archived" ? (
+              <button
+                type="button"
+                disabled={busy}
+                className="rounded px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                onClick={() => void runAction(row.id, "archive")}
+              >
+                Archivar
+              </button>
+            ) : null}
+          </div>
+        );
+      },
+    },
   ];
 
   return (
     <>
       <CmsSectionHeader
         title="Oportunidades"
-        description="Oportunidades de inversión publicadas en el portal."
+        description="Fichas de oportunidades de inversión (Opportunity Cards)."
         actions={
           canAdd(user, "investment", "investmentopportunity") ? (
             <Link
@@ -157,7 +216,7 @@ export function OpportunitiesListView() {
           setSearch(v);
           setPage(1);
         }}
-        searchPlaceholder="Buscar oportunidades…"
+        searchPlaceholder="Buscar por código, título…"
       >
         <select
           value={sector}
@@ -177,26 +236,12 @@ export function OpportunitiesListView() {
         <select
           value={status}
           onChange={(e) => {
-            setStatus(e.target.value as "" | OpportunityStatus);
+            setStatus(e.target.value as "" | PublishStatus);
             setPage(1);
           }}
           className="rounded-lg border border-[#334E88]/20 bg-white px-3 py-2 text-sm text-[#252A58] focus:border-[#334E88] focus:outline-none focus:ring-2 focus:ring-[#334E88]/20"
         >
           {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value || "all"} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={featured}
-          onChange={(e) => {
-            setFeatured(e.target.value as "" | "true" | "false");
-            setPage(1);
-          }}
-          className="rounded-lg border border-[#334E88]/20 bg-white px-3 py-2 text-sm text-[#252A58] focus:border-[#334E88] focus:outline-none focus:ring-2 focus:ring-[#334E88]/20"
-        >
-          {FEATURED_OPTIONS.map((opt) => (
             <option key={opt.value || "all"} value={opt.value}>
               {opt.label}
             </option>
@@ -213,7 +258,7 @@ export function OpportunitiesListView() {
         onRetry={() => void load()}
         onRowClick={(row) => router.push(`/cms/oportunidades/${row.id}`)}
         emptyTitle="Sin oportunidades"
-        emptyDescription="Registre oportunidades de inversión para el mapa del país."
+        emptyDescription="Registre fichas estructuradas (código, métricas, CAPEX)."
       />
 
       <CmsPagination page={page} pageSize={PAGE_SIZE} total={total} onPageChange={setPage} />

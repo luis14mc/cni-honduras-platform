@@ -16,7 +16,16 @@ páginas institucionales) se definen en el frontend (`components`, `designAssets
 `/public/images/…`). El CMS **no** administra fondos ni composición de heroes.
 
 Sí administra contenido dinámico **debajo** del hero: noticias, documentos,
-casos de éxito, oportunidades, multimedia, usuarios/roles.
+casos de éxito, oportunidades (fichas bilingües con métricas dinámicas y CAPEX),
+multimedia, usuarios/roles.
+
+### Oportunidades de inversión (S2-T8)
+
+- Un registro bilingüe (`modeltranslation`); no filas ES/EN separadas.
+- CMS/Admin API: ficha completa (descripción, cliente, mercado, propuesta, métricas, CAPEX).
+- `OpportunityMetric.is_public` selecciona hasta 4 métricas para el teaser público.
+- API pública: solo teaser — **sin** CAPEX ni narrativa interna.
+- Frontend público: teaser + CTA a contacto; hero de página estático.
 
 `SiteBanner` queda limitado a barras no estructurales (`site_top`, `footer`).
 El placement `home_hero` es legacy y no alimenta el sitio público.

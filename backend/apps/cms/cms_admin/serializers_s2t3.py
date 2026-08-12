@@ -9,8 +9,16 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from apps.cms.models import InstitutionalLink, Page
-from apps.investment.models import InvestmentOpportunity, Sector
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db import transaction
+
+from apps.cms.models import InstitutionalLink, Page, PublishStatus
+from apps.investment.models import (
+    InvestmentOpportunity,
+    OpportunityFundUse,
+    OpportunityMetric,
+    Sector,
+)
 
 from .admin_privileges import (
     assert_can_assign_groups,
@@ -84,38 +92,183 @@ class SectorAdminSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class InvestmentOpportunityAdminSerializer(serializers.ModelSerializer):
+class OpportunityMetricAdminSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
+    class Meta:
+        model = OpportunityMetric
+        fields = (
+            "id",
+            "label",
+            "label_es",
+            "label_en",
+            "value",
+            "value_es",
+            "value_en",
+            "note",
+            "note_es",
+            "note_en",
+            "icon",
+            "order",
+            "is_public",
+        )
+        extra_kwargs = {
+            "label": {"required": False, "allow_blank": True},
+            "label_es": {"required": False, "allow_blank": True},
+            "label_en": {"required": False, "allow_blank": True},
+        }
+
+    def validate(self, attrs):
+        label = (
+            attrs.get("label_es")
+            or attrs.get("label")
+            or attrs.get("label_en")
+            or ""
+        ).strip()
+        if not label:
+            raise serializers.ValidationError({"label_es": "La etiqueta es obligatoria."})
+        if not attrs.get("label"):
+            attrs["label"] = label
+        if attrs.get("label_es") is None and attrs.get("label"):
+            attrs["label_es"] = attrs["label"]
+        return attrs
+
+
+class OpportunityFundUseAdminSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, allow_null=True)
+
+    class Meta:
+        model = OpportunityFundUse
+        fields = (
+            "id",
+            "component",
+            "component_es",
+            "component_en",
+            "amount",
+            "description",
+            "description_es",
+            "description_en",
+            "order",
+        )
+        extra_kwargs = {
+            "component": {"required": False, "allow_blank": True},
+            "component_es": {"required": False, "allow_blank": True},
+            "component_en": {"required": False, "allow_blank": True},
+        }
+
+    def validate(self, attrs):
+        component = (
+            attrs.get("component_es")
+            or attrs.get("component")
+            or attrs.get("component_en")
+            or ""
+        ).strip()
+        if not component:
+            raise serializers.ValidationError({"component_es": "El componente es obligatorio."})
+        if not attrs.get("component"):
+            attrs["component"] = component
+        if attrs.get("component_es") is None and attrs.get("component"):
+            attrs["component_es"] = attrs["component"]
+        amount = attrs.get("amount")
+        if amount is not None and amount < Decimal("0"):
+            raise serializers.ValidationError({"amount": "El monto no puede ser negativo."})
+        return attrs
+
+
+class InvestmentOpportunityAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):
     sector_detail = SectorNestedSerializer(source="sector", read_only=True)
+    metrics = OpportunityMetricAdminSerializer(many=True, required=False)
+    fund_uses = OpportunityFundUseAdminSerializer(many=True, required=False)
+    is_public = serializers.SerializerMethodField()
 
     class Meta:
         model = InvestmentOpportunity
         fields = (
             "id",
+            "code",
             "title",
+            "title_es",
+            "title_en",
             "slug",
             "summary",
+            "summary_es",
+            "summary_en",
             "description",
+            "description_es",
+            "description_en",
+            "target_customer",
+            "target_customer_es",
+            "target_customer_en",
+            "market_demand",
+            "market_demand_es",
+            "market_demand_en",
+            "value_proposition",
+            "value_proposition_es",
+            "value_proposition_en",
             "sector",
             "sector_detail",
             "department",
             "region",
             "estimated_investment",
             "estimated_jobs",
+            "lifecycle_status",
             "status",
+            "published_at",
             "is_public",
             "is_featured",
+            "order",
+            "metrics",
+            "fund_uses",
             "created_at",
             "updated_at",
+            "created_by",
+            "created_by_name",
+            "updated_by",
+            "updated_by_name",
         )
-        read_only_fields = ("id", "created_at", "updated_at", "sector_detail")
+        read_only_fields = (
+            "id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "created_by_name",
+            "updated_by",
+            "updated_by_name",
+            "sector_detail",
+            "is_public",
+        )
         extra_kwargs = {
             "title": {"required": False, "allow_blank": True},
             "slug": {"required": False, "allow_blank": True},
+            "status": {"required": False},
         }
 
+    def get_is_public(self, obj: InvestmentOpportunity) -> bool:
+        return obj.status == PublishStatus.PUBLISHED and obj.published_at is not None
+
     def validate(self, attrs):
+        attrs = super().validate(attrs)
         instance = self.instance
-        investment = attrs.get("estimated_investment", getattr(instance, "estimated_investment", None))
+
+        # EditorialAuditMixin mirrors title_es → title. Writing the virtual
+        # base field goes through TranslationFieldDescriptor and updates the
+        # *active* language column — so a PATCH with only title_es can clobber
+        # title_en when get_language() is "en" (e.g. earlier LocalizedViewSet
+        # test left lang=en). Drop mirrored bases when locale columns are set.
+        for base in (
+            "title",
+            "summary",
+            "description",
+            "target_customer",
+            "market_demand",
+            "value_proposition",
+        ):
+            if f"{base}_es" in attrs or f"{base}_en" in attrs:
+                attrs.pop(base, None)
+
+        investment = attrs.get(
+            "estimated_investment", getattr(instance, "estimated_investment", None)
+        )
         if investment is not None and investment < Decimal("0"):
             raise serializers.ValidationError(
                 {"estimated_investment": "La inversión estimada no puede ser negativa."}
@@ -127,24 +280,92 @@ class InvestmentOpportunityAdminSerializer(serializers.ModelSerializer):
             )
         slug = attrs.get("slug")
         if slug:
-            qs = InvestmentOpportunity.objects.filter(slug=slug)
+            qs = InvestmentOpportunity.all_objects.filter(slug=slug)
             if instance:
                 qs = qs.exclude(pk=instance.pk)
             if qs.exists():
                 raise serializers.ValidationError({"slug": "Ya existe una oportunidad con este slug."})
-        is_public = attrs.get("is_public", getattr(instance, "is_public", True))
-        title = attrs.get("title", getattr(instance, "title", ""))
-        sector = attrs.get("sector", getattr(instance, "sector", None))
-        if is_public:
-            if not str(title).strip():
-                raise serializers.ValidationError(
-                    {"title": "El título es obligatorio para oportunidades públicas."}
-                )
-            if sector is None:
-                raise serializers.ValidationError(
-                    {"sector": "El sector es obligatorio para oportunidades públicas."}
-                )
+
+        # Run model.clean against merged state (publish gates when status=published).
+        probe = InvestmentOpportunity()
+        if instance:
+            for field in InvestmentOpportunity._meta.fields:
+                setattr(probe, field.name, getattr(instance, field.name))
+        for key, value in attrs.items():
+            if key in ("metrics", "fund_uses"):
+                continue
+            setattr(probe, key, value)
+        try:
+            probe.clean()
+        except DjangoValidationError as exc:
+            raise serializers.ValidationError(exc.message_dict) from exc
         return attrs
+
+    @staticmethod
+    def _sync_children(opportunity: InvestmentOpportunity, metrics, fund_uses) -> None:
+        if metrics is not None:
+            keep_ids: list[int] = []
+            for index, row in enumerate(metrics):
+                row = dict(row)
+                row_id = row.pop("id", None)
+                # Do not mirror label_es → label (descriptor / active language).
+                if "order" not in row or row["order"] is None:
+                    row["order"] = index
+                if row_id:
+                    metric = OpportunityMetric.objects.filter(
+                        pk=row_id, opportunity=opportunity
+                    ).first()
+                    if metric:
+                        for key, value in row.items():
+                            setattr(metric, key, value)
+                        metric.save()
+                        keep_ids.append(metric.pk)
+                        continue
+                metric = OpportunityMetric.objects.create(opportunity=opportunity, **row)
+                keep_ids.append(metric.pk)
+            OpportunityMetric.objects.filter(opportunity=opportunity).exclude(pk__in=keep_ids).delete()
+
+        if fund_uses is not None:
+            keep_ids = []
+            for index, row in enumerate(fund_uses):
+                row = dict(row)
+                row_id = row.pop("id", None)
+                # Do not mirror component_es → component (same descriptor risk).
+                if "order" not in row or row["order"] is None:
+                    row["order"] = index
+                if row_id:
+                    fund = OpportunityFundUse.objects.filter(
+                        pk=row_id, opportunity=opportunity
+                    ).first()
+                    if fund:
+                        for key, value in row.items():
+                            setattr(fund, key, value)
+                        fund.save()
+                        keep_ids.append(fund.pk)
+                        continue
+                fund = OpportunityFundUse.objects.create(opportunity=opportunity, **row)
+                keep_ids.append(fund.pk)
+            OpportunityFundUse.objects.filter(opportunity=opportunity).exclude(pk__in=keep_ids).delete()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        metrics = validated_data.pop("metrics", None)
+        fund_uses = validated_data.pop("fund_uses", None)
+        validated_data.setdefault("status", PublishStatus.DRAFT)
+        opportunity = InvestmentOpportunity.all_objects.create(**validated_data)
+        self._sync_children(opportunity, metrics, fund_uses)
+        return opportunity
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        metrics = validated_data.pop("metrics", None)
+        fund_uses = validated_data.pop("fund_uses", None)
+        # Saving a published opportunity must not force it back to draft.
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        self._sync_children(instance, metrics, fund_uses)
+        return instance
 
 
 class PageAdminSerializer(EditorialAuditMixin, serializers.ModelSerializer):

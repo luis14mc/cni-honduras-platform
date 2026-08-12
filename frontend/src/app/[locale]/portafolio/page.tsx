@@ -408,7 +408,7 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
                     </div>
                     <h4 className="mb-3 text-2xl font-bold text-[#252A58]">{opportunity.title}</h4>
                     <p className="mb-4 text-xs font-bold uppercase tracking-widest text-[#0E7A7C]">
-                      {labels.sector}: {opportunity.sector.name}
+                      {labels.sector}: {opportunity.sector?.name ?? "—"}
                     </p>
                     <p className="mb-6 text-sm leading-relaxed text-[#0E7A7C]">
                       {opportunity.summary || opportunity.description}

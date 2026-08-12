@@ -43,21 +43,46 @@ class Sector(TimeStampedModel):
 
 
 class OpportunityStatus(models.TextChoices):
+    """Lifecycle of the deal (independent from editorial publish status)."""
+
     OPEN = "open", "Abierta"
     IN_PROGRESS = "in_progress", "En progreso"
     CLOSED = "closed", "Cerrada"
 
 
-class InvestmentOpportunity(TimeStampedModel):
-    title = models.CharField(max_length=255)
+class InvestmentOpportunity(EditorialModel):
+    """
+    Bilingual investment opportunity (one row, modeltranslation ES/EN).
+
+    Dynamic metrics and CAPEX rows live in related models — do not add
+    rigid columns for IRR/EBITDA/jobs that vary per opportunity card.
+    """
+
+    code = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="Opportunity card code, e.g. OC-CNI-T002",
+    )
+    title = models.CharField(max_length=255, blank=True, default="")
     slug = models.SlugField(max_length=275, unique=True, db_index=True)
     summary = models.TextField(blank=True, default="")
-    description = models.TextField(blank=True, default="")
+    description = models.TextField(
+        blank=True,
+        default="",
+        help_text="Opportunity description (ficha: descripción de la oportunidad).",
+    )
+    target_customer = models.TextField(blank=True, default="")
+    market_demand = models.TextField(blank=True, default="")
+    value_proposition = models.TextField(blank=True, default="")
 
     sector = models.ForeignKey(
         Sector,
         on_delete=models.PROTECT,
         related_name="opportunities",
+        null=True,
+        blank=True,
     )
     department = models.ForeignKey(
         "geo.Department",
@@ -74,31 +99,123 @@ class InvestmentOpportunity(TimeStampedModel):
         related_name="opportunities",
     )
 
+    # Legacy rigid metrics — kept nullable for map/portafolio consumers.
+    # Prefer OpportunityMetric for new editorial content.
     estimated_investment = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True
     )
     estimated_jobs = models.PositiveIntegerField(null=True, blank=True)
-    status = models.CharField(
+    lifecycle_status = models.CharField(
         max_length=16,
         choices=OpportunityStatus.choices,
         default=OpportunityStatus.OPEN,
         db_index=True,
     )
-    is_public = models.BooleanField(default=True, db_index=True)
     is_featured = models.BooleanField(default=False, db_index=True)
+    order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ("-created_at", "-id")
+        ordering = ("order", "-is_featured", "-published_at", "-created_at", "-id")
         verbose_name = "Oportunidad de inversión"
         verbose_name_plural = "Oportunidades de inversión"
 
     def __str__(self) -> str:
-        return self.title
+        code = f" [{self.code}]" if self.code else ""
+        return f"{self.title or self.slug}{code}"
+
+    @property
+    def is_public(self) -> bool:
+        """Backward-compatible alias for consumers expecting is_public."""
+        return self.status == PublishStatus.PUBLISHED and self.published_at is not None
+
+    def clean(self):
+        super().clean()
+        errors: dict[str, str] = {}
+        if self.estimated_investment is not None and self.estimated_investment < Decimal("0"):
+            errors["estimated_investment"] = "La inversión estimada no puede ser negativa."
+        if self.estimated_jobs is not None and self.estimated_jobs < 0:
+            errors["estimated_jobs"] = "Los empleos estimados no pueden ser negativos."
+
+        if self.status == PublishStatus.PUBLISHED:
+            title_es = (getattr(self, "title_es", None) or self.title or "").strip()
+            description_es = (
+                getattr(self, "description_es", None) or self.description or ""
+            ).strip()
+            if not (self.code or "").strip():
+                errors["code"] = "El código es obligatorio para publicar."
+            if self.sector_id is None:
+                errors["sector"] = "El sector es obligatorio para publicar."
+            if not title_es:
+                errors["title"] = "El título en español es obligatorio para publicar."
+            if not description_es:
+                errors["description"] = (
+                    "La descripción de la oportunidad en español es obligatoria para publicar."
+                )
+        if errors:
+            raise ValidationError(errors)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            base = slugify(self.title or self.code or "oportunidad")
+            from apps.cms.models import unique_slug_for_model
+
+            self.slug = unique_slug_for_model(InvestmentOpportunity, base, self.pk)
         super().save(*args, **kwargs)
+
+
+class OpportunityMetric(models.Model):
+    """Dynamic key metric row for an opportunity card (not rigid columns)."""
+
+    opportunity = models.ForeignKey(
+        InvestmentOpportunity,
+        on_delete=models.CASCADE,
+        related_name="metrics",
+    )
+    label = models.CharField(max_length=255)
+    value = models.CharField(max_length=255, blank=True, default="")
+    note = models.CharField(max_length=255, blank=True, default="")
+    icon = models.CharField(max_length=64, blank=True, default="")
+    order = models.PositiveIntegerField(default=0)
+    is_public = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Si es verdadero, la métrica puede aparecer en la API/página pública (máx. 4).",
+    )
+
+    class Meta:
+        ordering = ("order", "id")
+        verbose_name = "Métrica de oportunidad"
+        verbose_name_plural = "Métricas de oportunidad"
+
+    def __str__(self) -> str:
+        return f"{self.label}: {self.value}"
+
+
+class OpportunityFundUse(models.Model):
+    """CAPEX / use-of-funds row for an opportunity card."""
+
+    opportunity = models.ForeignKey(
+        InvestmentOpportunity,
+        on_delete=models.CASCADE,
+        related_name="fund_uses",
+    )
+    component = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True)
+    description = models.TextField(blank=True, default="")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ("order", "id")
+        verbose_name = "Uso de fondos"
+        verbose_name_plural = "Usos de fondos"
+
+    def __str__(self) -> str:
+        return self.component
+
+    def clean(self):
+        super().clean()
+        if self.amount is not None and self.amount < Decimal("0"):
+            raise ValidationError({"amount": "El monto no puede ser negativo."})
 
 
 class ProjectStage(models.TextChoices):

@@ -133,10 +133,11 @@ class DashboardView(APIView):
                 "active": Sector.objects.filter(is_active=True).count(),
             },
             "opportunities": {
-                "total": InvestmentOpportunity.objects.count(),
-                "open": InvestmentOpportunity.objects.filter(
-                    status=OpportunityStatus.OPEN
+                "total": InvestmentOpportunity.all_objects.count(),
+                "open": InvestmentOpportunity.all_objects.filter(
+                    lifecycle_status=OpportunityStatus.OPEN
                 ).count(),
+                "published": InvestmentOpportunity.objects.published().count(),
             },
         }
 
@@ -196,9 +197,10 @@ class DashboardView(APIView):
             Q(external_url="") | Q(external_url__isnull=True),
         ).count()
 
-        incomplete_opportunities = InvestmentOpportunity.objects.filter(
+        incomplete_opportunities = InvestmentOpportunity.all_objects.filter(
             Q(summary="") | Q(summary__isnull=True)
             | Q(description="") | Q(description__isnull=True)
+            | Q(code="")
         ).count()
 
         return {
@@ -244,12 +246,12 @@ class DashboardView(APIView):
                     "updated_at": obj.updated_at.isoformat(),
                 }
             )
-        for obj in InvestmentOpportunity.objects.select_related("sector").order_by("-updated_at")[:10]:
+        for obj in InvestmentOpportunity.all_objects.select_related("sector").order_by("-updated_at")[:10]:
             events.append(
                 {
                     "type": "opportunity",
                     "id": obj.id,
-                    "label": obj.title,
+                    "label": obj.title or obj.code or str(obj.pk),
                     "status": obj.status,
                     "updated_at": obj.updated_at.isoformat(),
                 }
@@ -318,8 +320,8 @@ class SearchView(APIView):
                     label_attr="name",
                 ),
                 "opportunities": search_model(
-                    InvestmentOpportunity.objects.all(),
-                    ("title", "slug", "summary"),
+                    InvestmentOpportunity.all_objects.all(),
+                    ("code", "title", "title_es", "title_en", "slug", "summary"),
                 ),
                 "pages": search_model(
                     Page.all_objects.all(),

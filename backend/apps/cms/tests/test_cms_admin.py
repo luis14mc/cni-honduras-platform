@@ -293,9 +293,12 @@ class CMSAdminDashboardTests(CMSAdminTestCase):
         )
         self.sector = Sector.objects.create(name="Agroindustria", slug="agro")
         Sector.objects.create(name="Inactivo", slug="inact", is_active=False)
-        InvestmentOpportunity.objects.create(
-            title="Oport", slug="oport", sector=self.sector,
-            status=OpportunityStatus.OPEN,
+        InvestmentOpportunity.all_objects.create(
+            title="Oport",
+            slug="oport",
+            sector=self.sector,
+            lifecycle_status=OpportunityStatus.OPEN,
+            status=PublishStatus.DRAFT,
         )
         SuccessStory.objects.create(
             title="Caso", slug="caso", status=PublishStatus.PUBLISHED,

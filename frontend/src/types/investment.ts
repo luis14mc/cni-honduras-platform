@@ -59,20 +59,51 @@ export interface Sector {
 
 export type OpportunityStatus = "open" | "in_progress" | "closed";
 
+export interface OpportunityMetric {
+  id: number;
+  label: string;
+  value: string;
+  note: string;
+  icon: string;
+  order: number;
+  is_public?: boolean;
+}
+
+export interface OpportunityFundUse {
+  id: number;
+  component: string;
+  amount: string | null;
+  description: string;
+  order: number;
+}
+
 export interface InvestmentOpportunity {
   id: number;
+  code: string;
   title: string;
   slug: string;
   summary: string;
-  description: string;
-  sector: SectorLite;
-  department: DepartmentLite | null;
-  region: CNIRegion | null;
+  /** Not returned by the public teaser API — kept optional for admin/legacy. */
+  description?: string;
+  opportunity_description?: string;
+  target_customer?: string;
+  market_demand?: string;
+  value_proposition?: string;
+  sector: SectorLite | null;
+  department?: DepartmentLite | null;
+  region?: CNIRegion | null;
   estimated_investment: string | null;
   estimated_jobs: number | null;
   status: OpportunityStatus;
+  lifecycle_status?: OpportunityStatus;
   is_public: boolean;
   is_featured: boolean;
+  order?: number;
+  metrics?: OpportunityMetric[];
+  fund_uses?: OpportunityFundUse[];
+  published_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export type ProjectStage =

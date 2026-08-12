@@ -73,16 +73,17 @@ class SectorAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
 
 
 class OpportunityAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
-    def test_create_requires_sector(self):
+    def test_create_draft_without_sector_allowed(self):
         self._login("invest", "pw-invest-123")
         token = self._csrf()
         res = self.client.post(
             reverse("api-v1:cms-admin:opportunities-list"),
-            {"title": "Planta procesadora", "slug": "planta", "is_public": True},
+            {"title_es": "Planta procesadora", "slug": "planta", "code": "OC-CNI-T010"},
             format="json",
             HTTP_X_CSRFTOKEN=token,
         )
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.json()["status"], PublishStatus.DRAFT)
 
     def test_negative_investment_rejected(self):
         self._login("invest", "pw-invest-123")
@@ -90,7 +91,7 @@ class OpportunityAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
         res = self.client.post(
             reverse("api-v1:cms-admin:opportunities-list"),
             {
-                "title": "Proyecto X",
+                "title_es": "Proyecto X",
                 "slug": "proyecto-x",
                 "sector": self.sector.pk,
                 "estimated_investment": "-100.00",
@@ -100,12 +101,28 @@ class OpportunityAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
         )
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_publish_gating(self):
+    def test_publish_requires_code_sector_title_description(self):
         self._login("invest", "pw-invest-123")
+        # Publishing needs cms.can_publish
+        from django.contrib.auth.models import Permission
+        from django.contrib.contenttypes.models import ContentType
+
+        ct = ContentType.objects.get(app_label="cms", model="page")
+        perm = Permission.objects.get(content_type=ct, codename="can_publish")
+        User.objects.get(username="invest").user_permissions.add(perm)
+
         token = self._csrf()
-        res = self.client.post(
+        create = self.client.post(
             reverse("api-v1:cms-admin:opportunities-list"),
-            {"slug": "sin-titulo", "sector": self.sector.pk, "is_public": True},
+            {"slug": "sin-titulo", "sector": self.sector.pk, "code": "OC-CNI-T011"},
+            format="json",
+            HTTP_X_CSRFTOKEN=token,
+        )
+        self.assertEqual(create.status_code, status.HTTP_201_CREATED)
+        opp_id = create.json()["id"]
+        res = self.client.post(
+            reverse("api-v1:cms-admin:opportunities-publish", args=[opp_id]),
+            {},
             format="json",
             HTTP_X_CSRFTOKEN=token,
         )
@@ -116,7 +133,7 @@ class OpportunityAdminTests(CMSAdminS2T3Mixin, CMSAdminTestCase):
         token = self._csrf()
         res = self.client.post(
             reverse("api-v1:cms-admin:opportunities-list"),
-            {"title": "Opp", "slug": "opp", "sector": self.sector.pk},
+            {"title_es": "Opp", "slug": "opp", "sector": self.sector.pk},
             format="json",
             HTTP_X_CSRFTOKEN=token,
         )
