@@ -68,13 +68,9 @@ class SectorAdminSerializer(serializers.ModelSerializer):
         }
 
     def get_image_url(self, obj: Sector) -> str | None:
-        if obj.image:
-            request = self.context.get("request")
-            url = obj.image.url
-            if request and url.startswith("/"):
-                return request.build_absolute_uri(url)
-            return url
-        return None
+        from apps.media_library.serializers import absolute_file_url
+
+        return absolute_file_url(obj.image, self.context)
 
     def validate(self, attrs):
         name = attrs.get("name") or attrs.get("name_es") or attrs.get("name_en")

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import {
   FileIcon,
   Grid3X3,
@@ -11,6 +10,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { CmsMediaImage } from "@/src/components/cms/editor/CmsMediaImage";
 import { CmsPagination } from "@/src/components/cms/editor/CmsPagination";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsApiError } from "@/src/lib/cms/api";
@@ -345,14 +345,14 @@ export function CmsMediaPicker({
 }
 
 function MediaThumb({ asset, size }: { asset: MediaAsset; size: number }) {
-  const url = resolveMediaFileUrl(asset.file_url || asset.file);
+  const url = resolveMediaFileUrl(asset);
   if (asset.media_type === "image" && url) {
     return (
       <div
         className="relative shrink-0 overflow-hidden rounded bg-[#334E88]/10"
         style={{ width: size, height: size }}
       >
-        <Image src={url} alt={asset.alt_text || asset.title} fill className="object-cover" unoptimized />
+        <CmsMediaImage source={asset} alt={asset.alt_text || asset.title} />
       </div>
     );
   }
@@ -388,14 +388,8 @@ function MediaTile({
       )}
     >
       <div className="relative aspect-square bg-[#334E88]/5">
-        {asset.media_type === "image" && asset.file_url ? (
-          <Image
-            src={asset.file_url}
-            alt={asset.alt_text || asset.title}
-            fill
-            className="object-cover"
-            unoptimized
-          />
+        {asset.media_type === "image" && resolveMediaFileUrl(asset) ? (
+          <CmsMediaImage source={asset} alt={asset.alt_text || asset.title} />
         ) : (
           <div className="flex h-full items-center justify-center text-[#334E88]/50">
             <FileIcon className="h-8 w-8" />

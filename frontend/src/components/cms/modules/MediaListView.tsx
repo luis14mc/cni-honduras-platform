@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
 import { Trash2, Upload } from "lucide-react";
 import { CmsConfirmDialog } from "@/src/components/cms/editor/CmsConfirmDialog";
 import { CmsDataTable } from "@/src/components/cms/editor/CmsDataTable";
 import type { CmsColumn } from "@/src/components/cms/editor/CmsDataTable";
 import { CmsFilterBar } from "@/src/components/cms/editor/CmsFilterBar";
+import { CmsMediaImage } from "@/src/components/cms/editor/CmsMediaImage";
 import { CmsPagination } from "@/src/components/cms/editor/CmsPagination";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsSectionHeader } from "@/src/components/cms/CmsSectionHeader";
@@ -15,6 +15,7 @@ import { CmsApiError } from "@/src/lib/cms/api";
 import { deleteMedia, listMedia, uploadMedia } from "@/src/lib/cms/editorial/media";
 import type { MediaAsset, MediaType } from "@/src/lib/cms/editorial/types";
 import { canAdd, canDelete } from "@/src/lib/cms/permissions";
+import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 
 const PAGE_SIZE = 20;
 
@@ -100,9 +101,9 @@ export function MediaListView() {
       header: "",
       className: "w-14",
       render: (row) =>
-        row.media_type === "image" && row.file_url ? (
+        row.media_type === "image" && resolveMediaFileUrl(row) ? (
           <div className="relative h-10 w-10 overflow-hidden rounded">
-            <Image src={row.file_url} alt="" fill className="object-cover" unoptimized />
+            <CmsMediaImage source={row} alt={row.alt_text || row.title} />
           </div>
         ) : (
           <div className="flex h-10 w-10 items-center justify-center rounded bg-[#334E88]/10 text-xs">

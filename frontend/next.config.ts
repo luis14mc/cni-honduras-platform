@@ -1,6 +1,9 @@
 import path from "path";
 import type { NextConfig } from "next";
 
+/** Optional public media/CDN host (no provider hardcoding). Set in deploy env if needed. */
+const mediaHost = process.env.NEXT_PUBLIC_MEDIA_HOSTNAME?.trim();
+
 const nextConfig: NextConfig = {
   // Evita que Turbopack use la raíz del monorepo cuando hay otro lockfile arriba.
   turbopack: {
@@ -16,6 +19,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "api.cni.hn", pathname: "/**" },
       { protocol: "http", hostname: "localhost", pathname: "/**" },
       { protocol: "http", hostname: "127.0.0.1", pathname: "/**" },
+      ...(mediaHost
+        ? ([{ protocol: "https", hostname: mediaHost, pathname: "/**" }] as const)
+        : []),
     ],
   },
 };
