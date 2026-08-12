@@ -139,27 +139,22 @@ describe("opportunity form mapping", () => {
 });
 
 describe("public opportunity card helpers", () => {
-  it("resolves locale-facing fields from published payload shape", () => {
+  it("maps teaser payload without requiring CAPEX or internal narrative", () => {
     const item = {
       id: 1,
       code: "OC-CNI-T002",
       title: "El Cajón",
       slug: "el-cajon",
       summary: "Resumen",
-      description: "Descripción",
-      opportunity_description: "Descripción",
-      target_customer: "Inversionistas",
-      market_demand: "Demanda",
       value_proposition: "ESG",
       sector: { id: 1, name: "Turismo", slug: "turismo", icon: "", color_hex: "" },
       metrics: [{ id: 1, label: "TIR", value: "14%", note: "Validar", icon: "", order: 0 }],
-      fund_uses: [
-        { id: 1, component: "Terreno", amount: "500000.00", description: "", order: 0 },
-      ],
     };
     expect(item.code).toBe("OC-CNI-T002");
     expect(item.metrics[0].label).toBe("TIR");
-    expect(item.fund_uses[0].component).toBe("Terreno");
     expect(item.sector?.name).toBe("Turismo");
+    expect(item).not.toHaveProperty("fund_uses");
+    expect(item).not.toHaveProperty("target_customer");
+    expect(item).not.toHaveProperty("market_demand");
   });
 });

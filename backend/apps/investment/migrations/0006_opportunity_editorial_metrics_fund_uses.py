@@ -45,18 +45,23 @@ class Migration(migrations.Migration):
             old_name="status",
             new_name="lifecycle_status",
         ),
-        # PostgreSQL keeps the auto index name from the old ``status`` column after
-        # RenameField. Rename it so AddField(status, db_index=True) does not collide
-        # (CI DuplicateTable: investment_investmentopportunity_status_3c5c08c7).
+        # PostgreSQL keeps auto index names after RenameField, including the
+        # varchar_pattern_ops companion (``_like``). Rename both so
+        # AddField(status, db_index=True) does not hit DuplicateTable
+        # (CI #49: btree …_status_3c5c08c7; CI #50: …_status_3c5c08c7_like).
         migrations.RunSQL(
-            sql=(
-                'ALTER INDEX IF EXISTS "investment_investmentopportunity_status_3c5c08c7" '
-                'RENAME TO "investment_investmentopportunity_lifecycle_status_idx"'
-            ),
-            reverse_sql=(
-                'ALTER INDEX IF EXISTS "investment_investmentopportunity_lifecycle_status_idx" '
-                'RENAME TO "investment_investmentopportunity_status_3c5c08c7"'
-            ),
+            sql="""
+                ALTER INDEX IF EXISTS "investment_investmentopportunity_status_3c5c08c7"
+                  RENAME TO "investment_investmentopportunity_lifecycle_status_idx";
+                ALTER INDEX IF EXISTS "investment_investmentopportunity_status_3c5c08c7_like"
+                  RENAME TO "investment_investmentopportunity_lifecycle_status_like_idx";
+            """,
+            reverse_sql="""
+                ALTER INDEX IF EXISTS "investment_investmentopportunity_lifecycle_status_idx"
+                  RENAME TO "investment_investmentopportunity_status_3c5c08c7";
+                ALTER INDEX IF EXISTS "investment_investmentopportunity_lifecycle_status_like_idx"
+                  RENAME TO "investment_investmentopportunity_status_3c5c08c7_like";
+            """,
         ),
         migrations.AddField(
             model_name="investmentopportunity",

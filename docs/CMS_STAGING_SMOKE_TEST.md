@@ -124,8 +124,11 @@ Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC
 7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
 8. Admin retrieve sí incluye CAPEX y métricas internas
 
-### CI fix (run #49)
-Migración `0006` renombraba `status`→`lifecycle_status` y recreaba `status` con el mismo nombre de índice PostgreSQL (`…_status_3c5c08c7`). Se renombra el índice legacy antes de `AddField(status)`.
+### CI fix (runs #49 / #50)
+Migración `0006` renombraba `status`→`lifecycle_status` y recreaba `status` indexado.
+PostgreSQL conserva nombres de índice; faltaba renombrar también el companion
+`varchar_pattern_ops` (`…_status_3c5c08c7_like`). `0006` ahora renombra btree + `_like`
+antes de `AddField(status)`.
 
 ## 10. Page
 
