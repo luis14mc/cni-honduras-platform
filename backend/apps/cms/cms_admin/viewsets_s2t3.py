@@ -98,65 +98,46 @@ class SectorAdminViewSet(SectorFilterMixin, CMSPaginationMixin, viewsets.ModelVi
         return Response(self.get_serializer(obj).data)
 
 
-class OpportunityFilterMixin:
-    search_fields = ("title", "slug", "summary", "description")
+class OpportunityFilterMixin(EditorialFilterMixin):
+    search_fields = (
+        "code",
+        "title",
+        "title_es",
+        "title_en",
+        "slug",
+        "summary",
+        "summary_es",
+        "description",
+        "description_es",
+    )
 
     def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         params = self.request.query_params
-        search = (params.get("search") or "").strip()
-        if search:
-            q = Q()
-            for field in self.search_fields:
-                q |= Q(**{f"{field}__icontains": search})
-            queryset = queryset.filter(q)
         sector = params.get("sector")
         if sector:
             queryset = queryset.filter(sector_id=sector)
-        status_val = params.get("status")
-        if status_val:
-            queryset = queryset.filter(status=status_val)
         is_featured = params.get("is_featured")
         if is_featured in ("true", "false"):
             queryset = queryset.filter(is_featured=is_featured == "true")
-        is_public = params.get("is_public")
-        if is_public in ("true", "false"):
-            queryset = queryset.filter(is_public=is_public == "true")
-        return queryset.order_by("-updated_at", "-id")
+        lifecycle = params.get("lifecycle_status")
+        if lifecycle:
+            queryset = queryset.filter(lifecycle_status=lifecycle)
+        return queryset
 
 
 @method_decorator(csrf_protect, name="dispatch")
-class InvestmentOpportunityAdminViewSet(
-    OpportunityFilterMixin, CMSPaginationMixin, viewsets.ModelViewSet
-):
-    queryset = InvestmentOpportunity.objects.select_related("sector", "department", "region")
+class InvestmentOpportunityAdminViewSet(EditorialViewSetMixin, viewsets.ModelViewSet):
+    queryset = InvestmentOpportunity.all_objects.select_related(
+        "sector", "department", "region", "created_by", "updated_by"
+    ).prefetch_related("metrics", "fund_uses")
     serializer_class = InvestmentOpportunityAdminSerializer
-    permission_classes = [IsCMSStaff, CMSModelPermission]
     app_label = "investment"
     model_name = "investmentopportunity"
+    search_fields = OpportunityFilterMixin.search_fields
 
-    def list(self, request, *args, **kwargs):
-        qs = self.filter_queryset(self.get_queryset())
-        page, paginator = self.paginate_list(request, qs)
-        serializer = self.get_serializer(page, many=True)
-        return paginator.get_paginated_response(serializer.data)
-
-    @action(detail=True, methods=["post"])
-    def publish(self, request, pk=None):
-        obj = self.get_object()
-        if not can_change_model(request.user, self.app_label, self.model_name):
-            raise PermissionDenied("No tiene permiso para modificar oportunidades.")
-        obj.is_public = True
-        obj.save(update_fields=["is_public", "updated_at"])
-        return Response(self.get_serializer(obj).data)
-
-    @action(detail=True, methods=["post"])
-    def unpublish(self, request, pk=None):
-        obj = self.get_object()
-        if not can_change_model(request.user, self.app_label, self.model_name):
-            raise PermissionDenied("No tiene permiso para modificar oportunidades.")
-        obj.is_public = False
-        obj.save(update_fields=["is_public", "updated_at"])
-        return Response(self.get_serializer(obj).data)
+    def filter_queryset(self, queryset):
+        return OpportunityFilterMixin.filter_queryset(self, queryset)
 
 
 @method_decorator(csrf_protect, name="dispatch")

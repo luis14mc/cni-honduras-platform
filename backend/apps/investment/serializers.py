@@ -4,7 +4,14 @@ from apps.geo.models import Department
 from apps.geo.serializers import CNIRegionSerializer, DepartmentLiteSerializer, MunicipalitySerializer
 from apps.media_library.serializers import MediaAssetLiteSerializer
 
-from .models import InvestmentOpportunity, InvestmentProject, Sector, SuccessStory
+from .models import (
+    InvestmentOpportunity,
+    InvestmentProject,
+    OpportunityFundUse,
+    OpportunityMetric,
+    Sector,
+    SuccessStory,
+)
 
 
 class SectorLiteSerializer(serializers.ModelSerializer):
@@ -33,30 +40,61 @@ class SectorSerializer(serializers.ModelSerializer):
         )
 
 
+class OpportunityMetricPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OpportunityMetric
+        fields = ("id", "label", "value", "note", "icon", "order")
+
+
+class OpportunityFundUsePublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OpportunityFundUse
+        fields = ("id", "component", "amount", "description", "order")
+
+
 class InvestmentOpportunitySerializer(serializers.ModelSerializer):
     sector = SectorLiteSerializer(read_only=True)
     department = DepartmentLiteSerializer(read_only=True)
     region = CNIRegionSerializer(read_only=True)
+    metrics = OpportunityMetricPublicSerializer(many=True, read_only=True)
+    fund_uses = OpportunityFundUsePublicSerializer(many=True, read_only=True)
+    # Deal lifecycle kept as ``status`` for portafolio/map consumers.
+    status = serializers.CharField(source="lifecycle_status", read_only=True)
+    is_public = serializers.SerializerMethodField()
+    opportunity_description = serializers.CharField(source="description", read_only=True)
 
     class Meta:
         model = InvestmentOpportunity
         fields = (
             "id",
+            "code",
             "title",
             "slug",
             "summary",
             "description",
+            "opportunity_description",
+            "target_customer",
+            "market_demand",
+            "value_proposition",
             "sector",
             "department",
             "region",
             "estimated_investment",
             "estimated_jobs",
             "status",
+            "lifecycle_status",
             "is_public",
             "is_featured",
+            "order",
+            "metrics",
+            "fund_uses",
+            "published_at",
             "created_at",
             "updated_at",
         )
+
+    def get_is_public(self, obj: InvestmentOpportunity) -> bool:
+        return True
 
 
 class InvestmentProjectSerializer(serializers.ModelSerializer):

@@ -32,12 +32,14 @@ class CMSDashboardPendingS2T4Tests(CMSAdminTestCase):
             status=PublishStatus.DRAFT,
         )
         sector = Sector.objects.create(name="Agro", slug="agro-pending")
-        InvestmentOpportunity.objects.create(
+        InvestmentOpportunity.all_objects.create(
             title="Incompleta",
             slug="incompleta",
             sector=sector,
             summary="",
             description="",
+            code="",
+            status=PublishStatus.DRAFT,
         )
 
     def test_dashboard_pending_extended_fields(self):

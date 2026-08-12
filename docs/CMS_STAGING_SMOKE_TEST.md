@@ -102,19 +102,25 @@ SiteBanner solo para `site_top` / `footer` (no heroes de página). El placement 
 - CMS create → 3 medias → publish → home featured → detalle ES/EN
 - Verificar que logo nunca aparece como cover ni person_photo como logo
 
-## Scope note — Opportunities
-
-Opportunity **no** se rediseña en este sprint. Mantener estable; revisión posterior con ejemplos de negocio.
-
 ## 8. Sector
 
 1. Create sector, set active
 2. Public `/api/v1/investment/sectors/` includes slug
 
-## 9. Opportunity
+## 9. Opportunity (S2-T8)
 
-1. Create with sector, summary, description
-2. Set public — visible on public opportunities list
+Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC-CNI-T002`, Turismo).
+
+1. Rol **Inversiones**: create draft incompleto (sin EN) en `/cms/oportunidades`
+2. Completar código, sector, título ES, descripción ES; métricas dinámicas N; CAPEX N filas
+3. Guardar ES no debe borrar EN (y viceversa)
+4. Publish con `cms.can_publish` → `status=published`, `published_at` set
+5. Publish inválido (sin código/sector/título/desc ES) → HTTP 400 con errores de campo
+6. Editar publicada → sigue publicada (no vuelve a draft)
+7. Editor sin permiso investment → 403
+8. Público: `GET /api/v1/investment/opportunities/?lang=es|en` solo published
+9. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; cuerpo CMS (código, métricas, CAPEX)
+10. Hero de página **no** viene del CMS
 
 ## 10. Page
 

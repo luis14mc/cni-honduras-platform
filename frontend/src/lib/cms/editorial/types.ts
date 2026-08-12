@@ -160,25 +160,74 @@ export interface SectorItem {
   updated_at: string;
 }
 
-export type OpportunityStatus = "open" | "in_progress" | "closed";
+export type OpportunityLifecycleStatus = "open" | "in_progress" | "closed";
 
-export interface OpportunityItem {
+/** @deprecated Use OpportunityLifecycleStatus for deal state; PublishStatus for editorial. */
+export type OpportunityStatus = OpportunityLifecycleStatus;
+
+export interface OpportunityMetricItem {
+  id?: number | null;
+  label: string;
+  label_es: string;
+  label_en: string;
+  value: string;
+  value_es: string;
+  value_en: string;
+  note: string;
+  note_es: string;
+  note_en: string;
+  icon: string;
+  order: number;
+}
+
+export interface OpportunityFundUseItem {
+  id?: number | null;
+  component: string;
+  component_es: string;
+  component_en: string;
+  amount: string | null;
+  description: string;
+  description_es: string;
+  description_en: string;
+  order: number;
+}
+
+export interface OpportunityItem extends EditorialAudit {
   id: number;
+  code: string;
   title: string;
+  title_es: string;
+  title_en: string;
   slug: string;
   summary: string;
+  summary_es: string;
+  summary_en: string;
   description: string;
-  sector: number;
+  description_es: string;
+  description_en: string;
+  target_customer: string;
+  target_customer_es: string;
+  target_customer_en: string;
+  market_demand: string;
+  market_demand_es: string;
+  market_demand_en: string;
+  value_proposition: string;
+  value_proposition_es: string;
+  value_proposition_en: string;
+  sector: number | null;
   sector_detail: SectorRef | null;
   department: number | null;
   region: number | null;
   estimated_investment: string | null;
   estimated_jobs: number | null;
-  status: OpportunityStatus;
+  lifecycle_status: OpportunityLifecycleStatus;
+  status: PublishStatus;
+  published_at: string | null;
   is_public: boolean;
   is_featured: boolean;
-  created_at: string;
-  updated_at: string;
+  order: number;
+  metrics: OpportunityMetricItem[];
+  fund_uses: OpportunityFundUseItem[];
 }
 
 export interface PageItem extends EditorialAudit {

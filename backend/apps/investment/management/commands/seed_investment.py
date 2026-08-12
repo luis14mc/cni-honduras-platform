@@ -352,18 +352,23 @@ class Command(BaseCommand):
             sector = sectors_by_slug[data["sector_slug"]]
             defaults = {
                 "title": data["title"],
+                "title_es": data["title"],
                 "summary": data["summary"],
+                "summary_es": data["summary"],
                 "description": data["description"],
+                "description_es": data["description"],
                 "sector": sector,
                 "region": _optional_region(data.get("region_slug")),
                 "department": department,
                 "estimated_investment": data.get("estimated_investment"),
                 "estimated_jobs": data.get("estimated_jobs"),
-                "status": OpportunityStatus.OPEN,
-                "is_public": True,
+                "lifecycle_status": OpportunityStatus.OPEN,
+                "status": PublishStatus.PUBLISHED,
+                "published_at": timezone.now(),
                 "is_featured": True,
+                "code": data.get("code") or f"OC-CNI-{data['slug'][:8].upper()}",
             }
-            obj, was_created = InvestmentOpportunity.objects.update_or_create(
+            obj, was_created = InvestmentOpportunity.all_objects.update_or_create(
                 slug=data["slug"],
                 defaults=defaults,
             )
@@ -438,7 +443,7 @@ class Command(BaseCommand):
                 f"total_activos={Sector.objects.filter(is_active=True).count()}\n"
                 f"  Oportunidades:  creadas={opportunities_created} "
                 f"actualizadas={opportunities_updated} "
-                f"total_publicas={InvestmentOpportunity.objects.filter(is_public=True).count()}\n"
+                f"total_publicas={InvestmentOpportunity.objects.published().count()}\n"
                 f"  Proyectos:      creados={projects_created} actualizados={projects_updated} "
                 f"total_publicos={InvestmentProject.objects.filter(is_public=True).count()}\n"
                 f"  Casos de éxito: creados={stories_created} actualizados={stories_updated} "
