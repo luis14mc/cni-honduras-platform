@@ -124,9 +124,10 @@ Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC
 7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
 8. Admin retrieve sí incluye CAPEX y métricas internas
 
-### CI fix (runs #49 / #50 / #51)
+### CI fix (runs #49 / #50 / #51 / #52)
 - **#49/#50:** `0006` — PostgreSQL conserva índices btree + `_like` tras `RenameField(status→lifecycle_status)`; se renombran ambos antes de `AddField(status)`.
 - **#51:** migraciones OK; 7 tests admin fallaban por `TypeError` al llamar `OpportunityFilterMixin.filter_queryset(self, …)` sin heredar el mixin (`super()` inválido). ViewSet ahora hereda `OpportunityFilterMixin` correctamente.
+- **#52:** 1 FAIL bilingual admin — `validate()` copiaba `title_es→title` (descriptor); con idioma activo `en` (p. ej. test previo con `?lang=en`) eso escribía `title_en`. Se dejó de espejar campos base (como SuccessStory).
 
 ## 10. Page
 

@@ -250,18 +250,21 @@ class InvestmentOpportunityAdminSerializer(EditorialAuditMixin, serializers.Mode
         attrs = super().validate(attrs)
         instance = self.instance
 
-        if not attrs.get("title") and attrs.get("title_es"):
-            attrs["title"] = attrs["title_es"]
-        if not attrs.get("summary") and attrs.get("summary_es"):
-            attrs["summary"] = attrs["summary_es"]
-        if not attrs.get("description") and attrs.get("description_es"):
-            attrs["description"] = attrs["description_es"]
-        if not attrs.get("target_customer") and attrs.get("target_customer_es"):
-            attrs["target_customer"] = attrs["target_customer_es"]
-        if not attrs.get("market_demand") and attrs.get("market_demand_es"):
-            attrs["market_demand"] = attrs["market_demand_es"]
-        if not attrs.get("value_proposition") and attrs.get("value_proposition_es"):
-            attrs["value_proposition"] = attrs["value_proposition_es"]
+        # EditorialAuditMixin mirrors title_es → title. Writing the virtual
+        # base field goes through TranslationFieldDescriptor and updates the
+        # *active* language column — so a PATCH with only title_es can clobber
+        # title_en when get_language() is "en" (e.g. earlier LocalizedViewSet
+        # test left lang=en). Drop mirrored bases when locale columns are set.
+        for base in (
+            "title",
+            "summary",
+            "description",
+            "target_customer",
+            "market_demand",
+            "value_proposition",
+        ):
+            if f"{base}_es" in attrs or f"{base}_en" in attrs:
+                attrs.pop(base, None)
 
         investment = attrs.get(
             "estimated_investment", getattr(instance, "estimated_investment", None)
@@ -305,8 +308,7 @@ class InvestmentOpportunityAdminSerializer(EditorialAuditMixin, serializers.Mode
             for index, row in enumerate(metrics):
                 row = dict(row)
                 row_id = row.pop("id", None)
-                if not row.get("label") and row.get("label_es"):
-                    row["label"] = row["label_es"]
+                # Do not mirror label_es → label (descriptor / active language).
                 if "order" not in row or row["order"] is None:
                     row["order"] = index
                 if row_id:
@@ -328,8 +330,7 @@ class InvestmentOpportunityAdminSerializer(EditorialAuditMixin, serializers.Mode
             for index, row in enumerate(fund_uses):
                 row = dict(row)
                 row_id = row.pop("id", None)
-                if not row.get("component") and row.get("component_es"):
-                    row["component"] = row["component_es"]
+                # Do not mirror component_es → component (same descriptor risk).
                 if "order" not in row or row["order"] is None:
                     row["order"] = index
                 if row_id:
