@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from django.db import transaction
 from django.db.models import Q
 from django.utils.dateparse import parse_date
 from django.utils.decorators import method_decorator
@@ -15,6 +16,10 @@ from rest_framework.response import Response
 from apps.cms.models import Document, News, PublishStatus, SiteBanner, unique_slug_for_model
 from apps.investment.models import SuccessStory
 from apps.media_library.models import MediaAsset
+from apps.media_library.storage_errors import (
+    is_media_storage_error,
+    media_storage_error_response,
+)
 
 from .permissions import (
     CMSModelPermission,
@@ -35,7 +40,7 @@ from .serializers import (
     apply_draft,
     apply_publish,
 )
-from .upload_validation import infer_media_type, validate_upload_file
+from .upload_validation import infer_media_type, resolved_upload_mime, validate_upload_file
 
 
 class CMSPaginationMixin:
@@ -216,14 +221,26 @@ class MediaAssetViewSet(
 
         title = (request.data.get("title") or "").strip() or uploaded.name
         media_type = infer_media_type(uploaded.name)
-        asset = MediaAsset.objects.create(
-            title=title,
-            file=uploaded,
-            alt_text=(request.data.get("alt_text") or "").strip(),
-            caption=(request.data.get("caption") or "").strip(),
-            media_type=media_type,
-            uploaded_by=request.user,
-        )
+        original_name = (getattr(uploaded, "name", "") or "")[:255]
+        size = getattr(uploaded, "size", None)
+        mime = resolved_upload_mime(uploaded)
+        try:
+            with transaction.atomic():
+                asset = MediaAsset.objects.create(
+                    title=title,
+                    file=uploaded,
+                    alt_text=(request.data.get("alt_text") or "").strip(),
+                    caption=(request.data.get("caption") or "").strip(),
+                    media_type=media_type,
+                    uploaded_by=request.user,
+                    file_size_bytes=size,
+                    mime_type=mime or "",
+                    original_filename=original_name,
+                )
+        except Exception as exc:
+            if is_media_storage_error(exc):
+                return media_storage_error_response(exc)
+            raise
         return Response(
             self.get_serializer(asset).data,
             status=status.HTTP_201_CREATED,

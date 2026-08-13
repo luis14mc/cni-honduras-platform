@@ -19,6 +19,7 @@ export interface MediaAsset {
   media_type: MediaType;
   file_size_bytes: number | null;
   mime_type: string | null;
+  original_filename?: string;
   created_at: string;
   uploaded_by?: number | null;
   uploaded_by_name?: string | null;

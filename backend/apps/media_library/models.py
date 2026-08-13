@@ -19,6 +19,10 @@ class MediaAsset(models.Model):
         default=MediaType.FILE,
         db_index=True,
     )
+    # Persisted at upload so list serializers never call storage.size() / HEAD.
+    file_size_bytes = models.BigIntegerField(null=True, blank=True)
+    mime_type = models.CharField(max_length=128, blank=True, default="", null=True)
+    original_filename = models.CharField(max_length=255, blank=True, default="")
     uploaded_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,

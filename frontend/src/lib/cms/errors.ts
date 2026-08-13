@@ -4,29 +4,41 @@ export class CmsApiError extends Error {
   readonly status: number;
   readonly kind: CmsFailureKind;
   readonly fieldErrors: Record<string, string[]>;
+  readonly code?: string;
 
-  constructor(message: string, status: number, fieldErrors: Record<string, string[]> = {}) {
+  constructor(
+    message: string,
+    status: number,
+    fieldErrors: Record<string, string[]> = {},
+    code?: string,
+  ) {
     super(message);
     this.name = "CmsApiError";
     this.status = status;
     this.kind = status === 401 ? "expired" : status === 403 ? "unauthorized" : "error";
     this.fieldErrors = fieldErrors;
+    this.code = code;
   }
 }
 
 export type CmsHttpStatus = 400 | 401 | 403 | 404 | 409 | 429 | 500;
+
+export const MEDIA_STORAGE_ERROR_CODE = "media_storage_error";
+export const MEDIA_STORAGE_ERROR_MESSAGE =
+  "No fue posible subir el archivo. Verifique el almacenamiento multimedia.";
 
 export interface ParsedCmsError {
   message: string;
   fieldErrors: Record<string, string[]>;
   status: number;
   kind: CmsFailureKind;
+  code?: string;
 }
 
 function flattenFieldErrors(body: Record<string, unknown>): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   for (const [key, value] of Object.entries(body)) {
-    if (key === "detail") continue;
+    if (key === "detail" || key === "code") continue;
     if (Array.isArray(value)) {
       out[key] = value.map(String);
     } else if (typeof value === "string") {
@@ -40,9 +52,13 @@ function flattenFieldErrors(body: Record<string, unknown>): Record<string, strin
 export function parseCmsErrorBody(body: unknown, status: number): ParsedCmsError {
   let message = "Ocurrió un error inesperado.";
   let fieldErrors: Record<string, string[]> = {};
+  let code: string | undefined;
 
   if (typeof body === "object" && body !== null) {
     const record = body as Record<string, unknown>;
+    if (typeof record.code === "string" && record.code.trim()) {
+      code = record.code.trim();
+    }
     if (typeof record.detail === "string") {
       message = record.detail;
     }
@@ -51,6 +67,9 @@ export function parseCmsErrorBody(body: unknown, status: number): ParsedCmsError
       const first = Object.values(fieldErrors)[0]?.[0];
       if (first) message = first;
     }
+    if (code === MEDIA_STORAGE_ERROR_CODE) {
+      message = MEDIA_STORAGE_ERROR_MESSAGE;
+    }
   }
 
   return {
@@ -58,6 +77,7 @@ export function parseCmsErrorBody(body: unknown, status: number): ParsedCmsError
     fieldErrors,
     status,
     kind: status === 401 ? "expired" : status === 403 ? "unauthorized" : "error",
+    code,
   };
 }
 
@@ -78,6 +98,8 @@ export function messageForStatus(status: number, detail?: string): string {
       return "Demasiados intentos. Espere un momento e intente de nuevo.";
     case 500:
       return "Error del servidor. Intente de nuevo más tarde.";
+    case 503:
+      return detail || "El servicio no está disponible. Intente de nuevo más tarde.";
     default:
       return detail || "Ocurrió un error inesperado.";
   }
@@ -90,6 +112,7 @@ export function resolveCmsError(error: unknown): ParsedCmsError {
       fieldErrors: error.fieldErrors ?? {},
       status: error.status,
       kind: error.kind,
+      code: error.code,
     };
   }
   if (error instanceof Error) {

@@ -12,7 +12,7 @@ import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsSectionHeader } from "@/src/components/cms/CmsSectionHeader";
 import { useCmsAuth } from "@/src/lib/cms/AuthProvider";
 import { CmsApiError } from "@/src/lib/cms/api";
-import { deleteMedia, listMedia, uploadMedia } from "@/src/lib/cms/editorial/media";
+import { deleteMedia, listMedia, mediaUploadErrorMessage, uploadMedia } from "@/src/lib/cms/editorial/media";
 import type { MediaAsset, MediaType } from "@/src/lib/cms/editorial/types";
 import { canAdd, canDelete } from "@/src/lib/cms/permissions";
 import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
@@ -74,7 +74,7 @@ export function MediaListView() {
       setPage(1);
       await load();
     } catch (err) {
-      toast.error(err instanceof CmsApiError ? err.message : "Error al subir.");
+      toast.error(mediaUploadErrorMessage(err));
     } finally {
       setUploading(false);
     }

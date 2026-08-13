@@ -14,7 +14,7 @@ import { CmsMediaImage } from "@/src/components/cms/editor/CmsMediaImage";
 import { CmsPagination } from "@/src/components/cms/editor/CmsPagination";
 import { useCmsToast } from "@/src/components/cms/editor/CmsToast";
 import { CmsApiError } from "@/src/lib/cms/api";
-import { listMedia, uploadMedia } from "@/src/lib/cms/editorial/media";
+import { listMedia, mediaUploadErrorMessage, uploadMedia } from "@/src/lib/cms/editorial/media";
 import type { MediaAsset, MediaType } from "@/src/lib/cms/editorial/types";
 import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import { cn } from "@/src/lib/utils";
@@ -133,8 +133,7 @@ export function CmsMediaPicker({
       setPage(1);
       await load();
     } catch (error) {
-      const msg = error instanceof CmsApiError ? error.message : "Error al subir el archivo.";
-      toast.error(msg);
+      toast.error(mediaUploadErrorMessage(error));
     } finally {
       setUploading(false);
     }
