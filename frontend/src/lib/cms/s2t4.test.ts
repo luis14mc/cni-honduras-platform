@@ -29,6 +29,21 @@ describe("parseCmsErrorBody", () => {
     expect(messageForStatus(401)).toContain("sesión");
     expect(messageForStatus(429)).toContain("Demasiados");
     expect(messageForStatus(500)).toContain("servidor");
+    expect(messageForStatus(503)).toContain("disponible");
+  });
+
+  it("maps media_storage_error without leaking provider details", () => {
+    const parsed = parseCmsErrorBody(
+      {
+        detail: "No fue posible almacenar el archivo en el servicio multimedia.",
+        code: "media_storage_error",
+      },
+      503,
+    );
+    expect(parsed.code).toBe("media_storage_error");
+    expect(parsed.message).toContain("almacenamiento multimedia");
+    expect(parsed.fieldErrors.code).toBeUndefined();
+    expect(parsed.message).not.toMatch(/AWS|AccessDenied|Failed response/i);
   });
 
   it("extracts field errors from DRF body", () => {

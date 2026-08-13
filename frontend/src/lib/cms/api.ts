@@ -80,7 +80,7 @@ async function parseErrorResponse(response: Response): Promise<CmsApiError> {
     // non-JSON body
   }
   const parsed = parseCmsErrorBody(body, response.status);
-  return new CmsApiError(parsed.message, response.status, parsed.fieldErrors);
+  return new CmsApiError(parsed.message, response.status, parsed.fieldErrors, parsed.code);
 }
 
 async function parseDetail(response: Response): Promise<string> {

@@ -53,7 +53,6 @@ class LoginSerializer(serializers.Serializer):
 
 class MediaAssetNestedSerializer(serializers.ModelSerializer):
     file_url = serializers.SerializerMethodField()
-    file_size_bytes = serializers.SerializerMethodField()
     mime_type = serializers.SerializerMethodField()
 
     class Meta:
@@ -68,29 +67,31 @@ class MediaAssetNestedSerializer(serializers.ModelSerializer):
             "media_type",
             "file_size_bytes",
             "mime_type",
+            "original_filename",
             "created_at",
         )
-        read_only_fields = ("id", "file_url", "file_size_bytes", "mime_type", "created_at")
+        read_only_fields = (
+            "id",
+            "file_url",
+            "file_size_bytes",
+            "mime_type",
+            "original_filename",
+            "created_at",
+        )
 
     def get_file_url(self, obj: MediaAsset) -> str | None:
         from apps.media_library.serializers import absolute_file_url
 
         return absolute_file_url(obj.file, self.context)
 
-    def get_file_size_bytes(self, obj: MediaAsset) -> int | None:
-        if not obj.file:
-            return None
-        # FieldFile.size is a property that hits storage; hasattr() already raises
-        # FileNotFoundError when the blob is missing — never use hasattr here.
-        try:
-            return obj.file.size
-        except (FileNotFoundError, OSError, ValueError):
-            return None
-
     def get_mime_type(self, obj: MediaAsset) -> str | None:
-        if not obj.file or not obj.file.name:
+        stored = (getattr(obj, "mime_type", None) or "").strip()
+        if stored:
+            return stored
+        name = getattr(obj.file, "name", None) or getattr(obj, "original_filename", "") or ""
+        if not name:
             return None
-        guessed, _ = mimetypes.guess_type(obj.file.name)
+        guessed, _ = mimetypes.guess_type(name)
         return guessed
 
 

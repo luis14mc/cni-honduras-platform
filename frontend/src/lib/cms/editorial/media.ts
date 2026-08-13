@@ -1,4 +1,5 @@
 import { cmsDelete, cmsGet, cmsPatch, cmsUpload } from "@/src/lib/cms/api";
+import { CmsApiError, MEDIA_STORAGE_ERROR_CODE, MEDIA_STORAGE_ERROR_MESSAGE } from "@/src/lib/cms/errors";
 import type { ListParams, MediaAsset, PaginatedResponse } from "@/src/lib/cms/editorial/types";
 import { buildListQuery } from "@/src/lib/cms/editorial/types";
 
@@ -40,4 +41,14 @@ export async function updateMedia(id: number, input: UpdateMediaInput): Promise<
 
 export async function deleteMedia(id: number): Promise<void> {
   return cmsDelete(`/media/${id}/`);
+}
+
+export function mediaUploadErrorMessage(error: unknown): string {
+  if (error instanceof CmsApiError) {
+    if (error.code === MEDIA_STORAGE_ERROR_CODE || error.status === 503) {
+      return MEDIA_STORAGE_ERROR_MESSAGE;
+    }
+    return error.message;
+  }
+  return "Error al subir el archivo.";
 }

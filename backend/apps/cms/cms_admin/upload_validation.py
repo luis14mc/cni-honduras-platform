@@ -170,3 +170,23 @@ def infer_media_type(filename: str) -> str:
     if ext in ALLOWED_VIDEO_EXTENSIONS:
         return "video"
     return "file"
+
+
+def resolved_upload_mime(uploaded_file) -> str:
+    """MIME to persist at upload time — from the request, never from storage."""
+
+    name = getattr(uploaded_file, "name", "") or ""
+    ext = _extension(name)
+    raw = _normalize_mime(getattr(uploaded_file, "content_type", "") or "")
+    expected = EXTENSION_MIME_MAP.get(ext)
+
+    if raw and raw not in GENERIC_MIME_FALLBACKS:
+        if expected is None or raw in expected:
+            return raw
+
+    guessed, _ = mimetypes.guess_type(name)
+    if guessed:
+        return _normalize_mime(guessed)
+    if expected:
+        return next(iter(sorted(expected)))
+    return raw
