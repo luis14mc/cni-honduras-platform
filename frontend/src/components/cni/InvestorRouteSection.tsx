@@ -43,23 +43,15 @@ function useInView<T extends HTMLElement>(rootMargin = "-15% 0px -15% 0px") {
   return [ref, inView] as const;
 }
 
-function StepIcon({ icon, color, isLast }: { icon: string; color: string; isLast: boolean }) {
+function StepIcon({ icon }: { icon: string }) {
   return (
     <span
       className={cn(
-        "route-icon relative flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/nav:scale-105",
-        isLast
-          ? "border-transparent bg-[#252A58] text-white"
-          : "border-[#dce9ff] bg-white",
+        "route-icon relative flex h-14 w-14 items-center justify-center rounded-full border border-transparent bg-[#252A58] text-white",
+        "shadow-[0_10px_24px_-12px_rgba(37,42,88,0.55)]",
+        "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "group-hover/nav:scale-105 group-hover/nav:bg-[#29AB85] group-hover/nav:shadow-[0_14px_30px_-12px_rgba(41,171,133,0.55)]",
       )}
-      style={
-        isLast
-          ? undefined
-          : {
-              borderColor: "#dce9ff",
-              color: color,
-            }
-      }
     >
       <MaterialIcon name={icon} className="text-[1.75rem]" />
     </span>
@@ -70,10 +62,9 @@ type StepRowProps = {
   step: InvestorRouteStep;
   index: number;
   inView: boolean;
-  isLast: boolean;
 };
 
-function StepRow({ step, index, inView, isLast }: StepRowProps) {
+function StepRow({ step, index, inView }: StepRowProps) {
   const isLeft = index % 2 === 0;
   const sideAlign = isLeft ? "lg:text-right lg:items-end" : "lg:text-left lg:items-start";
   const delay = inView ? `${index * 140}ms` : "0ms";
@@ -125,7 +116,7 @@ function StepRow({ step, index, inView, isLast }: StepRowProps) {
         style={{ transitionDelay: delay }}
       >
         <div className="route-node-inner group/nav relative flex flex-col items-center">
-          <StepIcon icon={step.icon} color={step.color} isLast={isLast} />
+          <StepIcon icon={step.icon} />
         </div>
       </div>
 
@@ -191,7 +182,7 @@ export function InvestorRouteSection({ eyebrow, title, description, steps }: Pro
           <div className="route-track relative mx-auto mt-16 max-w-5xl md:mt-20">
             <div
               className={cn(
-                "route-line pointer-events-none absolute top-0 left-[1.75rem] w-px -translate-x-1/2 bg-gradient-to-b from-[#29AB85]/40 via-[#0E7A7C]/30 to-[#252A58]/30 lg:left-1/2",
+                "route-line pointer-events-none absolute top-0 left-[1.75rem] w-px -translate-x-1/2 bg-[#dce9ff] lg:left-1/2",
                 inView && "route-line--in-view",
               )}
               aria-hidden
@@ -204,7 +195,6 @@ export function InvestorRouteSection({ eyebrow, title, description, steps }: Pro
                   step={step}
                   index={index}
                   inView={inView}
-                  isLast={index === steps.length - 1}
                 />
               ))}
             </ol>
