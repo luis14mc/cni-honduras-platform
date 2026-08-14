@@ -316,13 +316,13 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
         title={
           locale === "es" ? (
             <>
-              ¿Por qué invertir en{" "}
-              <span className="text-[#29AB85]">Honduras</span>?
+              <span className="text-[#29AB85]">¿Por qué invertir en</span>{" "}
+              <span className="text-white">Honduras</span>?
             </>
           ) : (
             <>
-              Why invest in{" "}
-              <span className="text-[#29AB85]">Honduras</span>?
+              <span className="text-[#29AB85]">Why invest in</span>{" "}
+              <span className="text-white">Honduras</span>?
             </>
           )
         }

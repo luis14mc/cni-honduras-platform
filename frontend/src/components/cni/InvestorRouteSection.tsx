@@ -66,7 +66,9 @@ type StepRowProps = {
 
 function StepRow({ step, index, inView }: StepRowProps) {
   const isLeft = index % 2 === 0;
-  const sideAlign = isLeft ? "lg:text-right lg:items-end" : "lg:text-left lg:items-start";
+  const contentCol = isLeft ? "lg:col-start-1 lg:pr-10 lg:items-end lg:text-right" : "lg:col-start-3 lg:pl-10 lg:items-start lg:text-left";
+  const dividerCol = isLeft ? "lg:col-start-3" : "lg:col-start-1";
+  const itemsAlign = isLeft ? "lg:items-end" : "lg:items-start";
   const delay = inView ? `${index * 140}ms` : "0ms";
 
   return (
@@ -76,19 +78,13 @@ function StepRow({ step, index, inView }: StepRowProps) {
     >
       <div
         className={cn(
-          "route-content col-start-2 flex flex-col gap-3 text-center lg:col-start-1 lg:row-start-1",
-          "lg:pr-10",
-          sideAlign,
+          "route-content col-start-2 flex flex-col gap-3 text-center lg:row-start-1",
+          contentCol,
           inView && "route-content--in-view",
         )}
         style={{ transitionDelay: delay }}
       >
-        <div
-          className={cn(
-            "flex flex-col",
-            isLeft ? "lg:items-end" : "lg:items-start",
-          )}
-        >
+        <div className={cn("flex flex-col", itemsAlign)}>
           <h3
             className={cn(
               "font-display text-2xl font-extrabold leading-tight text-[#252A58] md:text-3xl",
@@ -123,7 +119,7 @@ function StepRow({ step, index, inView }: StepRowProps) {
       <div
         className={cn(
           "route-spacer hidden lg:row-start-1 lg:block",
-          isLeft ? "lg:col-start-3" : "lg:col-start-1",
+          dividerCol,
         )}
         aria-hidden
       />
