@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_opportunity_public_metrics",
+  "info": {
+    "displayName": "Public metric",
+    "icon": "layer",
+    "description": "Public teaser metric shown on investment opportunity cards (max 4)."
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

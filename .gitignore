@@ -35,6 +35,7 @@ yarn-error.log*
 .env.*
 !.env.example
 !backend/.env.example
+!cms-strapi/.env.example
 
 # vercel
 .vercel
@@ -47,6 +48,18 @@ yarn-error.log*
 /frontend/node_modules/
 /frontend/.next/
 /frontend/out/
+
+# Monorepo — Strapi 5 editorial CMS
+/cms-strapi/node_modules/
+/cms-strapi/.tmp/
+/cms-strapi/dist/
+/cms-strapi/build/
+/cms-strapi/.cache/
+/cms-strapi/.strapi/
+/cms-strapi/.strapi-updater.json
+/cms-strapi/.strapi-cloud.json
+/cms-strapi/public/uploads/*
+!/cms-strapi/public/uploads/.gitkeep
 
 # Backend / Python
 **/__pycache__/
