@@ -24,7 +24,7 @@ Draft & Publish + i18n (`es` default, `en`) en todos:
 
 | Tipo | REST | Notas |
 |------|------|--------|
-| News | `GET /api/news` | `content` blocks, `featured_image`, SEO |
+| News | `GET /api/news` | UID interno `news-item` (Strapi exige singular ≠ plural). `content` blocks, `featured_image`, SEO |
 | Document | `GET /api/documents` | `file` y `cover` localizados (ES/EN pueden diferir). `resource_key` compartido |
 | Success Story | `GET /api/success-stories` | `sector` es **string** (no se duplica el modelo Django `Sector`) |
 | Investment Opportunity | `GET /api/investment-opportunities` | `public_metrics` (máx. 4). `internal_notes` es editorial y se omite en REST público |
@@ -139,6 +139,7 @@ Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 |-------|------|
 | Proceso vivo | `GET /_health` → 204 |
 | Postgres | `GET /api/health` → `{ "status": "ok", "database": "connected" }` |
+| CI | `strapi-ci` arranca Postgres 16, `npm ci`, `npm run build`, `npm start` y exige `/api/health` 200 |
 | Admin | `GET /admin` carga |
 | Media R2 | Subir imagen en Media Library; URL absoluta `https://pub-….r2.dev/…` |
 | News ES | `GET /api/news?locale=es&populate=*` |

@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "news",
+  "collectionName": "news_items",
   "info": {
-    "singularName": "news",
+    "singularName": "news-item",
     "pluralName": "news",
     "displayName": "News",
-    "description": "Editorial news, press and announcements (Strapi parallel CMS)."
+    "description": "Editorial news, press and announcements (Strapi parallel CMS). REST: /api/news"
   },
   "options": {
     "draftAndPublish": true

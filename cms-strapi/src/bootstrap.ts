@@ -5,16 +5,27 @@ const REQUIRED_LOCALES = [
   { code: 'en', name: 'English (en)' },
 ] as const;
 
-const PUBLIC_READ_ACTIONS = [
-  'api::news.news.find',
-  'api::news.news.findOne',
-  'api::document.document.find',
-  'api::document.document.findOne',
-  'api::success-story.success-story.find',
-  'api::success-story.success-story.findOne',
-  'api::investment-opportunity.investment-opportunity.find',
-  'api::investment-opportunity.investment-opportunity.findOne',
+const PUBLIC_READ_CONTROLLERS = [
+  { type: 'api::news-item', controller: 'news-item' },
+  { type: 'api::document', controller: 'document' },
+  { type: 'api::success-story', controller: 'success-story' },
+  { type: 'api::investment-opportunity', controller: 'investment-opportunity' },
 ] as const;
+
+const WRITE_ACTIONS = ['create', 'update', 'delete'] as const;
+
+type PermissionAction = { enabled: boolean; policy: string };
+type RolePermissions = Record<
+  string,
+  { controllers?: Record<string, Record<string, PermissionAction>> }
+>;
+
+function bootstrapErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return 'unknown error';
+}
 
 async function ensureLocales(strapi: Core.Strapi) {
   const locales = strapi.plugin('i18n').service('locales');
@@ -34,57 +45,65 @@ async function ensureLocales(strapi: Core.Strapi) {
   }
 }
 
-async function ensurePublicReadPermissions(strapi: Core.Strapi) {
-  const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
-    where: { type: 'public' },
-    populate: ['permissions'],
-  });
+function grantPublicReadOnly(permissions: RolePermissions) {
+  for (const { type, controller } of PUBLIC_READ_CONTROLLERS) {
+    if (!permissions[type]) {
+      permissions[type] = { controllers: {} };
+    }
+    if (!permissions[type].controllers) {
+      permissions[type].controllers = {};
+    }
+    const controllers = permissions[type].controllers!;
+    if (!controllers[controller]) {
+      controllers[controller] = {};
+    }
+    const actions = controllers[controller];
+    actions.find = { enabled: true, policy: '' };
+    actions.findOne = { enabled: true, policy: '' };
+    for (const write of WRITE_ACTIONS) {
+      if (actions[write]) {
+        actions[write] = { enabled: false, policy: '' };
+      }
+    }
+  }
+}
 
-  if (!publicRole) {
+/**
+ * Grant Public find/findOne via the users-permissions role service.
+ * Failures are logged and swallowed so an RBAC mismatch cannot take Strapi down.
+ */
+async function ensurePublicReadPermissions(strapi: Core.Strapi) {
+  const roleService = strapi.plugin('users-permissions').service('role');
+  const roles = await roleService.find();
+  const publicMeta = (Array.isArray(roles) ? roles : []).find(
+    (role: { type?: string }) => role.type === 'public'
+  );
+
+  if (!publicMeta?.id) {
     strapi.log.warn('users-permissions: public role not found; skip REST grants');
     return;
   }
 
-  const existing = new Set(
-    (publicRole.permissions ?? []).map((permission: { action: string }) => permission.action)
-  );
+  const publicRole = await roleService.findOne(publicMeta.id);
+  const permissions = (publicRole.permissions ?? {}) as RolePermissions;
+  grantPublicReadOnly(permissions);
 
-  for (const action of PUBLIC_READ_ACTIONS) {
-    if (existing.has(action)) {
-      continue;
-    }
-    await strapi.db.query('plugin::users-permissions.permission').create({
-      data: {
-        action,
-        role: publicRole.id,
-      },
-    });
-    strapi.log.info(`users-permissions: granted public ${action}`);
-  }
-
-  const editorialUids = [
-    'api::news.news',
-    'api::document.document',
-    'api::success-story.success-story',
-    'api::investment-opportunity.investment-opportunity',
-  ];
-  const writeSuffixes = new Set(['create', 'update', 'delete']);
-
-  for (const permission of publicRole.permissions ?? []) {
-    const parts = String(permission.action).split('.');
-    const verb = parts[parts.length - 1];
-    const uid = parts.slice(0, -1).join('.');
-    if (!editorialUids.includes(uid) || !writeSuffixes.has(verb)) {
-      continue;
-    }
-    await strapi.db.query('plugin::users-permissions.permission').delete({
-      where: { id: permission.id },
-    });
-    strapi.log.warn(`users-permissions: removed public write ${permission.action}`);
-  }
+  await roleService.updateRole(publicMeta.id, {
+    name: publicRole.name,
+    description: publicRole.description,
+    permissions,
+  });
+  strapi.log.info('users-permissions: public read-only grants synced for editorial types');
 }
 
 export async function bootstrapStrapi({ strapi }: { strapi: Core.Strapi }) {
   await ensureLocales(strapi);
-  await ensurePublicReadPermissions(strapi);
+
+  try {
+    await ensurePublicReadPermissions(strapi);
+  } catch (error) {
+    strapi.log.error(
+      `users-permissions: public read grant failed (${bootstrapErrorMessage(error)}); continuing startup`
+    );
+  }
 }
