@@ -15,7 +15,6 @@ export const generateMetadata = makeGenerateMetadata(PAGE_SEO["invertir-por-que-
 
 const copy = {
   es: {
-    eyebrow: "Destino de Inversión Elite",
     title: "¿Por qué invertir en Honduras?",
     description:
       "El centro logístico y estratégico de las Américas. Una plataforma diseñada para el crecimiento de capital institucional en Centroamérica.",
@@ -153,7 +152,6 @@ const copy = {
     ],
   },
   en: {
-    eyebrow: "Elite Investment Destination",
     title: "Why invest in Honduras?",
     description:
       "The strategic logistics hub of the Americas. A platform designed for institutional capital growth in Central America.",
@@ -301,12 +299,23 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <PageHero
-        eyebrow={c.eyebrow}
-        title={c.title}
+        title={
+          locale === "es" ? (
+            <>
+              ¿Por qué invertir en{" "}
+              <span className="text-[#29AB85]">Honduras</span>?
+            </>
+          ) : (
+            <>
+              Why invest in{" "}
+              <span className="text-[#29AB85]">Honduras</span>?
+            </>
+          )
+        }
         description={c.description}
         imageSrc={designImages.porQue.hero}
         imageAlt={locale === "es" ? "Costa de Honduras" : "Honduras coastline"}
-        heightClass="min-h-[520px] md:min-h-[600px]"
+        heightClass="min-h-screen"
       />
 
       <section className="relative z-20 -mt-16">
