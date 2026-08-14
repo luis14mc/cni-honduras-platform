@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { legacyRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
 import { normalizePath } from "@/src/config/siteNavigation";
+import { isStrapiProxyPath, rewriteStrapiProxyUrl } from "@/src/lib/strapi/proxy";
 
 function isStaticAsset(pathname: string): boolean {
   return (
@@ -22,9 +23,20 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // The editorial CMS lives outside the localized public site; skip locale
-  // rewrites/redirects so /cms and /cms/* resolve to the CMS app router tree.
+  // Django editorial CMS stays on this app. Strapi is reverse-proxied when STRAPI_ORIGIN is set.
   if (pathname === "/cms" || pathname.startsWith("/cms/")) {
+    return NextResponse.next();
+  }
+
+  if (isStrapiProxyPath(pathname)) {
+    const target = rewriteStrapiProxyUrl(
+      process.env.STRAPI_ORIGIN,
+      pathname,
+      request.nextUrl.search,
+    );
+    if (target) {
+      return NextResponse.rewrite(new URL(target));
+    }
     return NextResponse.next();
   }
 

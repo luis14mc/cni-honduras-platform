@@ -1,5 +1,6 @@
 import path from "path";
 import type { NextConfig } from "next";
+import { buildStrapiBeforeFileRewrites } from "./src/lib/strapi/proxy";
 
 /** Optional public media/CDN host (no provider hardcoding). Set in deploy env if needed. */
 const mediaHost = process.env.NEXT_PUBLIC_MEDIA_HOSTNAME?.trim();
@@ -8,6 +9,11 @@ const nextConfig: NextConfig = {
   // Evita que Turbopack use la raíz del monorepo cuando hay otro lockfile arriba.
   turbopack: {
     root: path.join(__dirname),
+  },
+  async rewrites() {
+    return {
+      beforeFiles: buildStrapiBeforeFileRewrites(process.env.STRAPI_ORIGIN),
+    };
   },
   images: {
     remotePatterns: [

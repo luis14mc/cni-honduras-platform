@@ -4,15 +4,19 @@ export type StrapiMediaInput =
   | null
   | undefined;
 
-function strapiOrigin(): string {
-  return (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
+function strapiMediaBase(): string {
+  const configured = (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(configured)) return configured;
+  return "";
 }
 
 /**
  * Resolve a Strapi media URL for the browser.
  *
  * - absolute (`http(s)://…`, including `https://pub-….r2.dev`) → keep
- * - relative (`/uploads/…`) → prefix `NEXT_PUBLIC_STRAPI_URL`
+ * - relative (`/uploads/…`) + absolute STRAPI origin → prefix origin
+ * - relative + path-only `NEXT_PUBLIC_STRAPI_URL` (`/strapi-api`) → keep site path
+ *   (`/uploads` is proxied on the same host, not under `/strapi-api`)
  * - null / empty → null
  */
 export function getStrapiMediaUrl(input: StrapiMediaInput): string | null {
@@ -23,7 +27,7 @@ export function getStrapiMediaUrl(input: StrapiMediaInput): string | null {
   if (!url) return null;
   if (/^https?:\/\//i.test(url)) return url;
 
-  const origin = strapiOrigin();
+  const origin = strapiMediaBase();
   const path = url.startsWith("/") ? url : `/${url}`;
   return origin ? `${origin}${path}` : path;
 }
