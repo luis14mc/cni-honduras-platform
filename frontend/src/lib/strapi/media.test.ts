@@ -32,6 +32,13 @@ describe("getStrapiMediaUrl", () => {
     process.env.NEXT_PUBLIC_STRAPI_URL = previous;
   });
 
+  it("keeps site-relative upload paths when STRAPI URL is a path prefix", () => {
+    const previous = process.env.NEXT_PUBLIC_STRAPI_URL;
+    process.env.NEXT_PUBLIC_STRAPI_URL = "/strapi-api";
+    expect(getStrapiMediaUrl("/uploads/doc.pdf")).toBe("/uploads/doc.pdf");
+    process.env.NEXT_PUBLIC_STRAPI_URL = previous;
+  });
+
   it("returns null for empty input", () => {
     expect(getStrapiMediaUrl(null)).toBeNull();
     expect(getStrapiMediaUrl(undefined)).toBeNull();

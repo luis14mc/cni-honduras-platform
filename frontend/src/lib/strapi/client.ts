@@ -13,7 +13,13 @@ export class StrapiApiError extends Error {
 }
 
 export function getStrapiBaseUrl(): string {
-  return (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
+  const configured = (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
+  if (!configured) return "";
+  if (/^https?:\/\//i.test(configured)) return configured;
+  const prefix = configured.startsWith("/") ? configured : `/${configured}`;
+  if (typeof window !== "undefined") return prefix;
+  const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/+$/, "");
+  return site ? `${site}${prefix}` : prefix;
 }
 
 function getStrapiApiToken(): string | undefined {

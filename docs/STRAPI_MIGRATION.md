@@ -12,6 +12,24 @@ Next.js
 └── Django/PostGIS → mapa, geografía y APIs especializadas
 ```
 
+Same-site proxy (MIG-CMS-002): Strapi sigue como **servicio separado**. Next solo reverse-proxea:
+
+```text
+<public-site>
+├── /                     → Next.js
+├── /en/...               → Next.js
+├── /cms                  → CMS Django (sin cambios)
+├── /admin                → Strapi admin
+├── /admin/*              → Strapi admin
+├── /strapi-api/*         → Strapi /api/*
+└── /content-manager, /upload, /i18n, /users-permissions, …
+                          → plugins admin Strapi 5 (no viven bajo /admin)
+```
+
+- `STRAPI_ORIGIN` (server-only) = origen interno del servicio Strapi.
+- `NEXT_PUBLIC_STRAPI_URL=/strapi-api` = prefijo REST en el browser.
+- `STRAPI_PUBLIC_URL` en Strapi = URL pública del sitio (p. ej. `http://localhost:3000`). No usar el hostname interno de Render.
+
 - Strapi vive en `cms-strapi/` y usa **PostgreSQL propio** (Neon u otra instancia/schema).
 - **No** usar la base PostGIS de Django.
 - El frontend **sigue consumiendo Django** para noticias, documentos, mapa, etc.
@@ -109,17 +127,33 @@ Publicar contenido: Content Manager → tipo → locale ES/EN → **Publish**. E
 Variables (`frontend/.env.local`):
 
 ```text
-NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+STRAPI_ORIGIN=http://localhost:1337
+NEXT_PUBLIC_STRAPI_URL=/strapi-api
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # STRAPI_API_TOKEN=   # opcional, solo server-side (nunca NEXT_PUBLIC_)
 ```
 
+`STRAPI_ORIGIN` vacío: el build Next funciona y **no** registra rewrites Strapi.
+
+En Vercel/staging, definir `STRAPI_ORIGIN` en el entorno del **frontend** (build y runtime). El middleware de Next lo usa para `rewrite` hacia Strapi; no se expone al browser.
+
 Cliente:
 
-- `frontend/src/lib/strapi/client.ts`
-- `frontend/src/lib/strapi/types.ts`
+- `frontend/src/lib/strapi/client.ts` — relativo `/strapi-api` en browser; absoluto con `NEXT_PUBLIC_SITE_URL` en server
+- `frontend/src/lib/strapi/proxy.ts` — rewrites `beforeFiles`
 - `frontend/src/lib/strapi/media.ts` → `getStrapiMediaUrl()`
 
-Este PR **no** cambia páginas públicas ni el CMS Django.
+El CMS Django en `/cms` no se proxea.
+
+## Proxy local / staging
+
+1. Strapi: `STRAPI_PUBLIC_URL=http://localhost:3000` (staging: URL pública del frontend).
+2. Next: `STRAPI_ORIGIN` apuntando al servicio Strapi (local `:1337` o URL interna de Render).
+3. Abrir `http://localhost:3000/admin` (no el puerto 1337) para el panel.
+4. Health: `GET /strapi-api/health` → 200 `{ status: ok, database: connected }`.
+5. REST: `GET /strapi-api/news?locale=es`.
+
+Rewrites extra (plugins admin Strapi 5): `/content-manager`, `/content-type-builder`, `/upload`, `/uploads`, `/i18n`, `/users-permissions`, `/email`, `/content-releases`, `/review-workflows`, `/cloud`. No se interceptan `/cms`, `/en`, ni el mapa.
 
 ## Deployment (staging)
 
@@ -129,7 +163,7 @@ Este PR **no** cambia páginas públicas ni el CMS Django.
 4. Build: `npm run build` && `npm run start` (Node 20).
 5. Crear el primer admin en `/admin` (una sola vez).
 6. Settings → Users & Permissions: confirmar Public = find/findOne.
-7. Frontend: `NEXT_PUBLIC_STRAPI_URL` apuntando al Strapi de staging. No hardcodear hosts.
+7. Frontend: `STRAPI_ORIGIN` (server-only) + `NEXT_PUBLIC_STRAPI_URL=/strapi-api`. No hardcodear hosts de Render.
 
 Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 
@@ -140,7 +174,8 @@ Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 | Proceso vivo | `GET /_health` → 204 |
 | Postgres | `GET /api/health` → `{ "status": "ok", "database": "connected" }` |
 | CI | `strapi-ci` arranca Postgres 16, `npm ci`, `npm run build`, `npm start` y exige `/api/health` 200 |
-| Admin | `GET /admin` carga |
+| Admin vía proxy | `GET /admin` en el dominio del frontend |
+| Health vía proxy | `GET /strapi-api/health` → 200 |
 | Media R2 | Subir imagen en Media Library; URL absoluta `https://pub-….r2.dev/…` |
 | News ES | `GET /api/news?locale=es&populate=*` |
 | News EN | `GET /api/news?locale=en&populate=*` |
@@ -174,6 +209,6 @@ Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 
 ## Variables nuevas (resumen)
 
-**Strapi:** `DATABASE_*`, `DATABASE_URL` (opcional), `DATABASE_SCHEMA`, `STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE`, `CF_*`, más secretos estándar Strapi (`APP_KEYS`, `ADMIN_JWT_SECRET`, …).
+**Strapi:** `DATABASE_*`, `DATABASE_URL` (opcional), `DATABASE_SCHEMA`, `STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE`, `STRAPI_PUBLIC_URL`, `ADMIN_PATH`, `CF_*`, más secretos estándar Strapi (`APP_KEYS`, `ADMIN_JWT_SECRET`, …).
 
-**Frontend:** `NEXT_PUBLIC_STRAPI_URL`, `STRAPI_API_TOKEN` (opcional, server-only).
+**Frontend:** `STRAPI_ORIGIN` (server-only), `NEXT_PUBLIC_STRAPI_URL`, `STRAPI_API_TOKEN` (opcional, server-only).

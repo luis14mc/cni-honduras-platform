@@ -13,4 +13,5 @@ npm run build
 npm run start
 ```
 
-Health: `GET /api/health` (Postgres) y `GET /_health` (proceso).
+Health: `GET /api/health` (Postgres) y, vía Next, `GET /strapi-api/health`.
+Admin vía proxy: `http://localhost:3000/admin` (`STRAPI_ORIGIN` + `STRAPI_PUBLIC_URL`).
