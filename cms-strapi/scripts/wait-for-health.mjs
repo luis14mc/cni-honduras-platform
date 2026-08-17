@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Poll Strapi GET /api/health until HTTP 200 and { status: "ok", database: "connected" }.
+ * Poll Strapi GET /api/health until HTTP 200 and
+ * { status: "ok", database: "connected", service: "cms-strapi" }.
  * Used by GitHub Actions strapi-ci. Does not print secrets.
  */
 
@@ -19,7 +20,11 @@ async function check() {
     throw new Error(`HTTP ${response.status}`);
   }
   const body = await response.json();
-  if (body.status !== 'ok' || body.database !== 'connected') {
+  if (
+    body.status !== 'ok' ||
+    body.database !== 'connected' ||
+    body.service !== 'cms-strapi'
+  ) {
     throw new Error('health payload mismatch');
   }
   return body;

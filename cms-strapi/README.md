@@ -8,10 +8,12 @@ Guía completa: [`docs/STRAPI_MIGRATION.md`](../docs/STRAPI_MIGRATION.md)
 
 ```bash
 cp .env.example .env   # completar Postgres + secretos + R2
-npm run develop        # watch
+npm ci
+npm run develop        # watch (local)
 npm run build
-npm run start
+npm start              # production mode
 ```
 
-Health: `GET /api/health` (Postgres) y, vía Next, `GET /strapi-api/health`.
-Admin vía proxy: `http://localhost:3000/admin` (`STRAPI_ORIGIN` + `STRAPI_PUBLIC_URL`).
+- Health: `GET /_health` (204) y `GET /api/health` (`status`, `database`, `service`).
+- Admin directo: `http://localhost:1337/admin` (staging: `https://<strapi-service>/admin`).
+- El proxy Next `/admin` es **opcional**; no es requisito de staging.

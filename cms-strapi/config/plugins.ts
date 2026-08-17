@@ -46,6 +46,12 @@ const r2UploadConfig = (env: Core.Config.Shared.ConfigParams['env']) => ({
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => {
   const useR2 = Boolean(env('CF_BUCKET'));
 
+  if (env('NODE_ENV') === 'production' && env.bool('STRAPI_REQUIRE_R2', false) && !useR2) {
+    throw new Error(
+      'CF_BUCKET is required when STRAPI_REQUIRE_R2=true. Staging must not store media on the local filesystem.'
+    );
+  }
+
   return {
     i18n: {
       enabled: true,
