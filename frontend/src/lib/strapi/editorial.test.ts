@@ -4,6 +4,7 @@ import {
   getNews,
   getNewsBySlug,
   getOpportunityBySlug,
+  getSuccessStories,
   mapDocument,
   mapNews,
   mapOpportunity,
@@ -127,8 +128,24 @@ describe("mapSuccessStory", () => {
       person_role: "CEO",
     });
     expect(story?.sector).toMatchObject({ name: "agroindustria", slug: "agroindustria", id: 0 });
+    expect(mapSuccessStory({ ...{
+      id: 9,
+      title: "Caso energia",
+      slug: "caso-energia",
+      sector: "Energía",
+    }})?.sector?.slug).toBe("energia");
     expect(story?.featured_image?.file).toBe("https://cdn.example/cover.jpg");
     expect(story?.logo?.file).toBe("https://cdn.example/logo.png");
+  });
+
+  it("normalizes accented sector labels to slugs", () => {
+    expect(mapSuccessStory({ id: 1, title: "A", slug: "a", sector: "Energía" })?.sector?.slug).toBe(
+      "energia",
+    );
+    expect(
+      mapSuccessStory({ id: 2, title: "B", slug: "b", sector: "Infraestructura Vial" })?.sector
+        ?.slug,
+    ).toBe("infraestructura-vial");
   });
 });
 
@@ -244,6 +261,27 @@ describe("editorial fetch", () => {
     await expect(getNewsBySlug("en", "missing-slug")).rejects.toMatchObject({
       status: 404,
     });
+  });
+
+  it("filters stories by normalized sector instead of exact string equality", async () => {
+    vi.stubEnv("STRAPI_URL", "https://strapi.test");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          data: [
+            { id: 1, title: "Solar", slug: "solar", sector: "Energía" },
+            { id: 2, title: "Cafe", slug: "cafe", sector: "Agroindustria" },
+          ],
+          meta: {},
+        }),
+      }),
+    );
+    const stories = await getSuccessStories("es", { sector: "energia" });
+    expect(stories.map((item) => item.slug)).toEqual(["solar"]);
+    const url = String(vi.mocked(fetch).mock.calls[0]?.[0]);
+    expect(url).not.toContain("filters%5Bsector%5D");
   });
 
   it("does not send internal_notes in mapped opportunity lookups", async () => {

@@ -12,6 +12,7 @@ import type {
   StrapiNews,
   StrapiSuccessStory,
 } from "@/src/lib/strapi/types";
+import { normalizeSectorSlug, sectorsMatch } from "@/src/lib/strapi/sector";
 import { STRAPI_COLLECTION_PATHS } from "@/src/lib/strapi/types";
 import type { CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory } from "@/src/types/cms";
 import type {
@@ -113,12 +114,7 @@ function fileMime(raw: unknown): string {
 function toSectorLite(sector: unknown): SectorLite | null {
   const value = asString(sector).trim();
   if (!value) return null;
-  const slug = value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  const slug = normalizeSectorSlug(value);
   return {
     id: 0,
     name: value,
@@ -353,8 +349,15 @@ function withListFilters(extra: Record<string, string>, options?: EditorialListO
   const next = { ...extra };
   if (options?.featured) next["filters[featured][$eq]"] = "true";
   if (options?.category) next["filters[category][$eq]"] = options.category;
-  if (options?.sector) next["filters[sector][$eq]"] = options.sector;
   return next;
+}
+
+function matchesRequestedSector<T extends { sector?: SectorLite | null }>(
+  items: T[],
+  sector?: string,
+): T[] {
+  if (!sector) return items;
+  return items.filter((item) => sectorsMatch(item.sector?.slug ?? item.sector?.name, sector));
 }
 
 export async function getNews(locale: Locale, options?: EditorialListOptions): Promise<NewsArticle[]> {
@@ -410,7 +413,10 @@ export async function getSuccessStories(
     locale,
     extra,
   );
-  return rows.map(mapSuccessStory).filter((item): item is SuccessStory => item != null);
+  return matchesRequestedSector(
+    rows.map(mapSuccessStory).filter((item): item is SuccessStory => item != null),
+    options?.sector,
+  );
 }
 
 export async function getSuccessStoryBySlug(locale: Locale, slug: string): Promise<SuccessStory> {
@@ -441,7 +447,10 @@ export async function getOpportunities(
     locale,
     extra,
   );
-  return rows.map(mapOpportunity).filter((item): item is InvestmentOpportunity => item != null);
+  return matchesRequestedSector(
+    rows.map(mapOpportunity).filter((item): item is InvestmentOpportunity => item != null),
+    options?.sector,
+  );
 }
 
 export async function getOpportunityBySlug(locale: Locale, slug: string): Promise<InvestmentOpportunity> {
