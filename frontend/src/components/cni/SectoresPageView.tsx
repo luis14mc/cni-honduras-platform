@@ -295,14 +295,16 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     />
 
                     {/* Tira blanca desde el borde superior del card hasta el ícono */}
-                    <div
-                      className="relative -mt-px inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white px-3 pb-4 pt-10 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
-                      style={{
-                        border: `1px solid ${palette.accent}55`,
-                        borderTop: "none",
-                      }}
-                    >
-                      <SectorIcon slug={slug} size={72} />
+                    <div className={cn("flex w-full", reverse ? "justify-end" : "justify-start")}>
+                      <div
+                        className="relative -mt-px inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white px-3 pb-4 pt-10 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
+                        style={{
+                          border: `1px solid ${palette.accent}55`,
+                          borderTop: "none",
+                        }}
+                      >
+                        <SectorIcon slug={slug} size={72} />
+                      </div>
                     </div>
 
                     <h3
