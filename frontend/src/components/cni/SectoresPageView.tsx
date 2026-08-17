@@ -226,10 +226,11 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                 {emptyMessage}
               </div>
             ) : (
-              sectors.map((sector, idx) => {
+              sectors.map((sector) => {
               const slug = sector.slug as SectorSlug;
               const palette = SECTOR_ACCENTS[slug];
               if (!palette) return null;
+              const photoSrc = sectorPhotoHeaders[slug] ?? sector.image;
               const stat = quickStat(slug, locale);
 
               return (
@@ -237,7 +238,7 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   key={sector.slug}
                   id={sector.slug}
                   href={getSectorHref(locale, slug)}
-                  className="al-sector-tile group relative flex min-h-[460px] flex-col overflow-hidden rounded-2xl border border-[#252A58]/8 bg-white shadow-[0_1px_0_rgba(37,42,88,0.04),0_18px_40px_-22px_rgba(37,42,88,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-transparent hover:shadow-[0_30px_60px_-22px_rgba(37,42,88,0.28)]"
+                  className="al-sector-grid-card group relative flex min-h-[440px] flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   style={
                     {
                       "--sector-accent": palette.accent,
@@ -246,114 +247,107 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     } as CSSProperties
                   }
                 >
-                  {/* Halo de color superior */}
-                  <span
-                    className="pointer-events-none absolute -top-24 right-0 h-56 w-56 rounded-full opacity-60 transition-opacity duration-700 group-hover:opacity-100"
-                    style={{ background: `radial-gradient(circle, ${palette.soft} 0%, transparent 65%)` }}
-                    aria-hidden
-                  />
-
                   {/* Banda de acento superior */}
                   <span
-                    className="relative z-10 h-1 w-full origin-left scale-x-0 transition-transform duration-700 ease-out group-hover:scale-x-100"
+                    className="absolute inset-x-0 top-0 h-1.5 transition-all duration-300 group-hover:h-2"
                     style={{ backgroundColor: palette.accent }}
                     aria-hidden
                   />
 
-                  {/* Header: logo + índice */}
-                  <div className="relative z-10 flex items-start justify-between gap-4 px-7 pt-7">
+                  {/* Imagen header con overlay sectorial */}
+                  <div className="relative h-44 overflow-hidden">
+                    <Image
+                      src={photoSrc}
+                      alt={sector.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="al-sector-grid-overlay absolute inset-0" aria-hidden />
+
+                    {/* Marco del icono flotante */}
+                    <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
+                      <span
+                        className="al-sector-grid-icon-frame flex h-14 w-14 items-center justify-center rounded-xl backdrop-blur-md"
+                        aria-hidden
+                      >
+                        <SectorIcon slug={slug} size={40} className="text-white" />
+                      </span>
+                      <span className="al-sector-grid-index rounded-full px-3 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md">
+                        {indexLabel(slug, locale)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contenido */}
+                  <div className="relative flex flex-1 flex-col p-6 md:p-7">
+                    <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] al-sector-accent-text">
+                      {c.cardEyebrow}
+                    </p>
+                    <h3 className="mt-2 font-display text-xl font-extrabold leading-tight text-cni-primary md:text-2xl">
+                      {sector.name}
+                    </h3>
+                    <p className="mt-3 line-clamp-3 font-body text-sm leading-relaxed text-[#0E7A7C] md:text-base">
+                      {sector.short}
+                    </p>
+
+                    {/* Indicador clave */}
                     <div
-                      className="al-sector-tile-logo relative flex h-24 w-24 items-center justify-center rounded-2xl border transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                      className="mt-5 flex items-baseline justify-between rounded-lg border px-4 py-3"
                       style={{
                         backgroundColor: palette.soft,
                         borderColor: palette.border,
                       }}
                     >
-                      <SectorIcon slug={slug} size={84} />
-                      <span
-                        className="pointer-events-none absolute -inset-1 -z-10 rounded-2xl opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-80"
-                        style={{ backgroundColor: palette.accent }}
-                        aria-hidden
-                      />
-                    </div>
-                    <span
-                      className="font-display text-3xl font-extrabold leading-none tabular-nums transition-colors duration-500"
-                      style={{ color: `${palette.accent}30` }}
-                      aria-hidden
-                    >
-                      0{idx + 1}
-                    </span>
-                  </div>
-
-                  {/* Contenido */}
-                  <div className="relative z-10 flex flex-1 flex-col px-7 pb-7 pt-5">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="inline-block h-px w-6 transition-all duration-500 group-hover:w-10"
-                        style={{ backgroundColor: palette.accent }}
-                        aria-hidden
-                      />
-                      <p
-                        className="font-headline text-[10px] font-bold uppercase tracking-[0.22em]"
-                        style={{ color: palette.accent }}
-                      >
-                        {c.cardEyebrow}
-                      </p>
-                    </div>
-                    <h3 className="mt-3 font-display text-2xl font-extrabold leading-tight text-cni-primary md:text-[26px]">
-                      {sector.name}
-                    </h3>
-                    <p className="mt-3 line-clamp-3 font-body text-sm leading-relaxed text-[#0E7A7C] md:text-[15px]">
-                      {sector.short}
-                    </p>
-
-                    {/* Highlights como chips */}
-                    <div className="mt-5 flex flex-wrap gap-1.5">
-                      {sector.highlights.slice(0, 2).map((h) => (
-                        <span
-                          key={h}
-                          className="rounded-full px-2.5 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.12em]"
-                          style={{
-                            backgroundColor: palette.soft,
-                            color: palette.accent,
-                            border: `1px solid ${palette.border}`,
-                          }}
-                        >
-                          {h}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Stat + CTA anclados al fondo */}
-                    <div className="mt-auto pt-6">
-                      <div className="flex items-baseline justify-between border-t border-[#252A58]/8 pt-4">
-                        <div>
-                          <p
-                            className="font-headline text-[9px] font-bold uppercase tracking-[0.22em]"
-                            style={{ color: palette.accent }}
-                          >
-                            {c.cardStatsLabel}
-                          </p>
-                          <p className="mt-1 font-display text-2xl font-extrabold text-cni-primary">
-                            {stat.value}
-                          </p>
-                        </div>
-                        <span
-                          className="font-headline text-[10px] font-bold uppercase tracking-[0.16em] text-right max-w-[55%]"
+                      <div>
+                        <p
+                          className="font-headline text-[9px] font-bold uppercase tracking-[0.22em]"
                           style={{ color: palette.accent }}
                         >
-                          {stat.label}
-                        </span>
+                          {c.cardStatsLabel}
+                        </p>
+                        <p className="mt-1 font-display text-xl font-extrabold text-cni-primary md:text-2xl">
+                          {stat.value}
+                        </p>
                       </div>
-
                       <span
-                        className="mt-5 inline-flex items-center gap-2 font-headline text-[10px] font-bold uppercase tracking-[0.18em] transition-all duration-500 group-hover:gap-3"
+                        className="font-headline text-[10px] font-bold uppercase tracking-[0.16em]"
                         style={{ color: palette.accent }}
                       >
-                        {c.cardCta}
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        {stat.label}
                       </span>
                     </div>
+
+                    {/* Highlights mini */}
+                    <ul className="mt-5 space-y-1.5">
+                      {sector.highlights.slice(0, 2).map((h) => (
+                        <li
+                          key={h}
+                          className="flex items-start gap-2 font-body text-xs text-cni-primary/80"
+                        >
+                          <Check
+                            className="mt-0.5 h-3.5 w-3.5 shrink-0"
+                            style={{ color: palette.accent }}
+                          />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* CTA inline */}
+                    <span
+                      className="mt-6 inline-flex items-center gap-2 font-headline text-[10px] font-bold uppercase tracking-[0.18em] transition-all group-hover:gap-3"
+                      style={{ color: palette.accent }}
+                    >
+                      {c.cardCta}
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+
+                    {/* Patrón sutil inferior */}
+                    <div
+                      className="al-sector-grid-mesh pointer-events-none absolute inset-0 opacity-[0.04]"
+                      aria-hidden
+                    />
                   </div>
                 </Link>
               );
