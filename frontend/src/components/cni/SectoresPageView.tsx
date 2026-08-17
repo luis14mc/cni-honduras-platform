@@ -280,8 +280,8 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   {/* Contenido — 5/12 en desktop */}
                   <div
                     className={cn(
-                      "relative flex flex-col justify-center p-8 sm:p-10 lg:w-5/12 lg:p-14",
-                      reverse && "lg:order-1",
+                      "relative flex flex-col gap-8 pb-8 pt-0 sm:pb-10 lg:w-5/12 lg:pb-14",
+                      reverse ? "lg:order-1 lg:pr-14" : "lg:pl-14",
                     )}
                   >
                     {/* Línea de acento vertical en el borde exterior */}
@@ -294,19 +294,9 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       aria-hidden
                     />
 
-                    {/* Tira de acento vertical desde el borde superior hasta el ícono */}
-                    <span
-                      className={cn(
-                        "absolute top-0 h-32 w-[3px]",
-                        reverse ? "right-0" : "left-0",
-                      )}
-                      style={{ backgroundColor: palette.accent }}
-                      aria-hidden
-                    />
-
-                    {/* Tira blanca desde el borde superior hasta el ícono */}
+                    {/* Tira blanca desde el borde superior del card hasta el ícono */}
                     <div
-                      className="mb-8 inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white pt-10 pb-4 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
+                      className="relative -mt-px inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white px-3 pb-4 pt-10 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
                       style={{
                         border: `1px solid ${palette.accent}55`,
                         borderTop: "none",
