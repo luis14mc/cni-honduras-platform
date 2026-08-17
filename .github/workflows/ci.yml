@@ -142,6 +142,7 @@ jobs:
       DATABASE_USERNAME: strapi
       DATABASE_PASSWORD: strapi
       DATABASE_SSL: "false"
+      DATABASE_SCHEMA: public
       STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE: es
     services:
       postgres:
@@ -191,3 +192,30 @@ jobs:
             cat "${RUNNER_TEMP}/strapi-start.log" || true
             exit 1
           fi
+
+      - name: Smoke /_health and public REST
+        run: |
+          probe_health=$(curl -sS -o /dev/null -w "%{http_code}" "http://127.0.0.1:1337/_health")
+          if [ "$probe_health" != "204" ]; then
+            echo "GET /_health expected 204, got ${probe_health}"
+            exit 1
+          fi
+          for collection in news documents success-stories investment-opportunities; do
+            code=$(curl -sS -o /tmp/strapi-list.json -w "%{http_code}" \
+              "http://127.0.0.1:1337/api/${collection}?locale=es")
+            if [ "$code" != "200" ]; then
+              echo "GET /api/${collection}?locale=es expected 200, got ${code}"
+              cat /tmp/strapi-list.json || true
+              exit 1
+            fi
+          done
+          write_code=$(curl -sS -o /tmp/strapi-write.json -w "%{http_code}" \
+            -X POST "http://127.0.0.1:1337/api/news" \
+            -H "Content-Type: application/json" \
+            -d '{"data":{"title":"ci-should-fail"}}')
+          if [ "$write_code" != "403" ] && [ "$write_code" != "401" ]; then
+            echo "POST /api/news expected 401/403, got ${write_code}"
+            cat /tmp/strapi-write.json || true
+            exit 1
+          fi
+
