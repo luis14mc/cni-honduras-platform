@@ -217,16 +217,16 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
             {loadStatus === "error" ? (
               <div
                 role="alert"
-                className="md:col-span-2 lg:col-span-3 rounded-xl border border-red-200 bg-red-50 p-10 text-center text-red-800"
+                className="md:col-span-2 lg:col-span-3 rounded-2xl border border-red-200 bg-red-50 p-10 text-center text-red-800"
               >
                 {errorMessage}
               </div>
             ) : sectors.length === 0 ? (
-              <div className="md:col-span-2 lg:col-span-3 rounded-xl border border-dashed border-cni-primary/15 bg-[#f8f9ff] p-10 text-center text-cni-primary/70">
+              <div className="md:col-span-2 lg:col-span-3 rounded-2xl border border-dashed border-cni-primary/15 bg-[#f8f9ff] p-10 text-center text-cni-primary/70">
                 {emptyMessage}
               </div>
             ) : (
-              sectors.map((sector) => {
+              sectors.map((sector, idx) => {
               const slug = sector.slug as SectorSlug;
               const palette = SECTOR_ACCENTS[slug];
               if (!palette) return null;
@@ -238,7 +238,7 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   key={sector.slug}
                   id={sector.slug}
                   href={getSectorHref(locale, slug)}
-                  className="al-sector-grid-card group relative flex min-h-[440px] flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="al-sector-tile group relative flex flex-col overflow-hidden rounded-2xl border border-[#252A58]/8 bg-white shadow-[0_1px_0_rgba(37,42,88,0.04),0_18px_40px_-22px_rgba(37,42,88,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:border-[#252A58]/16 hover:shadow-[0_30px_60px_-22px_rgba(37,42,88,0.28)]"
                   style={
                     {
                       "--sector-accent": palette.accent,
@@ -247,15 +247,8 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     } as CSSProperties
                   }
                 >
-                  {/* Banda de acento superior */}
-                  <span
-                    className="absolute inset-x-0 top-0 h-1.5 transition-all duration-300 group-hover:h-2"
-                    style={{ backgroundColor: palette.accent }}
-                    aria-hidden
-                  />
-
-                  {/* Imagen header con overlay sectorial */}
-                  <div className="relative h-44 overflow-hidden">
+                  {/* Imagen header con overlay */}
+                  <div className="relative h-36 overflow-hidden">
                     <Image
                       src={photoSrc}
                       alt={sector.name}
@@ -263,91 +256,92 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="al-sector-grid-overlay absolute inset-0" aria-hidden />
+                    <div className="al-sector-tile-overlay absolute inset-0" aria-hidden />
 
-                    {/* Marco del icono flotante */}
-                    <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
-                      <span
-                        className="al-sector-grid-icon-frame flex h-14 w-14 items-center justify-center rounded-xl backdrop-blur-md"
-                        aria-hidden
-                      >
-                        <SectorIcon slug={slug} size={40} className="text-white" />
-                      </span>
-                      <span className="al-sector-grid-index rounded-full px-3 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md">
-                        {indexLabel(slug, locale)}
-                      </span>
+                    {/* Index badge */}
+                    <span
+                      className="al-sector-tile-index absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md"
+                      style={{
+                        backgroundColor: `${palette.accent}28`,
+                        color: '#ffffff',
+                        border: `1px solid ${palette.accent}55`,
+                      }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: palette.accent }} />
+                      Sector 0{idx + 1}
+                    </span>
+                  </div>
+
+                  {/* Ícono superpuesto al borde */}
+                  <div className="relative -mt-10 px-7">
+                    <div
+                      className="al-sector-tile-logo flex h-20 w-20 items-center justify-center rounded-2xl border-2 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                      style={{
+                        backgroundColor: '#ffffff',
+                        borderColor: palette.accent,
+                        boxShadow: `0 10px 24px -10px ${palette.accent}55`,
+                      }}
+                    >
+                      <SectorIcon slug={slug} size={68} />
                     </div>
                   </div>
 
                   {/* Contenido */}
-                  <div className="relative flex flex-1 flex-col p-6 md:p-7">
-                    <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] al-sector-accent-text">
-                      {c.cardEyebrow}
-                    </p>
-                    <h3 className="mt-2 font-display text-xl font-extrabold leading-tight text-cni-primary md:text-2xl">
+                  <div className="flex flex-1 flex-col px-7 pb-7 pt-5">
+                    <div className="flex items-center gap-2">
+                      <span className="h-px w-6 transition-all duration-500 group-hover:w-10" style={{ backgroundColor: palette.accent }} />
+                      <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em]" style={{ color: palette.accent }}>
+                        {c.cardEyebrow}
+                      </p>
+                    </div>
+                    <h3 className="mt-3 font-display text-2xl font-extrabold leading-tight text-cni-primary">
                       {sector.name}
                     </h3>
-                    <p className="mt-3 line-clamp-3 font-body text-sm leading-relaxed text-[#0E7A7C] md:text-base">
+                    <p className="mt-3 line-clamp-3 font-body text-sm leading-relaxed text-[#0E7A7C] md:text-[15px]">
                       {sector.short}
                     </p>
 
-                    {/* Indicador clave */}
-                    <div
-                      className="mt-5 flex items-baseline justify-between rounded-lg border px-4 py-3"
-                      style={{
-                        backgroundColor: palette.soft,
-                        borderColor: palette.border,
-                      }}
-                    >
-                      <div>
-                        <p
-                          className="font-headline text-[9px] font-bold uppercase tracking-[0.22em]"
-                          style={{ color: palette.accent }}
+                    {/* Highlights como chips */}
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {sector.highlights.slice(0, 2).map((h) => (
+                        <span
+                          key={h}
+                          className="rounded-full px-2.5 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.12em]"
+                          style={{
+                            backgroundColor: palette.soft,
+                            color: palette.accent,
+                            border: `1px solid ${palette.border}`,
+                          }}
                         >
-                          {c.cardStatsLabel}
-                        </p>
-                        <p className="mt-1 font-display text-xl font-extrabold text-cni-primary md:text-2xl">
-                          {stat.value}
-                        </p>
-                      </div>
-                      <span
-                        className="font-headline text-[10px] font-bold uppercase tracking-[0.16em]"
-                        style={{ color: palette.accent }}
-                      >
-                        {stat.label}
-                      </span>
+                          {h}
+                        </span>
+                      ))}
                     </div>
 
-                    {/* Highlights mini */}
-                    <ul className="mt-5 space-y-1.5">
-                      {sector.highlights.slice(0, 2).map((h) => (
-                        <li
-                          key={h}
-                          className="flex items-start gap-2 font-body text-xs text-cni-primary/80"
+                    {/* Stat + CTA anclados al fondo */}
+                    <div className="mt-auto pt-6">
+                      <div className="flex items-baseline justify-between border-t border-[#252A58]/8 pt-4">
+                        <div>
+                          <p className="font-headline text-[9px] font-bold uppercase tracking-[0.22em]" style={{ color: palette.accent }}>
+                            {c.cardStatsLabel}
+                          </p>
+                          <p className="mt-1 font-display text-2xl font-extrabold text-cni-primary">
+                            {stat.value}
+                          </p>
+                        </div>
+                        <span
+                          className="font-headline text-[10px] font-bold uppercase tracking-[0.16em] text-right max-w-[55%]"
+                          style={{ color: palette.accent }}
                         >
-                          <Check
-                            className="mt-0.5 h-3.5 w-3.5 shrink-0"
-                            style={{ color: palette.accent }}
-                          />
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
+                          {stat.label}
+                        </span>
+                      </div>
 
-                    {/* CTA inline */}
-                    <span
-                      className="mt-6 inline-flex items-center gap-2 font-headline text-[10px] font-bold uppercase tracking-[0.18em] transition-all group-hover:gap-3"
-                      style={{ color: palette.accent }}
-                    >
-                      {c.cardCta}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-
-                    {/* Patrón sutil inferior */}
-                    <div
-                      className="al-sector-grid-mesh pointer-events-none absolute inset-0 opacity-[0.04]"
-                      aria-hidden
-                    />
+                      <span className="mt-5 inline-flex items-center gap-2 font-headline text-[10px] font-bold uppercase tracking-[0.18em] transition-all duration-500 group-hover:gap-3" style={{ color: palette.accent }}>
+                        {c.cardCta}
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
                   </div>
                 </Link>
               );
@@ -377,13 +371,21 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
               return (
                 <article
                   key={item.title}
-                  className="al-sectores-why-card group relative overflow-hidden rounded-2xl border border-cni-primary/8 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  className="al-sectores-tile group relative flex flex-col overflow-hidden rounded-2xl border border-[#252A58]/8 bg-white p-8 shadow-[0_1px_0_rgba(37,42,88,0.04),0_18px_40px_-22px_rgba(37,42,88,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-22px_rgba(37,42,88,0.28)]"
                 >
-                  <span className="absolute -right-4 -top-6 font-display text-7xl font-extrabold leading-none text-cni-primary/[0.04] transition-colors group-hover:text-[#29AB85]/10">
+                  <span className="pointer-events-none absolute right-6 top-5 font-display text-3xl font-extrabold leading-none tabular-nums text-[#29AB85]/20">
                     0{idx + 1}
                   </span>
+
+                  <div className="flex items-center gap-2">
+                    <span className="h-px w-6 bg-[#29AB85]" />
+                    <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
+                      {c.whyEyebrow}
+                    </p>
+                  </div>
+
                   <span
-                    className="al-sectores-why-icon inline-flex h-12 w-12 items-center justify-center rounded-xl"
+                    className="al-sectores-why-icon mt-5 inline-flex h-12 w-12 items-center justify-center rounded-xl"
                     aria-hidden
                   >
                     <Icon className="h-5 w-5 text-[#29AB85]" />
@@ -392,7 +394,7 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   <p className={cn("mt-3", t.bodySm, "text-cni-on-surface-variant")}>
                     {item.text}
                   </p>
-                  <span className="mt-6 inline-flex h-1 w-12 rounded-full bg-gradient-to-r from-[#0E7A7C] via-[#29AB85] to-[#8DC046]" />
+                  <span className="mt-auto inline-flex h-1 w-12 rounded-full bg-gradient-to-r from-[#0E7A7C] via-[#29AB85] to-[#8DC046]" />
                 </article>
               );
             })}
@@ -414,27 +416,36 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
             description={c.statsDescription}
           />
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-5">
             {c.stats.map((stat, idx) => (
               <article
                 key={stat.label}
-                className="al-sectores-stat group flex flex-col rounded-2xl border border-cni-primary/8 bg-[#f8f9ff] px-5 py-6 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#29AB85]/30 hover:shadow-md"
+                className="al-sectores-tile group relative flex flex-col overflow-hidden rounded-2xl border border-[#252A58]/8 bg-white p-6 shadow-[0_1px_0_rgba(37,42,88,0.04),0_18px_40px_-22px_rgba(37,42,88,0.18)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-22px_rgba(37,42,88,0.28)]"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#29AB85]/10">
-                  <TrendingUp className="h-4 w-4 text-[#29AB85]" />
-                </span>
-                <p className={cn("mt-4 font-display text-3xl font-extrabold text-cni-primary md:text-4xl")}>
-                  {stat.value}
-                </p>
-                <p className={cn("mt-2 font-headline text-xs font-bold uppercase tracking-[0.12em] text-cni-secondary")}>
-                  {stat.label}
-                </p>
-                <p className={cn("mt-1 font-body text-[11px] leading-relaxed text-cni-on-surface-variant/80")}>
-                  {stat.hint}
-                </p>
-                <span className="mt-4 font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-on-surface-variant/55">
+                <span className="pointer-events-none absolute right-5 top-4 font-display text-2xl font-extrabold leading-none tabular-nums text-[#29AB85]/20">
                   0{idx + 1}
                 </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="h-px w-5 bg-[#29AB85]" />
+                  <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
+                    {c.statsEyebrow}
+                  </p>
+                </div>
+
+                <span className="mt-5 flex h-10 w-10 items-center justify-center rounded-xl bg-[#29AB85]/10">
+                  <TrendingUp className="h-4 w-4 text-[#29AB85]" />
+                </span>
+                <p className="mt-5 font-display text-3xl font-extrabold leading-none text-cni-primary md:text-4xl">
+                  {stat.value}
+                </p>
+                <p className="mt-3 font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-secondary">
+                  {stat.label}
+                </p>
+                <p className="mt-2 font-body text-[11px] leading-relaxed text-cni-on-surface-variant/80">
+                  {stat.hint}
+                </p>
+                <span className="mt-auto inline-flex h-1 w-10 rounded-full bg-gradient-to-r from-[#0E7A7C] via-[#29AB85] to-[#8DC046]" />
               </article>
             ))}
           </div>
