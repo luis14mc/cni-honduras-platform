@@ -306,11 +306,10 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       aria-hidden
                     />
 
-                    {/* Ícono del sector — oficial, transparente */}
+                    {/* Ícono del sector — fondo blanco, borde accent */}
                     <div
-                      className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-[0_8px_22px_-10px_rgba(0,0,0,0.35)] transition-transform duration-500 ease-out group-hover:scale-105"
                       style={{
-                        backgroundColor: `${palette.accent}1A`,
                         border: `1px solid ${palette.accent}55`,
                       }}
                     >
