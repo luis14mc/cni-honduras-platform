@@ -275,18 +275,6 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       className="absolute inset-0 bg-[#252A58]/20 mix-blend-multiply transition-colors duration-500 group-hover:bg-[#252A58]/10"
                       aria-hidden
                     />
-                    {/* Index sobre la imagen */}
-                    <span
-                      className="absolute left-6 top-6 inline-flex items-center gap-2 rounded-full px-3 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.18em] backdrop-blur-md"
-                      style={{
-                        backgroundColor: `${palette.accent}28`,
-                        color: '#ffffff',
-                        border: `1px solid ${palette.accent}55`,
-                      }}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: palette.accent }} />
-                      Sector 0{idx + 1}
-                    </span>
                   </div>
 
                   {/* Contenido — 5/12 en desktop */}
@@ -299,7 +287,17 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     {/* Línea de acento vertical en el borde exterior */}
                     <span
                       className={cn(
-                        "absolute top-0 bottom-0 w-[3px] origin-bottom scale-y-0 transition-transform duration-700 ease-out group-hover:scale-y-100",
+                        "absolute top-0 bottom-0 w-[3px]",
+                        reverse ? "right-0" : "left-0",
+                      )}
+                      style={{ backgroundColor: palette.accent }}
+                      aria-hidden
+                    />
+
+                    {/* Tira de acento vertical desde el borde superior hasta el ícono */}
+                    <span
+                      className={cn(
+                        "absolute top-0 h-1/4 w-[3px]",
                         reverse ? "right-0" : "left-0",
                       )}
                       style={{ backgroundColor: palette.accent }}
@@ -308,12 +306,12 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
 
                     {/* Ícono del sector — fondo blanco, borde accent */}
                     <div
-                      className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-[0_8px_22px_-10px_rgba(0,0,0,0.35)] transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="mb-8 inline-flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-[0_10px_28px_-12px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-out group-hover:scale-105"
                       style={{
                         border: `1px solid ${palette.accent}55`,
                       }}
                     >
-                      <SectorIcon slug={slug} size={48} />
+                      <SectorIcon slug={slug} size={72} />
                     </div>
 
                     <h3
