@@ -4,7 +4,7 @@ import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getFeaturedNews } from "@/src/services/cms";
+import { getNews } from "@/src/lib/strapi/editorial";
 import type { NewsArticle } from "@/src/types/cms";
 import { loadAsyncData } from "@/src/lib/asyncData";
 
@@ -14,7 +14,7 @@ export default async function HomeLedgerPage({ params }: { params: Promise<{ loc
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const newsResult = await loadAsyncData(async () => {
-    const news = await getFeaturedNews({ locale: locale as Locale });
+    const news = await getNews(locale as Locale, { featured: true });
     return [...news]
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
       .slice(0, 3);

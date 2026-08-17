@@ -7,7 +7,7 @@ import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getDocuments } from "@/src/services/cms";
+import { getDocuments } from "@/src/lib/strapi/editorial";
 import {
   documentActionLabel,
   documentCoverImage,
@@ -87,7 +87,7 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
   const featuredResult = await loadAsyncData(
-    () => getDocuments({ featured: true, locale }),
+    () => getDocuments(locale, { featured: true }),
     [] as CmsDocument[],
   );
   const highlights = featuredResult.data.slice(0, 6);

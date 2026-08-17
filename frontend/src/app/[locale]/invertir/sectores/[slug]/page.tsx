@@ -8,11 +8,10 @@ import {
   SECTOR_SLUGS,
 } from "@/src/data/investmentSectors";
 import {
-  getOpportunitiesBySector,
   getProjectsBySector,
   getSector,
-  getSuccessStoriesBySector,
 } from "@/src/services/investment";
+import { getOpportunities, getSuccessStories } from "@/src/lib/strapi/editorial";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 import type { InvestmentOpportunity, InvestmentProject, SuccessStory } from "@/src/types/investment";
 import Link from "next/link";
@@ -70,7 +69,7 @@ export default async function SectorPage({
 
   let opportunities: InvestmentOpportunity[] = [];
   try {
-    opportunities = await getOpportunitiesBySector(slug);
+    opportunities = await getOpportunities(locale, { sector: slug });
   } catch {
     opportunities = [];
   }
@@ -84,7 +83,7 @@ export default async function SectorPage({
 
   let successStories: SuccessStory[] = [];
   try {
-    successStories = await getSuccessStoriesBySector(slug, { locale });
+    successStories = await getSuccessStories(locale, { sector: slug });
   } catch {
     successStories = [];
   }

@@ -5,7 +5,7 @@ import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getSuccessStories } from "@/src/services/investment";
+import { getSuccessStories } from "@/src/lib/strapi/editorial";
 import type { SuccessStory } from "@/src/types/investment";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import {
@@ -49,7 +49,7 @@ export default async function CasosPage({ params }: { params: Promise<{ locale: 
   const locale = raw as Locale;
   const c = copy[locale];
   const storiesResult = await loadAsyncData(
-    () => getSuccessStories({ locale }),
+    () => getSuccessStories(locale),
     [] as SuccessStory[],
   );
   const stories = storiesResult.data;

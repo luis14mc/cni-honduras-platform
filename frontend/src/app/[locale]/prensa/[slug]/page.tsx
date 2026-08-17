@@ -6,10 +6,12 @@ import { buildNewsArticleMetadata, loadNewsArticle } from "@/src/lib/cmsNews";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { NewsBlocksRenderer } from "@/src/components/news/NewsBlocksRenderer";
+import { StrapiBlocks } from "@/src/components/strapi/StrapiBlocks";
 import {
   blocksHaveRenderableContent,
   ensureBlocks,
 } from "@/src/lib/newsBlocks";
+import { strapiBlocksHaveContent } from "@/src/lib/strapi/blocks";
 import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
@@ -141,8 +143,10 @@ export default async function PrensaArticlePage({
   }
 
   const article = result.article;
+  const strapiBlocks = article.rich_content ?? [];
+  const useStrapiBlocks = strapiBlocksHaveContent(strapiBlocks);
   const blocks = ensureBlocks(article.content_blocks);
-  const useBlocks = blocksHaveRenderableContent(blocks);
+  const useBlocks = !useStrapiBlocks && blocksHaveRenderableContent(blocks);
   const body = legacyParagraphs(article.content);
 
   return (
@@ -185,7 +189,9 @@ export default async function PrensaArticlePage({
           {mediaUrl(article) && (
             <img src={mediaUrl(article) ?? ""} alt={article.title} className="mb-10 w-full rounded-xl object-cover" />
           )}
-          {useBlocks ? (
+          {useStrapiBlocks ? (
+            <StrapiBlocks blocks={strapiBlocks} />
+          ) : useBlocks ? (
             <NewsBlocksRenderer blocks={blocks} />
           ) : (
             <div className="space-y-6 text-lg leading-relaxed text-[#0E7A7C]">
