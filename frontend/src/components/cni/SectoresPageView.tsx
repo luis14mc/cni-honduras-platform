@@ -280,8 +280,8 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   {/* Contenido — 5/12 en desktop */}
                   <div
                     className={cn(
-                      "relative flex flex-col gap-8 pb-10 pt-32 sm:pb-12 lg:w-5/12 lg:pb-14 lg:pt-40",
-                      reverse ? "lg:order-1 lg:pr-16 lg:pl-10" : "lg:pl-16 lg:pr-10",
+                      "relative flex flex-col gap-8 pb-10 pt-0 sm:pb-12 lg:w-5/12 lg:pb-14",
+                      reverse ? "lg:order-1 lg:pr-14" : "lg:pl-14",
                     )}
                   >
                     {/* Línea de acento vertical en el borde exterior */}
@@ -295,22 +295,21 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     />
 
                     {/* Tira blanca desde el borde superior del card hasta el ícono */}
-                    <div
-                      className={cn(
-                        "absolute top-0 inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white px-3 pb-4 pt-10 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1",
-                        reverse ? "right-0" : "left-0",
-                      )}
-                      style={{
-                        border: `1px solid ${palette.accent}55`,
-                        borderTop: "none",
-                      }}
-                    >
-                      <SectorIcon slug={slug} size={72} />
+                    <div className={cn("flex w-full", reverse ? "justify-end" : "justify-start")}>
+                      <div
+                        className="relative -mt-px inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white px-3 pb-4 pt-10 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
+                        style={{
+                          border: `1px solid ${palette.accent}55`,
+                          borderTop: "none",
+                        }}
+                      >
+                        <SectorIcon slug={slug} size={72} />
+                      </div>
                     </div>
 
                     <div className="flex flex-col gap-6">
                       <h3
-                        className="font-display text-3xl font-extrabold leading-tight text-white transition-colors duration-300 lg:text-[42px]"
+                        className="max-w-md break-words font-display text-3xl font-extrabold leading-tight text-white transition-colors duration-300 lg:text-[40px]"
                         style={{ letterSpacing: "-0.02em" }}
                       >
                         {sector.name}
