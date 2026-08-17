@@ -280,7 +280,7 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   {/* Contenido — 5/12 en desktop */}
                   <div
                     className={cn(
-                      "relative flex flex-col gap-8 pb-8 pt-0 sm:pb-10 lg:w-5/12 lg:pb-14",
+                      "relative flex flex-col gap-10 pb-10 pt-0 sm:pb-12 lg:w-5/12 lg:pb-14",
                       reverse ? "lg:order-1 lg:pr-14" : "lg:pl-14",
                     )}
                   >
@@ -307,19 +307,21 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       </div>
                     </div>
 
-                    <h3
-                      className="font-display text-3xl font-extrabold leading-tight text-white transition-colors duration-300 lg:text-[44px]"
-                      style={{ letterSpacing: "-0.02em" }}
-                    >
-                      {sector.name}
-                    </h3>
+                    <div className="flex flex-col gap-6">
+                      <h3
+                        className="font-display text-3xl font-extrabold leading-tight text-white transition-colors duration-300 lg:text-[44px]"
+                        style={{ letterSpacing: "-0.02em" }}
+                      >
+                        {sector.name}
+                      </h3>
 
-                    <p className="mt-6 max-w-md font-body text-base leading-relaxed text-white/70 lg:text-lg">
-                      {sector.short}
-                    </p>
+                      <p className="max-w-md font-body text-base leading-relaxed text-white/70 lg:text-lg">
+                        {sector.short}
+                      </p>
+                    </div>
 
                     {/* Stats — 2 columnas con divisor superior */}
-                    <div className="mt-10 grid grid-cols-2 gap-6 border-t border-white/15 pt-8">
+                    <div className="grid grid-cols-2 gap-6 border-t border-white/15 pt-6">
                       {stats.map((s, i) => (
                         <div key={`${s.value}-${i}`}>
                           <p className="font-display text-[36px] font-extrabold leading-none text-white lg:text-[40px]">
@@ -335,10 +337,9 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                       ))}
                     </div>
 
-                    {/* CTA */}
+                    {/* CTA — anclado al fondo */}
                     <span
-                      className="mt-10 inline-flex items-center gap-2 self-start font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:!text-white"
-                      style={{ color: "white" }}
+                      className="mt-auto inline-flex items-center gap-2 self-start font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white transition-colors duration-300"
                     >
                       {c.cardCta}
                       <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
