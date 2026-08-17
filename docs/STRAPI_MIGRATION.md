@@ -32,8 +32,9 @@ Same-site proxy (MIG-CMS-002): Strapi sigue como **servicio separado**. Next sol
 
 - Strapi vive en `cms-strapi/` y usa **PostgreSQL propio** (Neon u otra instancia/schema).
 - **No** usar la base PostGIS de Django.
-- El frontend **sigue consumiendo Django** para noticias, documentos, mapa, etc.
-- `frontend/src/lib/strapi/` es un cliente listo; **no** sustituye las APIs Django todavía.
+- El frontend **consume Strapi** para noticias, documentos, casos de éxito y oportunidades (MIG-CMS-003).
+- Django permanece para mapa, PostGIS, sectores/proyectos, banners y `/cms`.
+- `frontend/src/lib/strapi/editorial.ts` es la capa pública editorial. Server Components usan `STRAPI_URL` (no el proxy `/strapi-api`).
 - No hay migración automática de datos en este PR.
 
 ## Content types
@@ -199,10 +200,10 @@ Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 
 ## Limitaciones pendientes (fuera de este PR)
 
-- Consumo real en páginas Next (hoy Django).
+- Consumo real en páginas Next para noticias, documentos, casos y oportunidades (hecho en MIG-CMS-003).
 - Migración de contenidos Django → Strapi.
 - Retirada del CMS Django.
-- Relación `sector` con el catálogo Django/PostGIS.
+- Relación `sector` con el catálogo Django/PostGIS (Strapi usa string).
 - Dockerfile / servicio de staging para Strapi.
 - Token API de solo lectura si se desactiva Public find.
 - Campos privados adicionales: no añadirlos a `frontend/src/lib/strapi/types.ts`; omitirlos en REST.
@@ -211,4 +212,4 @@ Render/Fly/etc. son válidos; este PR no añade un Dockerfile de Strapi.
 
 **Strapi:** `DATABASE_*`, `DATABASE_URL` (opcional), `DATABASE_SCHEMA`, `STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE`, `STRAPI_PUBLIC_URL`, `ADMIN_PATH`, `CF_*`, más secretos estándar Strapi (`APP_KEYS`, `ADMIN_JWT_SECRET`, …).
 
-**Frontend:** `STRAPI_ORIGIN` (server-only), `NEXT_PUBLIC_STRAPI_URL`, `STRAPI_API_TOKEN` (opcional, server-only).
+**Frontend:** `STRAPI_URL` (server-only, editorial RSC), `STRAPI_ORIGIN` (server-only, proxy), `NEXT_PUBLIC_STRAPI_URL` (browser/proxy prefix), `STRAPI_API_TOKEN` (opcional, server-only).

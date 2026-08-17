@@ -11,8 +11,22 @@ describe("getStrapiMediaUrl", () => {
     );
   });
 
-  it("prefixes relative paths with NEXT_PUBLIC_STRAPI_URL", () => {
+  it("prefixes relative paths with STRAPI_URL when set", () => {
+    const previous = process.env.STRAPI_URL;
+    const previousPublic = process.env.NEXT_PUBLIC_STRAPI_URL;
+    process.env.STRAPI_URL = "https://strapi.example/";
+    process.env.NEXT_PUBLIC_STRAPI_URL = "http://localhost:1337/";
+    expect(getStrapiMediaUrl("/uploads/doc.pdf")).toBe(
+      "https://strapi.example/uploads/doc.pdf",
+    );
+    process.env.STRAPI_URL = previous;
+    process.env.NEXT_PUBLIC_STRAPI_URL = previousPublic;
+  });
+
+  it("prefixes relative paths with NEXT_PUBLIC_STRAPI_URL when STRAPI_URL is unset", () => {
     const previous = process.env.NEXT_PUBLIC_STRAPI_URL;
+    const previousServer = process.env.STRAPI_URL;
+    delete process.env.STRAPI_URL;
     process.env.NEXT_PUBLIC_STRAPI_URL = "http://localhost:1337/";
     expect(getStrapiMediaUrl("/uploads/doc.pdf")).toBe(
       "http://localhost:1337/uploads/doc.pdf",
@@ -21,6 +35,7 @@ describe("getStrapiMediaUrl", () => {
       "http://localhost:1337/uploads/doc.pdf",
     );
     process.env.NEXT_PUBLIC_STRAPI_URL = previous;
+    process.env.STRAPI_URL = previousServer;
   });
 
   it("reads url from a media object", () => {
@@ -34,9 +49,12 @@ describe("getStrapiMediaUrl", () => {
 
   it("keeps site-relative upload paths when STRAPI URL is a path prefix", () => {
     const previous = process.env.NEXT_PUBLIC_STRAPI_URL;
+    const previousServer = process.env.STRAPI_URL;
+    delete process.env.STRAPI_URL;
     process.env.NEXT_PUBLIC_STRAPI_URL = "/strapi-api";
     expect(getStrapiMediaUrl("/uploads/doc.pdf")).toBe("/uploads/doc.pdf");
     process.env.NEXT_PUBLIC_STRAPI_URL = previous;
+    process.env.STRAPI_URL = previousServer;
   });
 
   it("returns null for empty input", () => {

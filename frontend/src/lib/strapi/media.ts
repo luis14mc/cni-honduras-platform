@@ -5,6 +5,8 @@ export type StrapiMediaInput =
   | undefined;
 
 function strapiMediaBase(): string {
+  const server = (process.env.STRAPI_URL ?? "").replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(server)) return server;
   const configured = (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
   if (/^https?:\/\//i.test(configured)) return configured;
   return "";

@@ -7,7 +7,7 @@ import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getNews } from "@/src/services/cms";
+import { getNews } from "@/src/lib/strapi/editorial";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 import { loadAsyncData } from "@/src/lib/asyncData";
 
@@ -79,7 +79,7 @@ function formatDate(locale: Locale, value: string): string {
 }
 
 function mediaUrl(article: NewsArticle): string | null {
-  return article.featured_image?.file || null;
+  return article.featured_image?.file_url || article.featured_image?.file || null;
 }
 
 export default async function PrensaPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -88,7 +88,7 @@ export default async function PrensaPage({ params }: { params: Promise<{ locale:
   const locale = raw as Locale;
   const c = copy[locale];
   const L = (p: string) => resolveHref(locale, p);
-  const newsResult = await loadAsyncData(() => getNews({ locale }), [] as NewsArticle[]);
+  const newsResult = await loadAsyncData(() => getNews(locale), [] as NewsArticle[]);
   const articles = newsResult.data;
   const featured = articles.find((article) => article.is_featured);
   const archive = featured ? articles.filter((article) => article.slug !== featured.slug) : articles;

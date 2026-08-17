@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { buildMetadata } from "@/src/lib/seo";
 import { ResourcesCategoryView } from "@/src/components/cni/ResourcesCategoryView";
-import { getDocuments } from "@/src/services/cms";
+import { getDocuments } from "@/src/lib/strapi/editorial";
 import type { CmsDocument } from "@/src/types/cms";
 import {
   getAllResourceCategorySlugs,
@@ -39,7 +39,7 @@ export default async function RecursoCategoryPage({
   if (!category) notFound();
 
   const result = await loadAsyncData(
-    () => getDocuments({ category: category.slug, locale }),
+    () => getDocuments(locale, { category: category.slug }),
     [] as CmsDocument[],
   );
 

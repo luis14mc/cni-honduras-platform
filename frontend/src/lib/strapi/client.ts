@@ -1,5 +1,8 @@
 import type { StrapiListResponse, StrapiLocale } from "@/src/lib/strapi/types";
 
+export const STRAPI_REVALIDATE_SECONDS = 60;
+const STRAPI_FETCH_TIMEOUT_MS = 8_000;
+
 export class StrapiApiError extends Error {
   readonly status: number;
   readonly path: string;
@@ -12,6 +15,17 @@ export class StrapiApiError extends Error {
   }
 }
 
+/**
+ * Absolute Strapi origin for Server Components / Route Handlers.
+ * Server-only: do not use the `/strapi-api` proxy here.
+ */
+export function getStrapiServerUrl(): string {
+  const dedicated = (process.env.STRAPI_URL ?? "").replace(/\/+$/, "");
+  if (dedicated && /^https?:\/\//i.test(dedicated)) return dedicated;
+  return "";
+}
+
+/** Browser / rewrite-relative base. Not the primary editorial server origin. */
 export function getStrapiBaseUrl(): string {
   const configured = (process.env.NEXT_PUBLIC_STRAPI_URL ?? "").replace(/\/+$/, "");
   if (!configured) return "";
@@ -20,6 +34,15 @@ export function getStrapiBaseUrl(): string {
   if (typeof window !== "undefined") return prefix;
   const site = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/+$/, "");
   return site ? `${site}${prefix}` : prefix;
+}
+
+function resolveStrapiFetchBase(): string {
+  if (typeof window === "undefined") {
+    const server = getStrapiServerUrl();
+    if (server) return server;
+    throw new StrapiApiError("STRAPI_URL is not configured", 0, "/");
+  }
+  return getStrapiBaseUrl();
 }
 
 function getStrapiApiToken(): string | undefined {
@@ -54,23 +77,29 @@ export function buildStrapiQuery(params: {
 export type StrapiFetchOptions = RequestInit & {
   locale?: StrapiLocale | string;
   populate?: string;
+  extra?: Record<string, string>;
+  revalidate?: number;
 };
 
 export async function strapiGet<T>(
   path: string,
   options: StrapiFetchOptions = {},
 ): Promise<T> {
-  const base = getStrapiBaseUrl();
+  let base: string;
+  try {
+    base = resolveStrapiFetchBase();
+  } catch (error) {
+    if (error instanceof StrapiApiError) {
+      throw new StrapiApiError(error.message, error.status, path);
+    }
+    throw error;
+  }
   if (!base) {
-    throw new StrapiApiError(
-      "NEXT_PUBLIC_STRAPI_URL is not configured",
-      0,
-      path,
-    );
+    throw new StrapiApiError("Strapi URL is not configured", 0, path);
   }
 
-  const { locale, populate, headers, ...init } = options;
-  const query = buildStrapiQuery({ locale, populate });
+  const { locale, populate, extra, headers, revalidate, ...init } = options;
+  const query = buildStrapiQuery({ locale, populate, extra });
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const url = `${base}${normalizedPath}${query}`;
 
@@ -81,13 +110,30 @@ export async function strapiGet<T>(
     requestHeaders.set("Authorization", `Bearer ${token}`);
   }
 
+  const cacheMode = init.cache;
+  const nextRevalidate =
+    cacheMode === "no-store" ? undefined : (revalidate ?? STRAPI_REVALIDATE_SECONDS);
+
   let response: Response;
   try {
-    response = await fetch(url, {
-      method: "GET",
-      ...init,
-      headers: requestHeaders,
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), STRAPI_FETCH_TIMEOUT_MS);
+    const userSignal = init.signal;
+    if (userSignal) {
+      if (userSignal.aborted) controller.abort();
+      else userSignal.addEventListener("abort", () => controller.abort(), { once: true });
+    }
+    try {
+      response = await fetch(url, {
+        method: "GET",
+        ...init,
+        headers: requestHeaders,
+        signal: controller.signal,
+        ...(nextRevalidate != null ? { next: { revalidate: nextRevalidate } } : {}),
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Network error";
     throw new StrapiApiError(`Failed to fetch ${path}: ${message}`, 0, path);

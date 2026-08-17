@@ -5,11 +5,12 @@ import {
   loadNewsArticle,
   resolveNewsArticleFetch,
 } from "@/src/lib/cmsNews";
-import { getNewsArticle } from "@/src/services/cms";
+import { StrapiApiError } from "@/src/lib/strapi/client";
+import { getNewsBySlug } from "@/src/lib/strapi/editorial";
 import type { NewsArticle } from "@/src/types/cms";
 
-vi.mock("@/src/services/cms", () => ({
-  getNewsArticle: vi.fn(),
+vi.mock("@/src/lib/strapi/editorial", () => ({
+  getNewsBySlug: vi.fn(),
 }));
 
 const mockArticle: NewsArticle = {
@@ -36,6 +37,12 @@ describe("resolveNewsArticleFetch", () => {
     ).toBe("not_found");
   });
 
+  it("returns not_found for StrapiApiError 404", () => {
+    expect(
+      resolveNewsArticleFetch(new StrapiApiError("Not found", 404, "/api/news")),
+    ).toBe("not_found");
+  });
+
   it("returns error for ApiError status 0 (network)", () => {
     expect(
       resolveNewsArticleFetch(new ApiError("Network error", 0, "/cms/news/test/")),
@@ -55,12 +62,12 @@ describe("resolveNewsArticleFetch", () => {
 
 describe("loadNewsArticle", () => {
   beforeEach(() => {
-    vi.mocked(getNewsArticle).mockReset();
+    vi.mocked(getNewsBySlug).mockReset();
   });
 
   it("returns not_found for ApiError 404", async () => {
-    vi.mocked(getNewsArticle).mockRejectedValue(
-      new ApiError("Not found", 404, "/cms/news/missing/"),
+    vi.mocked(getNewsBySlug).mockRejectedValue(
+      new StrapiApiError("Not found", 404, "/api/news"),
     );
 
     const result = await loadNewsArticle("missing", "es");
@@ -68,8 +75,8 @@ describe("loadNewsArticle", () => {
   });
 
   it("returns error for network failures (status 0)", async () => {
-    vi.mocked(getNewsArticle).mockRejectedValue(
-      new ApiError("Failed to fetch", 0, "/cms/news/test/"),
+    vi.mocked(getNewsBySlug).mockRejectedValue(
+      new StrapiApiError("Failed to fetch", 0, "/api/news"),
     );
 
     const result = await loadNewsArticle("test", "es");
@@ -77,8 +84,8 @@ describe("loadNewsArticle", () => {
   });
 
   it("returns error for ApiError 500", async () => {
-    vi.mocked(getNewsArticle).mockRejectedValue(
-      new ApiError("Internal Server Error", 500, "/cms/news/test/"),
+    vi.mocked(getNewsBySlug).mockRejectedValue(
+      new StrapiApiError("Internal Server Error", 500, "/api/news"),
     );
 
     const result = await loadNewsArticle("test", "es");
@@ -86,21 +93,22 @@ describe("loadNewsArticle", () => {
   });
 
   it("returns article on success", async () => {
-    vi.mocked(getNewsArticle).mockResolvedValue(mockArticle);
+    vi.mocked(getNewsBySlug).mockResolvedValue(mockArticle);
 
     const result = await loadNewsArticle("noticia-prueba", "es");
     expect(result).toEqual({ status: "ok", article: mockArticle });
+    expect(getNewsBySlug).toHaveBeenCalledWith("es", "noticia-prueba");
   });
 });
 
 describe("buildNewsArticleMetadata", () => {
   beforeEach(() => {
-    vi.mocked(getNewsArticle).mockReset();
+    vi.mocked(getNewsBySlug).mockReset();
   });
 
   it("returns empty metadata for 404", async () => {
-    vi.mocked(getNewsArticle).mockRejectedValue(
-      new ApiError("Not found", 404, "/cms/news/missing/"),
+    vi.mocked(getNewsBySlug).mockRejectedValue(
+      new StrapiApiError("Not found", 404, "/api/news"),
     );
 
     const metadata = await buildNewsArticleMetadata("missing", "es");
@@ -108,8 +116,8 @@ describe("buildNewsArticleMetadata", () => {
   });
 
   it("returns generic press metadata for server errors", async () => {
-    vi.mocked(getNewsArticle).mockRejectedValue(
-      new ApiError("Internal Server Error", 500, "/cms/news/test/"),
+    vi.mocked(getNewsBySlug).mockRejectedValue(
+      new StrapiApiError("Internal Server Error", 500, "/api/news"),
     );
 
     const metadata = await buildNewsArticleMetadata("test", "es");
@@ -118,7 +126,7 @@ describe("buildNewsArticleMetadata", () => {
   });
 
   it("returns article SEO metadata on success", async () => {
-    vi.mocked(getNewsArticle).mockResolvedValue(mockArticle);
+    vi.mocked(getNewsBySlug).mockResolvedValue(mockArticle);
 
     const metadata = await buildNewsArticleMetadata("noticia-prueba", "es");
     expect(metadata.title).toBe("SEO title");

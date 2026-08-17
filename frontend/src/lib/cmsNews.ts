@@ -2,7 +2,8 @@ import { ApiError } from "@/src/lib/api";
 import { designImages } from "@/src/lib/designAssets";
 import { buildDetailMetadata, buildMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getNewsArticle } from "@/src/services/cms";
+import { StrapiApiError } from "@/src/lib/strapi/client";
+import { getNewsBySlug } from "@/src/lib/strapi/editorial";
 import type { Locale } from "@/src/i18n/config";
 import type { NewsArticle } from "@/src/types/cms";
 import type { Metadata } from "next";
@@ -20,7 +21,10 @@ export type NewsArticleLoadResult =
 
 /** Clasifica errores de fetch de detalle: 404 vs fallos transitorios/de servidor. */
 export function resolveNewsArticleFetch(error: unknown): "not_found" | "error" {
-  if (error instanceof ApiError && error.status === 404) {
+  if (
+    (error instanceof ApiError || error instanceof StrapiApiError) &&
+    error.status === 404
+  ) {
     return "not_found";
   }
   return "error";
@@ -31,7 +35,7 @@ export async function loadNewsArticle(
   locale: Locale,
 ): Promise<NewsArticleLoadResult> {
   try {
-    const article = await getNewsArticle(slug, { locale });
+    const article = await getNewsBySlug(locale, slug);
     return { status: "ok", article };
   } catch (error) {
     return resolveNewsArticleFetch(error) === "not_found"
@@ -45,7 +49,7 @@ export async function buildNewsArticleMetadata(
   locale: Locale,
 ): Promise<Metadata> {
   try {
-    const article = await getNewsArticle(slug, { locale });
+    const article = await getNewsBySlug(locale, slug);
     const title = article.seo_title?.trim() || article.title;
     const description =
       article.seo_description?.trim() || article.summary?.trim() || article.title;
@@ -56,10 +60,13 @@ export async function buildNewsArticleMetadata(
       enMirrorPath: `/en/news/${slug}`,
       title,
       description,
-      image: article.featured_image?.file ?? null,
+        image: article.featured_image?.file_url || article.featured_image?.file || null,
     });
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
+    if (
+      (error instanceof ApiError || error instanceof StrapiApiError) &&
+      error.status === 404
+    ) {
       return {};
     }
     return buildMetadata(PAGE_SEO.prensa, locale);
@@ -68,7 +75,11 @@ export async function buildNewsArticleMetadata(
 
 /** Imagen de tarjeta: CMS o fallback institucional de prensa (no contenido ficticio). */
 export function newsCardImage(article: NewsArticle, index = 0): string {
-  return article.featured_image?.file ?? cardFallbackImages[index % cardFallbackImages.length];
+  return (
+    article.featured_image?.file_url ||
+    article.featured_image?.file ||
+    cardFallbackImages[index % cardFallbackImages.length]
+  );
 }
 
 export function newsDetailPath(slug: string, locale: "es" | "en"): string {

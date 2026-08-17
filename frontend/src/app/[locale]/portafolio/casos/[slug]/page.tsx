@@ -4,7 +4,10 @@ import Link from "next/link";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { resolveHref } from "@/src/i18n/path";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import { getSuccessStory, getSuccessStories } from "@/src/services/investment";
+import { getSuccessStoryBySlug, getSuccessStories } from "@/src/lib/strapi/editorial";
+import { StrapiApiError } from "@/src/lib/strapi/client";
+import { StrapiBlocks } from "@/src/components/strapi/StrapiBlocks";
+import { strapiBlocksHaveContent } from "@/src/lib/strapi/blocks";
 import type { SuccessStory } from "@/src/types/investment";
 import { buildDetailMetadata } from "@/src/lib/seo";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
@@ -31,6 +34,8 @@ const copy = {
     investment: "Inversión",
     jobs: "Empleos generados",
     cta: "Contactar al CNI",
+    loadError:
+      "No pudimos cargar este caso de éxito en este momento. Intente de nuevo más tarde.",
   },
   en: {
     back: "Back to success stories",
@@ -40,6 +45,7 @@ const copy = {
     investment: "Investment",
     jobs: "Jobs generated",
     cta: "Contact the CNI",
+    loadError: "We could not load this success story right now. Please try again later.",
   },
 } as const;
 
@@ -51,7 +57,7 @@ export async function generateMetadata({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? (raw as Locale) : "es";
   try {
-    const story = await getSuccessStory(slug, { locale });
+    const story = await getSuccessStoryBySlug(locale, slug);
     return buildDetailMetadata({
       locale,
       slugPath: `/portafolio/casos/${slug}`,
@@ -85,23 +91,50 @@ export default async function CasoDetallePage({
   const locale = raw as Locale;
   const c = copy[locale];
 
-  let story;
+  let story: SuccessStory | null = null;
+  let loadError = false;
   try {
-    story = await getSuccessStory(slug, { locale });
-  } catch {
-    notFound();
+    story = await getSuccessStoryBySlug(locale, slug);
+  } catch (error) {
+    if (error instanceof StrapiApiError && error.status === 404) {
+      notFound();
+    }
+    loadError = true;
+  }
+
+  if (loadError || !story) {
+    return (
+      <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
+        <div className="mx-auto w-full max-w-3xl px-6 py-32 md:px-12">
+          <Link
+            href={resolveHref(locale, "/portafolio/casos")}
+            className="mb-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#35A963]"
+          >
+            <MaterialIcon name="arrow_back" className="text-sm" />
+            {c.back}
+          </Link>
+          <div
+            role="alert"
+            className="rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800"
+          >
+            {c.loadError}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   let related: SuccessStory[] = [];
   try {
-    const all = await getSuccessStories({ locale });
+    const all = await getSuccessStories(locale);
     related = all.filter((item) => item.slug !== slug).slice(0, 2);
   } catch {
     related = [];
   }
 
   const body = paragraphs(story.content);
-  const rich = isRichHtml(story.content);
+  const useStrapiBlocks = strapiBlocksHaveContent(story.rich_content ?? []);
+  const rich = !useStrapiBlocks && isRichHtml(story.content);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
@@ -159,7 +192,9 @@ export default async function CasoDetallePage({
             />
           </div>
         ) : null}
-        {rich ? (
+        {useStrapiBlocks ? (
+          <StrapiBlocks blocks={story.rich_content} />
+        ) : rich ? (
           <div
             className="prose prose-lg max-w-none text-[#0E7A7C] prose-headings:text-[#252A58]"
             dangerouslySetInnerHTML={{ __html: story.content }}

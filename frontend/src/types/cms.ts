@@ -18,6 +18,8 @@ export interface NewsArticle {
   summary: string;
   content: string;
   content_blocks?: import("@/src/lib/newsBlocks").NewsBlock[];
+  /** Strapi 5 Blocks JSON mapped for public render (optional). */
+  rich_content?: import("@/src/lib/strapi/blocks").StrapiBlock[] | null;
   featured_image: MediaAssetLite | null;
   category: NewsCategory;
   author_name: string;

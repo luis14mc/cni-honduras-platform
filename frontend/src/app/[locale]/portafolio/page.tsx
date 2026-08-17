@@ -14,7 +14,8 @@ import {
 import { SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getOpportunities, getProjects, getSectors } from "@/src/services/investment";
+import { getProjects, getSectors } from "@/src/services/investment";
+import { getOpportunities as getEditorialOpportunities } from "@/src/lib/strapi/editorial";
 import type { InvestmentOpportunity, InvestmentProject, ProjectStage, Sector } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.portafolio);
@@ -191,9 +192,9 @@ async function safeLoadProjects(): Promise<InvestmentProject[]> {
   }
 }
 
-async function safeLoadOpportunities(): Promise<InvestmentOpportunity[]> {
+async function safeLoadOpportunities(locale: Locale): Promise<InvestmentOpportunity[]> {
   try {
-    return await getOpportunities();
+    return await getEditorialOpportunities(locale);
   } catch {
     return [];
   }
@@ -254,7 +255,7 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
   }));
   const [projects, opportunities, sectors] = await Promise.all([
     safeLoadProjects(),
-    safeLoadOpportunities(),
+    safeLoadOpportunities(locale),
     safeLoadSectors(locale, fallbackSectors),
   ]);
 

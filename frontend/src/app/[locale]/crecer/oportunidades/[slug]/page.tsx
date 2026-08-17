@@ -6,7 +6,8 @@ import { PageHero } from "@/src/components/cni/PageHero";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import { Section } from "@/src/components/cni/Section";
 import { buildDetailMetadata } from "@/src/lib/seo";
-import { getOpportunity } from "@/src/services/investment";
+import { getOpportunityBySlug } from "@/src/lib/strapi/editorial";
+import { StrapiApiError } from "@/src/lib/strapi/client";
 import type { InvestmentOpportunity } from "@/src/types/investment";
 
 const copy = {
@@ -24,6 +25,7 @@ const copy = {
     heroEyebrow: "Oportunidades",
     heroTitle: "Oportunidad de inversión",
     heroDescription: "Información resumida para descubrir oportunidades priorizadas por el CNI.",
+    loadError: "No pudimos cargar esta oportunidad. Intente de nuevo más tarde.",
   },
   en: {
     back: "Back to opportunities",
@@ -39,6 +41,7 @@ const copy = {
     heroEyebrow: "Opportunities",
     heroTitle: "Investment opportunity",
     heroDescription: "A short overview of priority opportunities promoted by CNI.",
+    loadError: "We could not load this opportunity right now. Please try again later.",
   },
 } as const;
 
@@ -58,7 +61,7 @@ export async function generateMetadata({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? (raw as Locale) : "es";
   try {
-    const opp = await getOpportunity(slug, { locale });
+    const opp = await getOpportunityBySlug(locale, slug);
     return buildDetailMetadata({
       locale,
       slugPath: `/crecer/oportunidades/${slug}`,
@@ -81,11 +84,36 @@ export default async function OpportunityDetailPage({
   const t = copy[locale];
   const L = (path: string) => withLocale(locale, path);
 
-  let opp: InvestmentOpportunity;
+  let opp: InvestmentOpportunity | null = null;
+  let loadError = false;
   try {
-    opp = await getOpportunity(slug, { locale });
-  } catch {
-    notFound();
+    opp = await getOpportunityBySlug(locale, slug);
+  } catch (error) {
+    if (error instanceof StrapiApiError && error.status === 404) {
+      notFound();
+    }
+    loadError = true;
+  }
+
+  if (loadError || !opp) {
+    return (
+      <div className="flex flex-1 flex-col bg-[#f8f9ff]">
+        <Section tone="surface">
+          <Link
+            href={L("/crecer/oportunidades")}
+            className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
+          >
+            ← {t.back}
+          </Link>
+          <div
+            role="alert"
+            className="mt-10 rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800"
+          >
+            {t.loadError}
+          </div>
+        </Section>
+      </div>
+    );
   }
 
   const summary = (opp.summary || "").trim();

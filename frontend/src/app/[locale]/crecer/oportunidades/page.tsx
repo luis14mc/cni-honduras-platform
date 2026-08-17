@@ -10,7 +10,7 @@ import { crecerPageCopy } from "@/src/i18n/copy/crecerPage";
 import { withLocale } from "@/src/i18n/path";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getOpportunities } from "@/src/services/investment";
+import { getOpportunities } from "@/src/lib/strapi/editorial";
 import type { InvestmentOpportunity } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["crecer-oportunidades"]);
@@ -59,7 +59,7 @@ export default async function OportunidadesPage({
   let opportunities: InvestmentOpportunity[] = [];
   let loadError = false;
   try {
-    opportunities = await getOpportunities({ locale });
+    opportunities = await getOpportunities(locale);
   } catch {
     loadError = true;
   }

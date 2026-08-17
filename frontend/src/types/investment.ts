@@ -140,6 +140,7 @@ export interface SuccessStory {
   sector: SectorLite | null;
   summary: string;
   content: string;
+  rich_content?: import("@/src/lib/strapi/blocks").StrapiBlock[] | null;
   image: string | null;
   logo: import("@/src/types/cms").MediaAssetLite | null;
   featured_image?: import("@/src/types/cms").MediaAssetLite | null;
