@@ -297,18 +297,19 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                     {/* Tira de acento vertical desde el borde superior hasta el ícono */}
                     <span
                       className={cn(
-                        "absolute top-0 h-1/4 w-[3px]",
+                        "absolute top-0 h-32 w-[3px]",
                         reverse ? "right-0" : "left-0",
                       )}
                       style={{ backgroundColor: palette.accent }}
                       aria-hidden
                     />
 
-                    {/* Ícono del sector — fondo blanco, borde accent */}
+                    {/* Tira blanca desde el borde superior hasta el ícono */}
                     <div
-                      className="mb-8 inline-flex h-24 w-24 items-center justify-center rounded-2xl bg-white shadow-[0_10px_28px_-12px_rgba(0,0,0,0.45)] transition-transform duration-500 ease-out group-hover:scale-105"
+                      className="mb-8 inline-flex w-24 flex-col items-center justify-end rounded-b-2xl bg-white pt-10 pb-4 shadow-[0_14px_32px_-14px_rgba(0,0,0,0.55)] transition-transform duration-500 ease-out group-hover:-translate-y-1"
                       style={{
                         border: `1px solid ${palette.accent}55`,
+                        borderTop: "none",
                       }}
                     >
                       <SectorIcon slug={slug} size={72} />
