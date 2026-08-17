@@ -280,8 +280,8 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
                   {/* Contenido — 5/12 en desktop */}
                   <div
                     className={cn(
-                      "relative flex flex-col gap-8 pb-10 pt-0 sm:pb-12 lg:w-5/12 lg:pb-14",
-                      reverse ? "lg:order-1 lg:pr-14" : "lg:pl-14",
+                      "relative flex flex-col gap-8 pb-10 pt-0 sm:pb-12 lg:w-5/12 lg:px-14 lg:pb-14",
+                      reverse && "lg:order-1",
                     )}
                   >
                     {/* Línea de acento vertical en el borde exterior */}
