@@ -3,7 +3,7 @@ import { cn } from "@/src/lib/utils";
 import { type as t, layout } from "@/src/lib/typography";
 
 type PageHeroProps = {
-  eyebrow: string;
+  eyebrow?: string;
   title: React.ReactNode;
   description?: string;
   imageSrc?: string;
@@ -54,7 +54,7 @@ export function PageHero({
           align === "center" && "text-center",
         )}
       >
-        <span className={cn("mb-6", t.heroEyebrow)}>{eyebrow}</span>
+        {eyebrow && <span className={cn("mb-6", t.heroEyebrow)}>{eyebrow}</span>}
         <h1
           className={cn("max-w-4xl text-white", t.heroTitle)}
           style={{ textShadow: "0 2px 20px rgba(0, 0, 0, 0.25)" }}

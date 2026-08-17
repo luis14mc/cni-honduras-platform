@@ -10,7 +10,7 @@ export function TonalCard({
   className?: string;
   as?: "div" | "article";
 }) {
-  const Comp = as as React.ElementType;
+  const Comp: React.ElementType = as;
   return (
     <Comp
       className={cn(

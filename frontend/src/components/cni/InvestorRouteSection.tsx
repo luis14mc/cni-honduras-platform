@@ -1,5 +1,6 @@
-import Image from "next/image";
-import logoCni from "@/src/img/logos/Logo_CNI.png";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
@@ -7,106 +8,255 @@ import { cn } from "@/src/lib/utils";
 export type InvestorRouteStep = {
   n: number;
   label: string;
-  labelPosition?: "above" | "below";
-  icon: "cni" | string;
+  description?: string;
+  icon: string;
   color: string;
 };
 
 type Props = {
   eyebrow: string;
-  titlePrefix: string;
-  titleHighlight: string;
+  title: string;
+  description?: string;
   steps: readonly InvestorRouteStep[];
 };
 
-function StepIcon({ icon, color }: { icon: InvestorRouteStep["icon"]; color: string }) {
-  if (icon === "cni") {
-    return (
-      <Image
-        src={logoCni}
-        alt=""
-        aria-hidden
-        className="h-9 w-auto object-contain md:h-10"
-        sizes="72px"
-      />
-    );
-  }
+function useInView<T extends HTMLElement>(rootMargin = "-15% 0px -15% 0px") {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
 
-  return <MaterialIcon name={icon} className="text-[2rem] md:text-[2.25rem]" style={{ color }} />;
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin, threshold: 0.15 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [rootMargin]);
+
+  return [ref, inView] as const;
 }
 
-function RouteStep({
-  step,
-  isLast,
-}: {
-  step: InvestorRouteStep;
-  isLast: boolean;
-}) {
+function StepIcon({ icon }: { icon: string }) {
   return (
-    <li className="relative flex min-w-0 flex-1 flex-col">
-      {!isLast && (
-        <div
-          className="pointer-events-none absolute left-[calc(50%+3.5rem)] top-12 hidden h-px w-[calc(100%-7rem)] bg-gradient-to-r from-[#29AB85]/40 to-[#0E7A7C]/20 xl:block"
-          aria-hidden
-        />
+    <span
+      className={cn(
+        "route-icon relative flex h-14 w-14 items-center justify-center rounded-full border border-transparent bg-[#252A58] text-white",
+        "shadow-[0_10px_24px_-12px_rgba(37,42,88,0.55)]",
+        "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "group-hover/nav:scale-105 group-hover/nav:bg-[#29AB85] group-hover/nav:shadow-[0_14px_30px_-12px_rgba(41,171,133,0.55)]",
       )}
+    >
+      <MaterialIcon name={icon} className="text-[1.75rem]" />
+    </span>
+  );
+}
 
-      <article className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-[#252A58]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#29AB85]/30 hover:shadow-lg">
-        <div className="h-1.5 w-full shrink-0" style={{ backgroundColor: step.color }} />
+type StepRowProps = {
+  step: InvestorRouteStep;
+  index: number;
+  inView: boolean;
+};
 
-        <div className="flex flex-1 flex-col p-5 md:p-6">
-          <div className="mb-4 flex items-start justify-between gap-3">
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-sm font-extrabold text-white shadow-sm"
-              style={{ backgroundColor: step.color }}
-            >
-              {step.n}
-            </span>
-            <span
-              className="font-display text-4xl font-extrabold leading-none tabular-nums opacity-[0.07]"
-              style={{ color: step.color }}
-              aria-hidden
-            >
-              {String(step.n).padStart(2, "0")}
-            </span>
-          </div>
+function StepRow({ step, index, inView }: StepRowProps) {
+  const isLeft = index % 2 === 0;
+  const contentCol = isLeft ? "lg:col-start-1 lg:pr-10 lg:items-end lg:text-right" : "lg:col-start-3 lg:pl-10 lg:items-start lg:text-left";
+  const dividerCol = isLeft ? "lg:col-start-3" : "lg:col-start-1";
+  const itemsAlign = isLeft ? "lg:items-end" : "lg:items-start";
+  const delay = inView ? `${index * 140}ms` : "0ms";
 
-          <div
-            className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl border transition-colors duration-300 group-hover:border-transparent"
-            style={{
-              backgroundColor: `${step.color}12`,
-              borderColor: `${step.color}25`,
-            }}
+  return (
+    <li
+      className="route-step relative grid grid-cols-[3.5rem_1fr] items-start gap-x-4 lg:grid-cols-[1fr_5rem_1fr] lg:gap-x-8"
+      data-side={isLeft ? "left" : "right"}
+    >
+      <div
+        className={cn(
+          "route-content col-start-2 flex flex-col gap-3 text-center lg:row-start-1",
+          contentCol,
+          inView && "route-content--in-view",
+        )}
+        style={{ transitionDelay: delay }}
+      >
+        <div className={cn("flex flex-col", itemsAlign)}>
+          <h3
+            className={cn(
+              "font-display text-2xl font-extrabold leading-tight text-[#252A58] md:text-3xl",
+            )}
           >
-            <StepIcon icon={step.icon} color={step.color} />
-          </div>
-
-          <h3 className={t.h3Card}>{step.label}</h3>
+            <span className="text-[#0E7A7C]">{step.n}.</span> {step.label}
+          </h3>
+          {step.description && (
+            <p
+              className={cn(
+                "mt-3 max-w-md text-sm leading-relaxed text-[#64748B] md:text-[15px]",
+              )}
+            >
+              {step.description}
+            </p>
+          )}
         </div>
-      </article>
+      </div>
+
+      <div
+        className={cn(
+          "route-node col-start-1 flex items-start justify-center lg:col-start-2 lg:row-start-1 lg:justify-center",
+          inView && "route-node--in-view",
+        )}
+        style={{ transitionDelay: delay }}
+      >
+        <div className="route-node-inner group/nav relative flex flex-col items-center">
+          <StepIcon icon={step.icon} />
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "route-spacer hidden lg:row-start-1 lg:block",
+          dividerCol,
+        )}
+        aria-hidden
+      />
     </li>
   );
 }
 
-export function InvestorRouteSection({ eyebrow, titlePrefix, titleHighlight, steps }: Props) {
-  return (
-    <section className={cn("border-t border-[#252A58]/10 bg-[#f8f9ff]", layout.section)}>
-      <div className={layout.container}>
-        <header className="mx-auto max-w-3xl text-center">
-          <p className={t.eyebrow}>{eyebrow}</p>
-          <h2 className={cn("mt-3", t.h2)}>
-            {titlePrefix}{" "}
-            <span className="text-[#29AB85]">{titleHighlight}</span>
-          </h2>
-          <div className={cn("mx-auto mt-4", t.sectionRule)} />
-        </header>
+export function InvestorRouteSection({ eyebrow, title, description, steps }: Props) {
+  const [sectionRef, inView] = useInView<HTMLDivElement>("-20% 0px -20% 0px");
 
-        <ol className="relative mt-12 grid gap-5 sm:grid-cols-2 lg:mt-16 lg:flex lg:items-stretch lg:gap-4 xl:gap-5">
-          {steps.map((step, index) => (
-            <RouteStep key={step.n} step={step} isLast={index === steps.length - 1} />
-          ))}
-        </ol>
+  return (
+    <section
+      id="ruta-inversionista"
+      className="relative overflow-hidden border-t border-[#252A58]/10 bg-[#f8f9ff]"
+    >
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <div className="absolute -left-32 top-24 h-72 w-72 rounded-full bg-[#29AB85]/8 blur-3xl" />
+        <div className="absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-[#0E7A7C]/8 blur-3xl" />
       </div>
+
+      <div ref={sectionRef} className={cn("relative", layout.section)}>
+        <div className={layout.container}>
+          <header className="mx-auto max-w-3xl text-center">
+            <p
+              className={cn(
+                "route-reveal inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#29AB85]",
+                inView && "route-reveal--in-view",
+              )}
+            >
+              <span className="h-px w-6 bg-[#29AB85]/60" />
+              {eyebrow}
+              <span className="h-px w-6 bg-[#29AB85]/60" />
+            </p>
+            <h2
+              className={cn(
+                "route-reveal mt-4 font-display text-3xl font-extrabold leading-tight tracking-tight text-[#252A58] md:text-5xl",
+                inView && "route-reveal--in-view",
+              )}
+              style={{ transitionDelay: inView ? "120ms" : "0ms" }}
+            >
+              {title}
+            </h2>
+            {description && (
+              <p
+                className={cn(
+                  "route-reveal mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#0E7A7C] md:text-lg",
+                  inView && "route-reveal--in-view",
+                )}
+                style={{ transitionDelay: inView ? "240ms" : "0ms" }}
+              >
+                {description}
+              </p>
+            )}
+          </header>
+
+          <div className="route-track relative mx-auto mt-16 max-w-5xl md:mt-20">
+            <div
+              className={cn(
+                "route-line pointer-events-none absolute top-0 left-[1.75rem] w-px -translate-x-1/2 bg-[#dce9ff] lg:left-1/2",
+                inView && "route-line--in-view",
+              )}
+              aria-hidden
+            />
+
+            <ol className="flex flex-col gap-12 lg:gap-16">
+              {steps.map((step, index) => (
+                <StepRow
+                  key={step.n}
+                  step={step}
+                  index={index}
+                  inView={inView}
+                />
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .route-reveal {
+          opacity: 0;
+          transform: translateY(14px);
+          transition:
+            opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .route-reveal--in-view {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .route-line {
+          top: 1.75rem;
+          height: calc(100% - 3.5rem);
+          transform-origin: top;
+          transform: scaleY(0);
+          transition: transform 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .route-line--in-view {
+          transform: scaleY(1);
+        }
+
+        .route-content {
+          opacity: 0;
+          transform: translateY(20px);
+          transition:
+            opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .route-content--in-view {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .route-node {
+          opacity: 0;
+          transform: translateY(20px);
+          transition:
+            opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+            transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .route-node--in-view {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .route-reveal,
+          .route-content,
+          .route-node,
+          .route-line {
+            opacity: 1;
+            transform: none;
+            transition: none;
+          }
+        }
+      `}</style>
     </section>
   );
 }

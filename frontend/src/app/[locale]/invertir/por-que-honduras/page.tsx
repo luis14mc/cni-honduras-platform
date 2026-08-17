@@ -15,7 +15,6 @@ export const generateMetadata = makeGenerateMetadata(PAGE_SEO["invertir-por-que-
 
 const copy = {
   es: {
-    eyebrow: "Destino de Inversión Elite",
     title: "¿Por qué invertir en Honduras?",
     description:
       "El centro logístico y estratégico de las Américas. Una plataforma diseñada para el crecimiento de capital institucional en Centroamérica.",
@@ -111,49 +110,55 @@ const copy = {
     businessEaseDescription:
       "Honduras es el país más confiable para hacer negocios en Centroamérica según el índice de Complejidad Corporativa (GCBI) 2025, publicado en el 12.º informe anual de TMF Group.",
     businessEaseSource: "Elaboración propia con datos de TMF Group, 2025.",
-    routeTitlePrefix: "Te guiamos a través de la",
+    routeTitlePrefix: "",
     routeTitleHighlight: "Ruta del Inversionista",
-    routeEyebrow: "CNI · Acompañamiento institucional",
+    routeEyebrow: "Proceso estructurado",
+    routeDescription:
+      "Un enfoque metodológico de 5 fases diseñado para asegurar el éxito y la eficiencia operativa de su inversión en territorio hondureño.",
     routeSteps: [
       {
         n: 1,
-        label: "Punto de partida",
-        labelPosition: "below" as const,
-        icon: "cni",
+        label: "Punto de Partida",
+        icon: "place",
         color: "#29AB85",
+        description:
+          "Definición de objetivos, alcance del proyecto y análisis preliminar de viabilidad en el contexto hondureño.",
       },
       {
         n: 2,
-        label: "KICK OFF: reunión inicial",
-        labelPosition: "above" as const,
+        label: "Kick Off",
         icon: "groups",
         color: "#0E7A7C",
+        description:
+          "Reunión inicial de coordinación institucional. Alineación de actores clave y establecimiento del cronograma de trabajo.",
       },
       {
         n: 3,
-        label: "Pitch de inversiones oportunidades por sector",
-        labelPosition: "below" as const,
-        icon: "trending_up",
+        label: "Pitch de Inversiones",
+        icon: "description",
         color: "#1E88A8",
+        description:
+          "Presentación formal de oportunidades estratégicas por sector. Análisis profundo de incentivos fiscales y beneficios aplicables.",
       },
       {
         n: 4,
-        label: "Instalación de la inversión",
-        labelPosition: "above" as const,
-        icon: "payments",
+        label: "Instalación de Inversión",
+        icon: "work",
         color: "#24436B",
+        description:
+          "Acompañamiento especializado en procesos legales, obtención de permisos y establecimiento operativo de la empresa.",
       },
       {
         n: 5,
         label: "Aftercare",
-        labelPosition: "below" as const,
         icon: "volunteer_activism",
         color: "#252A58",
+        description:
+          "Seguimiento continuo, resolución de fricciones operativas y apoyo estratégico post-establecimiento para fomentar la expansión.",
       },
     ],
   },
   en: {
-    eyebrow: "Elite Investment Destination",
     title: "Why invest in Honduras?",
     description:
       "The strategic logistics hub of the Americas. A platform designed for institutional capital growth in Central America.",
@@ -249,44 +254,51 @@ const copy = {
     businessEaseDescription:
       "Honduras is the most reliable country for doing business in Central America according to the Global Complexity Business Index (GCBI) 2025, published in TMF Group's 12th annual report.",
     businessEaseSource: "Own elaboration with data from TMF Group, 2025.",
-    routeTitlePrefix: "We guide you through the",
+    routeTitlePrefix: "",
     routeTitleHighlight: "Investor Journey",
-    routeEyebrow: "CNI · Institutional support",
+    routeEyebrow: "Structured process",
+    routeDescription:
+      "A five-phase methodology designed to ensure the success and operational efficiency of your investment in Honduran territory.",
     routeSteps: [
       {
         n: 1,
-        label: "Starting point",
-        labelPosition: "below" as const,
-        icon: "cni",
+        label: "Starting Point",
+        icon: "place",
         color: "#29AB85",
+        description:
+          "Definition of objectives, project scope, and preliminary feasibility analysis in the Honduran context.",
       },
       {
         n: 2,
-        label: "KICK OFF: initial meeting",
-        labelPosition: "above" as const,
+        label: "Kick Off",
         icon: "groups",
         color: "#0E7A7C",
+        description:
+          "Initial institutional coordination meeting. Alignment of key stakeholders and work schedule.",
       },
       {
         n: 3,
-        label: "Investment pitch: sector opportunities",
-        labelPosition: "below" as const,
-        icon: "trending_up",
+        label: "Investment Pitch",
+        icon: "description",
         color: "#1E88A8",
+        description:
+          "Formal presentation of strategic opportunities by sector. In-depth analysis of applicable tax incentives and benefits.",
       },
       {
         n: 4,
-        label: "Investment installation",
-        labelPosition: "above" as const,
-        icon: "payments",
+        label: "Investment Installation",
+        icon: "work",
         color: "#24436B",
+        description:
+          "Specialized support in legal processes, obtaining permits, and operational establishment of the company.",
       },
       {
         n: 5,
         label: "Aftercare",
-        labelPosition: "below" as const,
         icon: "volunteer_activism",
         color: "#252A58",
+        description:
+          "Continuous monitoring, resolution of operational friction, and post-establishment strategic support to foster expansion.",
       },
     ],
   },
@@ -301,12 +313,23 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
       <PageHero
-        eyebrow={c.eyebrow}
-        title={c.title}
+        title={
+          locale === "es" ? (
+            <>
+              <span className="text-[#29AB85]">¿Por qué invertir en</span>{" "}
+              <span className="text-white">Honduras</span>?
+            </>
+          ) : (
+            <>
+              <span className="text-[#29AB85]">Why invest in</span>{" "}
+              <span className="text-white">Honduras</span>?
+            </>
+          )
+        }
         description={c.description}
         imageSrc={designImages.porQue.hero}
         imageAlt={locale === "es" ? "Costa de Honduras" : "Honduras coastline"}
-        heightClass="min-h-[520px] md:min-h-[600px]"
+        heightClass="min-h-screen"
       />
 
       <section className="relative z-20 -mt-16">
@@ -528,8 +551,8 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
 
       <InvestorRouteSection
         eyebrow={c.routeEyebrow}
-        titlePrefix={c.routeTitlePrefix}
-        titleHighlight={c.routeTitleHighlight}
+        title={c.routeTitleHighlight}
+        description={c.routeDescription}
         steps={c.routeSteps}
       />
     </div>
