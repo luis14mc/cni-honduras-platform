@@ -102,7 +102,7 @@ export function FooterLinkColumn({
       <ul
         className={
           columns === 2
-            ? "grid grid-cols-2 gap-x-6 gap-y-3 font-body text-sm text-white/60"
+            ? "grid grid-cols-2 grid-flow-col gap-x-6 gap-y-3 font-body text-sm text-white/60"
             : "space-y-3 font-body text-sm text-white/60"
         }
       >
