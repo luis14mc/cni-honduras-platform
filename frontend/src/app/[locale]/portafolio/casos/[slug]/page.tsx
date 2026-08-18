@@ -138,7 +138,7 @@ export default async function CasoDetallePage({
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
-      <header className="relative flex min-h-[50vh] items-end overflow-hidden bg-[#252A58] pb-16 pt-40">
+      <header className="relative flex min-h-screen items-end overflow-hidden bg-[#000a1e] pb-16 pt-40">
         <div className="absolute inset-0">
           <Image
             src={PAGE_HEROES.casos.image}
@@ -146,9 +146,10 @@ export default async function CasoDetallePage({
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-50"
+            className="object-cover opacity-[0.42]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#252A58] via-[#252A58]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/70 via-[#000a1e]/35 to-transparent" />
+          <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
         </div>
         <div className="relative z-10 mx-auto w-full max-w-4xl px-8">
           {successStoryHasLogo(story) && (
