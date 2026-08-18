@@ -11,6 +11,9 @@ type PageHeroProps = {
   heightClass?: string;
   align?: "left" | "center";
   children?: React.ReactNode;
+  imageClassName?: string;
+  overlayClassName?: string;
+  patternClassName?: string;
 };
 
 export function PageHero({
@@ -22,6 +25,9 @@ export function PageHero({
   heightClass = "min-h-[420px] md:min-h-[520px]",
   align = "left",
   children,
+  imageClassName = "absolute inset-0 object-cover opacity-[0.94]",
+  overlayClassName,
+  patternClassName,
 }: PageHeroProps) {
   return (
     <section
@@ -37,16 +43,23 @@ export function PageHero({
           fill
           priority
           sizes="100vw"
-          className="absolute inset-0 object-cover opacity-[0.94]"
+          className={imageClassName}
         />
       )}
       <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(37, 42, 88, 0.22) 0%, rgba(14, 122, 124, 0.05) 22%, transparent 48%)",
-        }}
+        className={cn("absolute inset-0", overlayClassName)}
+        style={
+          overlayClassName
+            ? undefined
+            : {
+                background:
+                  "linear-gradient(to top, rgba(37, 42, 88, 0.22) 0%, rgba(14, 122, 124, 0.05) 22%, transparent 48%)",
+              }
+        }
       />
+      {patternClassName ? (
+        <div className={cn("pointer-events-none absolute inset-0", patternClassName)} aria-hidden />
+      ) : null}
       <div
         className={cn(
           layout.container,

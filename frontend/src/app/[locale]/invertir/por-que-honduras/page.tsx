@@ -330,6 +330,9 @@ export default async function PorQueHondurasPage({ params }: { params: Promise<{
         imageSrc={designImages.porQue.hero}
         imageAlt={locale === "es" ? "Costa de Honduras" : "Honduras coastline"}
         heightClass="min-h-screen"
+        imageClassName="absolute inset-0 object-cover opacity-[0.42]"
+        overlayClassName="bg-gradient-to-r from-cni-primary/70 via-cni-primary/35 to-transparent"
+        patternClassName="site-footer-mesh opacity-[0.16]"
       />
 
       <section className="relative z-20 -mt-16">
