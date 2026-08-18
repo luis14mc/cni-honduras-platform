@@ -22,6 +22,18 @@ export const SECTOR_ACCENTS: Record<string, SectorAccentPalette> = {
   logistica: { accent: "#2EB29C", soft: "rgba(46, 178, 156, 0.10)", border: "rgba(46, 178, 156, 0.35)" },
 };
 
+export type SectoresInstitutionalLink = {
+  label: string;
+  href: string;
+};
+
+export type SectoresOffice = {
+  city: string;
+  address: string;
+  email: string;
+  phone: string;
+};
+
 export type SectoresIndexCopy = {
   heroEyebrow: string;
   heroTitleBefore: string;
@@ -52,6 +64,14 @@ export type SectoresIndexCopy = {
   ctaBody: string;
   ctaPrimary: string;
   ctaSecondary: string;
+  acompanamientoEyebrow: string;
+  acompanamientoTitle: string;
+  acompanamientoSubtitle: string;
+  acompanamientoLinksEyebrowA: string;
+  acompanamientoLinksEyebrowB: string;
+  acompanamientoLinks: ReadonlyArray<SectoresInstitutionalLink>;
+  acompanamientoOffices: ReadonlyArray<SectoresOffice>;
+  acompanamientoOfficesTitle: string;
 };
 
 const SECTORES_INDEX: Record<Locale, SectoresIndexCopy> = {
@@ -109,6 +129,40 @@ const SECTORES_INDEX: Record<Locale, SectoresIndexCopy> = {
       "Conecte con oficiales de inversión del CNI para evaluar prefactibilidad, encaje legal y acceso al portafolio Ready-to-Invest.",
     ctaPrimary: "Solicitar asesoría",
     ctaSecondary: "Descargar guía del inversionista",
+    acompanamientoEyebrow: "05 · Acompañamiento CNI",
+    acompanamientoTitle: "Institucionalidad que respalda su inversión",
+    acompanamientoSubtitle:
+      "Una red de socios públicos, gremiales y multilaterales, más dos oficinas físicas del CNI listas para acompañarle en cada etapa del proceso.",
+    acompanamientoLinksEyebrowA: "Presidencia · Aduanas",
+    acompanamientoLinksEyebrowB: "Fedecamaras · WAIPA",
+    acompanamientoLinks: [
+      { label: "Presidencia", href: "https://www.presidencia.gob.hn" },
+      { label: "COHEP", href: "https://cohep.com" },
+      { label: "BCH", href: "https://www.bch.hn" },
+      { label: "INE", href: "https://www.ine.gob.hn" },
+      { label: "Aduanas", href: "https://www.aduanas.gob.hn" },
+      { label: "Fedecamaras", href: "https://www.fedecamaras.com" },
+      { label: "SDE", href: "https://sde.gob.hn" },
+      { label: "SERNA", href: "https://www.miambiente.gob.hn" },
+      { label: "ANDI", href: "https://andi.hn" },
+      { label: "WAIPA", href: "https://waipa.org" },
+    ],
+    acompanamientoOfficesTitle: "Oficinas de atención",
+    acompanamientoOffices: [
+      {
+        city: "Tegucigalpa",
+        address: "Centro Cívico Gubernamental, Torre 1, Nivel 12.",
+        email: "seguimiento@cni.hn",
+        phone: "(504) 2242-8955",
+      },
+      {
+        city: "San Pedro Sula",
+        address:
+          "Cámara de Comercio e Industria de Cortés. Col. Las Brisas 22 y 24 calle entre 1 y 4ta. avenida Junior.",
+        email: "oficinasps@cni.hn",
+        phone: "(504) 2561-6100 ext 109",
+      },
+    ],
   },
   en: {
     heroEyebrow: "National strategic catalog",
@@ -164,6 +218,40 @@ const SECTORES_INDEX: Record<Locale, SectoresIndexCopy> = {
       "Connect with CNI investment officers to evaluate pre-feasibility, legal fit, and access to the Ready-to-Invest portfolio.",
     ctaPrimary: "Request advisory",
     ctaSecondary: "Download investor guide",
+    acompanamientoEyebrow: "05 · CNI accompaniment",
+    acompanamientoTitle: "The institutional network behind your investment",
+    acompanamientoSubtitle:
+      "A network of public, business and multilateral partners, plus two CNI offices ready to accompany you at every stage of the process.",
+    acompanamientoLinksEyebrowA: "Presidency · Customs",
+    acompanamientoLinksEyebrowB: "Fedecamaras · WAIPA",
+    acompanamientoLinks: [
+      { label: "Presidency", href: "https://www.presidencia.gob.hn" },
+      { label: "COHEP", href: "https://cohep.com" },
+      { label: "BCH", href: "https://www.bch.hn" },
+      { label: "INE", href: "https://www.ine.gob.hn" },
+      { label: "Customs", href: "https://www.aduanas.gob.hn" },
+      { label: "Fedecamaras", href: "https://www.fedecamaras.com" },
+      { label: "SDE", href: "https://sde.gob.hn" },
+      { label: "SERNA", href: "https://www.miambiente.gob.hn" },
+      { label: "ANDI", href: "https://andi.hn" },
+      { label: "WAIPA", href: "https://waipa.org" },
+    ],
+    acompanamientoOfficesTitle: "Service offices",
+    acompanamientoOffices: [
+      {
+        city: "Tegucigalpa",
+        address: "Centro Cívico Gubernamental, Torre 1, Nivel 12.",
+        email: "seguimiento@cni.hn",
+        phone: "(504) 2242-8955",
+      },
+      {
+        city: "San Pedro Sula",
+        address:
+          "Cámara de Comercio e Industria de Cortés. Col. Las Brisas 22 y 24 calle entre 1 y 4ta. avenida Junior.",
+        email: "oficinasps@cni.hn",
+        phone: "(504) 2561-6100 ext 109",
+      },
+    ],
   },
 };
 

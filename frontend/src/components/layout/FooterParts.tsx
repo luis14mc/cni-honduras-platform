@@ -30,9 +30,11 @@ type FooterCopy = {
     tguTitle: string;
     tguAddress: string;
     tguTel: string;
+    tguEmail: string;
     spsTitle: string;
     spsAddress: string;
     spsTel: string;
+    spsEmail: string;
   };
   legal: { privacy: string; terms: string; transparency: string; copyright: string };
 };
@@ -205,9 +207,14 @@ export function FooterBottomBar({
           </p>
           <p className="text-xs leading-relaxed text-white/50">
             {copy.offices.tguAddress}
-            <br />
-            {copy.offices.tguTel}
           </p>
+          <a
+            href={`mailto:${copy.offices.tguEmail}`}
+            className="mt-2 inline-block text-xs leading-relaxed text-white/55 transition-colors hover:text-[#32B372]"
+          >
+            {copy.offices.tguEmail}
+          </a>
+          <p className="text-xs leading-relaxed text-white/50">{copy.offices.tguTel}</p>
         </div>
 
         <div>
@@ -216,9 +223,14 @@ export function FooterBottomBar({
           </p>
           <p className="text-xs leading-relaxed text-white/50">
             {copy.offices.spsAddress}
-            <br />
-            {copy.offices.spsTel}
           </p>
+          <a
+            href={`mailto:${copy.offices.spsEmail}`}
+            className="mt-2 inline-block text-xs leading-relaxed text-white/55 transition-colors hover:text-[#32B372]"
+          >
+            {copy.offices.spsEmail}
+          </a>
+          <p className="text-xs leading-relaxed text-white/50">{copy.offices.spsTel}</p>
         </div>
 
         <div className="lg:col-span-2 lg:text-right">
