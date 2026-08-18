@@ -138,6 +138,15 @@ export function FooterExternalLinkColumns({
   title: string;
   links: { label: string; href: string }[];
 }) {
+  const seen = new Set<string>();
+  const uniqueLinks = links.filter((item) => {
+    if (seen.has(item.label)) return false;
+    seen.add(item.label);
+    return true;
+  });
+  const halfIndex = Math.ceil(uniqueLinks.length / 2);
+  const columnA = uniqueLinks.slice(0, halfIndex);
+  const columnB = uniqueLinks.slice(halfIndex);
   const renderItem = (item: { label: string; href: string }) => (
     <li key={item.label}>
       <a
@@ -160,10 +169,10 @@ export function FooterExternalLinkColumns({
       </h4>
       <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         <ul className="space-y-3 font-body text-sm text-white/60">
-          {links.filter((_, idx) => idx < 5).map(renderItem)}
+          {columnA.map(renderItem)}
         </ul>
         <ul className="space-y-3 font-body text-sm text-white/60">
-          {links.filter((_, idx) => idx >= 5 && idx < 10).map(renderItem)}
+          {columnB.map(renderItem)}
         </ul>
       </div>
     </nav>
