@@ -138,9 +138,6 @@ export function FooterExternalLinkColumns({
   title: string;
   links: { label: string; href: string }[];
 }) {
-  const halfIndex = Math.ceil(links.length / 2);
-  const columnA = links.slice(0, halfIndex);
-  const columnB = links.slice(halfIndex);
   const renderItem = (item: { label: string; href: string }) => (
     <li key={item.label}>
       <a
@@ -162,8 +159,12 @@ export function FooterExternalLinkColumns({
         {title}
       </h4>
       <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-        <ul className="space-y-3 font-body text-sm text-white/60">{columnA.map(renderItem)}</ul>
-        <ul className="space-y-3 font-body text-sm text-white/60">{columnB.map(renderItem)}</ul>
+        <ul className="space-y-3 font-body text-sm text-white/60">
+          {links.filter((_, idx) => idx < 5).map(renderItem)}
+        </ul>
+        <ul className="space-y-3 font-body text-sm text-white/60">
+          {links.filter((_, idx) => idx >= 5 && idx < 10).map(renderItem)}
+        </ul>
       </div>
     </nav>
   );
