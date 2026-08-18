@@ -7,15 +7,11 @@ import {
   mergeSectorWithApi,
   SECTOR_SLUGS,
 } from "@/src/data/investmentSectors";
-import {
-  getProjectsBySector,
-  getSector,
-} from "@/src/services/investment";
+import { getProjectsBySector, getSector } from "@/src/services/investment";
 import { getOpportunities, getSuccessStories } from "@/src/lib/strapi/editorial";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
+import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity, InvestmentProject, SuccessStory } from "@/src/types/investment";
-import Link from "next/link";
-import { resolveHref } from "@/src/i18n/path";
 
 export function generateStaticParams() {
   return SECTOR_SLUGS.map((slug) => ({ slug }));
@@ -34,59 +30,18 @@ export default async function SectorPage({
   if (!fallback) notFound();
 
   let sector = fallback;
-  let apiOk = false;
   try {
     const apiSector = await getSector(slug, { locale });
     sector = mergeSectorWithApi(fallback, apiSector);
-    apiOk = true;
   } catch {
-    apiOk = false;
+    sector = fallback;
   }
 
-  if (!apiOk) {
-    const L = (p: string) => resolveHref(locale, p);
-    return (
-      <div className="-mt-28 flex flex-1 flex-col items-center justify-center bg-[#f8f9ff] px-8 py-40">
-        <div
-          role="alert"
-          className="max-w-xl rounded-xl border border-red-200 bg-white p-10 text-center shadow-md"
-        >
-          <p className="text-lg font-medium text-red-800">
-            {locale === "es"
-              ? "No pudimos cargar este sector desde el CMS. Intente de nuevo más tarde."
-              : "We could not load this sector from the CMS. Please try again later."}
-          </p>
-          <Link
-            href={L("/invertir/sectores")}
-            className="mt-6 inline-block font-bold text-[#252A58] underline"
-          >
-            {locale === "es" ? "Volver a sectores" : "Back to sectors"}
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  let opportunities: InvestmentOpportunity[] = [];
-  try {
-    opportunities = await getOpportunities(locale, { sector: slug });
-  } catch {
-    opportunities = [];
-  }
-
-  let projects: InvestmentProject[] = [];
-  try {
-    projects = await getProjectsBySector(slug);
-  } catch {
-    projects = [];
-  }
-
-  let successStories: SuccessStory[] = [];
-  try {
-    successStories = await getSuccessStories(locale, { sector: slug });
-  } catch {
-    successStories = [];
-  }
+  const [opportunities, successStories, projects] = await Promise.all([
+    loadAsyncData(() => getOpportunities(locale, { sector: slug }), [] as InvestmentOpportunity[]),
+    loadAsyncData(() => getSuccessStories(locale, { sector: slug }), [] as SuccessStory[]),
+    loadAsyncData(() => getProjectsBySector(slug), [] as InvestmentProject[]),
+  ]);
 
   return (
     <SectorDetailView
