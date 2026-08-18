@@ -454,111 +454,37 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
         </div>
       </section>
 
-      {/* 5. Acompañamiento CNI — bloque institucional estilo footer */}
-      <section className="al-sectores-cta-final site-footer relative overflow-hidden py-20 text-white md:py-24">
-        <div className="site-footer-bg pointer-events-none absolute inset-0" aria-hidden>
-          <div className="site-footer-gradient absolute inset-0" />
-          <div className="site-footer-mesh absolute inset-0" />
-          <div className="site-footer-diagonal-slash absolute inset-0" />
-        </div>
-
+      {/* 5. CTA final — banda institucional oscura */}
+      <section className="al-sectores-cta-final relative overflow-hidden bg-[#252A58] py-20 text-white md:py-24">
+        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.22]" aria-hidden />
+        <div
+          className="pointer-events-none absolute right-0 top-0 h-full w-1/2 -skew-x-12 translate-x-24 bg-[#24436B] opacity-45"
+          aria-hidden
+        />
         <div className={cn(layout.container, "relative z-10")}>
-          <div className="flex flex-col items-start gap-4">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#29AB85]" />
-              {c.acompanamientoEyebrow}
-            </span>
-            <h2 className={cn("max-w-3xl", t.h2OnDark)}>{c.acompanamientoTitle}</h2>
-            <p className={cn("max-w-2xl text-white/70", t.lead)}>
-              {c.acompanamientoSubtitle}
-            </p>
-          </div>
-
-          <div className="mt-14 grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-14">
-            <nav aria-label={c.acompanamientoLinksEyebrowA} className="flex flex-col">
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#29AB85]" />
-                <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
-                  {c.acompanamientoLinksEyebrowA}
-                </p>
-              </div>
-              <ul className="space-y-3 font-body text-sm text-white/60">
-                {c.acompanamientoLinks.slice(0, 5).map((link) => (
-                  <li key={`${c.acompanamientoLinksEyebrowA}-${link.label}`}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                      <span aria-hidden className="h-1 w-1 rounded-full bg-[#29AB85]/70" />
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <nav aria-label={c.acompanamientoLinksEyebrowB} className="flex flex-col">
-              <div className="mb-5 flex items-center gap-3">
-                <span className="h-px w-8 bg-[#29AB85]" />
-                <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
-                  {c.acompanamientoLinksEyebrowB}
-                </p>
-              </div>
-              <ul className="space-y-3 font-body text-sm text-white/60">
-                {c.acompanamientoLinks.slice(5, 10).map((link) => (
-                  <li key={`${c.acompanamientoLinksEyebrowB}-${link.label}`}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 transition-colors hover:text-white"
-                    >
-                      <span aria-hidden className="h-1 w-1 rounded-full bg-[#29AB85]/70" />
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-
-          <div className="mt-16 border-t border-white/10 pt-10">
-            <div className="mb-8 flex items-center gap-3">
-              <span className="h-px w-8 bg-[#29AB85]" />
-              <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
-                {c.acompanamientoOfficesTitle}
+          <div className="flex flex-col items-start justify-between gap-10 md:flex-row md:items-center">
+            <div className="max-w-2xl">
+              <p className={t.eyebrowOnDark}>
+                {locale === "es" ? "Acompañamiento CNI" : "CNI support"}
               </p>
+              <h2 className={cn("mt-3", t.h2OnDark)}>{c.ctaTitle}</h2>
+              <p className={cn("mt-4 text-white/75", t.lead)}>{c.ctaBody}</p>
             </div>
-            <div className="grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-14">
-              {c.acompanamientoOffices.map((office) => (
-                <article
-                  key={office.city}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition-colors hover:border-[#29AB85]/40"
-                >
-                  <p className="text-[0.6875rem] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
-                    {office.city}
-                  </p>
-                  <p className="mt-3 font-body text-sm leading-relaxed text-white/65">
-                    {office.address}
-                  </p>
-                  <div className="mt-5 flex flex-col gap-2 border-t border-white/10 pt-5">
-                    <a
-                      href={`mailto:${office.email}`}
-                      className="font-body text-sm text-white/75 transition-colors hover:text-[#29AB85]"
-                    >
-                      {office.email}
-                    </a>
-                    <a
-                      href={`tel:${office.phone.replace(/[^+\d]/g, "")}`}
-                      className="font-body text-sm text-white/75 transition-colors hover:text-[#29AB85]"
-                    >
-                      {office.phone}
-                    </a>
-                  </div>
-                </article>
-              ))}
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <Link
+                href={L("/asesoria")}
+                className={cn(
+                  "inline-flex items-center justify-center gap-2 rounded-lg bg-[#29AB85] px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#35A963]",
+                )}
+              >
+                {c.ctaPrimary}
+              </Link>
+              <Link
+                href={L("/recursos")}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-white/10"
+              >
+                {c.ctaSecondary}
+              </Link>
             </div>
           </div>
         </div>
