@@ -102,7 +102,7 @@ export function FooterLinkColumn({
       <ul
         className={
           columns === 2
-            ? "grid grid-cols-2 grid-flow-col gap-x-6 gap-y-3 font-body text-sm text-white/60"
+            ? "grid grid-cols-2 gap-x-6 gap-y-3 font-body text-sm text-white/60"
             : "space-y-3 font-body text-sm text-white/60"
         }
       >
@@ -125,6 +125,46 @@ export function FooterLinkColumn({
           </li>
         ))}
       </ul>
+    </nav>
+  );
+}
+
+export function FooterExternalLinkColumns({
+  id,
+  title,
+  links,
+}: {
+  id: string;
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  const halfIndex = Math.ceil(links.length / 2);
+  const columnA = links.slice(0, halfIndex);
+  const columnB = links.slice(halfIndex);
+  const renderItem = (item: { label: string; href: string }) => (
+    <li key={item.label}>
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="transition-colors hover:text-[#32B372]"
+      >
+        {item.label}
+      </a>
+    </li>
+  );
+  return (
+    <nav aria-labelledby={id} className="flex flex-col">
+      <h4
+        id={id}
+        className="mb-5 font-headline text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-white/90"
+      >
+        {title}
+      </h4>
+      <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+        <ul className="space-y-3 font-body text-sm text-white/60">{columnA.map(renderItem)}</ul>
+        <ul className="space-y-3 font-body text-sm text-white/60">{columnB.map(renderItem)}</ul>
+      </div>
     </nav>
   );
 }

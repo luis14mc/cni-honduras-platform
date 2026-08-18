@@ -8,6 +8,7 @@ import { resolveHref } from "@/src/i18n/path";
 import {
   FooterBottomBar,
   FooterBrandColumn,
+  FooterExternalLinkColumns,
   FooterGuacamayaCta,
   FooterLinkColumn,
   type FooterCopy,
@@ -147,13 +148,10 @@ export default function Footer({
         </p>
       </nav>
     ) : (
-      <FooterLinkColumn
+      <FooterExternalLinkColumns
         id="footer-external"
         title={ft.externalTitle}
         links={resolvedExternalLinks}
-        resolveHref={L}
-        external
-        columns={2}
       />
     );
 
