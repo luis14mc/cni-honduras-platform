@@ -30,9 +30,11 @@ type FooterCopy = {
     tguTitle: string;
     tguAddress: string;
     tguTel: string;
+    tguEmail: string;
     spsTitle: string;
     spsAddress: string;
     spsTel: string;
+    spsEmail: string;
   };
   legal: { privacy: string; terms: string; transparency: string; copyright: string };
 };
@@ -127,6 +129,47 @@ export function FooterLinkColumn({
   );
 }
 
+export function FooterExternalLinkColumns({
+  id,
+  title,
+  links,
+}: {
+  id: string;
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  const renderItem = (item: { label: string; href: string }) => (
+    <li key={item.label}>
+      <a
+        href={item.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="transition-colors hover:text-[#32B372]"
+      >
+        {item.label}
+      </a>
+    </li>
+  );
+  return (
+    <nav aria-labelledby={id} className="flex flex-col">
+      <h4
+        id={id}
+        className="mb-5 font-headline text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-white/90"
+      >
+        {title}
+      </h4>
+      <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+        <ul className="space-y-3 font-body text-sm text-white/60">
+          {links.filter((_, idx) => idx < 5).map(renderItem)}
+        </ul>
+        <ul className="space-y-3 font-body text-sm text-white/60">
+          {links.filter((_, idx) => idx >= 5 && idx < 10).map(renderItem)}
+        </ul>
+      </div>
+    </nav>
+  );
+}
+
 export function FooterGuacamayaCta({
   copy,
   contactHref,
@@ -205,9 +248,14 @@ export function FooterBottomBar({
           </p>
           <p className="text-xs leading-relaxed text-white/50">
             {copy.offices.tguAddress}
-            <br />
-            {copy.offices.tguTel}
           </p>
+          <a
+            href={`mailto:${copy.offices.tguEmail}`}
+            className="mt-2 inline-block text-xs leading-relaxed text-white/55 transition-colors hover:text-[#32B372]"
+          >
+            {copy.offices.tguEmail}
+          </a>
+          <p className="text-xs leading-relaxed text-white/50">{copy.offices.tguTel}</p>
         </div>
 
         <div>
@@ -216,9 +264,14 @@ export function FooterBottomBar({
           </p>
           <p className="text-xs leading-relaxed text-white/50">
             {copy.offices.spsAddress}
-            <br />
-            {copy.offices.spsTel}
           </p>
+          <a
+            href={`mailto:${copy.offices.spsEmail}`}
+            className="mt-2 inline-block text-xs leading-relaxed text-white/55 transition-colors hover:text-[#32B372]"
+          >
+            {copy.offices.spsEmail}
+          </a>
+          <p className="text-xs leading-relaxed text-white/50">{copy.offices.spsTel}</p>
         </div>
 
         <div className="lg:col-span-2 lg:text-right">

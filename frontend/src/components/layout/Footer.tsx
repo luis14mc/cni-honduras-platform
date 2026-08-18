@@ -8,6 +8,7 @@ import { resolveHref } from "@/src/i18n/path";
 import {
   FooterBottomBar,
   FooterBrandColumn,
+  FooterExternalLinkColumns,
   FooterGuacamayaCta,
   FooterLinkColumn,
   type FooterCopy,
@@ -46,12 +47,14 @@ const footerTranslations: Record<
     },
     offices: {
       tguTitle: "Tegucigalpa",
-      tguAddress: "Colonia Lomas del Guijarro Sur, Calle Roma, Edificio Torre Alianza II, Nivel 5.",
-      tguTel: "Tel: +504 2232-3535",
+      tguAddress: "Centro Cívico Gubernamental, Torre 1, Nivel 12.",
+      tguTel: "Tel: (504) 2242-8955",
+      tguEmail: "seguimiento@cni.hn",
       spsTitle: "San Pedro Sula",
       spsAddress:
-        "Barrio Los Andes, 2da Calle, entre 10 y 11 Ave. Edificio Cámara de Comercio e Industrias de Cortés.",
-      spsTel: "Tel: +504 2561-6100",
+        "Cámara de Comercio e Industria de Cortés. Col. Las Brisas 22 y 24 calle entre 1 y 4ta. avenida Junior.",
+      spsTel: "Tel: (504) 2561-6100 ext 109",
+      spsEmail: "oficinasps@cni.hn",
     },
     legal: {
       privacy: "Privacidad",
@@ -83,12 +86,14 @@ const footerTranslations: Record<
     },
     offices: {
       tguTitle: "Tegucigalpa",
-      tguAddress: "Colonia Lomas del Guijarro Sur, Calle Roma, Edificio Torre Alianza II, Nivel 5.",
-      tguTel: "Tel: +504 2232-3535",
+      tguAddress: "Centro Cívico Gubernamental, Torre 1, Nivel 12.",
+      tguTel: "Tel: (504) 2242-8955",
+      tguEmail: "seguimiento@cni.hn",
       spsTitle: "San Pedro Sula",
       spsAddress:
-        "Barrio Los Andes, 2da Calle, entre 10 y 11 Ave. Edificio Cámara de Comercio e Industrias de Cortés.",
-      spsTel: "Tel: +504 2561-6100",
+        "Cámara de Comercio e Industria de Cortés. Col. Las Brisas 22 y 24 calle entre 1 y 4ta. avenida Junior.",
+      spsTel: "Tel: (504) 2561-6100 ext 109",
+      spsEmail: "oficinasps@cni.hn",
     },
     legal: {
       privacy: "Privacy",
@@ -143,13 +148,10 @@ export default function Footer({
         </p>
       </nav>
     ) : (
-      <FooterLinkColumn
+      <FooterExternalLinkColumns
         id="footer-external"
         title={ft.externalTitle}
         links={resolvedExternalLinks}
-        resolveHref={L}
-        external
-        columns={2}
       />
     );
 
