@@ -1,9 +1,7 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { PageHero } from "@/src/components/cni/PageHero";
-import { PAGE_HEROES } from "@/src/lib/pageHeroes";
-import { Section, SectionHeader } from "@/src/components/cni/Section";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { crecerPageCopy } from "@/src/i18n/copy/crecerPage";
@@ -11,38 +9,12 @@ import { withLocale } from "@/src/i18n/path";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getOpportunities } from "@/src/lib/strapi/editorial";
+import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity } from "@/src/types/investment";
+import { layout } from "@/src/lib/typography";
+import { cn } from "@/src/lib/utils";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["crecer-oportunidades"]);
-
-const copy = {
-  es: {
-    listEyebrow: "Portafolio",
-    listTitle: "Oportunidades de inversión",
-    listDescription:
-      "Una selección de oportunidades priorizadas. Para información detallada, contacte al equipo del CNI.",
-    empty: "No hay oportunidades publicadas en este momento.",
-    error: "No se pudieron cargar las oportunidades. Intente de nuevo más tarde.",
-    cta: "Ver oportunidad",
-  },
-  en: {
-    listEyebrow: "Portfolio",
-    listTitle: "Investment opportunities",
-    listDescription:
-      "A selection of priority opportunities. For detailed information, contact the CNI team.",
-    empty: "There are no published opportunities at this time.",
-    error: "Opportunities could not be loaded. Please try again later.",
-    cta: "View opportunity",
-  },
-} as const;
-
-function brief(opp: InvestmentOpportunity): string {
-  return (opp.summary || "").trim();
-}
-
-function cardMetrics(opp: InvestmentOpportunity) {
-  return (opp.metrics ?? []).slice(0, 2);
-}
 
 export default async function OportunidadesPage({
   params,
@@ -53,112 +25,85 @@ export default async function OportunidadesPage({
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = crecerPageCopy[locale];
-  const t = copy[locale];
   const L = (path: string) => withLocale(locale, path);
-
-  let opportunities: InvestmentOpportunity[] = [];
-  let loadError = false;
-  try {
-    opportunities = await getOpportunities(locale);
-  } catch {
-    loadError = true;
-  }
+  const result = await loadAsyncData(() => getOpportunities(locale), [] as InvestmentOpportunity[]);
 
   return (
-    <div className="flex flex-1 flex-col bg-[#f8f9ff]">
-      <div className="-mt-28">
-        <PageHero
-          eyebrow={c.heroEyebrow}
-          title={
-            <>
-              {c.heroTitleBefore} <span className="text-[#35A963]">{c.heroTitleAccent}</span>
-            </>
-          }
-          description={c.heroDescription}
-          imageSrc={PAGE_HEROES.oportunidades.image}
-          imageAlt={c.heroImageAlt}
-          heightClass="min-h-[560px] md:min-h-[620px]"
-        >
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="#portafolio"
-              className="inline-flex items-center gap-2 rounded-md bg-[#35A963] px-8 py-4 text-xs font-bold uppercase tracking-widest text-[#252A58] transition hover:brightness-95"
-            >
-              {c.ctaPortfolio}
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-            <Link
-              href={L("/contacto")}
-              className="inline-flex items-center gap-2 rounded-md border border-white/20 bg-white/10 px-8 py-4 text-xs font-bold uppercase tracking-widest text-white backdrop-blur-md transition hover:bg-white/20"
-            >
-              {c.advisoryCta}
-            </Link>
-          </div>
-        </PageHero>
-      </div>
-
-      <Section id="portafolio" tone="surface">
-        <SectionHeader eyebrow={t.listEyebrow} title={t.listTitle} description={t.listDescription} />
-
-        {loadError ? (
-          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-            {t.error}
+    <div className="al-crecer flex flex-1 flex-col bg-[#f4f6fb]">
+      <header className="al-crecer-hero relative -mt-28 flex min-h-[58vh] flex-col justify-end overflow-hidden bg-cni-primary pt-32">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero/home/logistica.webp"
+            alt={c.heroImageAlt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover opacity-[0.7]"
+          />
+          <div className="absolute inset-0 bg-[#12162e]/72" />
+          <div className="al-crecer-hero-mesh pointer-events-none absolute inset-0 opacity-35" aria-hidden />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e22] via-transparent to-transparent" />
+        </div>
+        <div className={cn("relative z-10 w-full pb-12 pt-8", layout.container)}>
+          <Link
+            href={L("/crecer")}
+            className="mb-8 inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 transition hover:text-white"
+          >
+            <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden />
+            {locale === "es" ? "Crecer en Honduras" : "Grow in Honduras"}
+          </Link>
+          <p className="mb-4 font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#32B372]">
+            {c.portfolioEyebrow}
           </p>
-        ) : opportunities.length === 0 ? (
-          <p className="rounded-lg border border-[#334E88]/15 bg-white px-4 py-8 text-center text-sm text-[#0E7A7C]">
-            {t.empty}
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {opportunities.map((opp) => {
-              const metrics = cardMetrics(opp);
-              const text = brief(opp);
-              return (
-                <article
-                  key={opp.id}
-                  className="flex h-full flex-col border border-[#dce9ff]/30 bg-white p-6 transition hover:shadow-lg hover:shadow-[#252A58]/5"
+          <h1 className="max-w-4xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white md:text-6xl">
+            {c.portfolioTitle}
+          </h1>
+          <p className="mt-5 max-w-2xl font-body text-base text-white/80">{c.portfolioDescription}</p>
+        </div>
+      </header>
+
+      <section className={cn("bg-white", layout.section)}>
+        <div className={layout.container}>
+          {result.status === "error" ? (
+            <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-6 py-10 text-center text-sm text-red-800">
+              {c.portfolioError}
+            </p>
+          ) : result.data.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-cni-primary/15 bg-[#f8f9ff] px-6 py-12 text-center text-sm text-[#0E7A7C]">
+              {c.portfolioEmpty}
+            </p>
+          ) : (
+            <div className="divide-y divide-cni-primary/10 overflow-hidden rounded-2xl border border-cni-primary/10 bg-[#f8f9ff]">
+              {result.data.map((item, index) => (
+                <Link
+                  key={item.slug}
+                  href={L(`/crecer/oportunidades/${item.slug}`)}
+                  className="al-crecer-row group grid grid-cols-1 gap-4 px-6 py-6 transition-colors hover:bg-white md:grid-cols-12 md:items-center md:px-8"
                 >
-                  <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-widest">
-                    {opp.sector?.name ? (
-                      <span className="bg-[#e5eeff] px-3 py-1 text-[#294f83]">{opp.sector.name}</span>
-                    ) : null}
-                    {opp.code ? (
-                      <span className="font-mono text-[#0E7A7C]">{opp.code}</span>
-                    ) : null}
-                  </div>
-                  <h3 className="mt-4 text-xl font-bold text-[#252A58]">{opp.title}</h3>
-                  {text ? (
-                    <p className="mt-3 flex-1 text-sm leading-relaxed text-[#0E7A7C] line-clamp-3">
-                      {text}
+                  <span className="font-headline text-[11px] font-bold tracking-[0.18em] text-[#32B372] md:col-span-1">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="md:col-span-8">
+                    <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-on-surface-variant/55">
+                      {item.sector?.name || item.code || item.status}
                     </p>
-                  ) : null}
-                  {metrics.length > 0 ? (
-                    <dl className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {metrics.map((m) => (
-                        <div key={m.id} className="border-t border-[#dce9ff]/40 pt-3">
-                          <dd className="text-sm font-semibold text-[#252A58]">{m.value || "—"}</dd>
-                          <dt className="mt-1 text-[10px] font-bold uppercase tracking-wide text-[#b6c2d3]">
-                            {m.label}
-                          </dt>
-                        </div>
-                      ))}
-                    </dl>
-                  ) : null}
-                  <div className="mt-6">
-                    <Link
-                      href={L(`/crecer/oportunidades/${opp.slug}`)}
-                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#252A58] underline-offset-4 hover:text-[#35A963] hover:underline"
-                    >
-                      {t.cta}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                    <h2 className="mt-1 font-display text-xl font-extrabold text-cni-primary group-hover:text-[#0E7A7C]">
+                      {item.title}
+                    </h2>
+                    {item.summary ? (
+                      <p className="mt-2 line-clamp-2 font-body text-sm text-[#0E7A7C]">{item.summary}</p>
+                    ) : null}
                   </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </Section>
+                  <span className="inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-cni-primary md:col-span-3 md:justify-end">
+                    {c.portfolioCta}
+                    <ArrowUpRight className="h-4 w-4" aria-hidden />
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

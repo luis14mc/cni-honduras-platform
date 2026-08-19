@@ -1,19 +1,11 @@
-import Image from "next/image";
 import Link from "next/link";
+import { BrandPageHero, brandHeroCta } from "@/src/components/cni/BrandPageHero";
+import { RecursosDocsCatalog } from "@/src/components/cni/RecursosDocsCatalog";
+import { documentCoverFallback } from "@/src/lib/cmsDocuments";
 import type { Locale } from "@/src/i18n/config";
-import { resolveHref } from "@/src/i18n/path";
-import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import {
-  documentActionLabel,
-  documentCoverFallback,
-  documentCoverImage,
-  documentDisplayDate,
-  documentLinkRel,
-  documentLinkTarget,
-  documentOpenUrl,
-  formatDocumentDate,
-  formatDocumentFileSize,
-} from "@/src/lib/cmsDocuments";
+import { withLocale } from "@/src/i18n/path";
+import { layout, type as t } from "@/src/lib/typography";
+import { cn } from "@/src/lib/utils";
 import {
   resourceCategoryUi,
   type ResourceCategoryMeta,
@@ -34,161 +26,64 @@ export function ResourcesCategoryView({
   loadStatus = "ok",
 }: Props) {
   const ui = resourceCategoryUi[locale];
-  const L = (p: string) => resolveHref(locale, p);
-  const featured = documents.filter((doc) => doc.is_featured);
-  const regular = documents.filter((doc) => !doc.is_featured);
+  const L = (path: string) => withLocale(locale, path);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
-      <header className="relative flex h-[60vh] min-h-[400px] items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={documentCoverFallback()}
-            alt={category.heroAlt[locale]}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#252A58] via-[#252A58]/80 to-transparent" />
-        </div>
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-8 lg:px-12">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+      <BrandPageHero
+        kicker={
           <Link
             href={L("/recursos")}
-            className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#35A963] hover:text-white"
+            className="font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 transition hover:text-white"
           >
-            <MaterialIcon name="arrow_back" className="text-sm" />
-            {ui.backToList}
+            ← {ui.backToList}
           </Link>
-          <div className="max-w-2xl">
-            <span className="mb-4 inline-block text-xs font-bold uppercase tracking-[0.28em] text-[#35A963]/90">
-              {ui.eyebrow}
-            </span>
-            <div className="mb-8 h-1 w-20 bg-[#35A963]" />
-            <h1 className="mb-6 text-5xl font-extrabold tracking-tight text-white md:text-6xl">
-              {category.title[locale]}
-            </h1>
-            <p className="max-w-xl text-xl leading-relaxed text-white/80">
-              {category.description[locale]}
-            </p>
+        }
+        title={category.title[locale]}
+        description={category.description[locale]}
+        imageSrc={documentCoverFallback()}
+        imageAlt={category.heroAlt[locale]}
+      >
+        <a href="#directorio" className={brandHeroCta(true)}>
+          {locale === "es" ? "Ver directorio" : "View directory"}
+        </a>
+        <Link href={L("/contacto")} className={brandHeroCta(false)}>
+          {locale === "es" ? "Contactar al CNI" : "Contact CNI"}
+        </Link>
+      </BrandPageHero>
+
+      <section id="directorio" className={cn("bg-white", layout.section)}>
+        <div className={layout.container}>
+          <p className={t.eyebrow}>{ui.directoryEyebrow}</p>
+          <h2 className={cn("mt-3", t.h2)}>{category.directoryTitle[locale]}</h2>
+          <div className={cn("mt-4", t.sectionRule)} />
+          <p className={cn("mt-6 max-w-2xl", t.lead)}>
+            {locale === "es"
+              ? "Filtre por título. Vacío no es error: si no hay documentos, la categoría está en actualización."
+              : "Filter by title. Empty is not an error: if no documents appear, the category is being updated."}
+          </p>
+          <div className="mt-10">
+            <RecursosDocsCatalog
+              locale={locale}
+              documents={{ status: loadStatus, data: documents }}
+            />
           </div>
         </div>
-      </header>
-
-      <section className="mx-auto max-w-7xl px-8 py-24 lg:px-12">
-        <div className="mb-16 flex flex-col items-end justify-between gap-8 md:flex-row">
-          <div className="space-y-4">
-            <span className="text-sm font-semibold uppercase tracking-widest text-[#0E7A7C]">
-              {ui.directoryEyebrow}
-            </span>
-            <h2 className="text-4xl font-bold text-[#252A58]">
-              {category.directoryTitle[locale]}
-            </h2>
-          </div>
-        </div>
-
-        {loadStatus === "error" ? (
-          <div
-            role="alert"
-            className="rounded-xl border border-red-200 bg-white p-10 text-center text-lg text-red-800 shadow-sm"
-          >
-            {ui.error}
-          </div>
-        ) : documents.length === 0 ? (
-          <div className="rounded-xl bg-white p-10 text-center text-lg text-[#0E7A7C] shadow-sm">
-            {ui.empty}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {[...featured, ...regular].map((doc) => {
-              const openUrl = documentOpenUrl(doc);
-              const displayDate = documentDisplayDate(doc);
-
-              return (
-                <article
-                  key={doc.id}
-                  className={`group flex flex-col justify-between rounded-xl bg-white p-8 transition-all duration-300 hover:shadow-[0_20px_40px_rgba(0,10,30,0.06)] ${doc.is_featured ? "border-t-4 border-[#35A963]" : ""}`}
-                >
-                  <div>
-                    <div
-                      className={`relative mb-6 overflow-hidden rounded-lg ${doc.is_featured ? "bg-[#0E7A7C]" : "bg-[#24436B]"}`}
-                    >
-                      {documentCoverImage(doc) ? (
-                        <img
-                          src={documentCoverImage(doc) ?? ""}
-                          alt={doc.cover_image?.alt_text || doc.title}
-                          className="h-40 w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-40 w-full items-center justify-center text-[#35A963]">
-                          <MaterialIcon name="description" filled className="text-5xl" />
-                        </div>
-                      )}
-                      {doc.is_featured && (
-                        <span className="absolute left-3 top-3 rounded-sm bg-[#35A963] px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-[#261900]">
-                          {ui.featured}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="mb-3 text-2xl font-bold text-[#252A58]">{doc.title}</h3>
-                    {doc.description && (
-                      <p className="mb-4 leading-relaxed text-[#0E7A7C]">{doc.description}</p>
-                    )}
-                    <div className="space-y-1 text-xs font-semibold uppercase tracking-widest text-[#b6c2d3]">
-                      {doc.file_type && (
-                        <p>
-                          {doc.file_type.toUpperCase()}
-                          {doc.file_size_bytes
-                            ? ` · ${formatDocumentFileSize(doc.file_size_bytes, locale)}`
-                            : ""}
-                        </p>
-                      )}
-                      {displayDate && (
-                        <time dateTime={displayDate}>{formatDocumentDate(locale, displayDate)}</time>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-8 flex gap-4">
-                    {openUrl ? (
-                      <a
-                        href={openUrl}
-                        target={documentLinkTarget(doc)}
-                        rel={documentLinkRel(doc)}
-                        className="flex flex-1 items-center justify-center rounded-lg bg-[#252A58] py-3 text-sm font-bold text-white transition-transform active:scale-95"
-                      >
-                        {documentActionLabel(doc, locale)}
-                      </a>
-                    ) : (
-                      <span className="flex flex-1 items-center justify-center rounded-lg bg-[#b6c2d3]/30 py-3 text-sm font-bold text-[#0E7A7C]">
-                        {ui.unavailable}
-                      </span>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
       </section>
 
-      <section className="bg-[#e5eeff] px-8 py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-[#252A58]">
-            <MaterialIcon name="support_agent" className="text-4xl text-[#35A963]" />
-          </div>
-          <h2 className="mb-6 text-4xl font-bold text-[#252A58]">{ui.helpTitle}</h2>
-          <p className="mb-10 text-xl leading-relaxed text-[#0E7A7C]">{ui.helpText}</p>
-          <div className="flex flex-col justify-center gap-6 sm:flex-row">
-            <Link
-              href={L("/asesoria")}
-              className="rounded-lg bg-[#252A58] px-10 py-4 text-lg font-bold text-white shadow-xl shadow-[#252A58]/20 transition-all hover:-translate-y-1"
-            >
+      <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
+        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
+        <div className={cn("relative z-10", layout.container)}>
+          <p className={t.eyebrowOnDark}>
+            {locale === "es" ? "Acompañamiento CNI" : "CNI support"}
+          </p>
+          <h2 className={cn("mt-3 max-w-3xl text-white", t.h2OnDark)}>{ui.helpTitle}</h2>
+          <p className="mt-6 max-w-xl font-body text-lg text-white/80">{ui.helpText}</p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href={L("/asesoria")} className={brandHeroCta(true)}>
               {ui.helpPrimary}
             </Link>
-            <Link
-              href={L("/recursos")}
-              className="rounded-lg border border-[#dce9ff]/30 bg-white px-10 py-4 text-lg font-bold text-[#252A58] transition-all hover:bg-[#f8f9ff]"
-            >
+            <Link href={L("/recursos")} className={brandHeroCta(false)}>
               {ui.helpSecondary}
             </Link>
           </div>
