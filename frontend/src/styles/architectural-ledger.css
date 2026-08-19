@@ -490,10 +490,40 @@
 .theme-architectural-ledger .al-sector-stat::before {
   content: "";
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--sector-accent, #29ab85);
-  opacity: 0.95;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--sector-accent, #93c01f);
+}
+
+.theme-architectural-ledger .al-sector-intro {
+  background: color-mix(in srgb, var(--sector-accent, #93c01f) 8%, #ffffff);
+}
+
+.theme-architectural-ledger .al-sector-intro-logo {
+  background: color-mix(in srgb, var(--sector-accent, #93c01f) 16%, #ffffff);
+  border: 1px solid var(--sector-border, rgba(147, 192, 31, 0.35));
+  box-shadow: 0 10px 28px -18px color-mix(in srgb, var(--sector-accent, #93c01f) 70%, transparent);
+}
+
+.theme-architectural-ledger .al-sector-intro-eyebrow {
+  color: var(--sector-accent, #93c01f);
+}
+
+.theme-architectural-ledger .al-sector-intro-rule {
+  background: var(--sector-accent, #93c01f);
+}
+
+.theme-architectural-ledger .al-sector-video {
+  box-shadow: 0 24px 48px -28px rgba(37, 42, 88, 0.55);
+}
+
+.theme-architectural-ledger .al-sector-video::before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: var(--sector-accent, #93c01f);
 }
 
 .theme-architectural-ledger .al-sector-quick-stat {

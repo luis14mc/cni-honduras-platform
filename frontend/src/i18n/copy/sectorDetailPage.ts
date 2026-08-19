@@ -19,31 +19,30 @@ export type SectorPageExtra = {
 const DETAIL: Record<SectorSlug, Record<Locale, SectorPageExtra>> = {
   agroindustria: {
     es: {
-      heroBadge: "Sector económico estratégico",
-      heroTitleBefore: "Análisis de agronegocios:",
-      heroTitleAccent: "Cultivando el futuro",
+      heroBadge: "Agroindustria",
+      heroTitleBefore: "El hub de producción agrícola",
+      heroTitleAccent: "en Centroamérica",
       heroTitleAfter: "",
       stats: [
-        { value: "$1.2B", label: "IED del sector (referencia)" },
-        { value: "2.5M ha", label: "Tierra arable" },
-        { value: "12", label: "Microclimas" },
+        { value: "+3,000 MM", label: "Exportaciones agrícolas, ganaderas, silvícolas y pesqueras" },
+        { value: "8.º", label: "Exportador de café a nivel mundial" },
+        { value: "807.5 mil", label: "Empleos en agricultura, ganadería, silvicultura y pesca" },
       ],
-      valueTitle: "La ventaja soberana",
+      valueTitle: "Agroindustria",
       valueLead:
-        "Panorama de agronegocios con eficiencia, accesibilidad y marco regulatorio orientado a la longevidad institucional.",
+        "Honduras se posiciona como una ubicación destacada y privilegiada para la agroindustria, ofreciendo una combinación única de recursos naturales excepcionales, prácticas sostenibles y acceso a mercados globales. Desde cultivos tradicionales hasta productos de alto valor agregado, el país está listo para ser el aliado estratégico de tu inversión.",
       advantages: [
         {
-          title: "Exportación estratégica",
-          text: "Red logística con acceso a puertos de aguas profundas hacia EE. UU. y la UE, acortando tiempos de tránsito frente a pares regionales.",
+          title: "Abundancia de Recursos Naturales",
+          text: "Honduras cuenta con más de 1.8 millones de hectáreas cultivables y acceso a agua abundante, proporcionando condiciones óptimas para una agroindustria diversa y productiva.",
         },
         {
-          title: "Resiliencia climática",
-          text: "Diversidad de microclimas que permiten producción durante todo el año de cultivos de alto valor.",
+          title: "Ubicación Estratégica",
+          text: "Su proximidad a mercados como Estados Unidos, Europa y Asia permite exportaciones rápidas y competitivas, soportadas por infraestructura de clase mundial como Puerto Cortés, uno de los puertos más grandes y seguros de Centroamérica.",
         },
         {
-          title: "Marco de incentivos",
-          text: "Exenciones para agroexportación, importación de equipos con arancel cero y acompañamiento LPPI/ZOLI.",
-          wide: true,
+          title: "Incentivos para Inversionistas",
+          text: "Honduras ofrece incentivos atractivos, como exoneraciones fiscales en la importación de maquinaria y equipos agrícolas, así como beneficios comerciales a través de acuerdos como el CAFTA-DR, eliminando aranceles para exportaciones clave.",
         },
       ],
       analysisEyebrow: "Referencia de mercado",
