@@ -26,8 +26,8 @@ export function SectorHero({
   backLabel,
 }: Props) {
   return (
-    <header className="al-sector-hero relative -mt-28 flex min-h-screen flex-col justify-end overflow-hidden bg-cni-primary pt-32 md:pt-28">
-      <div className="absolute inset-0">
+    <header className="al-sector-hero relative -mt-28 flex min-h-screen flex-col justify-end bg-cni-primary pt-32 md:pt-28">
+      <div className="absolute inset-0 overflow-hidden">
         <Image
           src={photoSrc}
           alt={name}
@@ -66,29 +66,27 @@ export function SectorHero({
           </div>
 
           <h1
-            className="max-w-5xl font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.1rem]"
+            className="max-w-5xl text-balance font-display text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-[3.35rem]"
             style={{ textShadow: "0 2px 24px rgba(0, 0, 0, 0.55)" }}
           >
             {headline}
           </h1>
 
-          <div
-            className="mt-10 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/15 bg-white/10 sm:grid-cols-3"
-            role="list"
-          >
+          <ul className="mt-10 grid grid-cols-1 gap-3 md:grid-cols-3 md:items-stretch md:gap-4 lg:gap-5">
             {metrics.map((metric) => (
-              <div
+              <li
                 key={`${metric.value}-${metric.label}`}
-                role="listitem"
-                className="al-sector-stat bg-[#252A58]/55 px-5 py-6 backdrop-blur-md md:px-6 md:py-7"
+                className="al-sector-stat flex h-full min-w-0 flex-col rounded-2xl border border-white/15 bg-[#252A58]/60 px-5 py-5 backdrop-blur-md md:px-5 md:py-6 lg:px-6"
               >
-                <p className="font-display text-3xl font-extrabold leading-none text-white md:text-4xl">
+                <p className="font-display text-[1.7rem] font-extrabold leading-none tracking-tight text-white lg:text-[2.15rem]">
                   <span className="al-sector-accent-text">{metric.value}</span>
                 </p>
-                <p className="mt-3 font-body text-sm leading-relaxed text-white/80">{metric.label}</p>
-              </div>
+                <p className="mt-3 font-body text-sm leading-snug text-pretty text-white/80 md:text-[13px] lg:text-sm">
+                  {metric.label}
+                </p>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
     </header>

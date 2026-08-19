@@ -63,6 +63,7 @@ export function SectorDetailView({
         backLabel={chrome.backToSectors}
       />
       <SectorIntro
+        slug={slug}
         title={page.intro.title}
         description={page.intro.description}
         videoUrl={page.intro.videoUrl}

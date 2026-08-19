@@ -28,12 +28,96 @@ describe("getSectorPageContent", () => {
     expect(en.name).toBe("Agroindustry");
   });
 
-  it("lets other sectors reuse the same shape from existing extras", () => {
-    const turismo = getSectorPageContent("turismo", "es");
-    expect(turismo.color).toBe(SECTOR_ACCENTS.turismo.accent);
-    expect(turismo.hero.metrics.length).toBeGreaterThan(0);
-    expect(turismo.benefits.items.length).toBeGreaterThan(0);
-    expect(turismo.guide).toBeNull();
-    expect(turismo.intro.videoUrl).toBeNull();
+  it("loads the approved Spanish manufacturing template", () => {
+    const page = getSectorPageContent("manufactura", "es");
+    expect(page.name).toBe("Manufactura");
+    expect(page.color).toBe(SECTOR_ACCENTS.manufactura.accent);
+    expect(page.hero.headline).toBe("El hub de nearshoring en Centroamérica");
+    expect(page.hero.metrics).toHaveLength(3);
+    expect(page.hero.metrics[0]?.value).toBe("503.1k");
+    expect(page.intro.videoUrl).toBe("https://youtu.be/XjbxTvn0Ybs");
+    expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de Manufactura");
+    expect(page.benefits.items).toHaveLength(3);
+    expect(page.guide).toBeNull();
+  });
+
+  it("does not invent EN copy: manufacturing EN falls back to the Spanish body", () => {
+    const es = getSectorPageContent("manufactura", "es");
+    const en = getSectorPageContent("manufactura", "en");
+    expect(en.hero.headline).toBe(es.hero.headline);
+    expect(en.intro.videoUrl).toBe(es.intro.videoUrl);
+    expect(en.name).toBe("Manufacturing");
+  });
+
+  it("loads the approved Spanish tourism template", () => {
+    const page = getSectorPageContent("turismo", "es");
+    expect(page.name).toBe("Turismo");
+    expect(page.color).toBe(SECTOR_ACCENTS.turismo.accent);
+    expect(page.hero.headline).toContain("vastas oportunidades de inversión");
+    expect(page.hero.metrics).toHaveLength(3);
+    expect(page.hero.metrics[0]?.value).toBe("2.7 millones");
+    expect(page.intro.videoUrl).toBe("https://youtu.be/CuF6u-CEdnw");
+    expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de turismo");
+    expect(page.benefits.items).toHaveLength(3);
+    expect(page.guide).toBeNull();
+  });
+
+  it("does not invent EN copy: tourism EN falls back to the Spanish body", () => {
+    const es = getSectorPageContent("turismo", "es");
+    const en = getSectorPageContent("turismo", "en");
+    expect(en.hero.headline).toBe(es.hero.headline);
+    expect(en.intro.videoUrl).toBe(es.intro.videoUrl);
+    expect(en.name).toBe("Tourism");
+  });
+
+  it("loads the approved Spanish energy template", () => {
+    const page = getSectorPageContent("energia", "es");
+    expect(page.name).toBe("Energía");
+    expect(page.color).toBe(SECTOR_ACCENTS.energia.accent);
+    expect(page.hero.headline).toBe("Energía Limpia para un Futuro Sostenible");
+    expect(page.hero.metrics).toHaveLength(3);
+    expect(page.hero.metrics[0]?.value).toBe("53%");
+    expect(page.intro.videoUrl).toBe("https://youtu.be/wbBNwUCdkRc");
+    expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de Energía");
+    expect(page.benefits.items).toHaveLength(3);
+    expect(page.guide).toBeNull();
+  });
+
+  it("does not invent EN copy: energy EN falls back to the Spanish body", () => {
+    const es = getSectorPageContent("energia", "es");
+    const en = getSectorPageContent("energia", "en");
+    expect(en.hero.headline).toBe(es.hero.headline);
+    expect(en.intro.videoUrl).toBe(es.intro.videoUrl);
+    expect(en.name).toBe("Energy");
+  });
+
+  it("loads the approved Spanish infrastructure template", () => {
+    const page = getSectorPageContent("infraestructura", "es");
+    expect(page.name).toBe("Infraestructura");
+    expect(page.color).toBe(SECTOR_ACCENTS.infraestructura.accent);
+    expect(page.hero.headline).toBe("Conectividad y Desarrollo para Impulsar tu Negocio");
+    expect(page.hero.metrics).toHaveLength(3);
+    expect(page.hero.metrics[0]?.value).toBe("8");
+    expect(page.intro.videoUrl).toBe("https://youtu.be/j4IpoLINxt0");
+    expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de infraestructura");
+    expect(page.benefits.items).toHaveLength(3);
+    expect(page.guide).toBeNull();
+  });
+
+  it("does not invent EN copy: infrastructure EN falls back to the Spanish body", () => {
+    const es = getSectorPageContent("infraestructura", "es");
+    const en = getSectorPageContent("infraestructura", "en");
+    expect(en.hero.headline).toBe(es.hero.headline);
+    expect(en.intro.videoUrl).toBe(es.intro.videoUrl);
+    expect(en.name).toBe("Infrastructure");
+  });
+
+  it("lets remaining sectors reuse the same shape from existing extras", () => {
+    const logistica = getSectorPageContent("logistica", "es");
+    expect(logistica.color).toBe(SECTOR_ACCENTS.logistica.accent);
+    expect(logistica.hero.metrics.length).toBeGreaterThan(0);
+    expect(logistica.benefits.items.length).toBeGreaterThan(0);
+    expect(logistica.guide).toBeNull();
+    expect(logistica.intro.videoUrl).toBeNull();
   });
 });
