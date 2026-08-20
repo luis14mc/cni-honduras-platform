@@ -120,7 +120,7 @@ class InvestmentProjectAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("title", "slug", "summary", "description")}),
         ("Clasificación", {"fields": ("sector", "department", "region", "municipality")}),
-        ("Datos", {"fields": ("investment_amount", "estimated_jobs", "project_stage")}),
+        ("Datos", {"fields": ("investment_amount", "estimated_jobs", "project_stage", "location")}),
         ("Visibilidad", {"fields": ("is_public", "is_featured")}),
         ("Metadatos", {"fields": ("created_at", "updated_at")}),
     )

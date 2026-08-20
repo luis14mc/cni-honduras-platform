@@ -84,6 +84,14 @@ class MunicipalitySerializer(GeometrySerializerMixin, serializers.ModelSerialize
         )
 
 
+class MunicipalityLiteSerializer(serializers.ModelSerializer):
+    department = DepartmentLiteSerializer(read_only=True)
+
+    class Meta:
+        model = Municipality
+        fields = ("id", "department", "name", "slug", "code", "center_lat", "center_lng")
+
+
 class DepartmentPropertiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
@@ -108,8 +116,15 @@ def department_feature(dept: Department) -> dict:
     geometry = json.loads(dept.geometry.geojson)
     return {
         "type": "Feature",
+        "id": dept.id,
         "geometry": geometry,
-        "properties": DepartmentPropertiesSerializer(dept).data,
+        "properties": {
+            "name": dept.name,
+            "slug": dept.slug,
+            "code": dept.code,
+            "center_lat": dept.center_lat,
+            "center_lng": dept.center_lng,
+        },
     }
 
 
@@ -117,4 +132,29 @@ def departments_feature_collection(qs) -> dict:
     return {
         "type": "FeatureCollection",
         "features": [department_feature(d) for d in qs],
+    }
+
+
+def municipality_feature(municipality: Municipality) -> dict:
+    return {
+        "type": "Feature",
+        "id": municipality.id,
+        "geometry": json.loads(municipality.geometry.geojson)
+        if municipality.geometry
+        else None,
+        "properties": {
+            "name": municipality.name,
+            "slug": municipality.slug,
+            "code": municipality.code,
+            "department": municipality.department.slug,
+            "center_lat": municipality.center_lat,
+            "center_lng": municipality.center_lng,
+        },
+    }
+
+
+def municipalities_feature_collection(qs) -> dict:
+    return {
+        "type": "FeatureCollection",
+        "features": [municipality_feature(municipality) for municipality in qs],
     }

@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.contrib.gis.db import models
 from django.utils.text import slugify
 
 from apps.cms.models import EditorialModel, PublishStatus
@@ -260,6 +260,7 @@ class InvestmentProject(TimeStampedModel):
         blank=True,
         related_name="projects",
     )
+    location = models.PointField(srid=4326, null=True, blank=True)
 
     investment_amount = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True
@@ -281,6 +282,17 @@ class InvestmentProject(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.title
+
+    def clean(self):
+        super().clean()
+        if (
+            self.department_id is not None
+            and self.municipality_id is not None
+            and self.municipality.department_id != self.department_id
+        ):
+            raise ValidationError(
+                {"municipality": "El municipio debe pertenecer al departamento indicado."}
+            )
 
     def save(self, *args, **kwargs):
         if not self.slug:

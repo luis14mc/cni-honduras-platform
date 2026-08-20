@@ -1,8 +1,16 @@
 from django.http import Http404
 from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from .models import CNIRegion, Department, Municipality
-from .serializers import CNIRegionSerializer, DepartmentSerializer, MunicipalitySerializer
+from .serializers import (
+    CNIRegionSerializer,
+    DepartmentSerializer,
+    MunicipalitySerializer,
+    departments_feature_collection,
+    municipalities_feature_collection,
+)
 
 
 class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
@@ -11,6 +19,13 @@ class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Department.objects.filter(is_active=True).order_by(*Department._meta.ordering)
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        queryset = self.get_queryset().only(
+            "id", "name", "slug", "code", "geometry", "center_lat", "center_lng"
+        )
+        return Response(departments_feature_collection(queryset))
 
 
 class CNIRegionViewSet(viewsets.ReadOnlyModelViewSet):
@@ -42,6 +57,24 @@ class MunicipalityViewSet(viewsets.ReadOnlyModelViewSet):
         if region_slug:
             queryset = queryset.filter(department__regions__slug=region_slug).distinct()
         return queryset
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        queryset = self.get_queryset().only(
+            "id",
+            "department_id",
+            "department__id",
+            "department__name",
+            "department__slug",
+            "department__code",
+            "name",
+            "slug",
+            "code",
+            "geometry",
+            "center_lat",
+            "center_lng",
+        )
+        return Response(municipalities_feature_collection(queryset))
 
     def get_object(self):
         slug = self.kwargs.get(self.lookup_field)
