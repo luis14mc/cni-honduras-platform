@@ -33,9 +33,9 @@ export const PAGE_HEROES = {
     source: "design-assets" as const,
     image: designImages.casos.sinclairHero,
   },
-  oportunidades: {
+  asesoria: {
     source: "design-assets" as const,
-    image: designImages.portfolio.hero,
+    image: designImages.cni.heroCity,
   },
   portfolio: {
     source: "design-assets" as const,

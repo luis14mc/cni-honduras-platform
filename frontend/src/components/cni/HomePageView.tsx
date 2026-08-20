@@ -18,6 +18,7 @@ import { newsCardImage } from "@/src/lib/cmsNews";
   successStoryDetailHref,
 } from "@/src/lib/cmsSuccessStories";
 import { sectorIconAssets } from "@/src/lib/sectorIcons";
+import { SECTOR_ACCENTS } from "@/src/i18n/copy/invertirPage";
 import { cn } from "@/src/lib/utils";
 import { type as t } from "@/src/lib/typography";
 import { strategicAlliesLevel1, strategicAlliesLevel2, strategicAllyLogoSize } from "@/src/data/strategicAllies";
@@ -130,38 +131,29 @@ export function HomePageView({
   const sectorsData = useMemo(() => {
     if (sectorsStatus !== "ok" || apiSectors.length === 0) return [];
 
-    const visualBySlug: Record<
-      string,
-      { iconSrc: string; accent: string; img: string }
-    > = {
+    const visualBySlug: Record<string, { iconSrc: string; img: string }> = {
       agroindustria: {
         iconSrc: sectorIconAssets.agroindustria.src,
-        accent: "#93C01F",
         img: designImages.sectors.agroindustria,
       },
       manufactura: {
         iconSrc: sectorIconAssets.manufactura.src,
-        accent: "#7C25A8",
         img: designImages.sectors.manufactura,
       },
       energia: {
         iconSrc: sectorIconAssets.energia.src,
-        accent: "#F7BF06",
         img: designImages.sectors.energia,
       },
       logistica: {
         iconSrc: sectorIconAssets.logistica.src,
-        accent: "#2EB29C",
         img: designImages.sectors.logistica,
       },
       turismo: {
         iconSrc: sectorIconAssets.turismo.src,
-        accent: "#57D0E1",
         img: designImages.sectors.turismo,
       },
       infraestructura: {
         iconSrc: sectorIconAssets.infraestructura.src,
-        accent: "#F98639",
         img: designImages.sectors.infraestructura,
       },
     };
@@ -171,11 +163,12 @@ export function HomePageView({
       .sort((a, b) => a.order - b.order)
       .map((sector) => {
         const visual = visualBySlug[sector.slug];
+        const palette = SECTOR_ACCENTS[sector.slug];
         return {
           slug: sector.slug,
           iconSrc: visual?.iconSrc ?? sectorIconAssets.agroindustria.src,
-          accent: sector.color_hex || visual?.accent || "#252A58",
-          img: sector.image || visual?.img || designImages.sectors.agroindustria,
+          accent: palette?.accent || sector.color_hex || "#252A58",
+          img: visual?.img || sector.image || designImages.sectors.agroindustria,
           name: sector.name,
           desc: sector.short_description || sector.description || "",
           href: getSectorHref(locale, sector.slug),

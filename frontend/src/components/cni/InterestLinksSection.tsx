@@ -40,47 +40,47 @@ export function InterestLinksSection({ locale, links = [], status = "ok" }: Prop
 
   return (
     <section
-      className="border-t border-cni-primary/10 bg-white py-10 md:py-12"
+      className="border-t border-cni-primary/10 bg-white py-14 md:py-20"
       aria-labelledby="interest-links-title"
     >
       <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
-          <header className="shrink-0 lg:max-w-[13rem]">
-            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
+        <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+          <header className="shrink-0 lg:max-w-[16rem]">
+            <p className="font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
               {copy.sectionEyebrow}
             </p>
             <h2
               id="interest-links-title"
-              className="mt-2 font-display text-xl font-extrabold uppercase leading-tight tracking-tight text-cni-primary md:text-[1.35rem]"
+              className="mt-3 font-display text-2xl font-extrabold uppercase leading-tight tracking-tight text-cni-primary md:text-3xl"
             >
               {copy.sectionTitle}
             </h2>
           </header>
 
           {status === "error" ? (
-            <p className="font-body text-sm text-cni-primary/70 lg:flex-1 lg:text-right" role="status">
+            <p className="font-body text-base text-cni-primary/70 lg:flex-1 lg:text-right" role="status">
               {copy.error}
             </p>
           ) : resolvedLinks.length === 0 ? (
-            <p className="font-body text-sm text-cni-primary/60 lg:flex-1 lg:text-right" role="status">
+            <p className="font-body text-base text-cni-primary/60 lg:flex-1 lg:text-right" role="status">
               {copy.empty}
             </p>
           ) : (
-            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:flex lg:flex-1 lg:items-start lg:justify-end lg:gap-0 lg:divide-x lg:divide-cni-primary/10">
+            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:flex-1 lg:items-start lg:justify-end lg:gap-0 lg:divide-x lg:divide-cni-primary/10">
               {resolvedLinks.map((item) => (
-                <li key={item.id} className="lg:min-w-0 lg:flex-1 lg:px-6 lg:first:pl-0 lg:last:pr-0">
+                <li key={item.id} className="lg:min-w-0 lg:flex-1 lg:px-8 lg:first:pl-0 lg:last:pr-0">
                   <Link
                     href={item.href}
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
-                    className="al-interest-link group flex items-center gap-4 rounded-xl px-1 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#29AB85] sm:gap-5 lg:flex-col lg:items-center lg:gap-4 lg:px-0 lg:py-1 lg:text-center"
+                    className="al-interest-link group flex items-center gap-5 rounded-xl px-1 py-3 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#29AB85] sm:gap-6 lg:flex-col lg:items-center lg:gap-5 lg:px-0 lg:py-2 lg:text-center"
                     style={{ "--interest-accent": item.accent } as CSSProperties}
                   >
-                    <span className="relative flex h-20 w-20 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-24 sm:w-24 lg:h-28 lg:w-28">
+                    <span className="relative flex h-24 w-24 shrink-0 items-center justify-center transition-transform duration-300 group-hover:scale-105 sm:h-28 sm:w-28 lg:h-36 lg:w-36 xl:h-40 xl:w-40">
                       <InterestLinkIcon id={item.id} className="h-full w-full object-contain" />
                     </span>
 
-                    <span className="min-w-0 flex-1 font-headline text-xs font-bold uppercase leading-snug tracking-[0.1em] text-cni-primary transition-colors duration-300 group-hover:text-[color:var(--interest-accent)] sm:text-[13px] lg:flex-none lg:max-w-[11rem] lg:text-xs lg:tracking-[0.12em]">
+                    <span className="min-w-0 flex-1 font-headline text-sm font-bold uppercase leading-snug tracking-[0.1em] text-cni-primary transition-colors duration-300 group-hover:text-[color:var(--interest-accent)] sm:text-base lg:flex-none lg:max-w-[14rem] lg:text-sm lg:tracking-[0.12em]">
                       {item.title}
                     </span>
                   </Link>

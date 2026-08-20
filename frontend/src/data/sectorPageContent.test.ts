@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { SECTOR_ACCENTS } from "@/src/i18n/copy/invertirPage";
-import { getSectorPageContent } from "@/src/data/sectorPageContent";
+import { getSectorPageContent, SECTOR_GUIDE_COVER } from "@/src/data/sectorPageContent";
 
 describe("getSectorPageContent", () => {
   it("uses catalog color for agroindustria instead of a hardcoded accent", () => {
@@ -18,7 +18,9 @@ describe("getSectorPageContent", () => {
     expect(page.hero.metrics[0]?.value).toBe("+3,000 MM");
     expect(page.intro.videoUrl).toBe("https://youtu.be/gzplb3I4X98");
     expect(page.benefits.items).toHaveLength(3);
-    expect(page.guide).toBeNull();
+    expect(page.guide?.title).toBe("Guía de Agroindustria");
+    expect(page.guide?.subtitle).toBe("Guía sectorial");
+    expect(page.guide?.image).toBe(SECTOR_GUIDE_COVER.agroindustria);
   });
 
   it("loads the approved English agroindustry template", () => {
@@ -29,6 +31,7 @@ describe("getSectorPageContent", () => {
     expect(page.intro.title).toBe("Agribusiness");
     expect(page.intro.videoUrl).toBe("https://youtu.be/gzplb3I4X98");
     expect(page.benefits.items).toHaveLength(3);
+    expect(page.guide?.title).toBe("Agroindustry guide");
   });
 
   it("loads the approved Spanish manufacturing template", () => {
@@ -51,6 +54,7 @@ describe("getSectorPageContent", () => {
     expect(page.intro.title).toBe("Manufacturing");
     expect(page.intro.videoUrl).toBe("https://youtu.be/XjbxTvn0Ybs");
     expect(page.benefits.title).toBe("Benefits of Investing in the Manufacturing Sector");
+    expect(page.guide).toBeNull();
   });
 
   it("loads the approved Spanish tourism template", () => {
@@ -63,7 +67,8 @@ describe("getSectorPageContent", () => {
     expect(page.intro.videoUrl).toBe("https://youtu.be/CuF6u-CEdnw");
     expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de turismo");
     expect(page.benefits.items).toHaveLength(3);
-    expect(page.guide).toBeNull();
+    expect(page.guide?.title).toBe("Guía de Turismo");
+    expect(page.guide?.image).toBe(SECTOR_GUIDE_COVER.turismo);
   });
 
   it("loads the approved English tourism template", () => {
@@ -74,6 +79,7 @@ describe("getSectorPageContent", () => {
     expect(page.intro.title).toBe("Tourism");
     expect(page.intro.videoUrl).toBe("https://youtu.be/CuF6u-CEdnw");
     expect(page.intro.description.split(/\n\s*\n/).length).toBe(2);
+    expect(page.guide?.title).toBe("Tourism guide");
   });
 
   it("loads the approved Spanish energy template", () => {
@@ -96,6 +102,7 @@ describe("getSectorPageContent", () => {
     expect(page.intro.title).toBe("Energy");
     expect(page.intro.videoUrl).toBe("https://youtu.be/wbBNwUCdkRc");
     expect(page.benefits.title).toBe("Benefits of Investing in the Energy Sector");
+    expect(page.guide).toBeNull();
   });
 
   it("loads the approved Spanish infrastructure template", () => {
@@ -108,7 +115,8 @@ describe("getSectorPageContent", () => {
     expect(page.intro.videoUrl).toBe("https://youtu.be/j4IpoLINxt0");
     expect(page.benefits.title).toBe("Beneficios de Invertir en el sector de infraestructura");
     expect(page.benefits.items).toHaveLength(3);
-    expect(page.guide).toBeNull();
+    expect(page.guide?.title).toBe("Guía de Infraestructura");
+    expect(page.guide?.image).toBe(SECTOR_GUIDE_COVER.infraestructura);
   });
 
   it("loads the approved English infrastructure template", () => {
@@ -118,6 +126,7 @@ describe("getSectorPageContent", () => {
     expect(page.intro.title).toBe("Infrastructure");
     expect(page.intro.videoUrl).toBe("https://youtu.be/j4IpoLINxt0");
     expect(page.benefits.items[2]?.title).toContain("Logistics Performance Index");
+    expect(page.guide?.title).toBe("Infrastructure guide");
   });
 
   it("lets remaining sectors reuse the same shape from existing extras", () => {

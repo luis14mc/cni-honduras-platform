@@ -17,10 +17,95 @@ export type SectorBenefit = {
 
 export type SectorGuideContent = {
   title: string;
+  subtitle?: string;
   description?: string;
   image: string;
   fileUrl: string;
 };
+
+export const SECTOR_GUIDE_COVER = {
+  general: "/portadas-guias/guia-porque-honduras.png",
+  agroindustria: "/portadas-guias/portada-guia-agro.png",
+  turismo: "/portadas-guias/portada-guia-turismo.png",
+  infraestructura: "/portadas-guias/portada-guia-infraestructura.png",
+} as const;
+
+/** Portada por defecto (guía general / Por qué Honduras). */
+export const SECTOR_GUIDE_IMAGE = SECTOR_GUIDE_COVER.general;
+
+const SECTOR_GUIDE_COVER_BY_SLUG: Partial<Record<SectorSlug, string>> = {
+  agroindustria: SECTOR_GUIDE_COVER.agroindustria,
+  turismo: SECTOR_GUIDE_COVER.turismo,
+  infraestructura: SECTOR_GUIDE_COVER.infraestructura,
+};
+
+const DEFAULT_SECTOR_GUIDE: Record<Locale, SectorGuideContent> = {
+  es: {
+    title: "Invierte en Honduras",
+    subtitle: "Guía para inversionistas",
+    description:
+      "Marco legal LPPI/ZOLI, sectores prioritarios y rutas de acompañamiento institucional del CNI para aterrizar capital en el país.",
+    image: SECTOR_GUIDE_IMAGE,
+    fileUrl: "/recursos/tecnicos",
+  },
+  en: {
+    title: "Invest in Honduras",
+    subtitle: "Investor guide",
+    description:
+      "LPPI/ZOLI legal framework, priority sectors and CNI institutional pathways to land capital in the country.",
+    image: SECTOR_GUIDE_IMAGE,
+    fileUrl: "/recursos/tecnicos",
+  },
+};
+
+export function getDefaultSectorGuide(locale: Locale): SectorGuideContent {
+  return DEFAULT_SECTOR_GUIDE[locale];
+}
+
+const SECTOR_GUIDE_DESCRIPTIONS: Record<Locale, Record<SectorSlug, string>> = {
+  es: {
+    agroindustria:
+      "Indicadores, ventajas competitivas, marco legal e inversiones clave del sector agroindustrial en Honduras.",
+    manufactura:
+      "Datos de nearshoring, talento disponible, incentivos LPPI/ZOLI y oportunidades de manufactura en Honduras.",
+    turismo:
+      "Potencial turístico, proyectos emblemáticos, incentivos y rutas de inversión del sector turismo en Honduras.",
+    energia:
+      "Matriz energética, proyectos renovables, marco regulatorio e inversiones del sector energía en Honduras.",
+    infraestructura:
+      "Conectividad, corredores logísticos, proyectos públicos e inversiones de infraestructura en Honduras.",
+    logistica:
+      "Puertos, aeropuertos, corredores y ventajas logísticas para invertir en transporte y distribución en Honduras.",
+  },
+  en: {
+    agroindustria:
+      "Indicators, competitive advantages, legal framework and key agribusiness investments in Honduras.",
+    manufactura:
+      "Nearshoring data, available talent, LPPI/ZOLI incentives and manufacturing opportunities in Honduras.",
+    turismo:
+      "Tourism potential, flagship projects, incentives and investment pathways in Honduras.",
+    energia:
+      "Energy matrix, renewable projects, regulatory framework and energy-sector investments in Honduras.",
+    infraestructura:
+      "Connectivity, logistics corridors, public projects and infrastructure investments in Honduras.",
+    logistica:
+      "Ports, airports, corridors and logistics advantages for transport and distribution investment in Honduras.",
+  },
+};
+
+export function getSectorGuideContent(slug: SectorSlug, locale: Locale): SectorGuideContent | null {
+  const cover = SECTOR_GUIDE_COVER_BY_SLUG[slug];
+  if (!cover) return null;
+
+  const name = getSectorDisplayName(locale, slug);
+  return {
+    title: locale === "es" ? `Guía de ${name}` : `${name} guide`,
+    subtitle: locale === "es" ? "Guía sectorial" : "Sector guide",
+    description: SECTOR_GUIDE_DESCRIPTIONS[locale][slug],
+    image: cover,
+    fileUrl: "/recursos/tecnicos",
+  };
+}
 
 export type SectorPageContent = {
   slug: SectorSlug;
@@ -616,6 +701,7 @@ export function getSectorPageContent(slug: SectorSlug, locale: Locale): SectorPa
     color: palette.accent,
     palette,
     ...body,
+    guide: body.guide ?? getSectorGuideContent(slug, locale),
   };
 }
 
@@ -638,9 +724,10 @@ export const sectorTemplateChrome = {
     projectsLead: "Proyectos públicos asociados a este sector estratégico.",
     projectsEmpty: "Todavía no hay proyectos publicados para este sector.",
     projectsError: "No pudimos cargar los proyectos. Intente de nuevo más tarde.",
-    guideEyebrow: "Recursos",
-    guideFallbackTitle: "Guía de inversión",
-    guideCta: "Descargar guía",
+    guideEyebrow: "Guía sectorial",
+    guideFallbackTitle: "Guía sectorial",
+    guideFallbackSubtitle: "Sector estratégico",
+    guideCta: "Descargar guía sectorial",
     videoTitle: "Video del sector",
     otherSectorsEyebrow: "Sigue explorando",
     otherSectorsTitle: "Otros sectores estratégicos",
@@ -664,9 +751,10 @@ export const sectorTemplateChrome = {
     projectsLead: "Public projects associated with this strategic sector.",
     projectsEmpty: "There are no published projects for this sector yet.",
     projectsError: "We could not load projects right now. Please try again later.",
-    guideEyebrow: "Resources",
-    guideFallbackTitle: "Investment guide",
-    guideCta: "Download guide",
+    guideEyebrow: "Sector guide",
+    guideFallbackTitle: "Sector guide",
+    guideFallbackSubtitle: "Strategic sector",
+    guideCta: "Download sector guide",
     videoTitle: "Sector video",
     otherSectorsEyebrow: "Keep exploring",
     otherSectorsTitle: "Other strategic sectors",

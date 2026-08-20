@@ -15,6 +15,8 @@ import { getSectorHref, withLocale } from "@/src/i18n/path";
 import { sectorPhotoHeaders } from "@/src/lib/sectorIcons";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
+import { SectorGuide } from "@/src/components/cni/sector/SectorGuide";
+import { getDefaultSectorGuide } from "@/src/data/sectorPageContent";
 
 type Props = {
   locale: Locale;
@@ -454,41 +456,7 @@ export function SectoresPageView({ locale, copy: c, sectors, loadStatus = "ok" }
         </div>
       </section>
 
-      {/* 5. CTA final — banda institucional oscura */}
-      <section className="al-sectores-cta-final relative overflow-hidden bg-[#252A58] py-20 text-white md:py-24">
-        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.22]" aria-hidden />
-        <div
-          className="pointer-events-none absolute right-0 top-0 h-full w-1/2 -skew-x-12 translate-x-24 bg-[#24436B] opacity-45"
-          aria-hidden
-        />
-        <div className={cn(layout.container, "relative z-10")}>
-          <div className="flex flex-col items-start justify-between gap-10 md:flex-row md:items-center">
-            <div className="max-w-2xl">
-              <p className={t.eyebrowOnDark}>
-                {locale === "es" ? "Acompañamiento CNI" : "CNI support"}
-              </p>
-              <h2 className={cn("mt-3", t.h2OnDark)}>{c.ctaTitle}</h2>
-              <p className={cn("mt-4 text-white/75", t.lead)}>{c.ctaBody}</p>
-            </div>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Link
-                href={L("/asesoria")}
-                className={cn(
-                  "inline-flex items-center justify-center gap-2 rounded-lg bg-[#29AB85] px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-[#35A963]",
-                )}
-              >
-                {c.ctaPrimary}
-              </Link>
-              <Link
-                href={L("/recursos")}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-white/10"
-              >
-                {c.ctaSecondary}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <SectorGuide locale={locale} guide={getDefaultSectorGuide(locale)} />
     </div>
   );
 }
