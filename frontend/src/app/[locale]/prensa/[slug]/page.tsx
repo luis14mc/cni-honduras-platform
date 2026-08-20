@@ -14,6 +14,9 @@ import {
 import { strapiBlocksHaveContent } from "@/src/lib/strapi/blocks";
 import { resolveMediaFileUrl } from "@/src/lib/mediaUrl";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
+import { brandHeroCta } from "@/src/components/cni/BrandPageHero";
+import { layout, type as t } from "@/src/lib/typography";
+import { cn } from "@/src/lib/utils";
 import type { NewsArticle, NewsCategory } from "@/src/types/cms";
 
 const copy = {
@@ -24,9 +27,12 @@ const copy = {
     externalLink: "Ver enlace externo",
     loadError:
       "No pudimos cargar esta noticia en este momento. Intente de nuevo más tarde.",
-    ctaTitle: "Acelera tu proceso de inversión en Honduras",
-    ctaDesc: "Nuestro equipo de asesores técnicos y legales está listo para acompañar tu visión de negocio.",
-    ctaButton: "Contacta al CNI para asistencia gratuita",
+    ctaEyebrow: "Acompañamiento CNI",
+    ctaTitle1: "Hable con el",
+    ctaTitle2: "equipo CNI",
+    ctaDesc: "Asesoría técnica y legal sin costo. No sustituye la decisión de inversión.",
+    ctaPrimary: "Contactar al CNI",
+    ctaSecondary: "Sala de prensa",
   },
   en: {
     backToArchive: "Back to Press Room",
@@ -34,9 +40,12 @@ const copy = {
     author: "Author",
     externalLink: "Open external link",
     loadError: "We could not load this article right now. Please try again later.",
-    ctaTitle: "Accelerate your investment process in Honduras",
-    ctaDesc: "Our team of technical and legal advisors is ready to support your business vision.",
-    ctaButton: "Contact the CNI for free assistance",
+    ctaEyebrow: "CNI support",
+    ctaTitle1: "Talk to the",
+    ctaTitle2: "CNI team",
+    ctaDesc: "Technical and legal advisory at no cost. It does not replace the investment decision.",
+    ctaPrimary: "Contact CNI",
+    ctaSecondary: "Press room",
   },
 } as const;
 
@@ -150,37 +159,37 @@ export default async function PrensaArticlePage({
   const body = legacyParagraphs(article.content);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
-      <header className="relative flex min-h-[60vh] items-center overflow-hidden bg-[#252A58] pb-24 pt-40">
-        <div className="absolute inset-0 z-0">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
+      <header className="relative flex min-h-screen items-end overflow-hidden bg-[#000a1e] pb-16 pt-40">
+        <div className="absolute inset-0">
           <Image
             src={PAGE_HEROES.prensaArticle.image}
             alt=""
             fill
             priority
             sizes="100vw"
-            className="object-cover opacity-50"
+            className="object-cover opacity-[0.42]"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#252A58] via-[#252A58]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/70 via-[#000a1e]/35 to-transparent" />
+          <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
         </div>
-        <div className="relative z-10 mx-auto w-full max-w-4xl px-6 md:px-12">
-          <Link
-            href={L("/prensa")}
-            className="mb-6 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#35A963] hover:text-white"
-          >
-            <MaterialIcon name="arrow_back" className="text-sm" />
-            {c.backToArchive}
-          </Link>
-          <div className="mb-6 flex flex-wrap items-center gap-4">
-            <span className="inline-block rounded-sm bg-[#0E7A7C] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#8DC046]">
-              {categoryLabels[locale][article.category]}
-            </span>
-            <span className="text-sm font-medium text-white/70">{formatDate(locale, article.published_at)}</span>
+        <div className={cn("relative z-10 w-full", layout.container)}>
+          <div className="max-w-4xl">
+            <Link
+              href={L("/prensa")}
+              className="mb-6 inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-[#32B372] hover:text-white"
+            >
+              <MaterialIcon name="arrow_back" className="text-sm" />
+              {c.backToArchive}
+            </Link>
+            <p className="font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+              {categoryLabels[locale][article.category]} · {formatDate(locale, article.published_at)}
+            </p>
+            <h1 className={cn("mt-4 text-white", t.heroTitle)}>{article.title}</h1>
+            {article.summary ? (
+              <p className={cn("mt-6 max-w-2xl text-white/80", t.heroLead)}>{article.summary}</p>
+            ) : null}
           </div>
-          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white md:text-6xl">
-            {article.title}
-          </h1>
-          {article.summary && <p className="mt-6 text-lg leading-relaxed text-white/80">{article.summary}</p>}
         </div>
       </header>
 
@@ -230,16 +239,20 @@ export default async function PrensaArticlePage({
         </div>
       </article>
 
-      <section className="bg-[#d3e4fe] py-20">
-        <div className="container mx-auto px-6 text-center md:px-12">
-          <div className="mx-auto max-w-2xl rounded-2xl bg-white p-12 shadow-xl shadow-[#252A58]/5">
-            <h2 className="mb-6 text-3xl font-extrabold text-[#252A58]">{c.ctaTitle}</h2>
-            <p className="mb-10 text-lg text-[#0E7A7C]">{c.ctaDesc}</p>
-            <Link
-              href={L("/contacto")}
-              className="inline-block rounded-md bg-[#252A58] px-10 py-4 text-lg font-bold text-white shadow-lg shadow-[#252A58]/20 transition-colors duration-200 hover:bg-[#24436B] active:scale-95"
-            >
-              {c.ctaButton}
+      <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
+        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
+        <div className={cn("relative z-10", layout.container)}>
+          <p className={t.eyebrowOnDark}>{c.ctaEyebrow}</p>
+          <h2 className={cn("mt-3 text-white", t.h2OnDark)}>
+            {c.ctaTitle1} <span className="text-[#32B372]">{c.ctaTitle2}</span>
+          </h2>
+          <p className="mt-6 max-w-xl font-body text-lg leading-relaxed text-white/80">{c.ctaDesc}</p>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href={L("/contacto")} className={brandHeroCta(true)}>
+              {c.ctaPrimary}
+            </Link>
+            <Link href={L("/prensa")} className={brandHeroCta(false)}>
+              {c.ctaSecondary}
             </Link>
           </div>
         </div>

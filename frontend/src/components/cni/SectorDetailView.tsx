@@ -15,7 +15,7 @@ import type { Locale } from "@/src/i18n/config";
 import type { SectorCopy, SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorDisplayName, SECTOR_SLUGS } from "@/src/data/investmentSectors";
 import { getSectorPageContent, sectorTemplateChrome } from "@/src/data/sectorPageContent";
-import { invertirPageCopy, SECTOR_ACCENTS } from "@/src/i18n/copy/invertirPage";
+import { SECTOR_ACCENTS } from "@/src/i18n/copy/invertirPage";
 import { withLocale, getSectorHref } from "@/src/i18n/path";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
@@ -41,7 +41,6 @@ export function SectorDetailView({
 }: Props) {
   const page = getSectorPageContent(slug, locale);
   const chrome = sectorTemplateChrome[locale];
-  const inv = invertirPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
   const photoSrc = sectorPhotoHeaders[slug] ?? designImages.sectors.agroindustria;
   const sectorStyle: CSSProperties & Record<string, string> = {
@@ -73,7 +72,6 @@ export function SectorDetailView({
       <SectorOpportunities locale={locale} result={opportunities} />
       <SectorSuccessStories locale={locale} result={successStories} />
       <SectorProjects locale={locale} result={projects} />
-      <SectorGuide locale={locale} guide={page.guide} />
 
       <section className={cn("bg-[#f8f9ff] py-16 md:py-20", "border-t border-cni-primary/8")}>
         <div className={layout.container}>
@@ -123,32 +121,7 @@ export function SectorDetailView({
         </div>
       </section>
 
-      <section className="al-sector-cta-final relative overflow-hidden bg-[#252A58] py-20 text-white md:py-24">
-        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.22]" aria-hidden />
-        <div className={cn(layout.container, "relative z-10")}>
-          <div className="flex flex-col items-start justify-between gap-10 md:flex-row md:items-center">
-            <div className="max-w-2xl">
-              <p className={t.eyebrowOnDark}>{locale === "es" ? "Acompañamiento CNI" : "CNI support"}</p>
-              <h2 className={cn("mt-3", t.h2OnDark)}>{inv.ctaTitle}</h2>
-              <p className={cn("mt-4 text-white/75", t.lead)}>{inv.ctaBody}</p>
-            </div>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Link
-                href={L("/asesoria")}
-                className="al-sector-cta-primary inline-flex items-center justify-center gap-2 rounded-lg px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] transition"
-              >
-                {inv.ctaAdvisory}
-              </Link>
-              <Link
-                href={L("/recursos")}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-10 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-white transition hover:bg-white/10"
-              >
-                {inv.ctaGuide}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <SectorGuide locale={locale} guide={page.guide} />
     </div>
   );
 }

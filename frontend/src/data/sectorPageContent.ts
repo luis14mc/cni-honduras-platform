@@ -17,10 +17,95 @@ export type SectorBenefit = {
 
 export type SectorGuideContent = {
   title: string;
+  subtitle?: string;
   description?: string;
   image: string;
   fileUrl: string;
 };
+
+export const SECTOR_GUIDE_COVER = {
+  general: "/portadas-guias/guia-porque-honduras.png",
+  agroindustria: "/portadas-guias/portada-guia-agro.png",
+  turismo: "/portadas-guias/portada-guia-turismo.png",
+  infraestructura: "/portadas-guias/portada-guia-infraestructura.png",
+} as const;
+
+/** Portada por defecto (guía general / Por qué Honduras). */
+export const SECTOR_GUIDE_IMAGE = SECTOR_GUIDE_COVER.general;
+
+const SECTOR_GUIDE_COVER_BY_SLUG: Partial<Record<SectorSlug, string>> = {
+  agroindustria: SECTOR_GUIDE_COVER.agroindustria,
+  turismo: SECTOR_GUIDE_COVER.turismo,
+  infraestructura: SECTOR_GUIDE_COVER.infraestructura,
+};
+
+const DEFAULT_SECTOR_GUIDE: Record<Locale, SectorGuideContent> = {
+  es: {
+    title: "Invierte en Honduras",
+    subtitle: "Guía para inversionistas",
+    description:
+      "Marco legal LPPI/ZOLI, sectores prioritarios y rutas de acompañamiento institucional del CNI para aterrizar capital en el país.",
+    image: SECTOR_GUIDE_IMAGE,
+    fileUrl: "/recursos/tecnicos",
+  },
+  en: {
+    title: "Invest in Honduras",
+    subtitle: "Investor guide",
+    description:
+      "LPPI/ZOLI legal framework, priority sectors and CNI institutional pathways to land capital in the country.",
+    image: SECTOR_GUIDE_IMAGE,
+    fileUrl: "/recursos/tecnicos",
+  },
+};
+
+export function getDefaultSectorGuide(locale: Locale): SectorGuideContent {
+  return DEFAULT_SECTOR_GUIDE[locale];
+}
+
+const SECTOR_GUIDE_DESCRIPTIONS: Record<Locale, Record<SectorSlug, string>> = {
+  es: {
+    agroindustria:
+      "Indicadores, ventajas competitivas, marco legal e inversiones clave del sector agroindustrial en Honduras.",
+    manufactura:
+      "Datos de nearshoring, talento disponible, incentivos LPPI/ZOLI y oportunidades de manufactura en Honduras.",
+    turismo:
+      "Potencial turístico, proyectos emblemáticos, incentivos y rutas de inversión del sector turismo en Honduras.",
+    energia:
+      "Matriz energética, proyectos renovables, marco regulatorio e inversiones del sector energía en Honduras.",
+    infraestructura:
+      "Conectividad, corredores logísticos, proyectos públicos e inversiones de infraestructura en Honduras.",
+    logistica:
+      "Puertos, aeropuertos, corredores y ventajas logísticas para invertir en transporte y distribución en Honduras.",
+  },
+  en: {
+    agroindustria:
+      "Indicators, competitive advantages, legal framework and key agribusiness investments in Honduras.",
+    manufactura:
+      "Nearshoring data, available talent, LPPI/ZOLI incentives and manufacturing opportunities in Honduras.",
+    turismo:
+      "Tourism potential, flagship projects, incentives and investment pathways in Honduras.",
+    energia:
+      "Energy matrix, renewable projects, regulatory framework and energy-sector investments in Honduras.",
+    infraestructura:
+      "Connectivity, logistics corridors, public projects and infrastructure investments in Honduras.",
+    logistica:
+      "Ports, airports, corridors and logistics advantages for transport and distribution investment in Honduras.",
+  },
+};
+
+export function getSectorGuideContent(slug: SectorSlug, locale: Locale): SectorGuideContent | null {
+  const cover = SECTOR_GUIDE_COVER_BY_SLUG[slug];
+  if (!cover) return null;
+
+  const name = getSectorDisplayName(locale, slug);
+  return {
+    title: locale === "es" ? `Guía de ${name}` : `${name} guide`,
+    subtitle: locale === "es" ? "Guía sectorial" : "Sector guide",
+    description: SECTOR_GUIDE_DESCRIPTIONS[locale][slug],
+    image: cover,
+    fileUrl: "/recursos/tecnicos",
+  };
+}
 
 export type SectorPageContent = {
   slug: SectorSlug;
@@ -299,22 +384,279 @@ const INFRAESTRUCTURA_ES: SectorContentBody = {
   guide: null,
 };
 
-/** Locale-specific bodies. Missing locales fall back to Spanish (no invented EN copy). */
+const AGROINDUSTRIA_EN: SectorContentBody = {
+  hero: {
+    headline: "Central America’s agricultural production hub",
+    metrics: [
+      {
+        value: "+3,000 MM",
+        label:
+          "US dollars in exports of agricultural, livestock, forestry, and fisheries products",
+      },
+      {
+        value: "8th",
+        label: "coffee exporter worldwide",
+      },
+      {
+        value: "807.5 thousand",
+        label: "employees in agriculture, livestock, forestry, and fisheries",
+      },
+    ],
+  },
+  intro: {
+    title: "Agribusiness",
+    description:
+      "Honduras stands out as a privileged location for agribusiness, offering a unique combination of exceptional natural resources, sustainable practices, and access to global markets. From traditional crops to high-value-added products, the country is ready to be the strategic partner for your investment.",
+    videoUrl: "https://youtu.be/gzplb3I4X98",
+  },
+  benefits: {
+    title: "Benefits of Investing in the Agribusiness Sector",
+    items: [
+      {
+        title: "Abundance of Natural Resources",
+        description:
+          "Honduras has more than 1.8 million hectares of arable land and abundant water, providing optimal conditions for a diverse and productive agribusiness sector.",
+        icon: "water_drop",
+      },
+      {
+        title: "Strategic Location",
+        description:
+          "Proximity to markets in the United States, Europe, and Asia enables fast, competitive exports, supported by world-class infrastructure such as Puerto Cortés, one of the largest and safest ports in Central America.",
+        icon: "public",
+      },
+      {
+        title: "Incentives for Investors",
+        description:
+          "Honduras offers attractive incentives, including tax exemptions on imports of agricultural machinery and equipment, as well as trade benefits under agreements such as CAFTA-DR, eliminating tariffs on key exports.",
+        icon: "handshake",
+      },
+    ],
+  },
+  guide: null,
+};
+
+const MANUFACTURA_EN: SectorContentBody = {
+  hero: {
+    headline: "Central America’s nearshoring hub",
+    metrics: [
+      {
+        value: "503.1k",
+        label: "employees in manufacturing",
+      },
+      {
+        value: "4.5 million",
+        label: "in exports (USD)",
+      },
+      {
+        value: "#2",
+        label: "worldwide in harness exports to the United States",
+      },
+    ],
+  },
+  intro: {
+    title: "Manufacturing",
+    description:
+      "Honduras has become a key destination for manufacturing, offering a strategic location in the heart of the Americas, competitive costs, and a skilled workforce. Free zones, advanced infrastructure, and preferential access to international markets make the country an ideal setting for light and advanced manufacturing. Honduras is the right place to produce textiles, electronic devices, auto parts, and pharmaceuticals, attracting global companies that seek efficiency and quality.",
+    videoUrl: "https://youtu.be/XjbxTvn0Ybs",
+  },
+  benefits: {
+    title: "Benefits of Investing in the Manufacturing Sector",
+    items: [
+      {
+        title: "Strategic geographic position",
+        description:
+          "Honduras is close to the region’s main market, strengthened by logistics that make exporting easier and reduce transit time and transportation costs.",
+        icon: "public",
+      },
+      {
+        title: "Highly skilled and productive workforce",
+        description:
+          "Honduras has a young, specialized labor force trained in world-class industrial processes, supporting efficient, high-quality production.",
+        icon: "groups",
+      },
+      {
+        title: "Network of trade agreements",
+        description:
+          "Honduras has a favorable network of trade agreements that provide preferential access to key markets such as the United States and the European Union, while expanding business opportunities within the region.",
+        icon: "handshake",
+      },
+    ],
+  },
+  guide: null,
+};
+
+const TURISMO_EN: SectorContentBody = {
+  hero: {
+    headline:
+      "Its beaches, biodiversity, and cultural heritage make Honduras a destination with vast investment opportunities",
+    metrics: [
+      {
+        value: "2.7 million",
+        label: "visitors in 2024",
+      },
+      {
+        value: "450+",
+        label: "cruise ships visit the country each year",
+      },
+      {
+        value: "802 million",
+        label: "in tourism foreign-exchange earnings",
+      },
+    ],
+  },
+  intro: {
+    title: "Tourism",
+    description:
+      "With spectacular natural landscapes, a rich cultural heritage, and a growing focus on sustainable tourism, Honduras is one of the most promising destinations for tourism investment in Central America. From paradise beaches to unique cultural enclaves, the country combines visitor appeal with a setting built for expanding businesses.\n\nHonduras stands out as an emerging tourism destination with exceptional investment potential. It offers an impressive range of natural and cultural attractions, from the beaches of Roatán and the rainforests of La Mosquitia to the Maya ruins of Copán, a World Heritage Site. The country has growing infrastructure and a favorable environment for investors, with tax incentives and support programs for tourism development. Rich biodiversity, unique experiences such as diving on the world’s second-largest coral reef, and a vibrant cultural heritage make Honduras an attractive opportunity for investors.",
+    videoUrl: "https://youtu.be/CuF6u-CEdnw",
+  },
+  benefits: {
+    title: "Benefits of Investing in the Tourism Sector",
+    items: [
+      {
+        title: "Natural wealth and biodiversity",
+        description:
+          "Honduras is home to more than 90 protected areas, including national parks, biological reserves, and marine sites. The Bay Islands host the world’s second-largest coral reef and offer unique diving and snorkeling.",
+        icon: "forest",
+      },
+      {
+        title: "Cultural and archaeological heritage",
+        description:
+          "The Maya ruins of Copán, a UNESCO World Heritage Site, attract thousands of visitors each year. Living traditions of Garifuna, Lenca, and mestizo communities are well suited to immersive cultural experiences.",
+        icon: "account_balance",
+      },
+      {
+        title: "Its people",
+        description:
+          "Honduras has a workforce trained in tourism and hospitality, with programs developed alongside local and international institutions, generating 287 thousand jobs.",
+        icon: "groups",
+      },
+    ],
+  },
+  guide: null,
+};
+
+const ENERGIA_EN: SectorContentBody = {
+  hero: {
+    headline: "Clean Energy for a Sustainable Future",
+    metrics: [
+      {
+        value: "53%",
+        label: "of Honduras’s energy matrix comes from renewables",
+      },
+      {
+        value: "3.5–4%",
+        label: "projected growth in electricity demand over the next 5–10 years",
+      },
+      {
+        value: "70%",
+        label: "of the country has high solar potential (vs. 20% worldwide)",
+      },
+    ],
+  },
+  intro: {
+    title: "Energy",
+    description:
+      "Honduras has become a regional leader in renewable power generation, including solar, wind, and hydroelectric sources. Favorable regulatory frameworks, abundant natural resources, and steadily growing energy demand make this sector an unmatched opportunity for investors. Integration into the Central American Electrical Interconnection System (SIEPAC) also expands the potential to export energy across the region.",
+    videoUrl: "https://youtu.be/wbBNwUCdkRc",
+  },
+  benefits: {
+    title: "Benefits of Investing in the Energy Sector",
+    items: [
+      {
+        title: "Diversity of sources",
+        description:
+          "Honduras has a climate and geography that favor solar, wind, and hydroelectric generation, supporting a sustainable energy supply.",
+        icon: "wb_sunny",
+      },
+      {
+        title: "Solid regulatory framework",
+        description:
+          "The Honduran government promotes investment in renewables through laws that grant tax exemptions and benefits, creating favorable conditions to finance and implement clean-energy projects and a faster, more attractive return on investment.",
+        icon: "gavel",
+      },
+      {
+        title: "Growing demand and exports",
+        description:
+          "Local energy demand continues to rise, while SIEPAC enables exports to other countries in the region.",
+        icon: "bolt",
+      },
+    ],
+  },
+  guide: null,
+};
+
+const INFRAESTRUCTURA_EN: SectorContentBody = {
+  hero: {
+    headline: "Connectivity and Development to Power Your Business",
+    metrics: [
+      {
+        value: "8",
+        label: "logistics corridors connecting Honduras",
+      },
+      {
+        value: "+19.7 km",
+        label: "of roads connecting the country",
+      },
+      {
+        value: "8 hours",
+        label: "connecting the Atlantic and the Pacific",
+      },
+    ],
+  },
+  intro: {
+    title: "Infrastructure",
+    description:
+      "Honduras is investing in the modernization and expansion of its infrastructure, from roads and bridges to airports and seaports. The country aims to improve internal and regional connectivity to strengthen trade, tourism, and competitiveness. Public-private partnerships, government incentives, and growing interest in the region give the infrastructure sector numerous opportunities for local and international investors.",
+    videoUrl: "https://youtu.be/j4IpoLINxt0",
+  },
+  benefits: {
+    title: "Benefits of Investing in the Infrastructure Sector",
+    items: [
+      {
+        title: "Sustainable and urban development",
+        description:
+          "Expansion plans consider sustainability and the improvement of urban areas, promoting modern infrastructure that is resilient to environmental challenges.",
+        icon: "apartment",
+      },
+      {
+        title: "Regional transport hub",
+        description:
+          "Located in the heart of Central America, Honduras is the natural bridge between North and South America, a key geographic advantage for distribution and trade.",
+        icon: "hub",
+      },
+      {
+        title: "Honduras leads the region in the World Bank Logistics Performance Index",
+        description:
+          "Honduras ranks as the regional leader in the Logistics Performance Index, with a score of 2.90 in the World Bank’s latest report. This recognition reflects progress in infrastructure, customs efficiency, and connectivity, consolidating the country as a strategic destination for trade and investment.",
+        icon: "emoji_events",
+      },
+    ],
+  },
+  guide: null,
+};
+
+/** Missing locales fall back to Spanish. Logística still uses legacy extras until a brief is approved. */
 const SECTOR_PAGE_BODIES: Partial<Record<SectorSlug, Partial<Record<Locale, SectorContentBody>>>> = {
   agroindustria: {
     es: AGROINDUSTRIA_ES,
+    en: AGROINDUSTRIA_EN,
   },
   manufactura: {
     es: MANUFACTURA_ES,
+    en: MANUFACTURA_EN,
   },
   turismo: {
     es: TURISMO_ES,
+    en: TURISMO_EN,
   },
   energia: {
     es: ENERGIA_ES,
+    en: ENERGIA_EN,
   },
   infraestructura: {
     es: INFRAESTRUCTURA_ES,
+    en: INFRAESTRUCTURA_EN,
   },
 };
 
@@ -359,6 +701,7 @@ export function getSectorPageContent(slug: SectorSlug, locale: Locale): SectorPa
     color: palette.accent,
     palette,
     ...body,
+    guide: body.guide ?? getSectorGuideContent(slug, locale),
   };
 }
 
@@ -381,9 +724,10 @@ export const sectorTemplateChrome = {
     projectsLead: "Proyectos públicos asociados a este sector estratégico.",
     projectsEmpty: "Todavía no hay proyectos publicados para este sector.",
     projectsError: "No pudimos cargar los proyectos. Intente de nuevo más tarde.",
-    guideEyebrow: "Recursos",
-    guideFallbackTitle: "Guía de inversión",
-    guideCta: "Descargar guía",
+    guideEyebrow: "Guía sectorial",
+    guideFallbackTitle: "Guía sectorial",
+    guideFallbackSubtitle: "Sector estratégico",
+    guideCta: "Descargar guía sectorial",
     videoTitle: "Video del sector",
     otherSectorsEyebrow: "Sigue explorando",
     otherSectorsTitle: "Otros sectores estratégicos",
@@ -407,9 +751,10 @@ export const sectorTemplateChrome = {
     projectsLead: "Public projects associated with this strategic sector.",
     projectsEmpty: "There are no published projects for this sector yet.",
     projectsError: "We could not load projects right now. Please try again later.",
-    guideEyebrow: "Resources",
-    guideFallbackTitle: "Investment guide",
-    guideCta: "Download guide",
+    guideEyebrow: "Sector guide",
+    guideFallbackTitle: "Sector guide",
+    guideFallbackSubtitle: "Strategic sector",
+    guideCta: "Download sector guide",
     videoTitle: "Sector video",
     otherSectorsEyebrow: "Keep exploring",
     otherSectorsTitle: "Other strategic sectors",

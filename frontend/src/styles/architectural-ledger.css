@@ -612,6 +612,32 @@
   filter: brightness(0.94);
 }
 
+.theme-architectural-ledger .al-sector-guide-showcase {
+  isolation: isolate;
+}
+
+.theme-architectural-ledger .al-sector-guide-divider {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--sector-accent, #29ab85) 18%,
+    var(--sector-accent, #29ab85) 82%,
+    transparent 100%
+  );
+}
+
+.theme-architectural-ledger .al-sector-guide-eyebrow {
+  color: var(--sector-accent, #29ab85);
+}
+
+.theme-architectural-ledger .al-sector-guide-cta {
+  background: linear-gradient(135deg, #252a58 0%, #1e2348 100%);
+}
+
+.theme-architectural-ledger .al-sector-guide-cta:hover {
+  background: linear-gradient(135deg, #2d3468 0%, #252a58 100%);
+}
+
 .theme-architectural-ledger .al-sector-cta-final {
   background: linear-gradient(135deg, #1a1f3d 0%, #252a58 48%, #1e2348 100%);
 }
