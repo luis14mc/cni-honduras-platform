@@ -130,6 +130,9 @@ export interface InvestmentProject {
   project_stage: ProjectStage;
   is_public: boolean;
   is_featured: boolean;
+  location: GeoJSON.Point | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 export interface SuccessStory {
