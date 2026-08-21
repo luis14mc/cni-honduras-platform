@@ -12,7 +12,7 @@ from apps.geo.models import Department, Municipality
 
 EXPECTED_DEPARTMENTS = 18
 EXPECTED_MUNICIPALITIES = 298
-DEFAULT_DATA_DIR = Path(settings.BASE_DIR).parent / "temp-hn-geo" / "geojson"
+DEFAULT_DATA_DIR = Path(settings.BASE_DIR) / "apps" / "geo" / "data" / "honduras"
 
 
 class Command(BaseCommand):

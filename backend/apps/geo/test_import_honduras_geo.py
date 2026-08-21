@@ -5,10 +5,21 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from apps.geo.management.commands.import_departments import _to_multipolygon
+from apps.geo.management.commands.import_honduras_geo import DEFAULT_DATA_DIR, EXPECTED_DEPARTMENTS
 from apps.geo.models import Department, Municipality
 
 
 class ImportHondurasGeoTests(TestCase):
+    def test_default_data_dir_contains_packaged_dataset(self):
+        departments_file = DEFAULT_DATA_DIR / "hn-deparments.geo.json"
+        municipality_files = sorted(DEFAULT_DATA_DIR.glob("hn-municipios-*.geo.json"))
+
+        self.assertTrue(departments_file.is_file(), msg=f"Missing {departments_file}")
+        self.assertEqual(
+            len(municipality_files),
+            EXPECTED_DEPARTMENTS,
+            msg="Expected 18 municipal GeoJSON files in DEFAULT_DATA_DIR",
+        )
     @classmethod
     def setUpTestData(cls):
         cls.first_output = StringIO()
