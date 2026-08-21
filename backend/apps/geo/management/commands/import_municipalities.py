@@ -12,7 +12,7 @@ def _to_multipolygon(geom: GEOSGeometry) -> MultiPolygon:
     if geom.geom_type == "MultiPolygon":
         return geom
     if geom.geom_type == "Polygon":
-        return MultiPolygon(geom)
+        return MultiPolygon(geom, srid=geom.srid)
     raise ValueError(f"Unsupported geometry type: {geom.geom_type}")
 
 
@@ -189,6 +189,8 @@ class Command(BaseCommand):
                     continue
 
                 geom.srid = geom.srid or 4326
+                if geom.srid != 4326:
+                    geom.transform(4326)
                 geom = _make_valid(geom)
                 if not getattr(geom, "valid", True):
                     _skip("Geometry no válida tras validar", name)
@@ -200,9 +202,9 @@ class Command(BaseCommand):
                     _skip(str(exc), name)
                     continue
 
-                centroid = multipolygon.centroid
-                center_lat = float(centroid.y) if centroid else None
-                center_lng = float(centroid.x) if centroid else None
+                center = multipolygon.point_on_surface
+                center_lat = float(center.y) if center else None
+                center_lng = float(center.x) if center else None
                 slug = slugify(name)
 
                 defaults = {
