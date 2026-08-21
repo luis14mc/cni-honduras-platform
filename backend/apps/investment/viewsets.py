@@ -1,11 +1,20 @@
 from decimal import Decimal
 
-from django.db.models import Count, Q, Sum
+from django.db.models import (
+    Count,
+    DecimalField,
+    IntegerField,
+    OuterRef,
+    Q,
+    Subquery,
+    Sum,
+    Value,
+)
+from django.db.models.functions import Coalesce
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.cms.models import PublishStatus
 from apps.core.api import LocalizedViewSetMixin
 from apps.geo.models import Department
 
@@ -78,6 +87,9 @@ class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
         featured = parse_bool_param(self.request.query_params.get("featured"))
         if featured is not None:
             queryset = queryset.filter(is_featured=featured)
+        has_location = parse_bool_param(self.request.query_params.get("has_location"))
+        if has_location is not None:
+            queryset = queryset.filter(location__isnull=not has_location)
         return queryset
 
 
@@ -100,59 +112,94 @@ class SuccessStoryViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
         return queryset
 
 
-_PUBLIC_PROJECT_FILTER = Q(projects__is_public=True, projects__sector__is_active=True)
-_PUBLIC_OPPORTUNITY_FILTER = Q(
-    opportunities__status=PublishStatus.PUBLISHED,
-    opportunities__published_at__isnull=False,
-) & (Q(opportunities__sector__isnull=True) | Q(opportunities__sector__is_active=True))
-
-
 class MapSummaryAPIView(APIView):
     """Aggregated investment metrics per department for the interactive map."""
 
     def get(self, request):
+        sector_slug = request.query_params.get("sector")
+        stage = request.query_params.get("stage")
+
+        project_queryset = InvestmentProject.objects.filter(
+            department_id=OuterRef("pk"),
+            is_public=True,
+            sector__is_active=True,
+        )
+        if sector_slug:
+            project_queryset = project_queryset.filter(sector__slug=sector_slug)
+        if stage:
+            project_queryset = project_queryset.filter(project_stage=stage)
+
+        def project_metric(aggregate):
+            return Subquery(
+                project_queryset.values("department_id")
+                .annotate(value=aggregate)
+                .values("value")[:1]
+            )
+
+        opportunity_queryset = InvestmentOpportunity.objects.published().filter(
+            department_id=OuterRef("pk")
+        ).filter(Q(sector__isnull=True) | Q(sector__is_active=True))
+        if sector_slug:
+            opportunity_queryset = opportunity_queryset.filter(sector__slug=sector_slug)
+
+        def opportunity_metric(aggregate):
+            return Subquery(
+                opportunity_queryset.values("department_id")
+                .annotate(value=aggregate)
+                .values("value")[:1]
+            )
+
+        if stage:
+            opportunity_count = Value(0, output_field=IntegerField())
+            opportunity_sum = Value(
+                None, output_field=DecimalField(max_digits=18, decimal_places=2)
+            )
+            opportunity_jobs = Value(0, output_field=IntegerField())
+        else:
+            opportunity_count = opportunity_metric(Count("id"))
+            opportunity_sum = opportunity_metric(Sum("estimated_investment"))
+            opportunity_jobs = opportunity_metric(Sum("estimated_jobs"))
+
         departments = (
             Department.objects.filter(is_active=True)
             .annotate(
-                projects_count=Count("projects", filter=_PUBLIC_PROJECT_FILTER, distinct=True),
-                opportunities_count=Count(
-                    "opportunities", filter=_PUBLIC_OPPORTUNITY_FILTER, distinct=True
-                ),
-                projects_investment=Sum(
-                    "projects__investment_amount", filter=_PUBLIC_PROJECT_FILTER
-                ),
-                opportunities_investment=Sum(
-                    "opportunities__estimated_investment", filter=_PUBLIC_OPPORTUNITY_FILTER
-                ),
-                projects_jobs=Sum("projects__estimated_jobs", filter=_PUBLIC_PROJECT_FILTER),
-                opportunities_jobs=Sum(
-                    "opportunities__estimated_jobs", filter=_PUBLIC_OPPORTUNITY_FILTER
-                ),
+                projects_count=Coalesce(project_metric(Count("id")), Value(0)),
+                opportunities_count=Coalesce(opportunity_count, Value(0)),
+                projects_investment=project_metric(Sum("investment_amount")),
+                opportunities_investment=opportunity_sum,
+                projects_jobs=Coalesce(project_metric(Sum("estimated_jobs")), Value(0)),
+                opportunities_jobs=Coalesce(opportunity_jobs, Value(0)),
             )
             .order_by("name")
         )
 
         sector_ids_by_department: dict[int, set[int]] = {}
+        project_sectors = InvestmentProject.objects.filter(
+            is_public=True,
+            sector__is_active=True,
+            department_id__isnull=False,
+        )
+        if sector_slug:
+            project_sectors = project_sectors.filter(sector__slug=sector_slug)
+        if stage:
+            project_sectors = project_sectors.filter(project_stage=stage)
         for department_id, sector_id in (
-            InvestmentProject.objects.filter(
-                is_public=True,
-                sector__is_active=True,
-                department_id__isnull=False,
-            )
+            project_sectors
             .values_list("department_id", "sector_id")
             .distinct()
         ):
             sector_ids_by_department.setdefault(department_id, set()).add(sector_id)
-        for department_id, sector_id in (
-            InvestmentOpportunity.objects.published()
-            .filter(
+        if not stage:
+            opportunity_sectors = InvestmentOpportunity.objects.published().filter(
                 sector__is_active=True,
                 department_id__isnull=False,
             )
-            .values_list("department_id", "sector_id")
-            .distinct()
-        ):
-            sector_ids_by_department.setdefault(department_id, set()).add(sector_id)
+            if sector_slug:
+                opportunity_sectors = opportunity_sectors.filter(sector__slug=sector_slug)
+            for department_id, sector_id in (
+                opportunity_sectors.values_list("department_id", "sector_id").distinct()
+            ):
+                sector_ids_by_department.setdefault(department_id, set()).add(sector_id)
 
         all_sector_ids = {
             sector_id

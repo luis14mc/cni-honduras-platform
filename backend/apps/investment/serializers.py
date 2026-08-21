@@ -1,7 +1,13 @@
+import json
+
 from rest_framework import serializers
 
 from apps.geo.models import Department
-from apps.geo.serializers import CNIRegionSerializer, DepartmentLiteSerializer, MunicipalitySerializer
+from apps.geo.serializers import (
+    CNIRegionSerializer,
+    DepartmentLiteSerializer,
+    MunicipalityLiteSerializer,
+)
 from apps.media_library.serializers import MediaAssetLiteSerializer
 
 from .models import (
@@ -116,7 +122,10 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
     sector = SectorLiteSerializer(read_only=True)
     department = DepartmentLiteSerializer(read_only=True)
     region = CNIRegionSerializer(read_only=True)
-    municipality = MunicipalitySerializer(read_only=True)
+    municipality = MunicipalityLiteSerializer(read_only=True)
+    location = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
 
     class Meta:
         model = InvestmentProject
@@ -130,6 +139,9 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
             "department",
             "region",
             "municipality",
+            "location",
+            "latitude",
+            "longitude",
             "investment_amount",
             "estimated_jobs",
             "project_stage",
@@ -138,6 +150,15 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         )
+
+    def get_location(self, obj: InvestmentProject) -> dict | None:
+        return json.loads(obj.location.geojson) if obj.location else None
+
+    def get_latitude(self, obj: InvestmentProject) -> float | None:
+        return obj.location.y if obj.location else None
+
+    def get_longitude(self, obj: InvestmentProject) -> float | None:
+        return obj.location.x if obj.location else None
 
 
 class SuccessStorySerializer(serializers.ModelSerializer):
