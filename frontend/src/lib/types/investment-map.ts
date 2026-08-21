@@ -51,6 +51,7 @@ export type DepartmentProperties = {
 
 export type DepartmentFeature = {
   type: "Feature";
+  id: number;
   geometry: GeoJSONGeometry | null;
   properties: DepartmentProperties;
 };
@@ -60,7 +61,7 @@ export type DepartmentFeatureCollection = {
   features: DepartmentFeature[];
 };
 
-/** Respuesta cruda de GET /api/v1/geo/departments/ */
+/** Legacy response shape kept for the existing deprecated map component. */
 export type DepartmentApiItem = {
   id: number;
   name: string;
@@ -73,26 +74,26 @@ export type DepartmentApiItem = {
   is_active: boolean;
 };
 
+/** @deprecated MAP-002 consumes the GeoJSON endpoint directly. */
 export function departmentsToFeatureCollection(
   departments: DepartmentApiItem[],
 ): DepartmentFeatureCollection {
   return {
     type: "FeatureCollection",
-    features: departments
-      .filter((dept) => dept.geometry)
-      .map((dept) => ({
-        type: "Feature" as const,
-        geometry: dept.geometry,
-        properties: {
-          name: dept.name,
-          slug: dept.slug,
-          code: dept.code,
-          description: dept.description,
-          center_lat: dept.center_lat,
-          center_lng: dept.center_lng,
-          is_active: dept.is_active,
-        },
-      })),
+    features: departments.filter((dept) => dept.geometry).map((dept) => ({
+      type: "Feature" as const,
+      id: dept.id,
+      geometry: dept.geometry,
+      properties: {
+        name: dept.name,
+        slug: dept.slug,
+        code: dept.code,
+        description: dept.description,
+        center_lat: dept.center_lat,
+        center_lng: dept.center_lng,
+        is_active: dept.is_active,
+      },
+    })),
   };
 }
 
@@ -131,18 +132,39 @@ export function hasPublicInvestmentActivity(summary: MapDepartmentSummary | unde
   return summary.projects_count + summary.opportunities_count > 0;
 }
 
-export function formatMapInvestment(value: string | null | undefined): string {
+export function formatMapInvestment(
+  value: string | null | undefined,
+  locale: "es" | "en" = "es",
+): string {
   if (!value) return "—";
   const amount = Number(value);
   if (Number.isNaN(amount)) return value;
-  return new Intl.NumberFormat("es-HN", {
+  return new Intl.NumberFormat(locale === "es" ? "es-HN" : "en-US", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(amount);
 }
 
-export function formatMapJobs(value: number | null | undefined): string {
+export function formatMapJobs(value: number | null | undefined, locale: "es" | "en" = "es"): string {
   if (value == null) return "—";
-  return new Intl.NumberFormat("es-HN").format(value);
+  return new Intl.NumberFormat(locale === "es" ? "es-HN" : "en-US").format(value);
+}
+
+export function indexSummaries(
+  summaries: MapDepartmentSummary[],
+): Map<string, MapDepartmentSummary> {
+  return new Map(summaries.map((summary) => [summary.department.slug, summary]));
+}
+
+export function getMapTotals(summaries: MapDepartmentSummary[]) {
+  return summaries.reduce(
+    (totals, item) => ({
+      projects: totals.projects + item.projects_count,
+      opportunities: totals.opportunities + item.opportunities_count,
+      jobs: totals.jobs + (item.estimated_jobs ?? 0),
+      investment: totals.investment + Number(item.total_investment ?? 0),
+    }),
+    { projects: 0, opportunities: 0, jobs: 0, investment: 0 },
+  );
 }

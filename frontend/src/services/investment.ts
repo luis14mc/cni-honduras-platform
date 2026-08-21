@@ -62,6 +62,22 @@ export function getProject(slug: string): Promise<InvestmentProject> {
   return apiGet<InvestmentProject>(`${BASE}/projects/${slug}/`);
 }
 
+export function getProjectsByDepartment(
+  departmentSlug: string,
+  sectorSlug?: string,
+): Promise<InvestmentProject[]> {
+  const params = new URLSearchParams({ department: departmentSlug });
+  if (sectorSlug) params.set("sector", sectorSlug);
+  return apiGetList<InvestmentProject>(`${BASE}/projects/?${params.toString()}`);
+}
+
+export function getMapSummary(sectorSlug?: string): Promise<import("@/src/lib/types/investment-map").MapDepartmentSummary[]> {
+  const query = sectorSlug ? `?sector=${encodeURIComponent(sectorSlug)}` : "";
+  return apiGet<import("@/src/lib/types/investment-map").MapDepartmentSummary[]>(
+    `${BASE}/map-summary/${query}`,
+  );
+}
+
 export function getSuccessStories(options: {
   featured?: boolean;
   sector?: string;
