@@ -1,6 +1,6 @@
 # Honduras Geographic Seed
 
-The versioned boundary files in `temp-hn-geo/geojson/` come from the public
+The versioned boundary files in `backend/apps/geo/data/honduras/` come from the public
 [`SEFINHN-UIT/hn-geo`](https://github.com/SEFINHN-UIT/hn-geo) repository
 (upstream `main` observed at `ee0d490ef40de08cfa9042e8453983e9077294e4`). The
 upstream repository does not publish an explicit license and warns that source
