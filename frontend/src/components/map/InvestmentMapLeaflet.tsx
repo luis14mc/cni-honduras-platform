@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import L, { type PathOptions } from "leaflet";
-import { GeoJSON, MapContainer, TileLayer, useMap } from "react-leaflet";
+import { GeoJSON, MapContainer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type {
@@ -16,6 +16,12 @@ const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
   [12.6, -90.4],
   [17, -82.4],
 ];
+const STROKE = "#334E88";
+const FILL_BASE = "#E8F1FA";
+const FILL_ACTIVE = "#C5DCF0";
+const HOVER_FILL = "#32B372";
+const SELECTED_FILL = "#32B372";
+const SELECTED_STROKE = "#334E88";
 
 type Props = {
   data: DepartmentFeatureCollection;
@@ -36,25 +42,68 @@ function styleDepartment(
   const hasActivity = Boolean(
     summary && summary.projects_count + summary.opportunities_count > 0,
   );
-  const matches = activeSector === "all" || hasActivity;
+  const matches =
+    activeSector === "all" ||
+    (summary?.sectors?.some((sector) => sector.slug === activeSector) ?? false);
   const selected = properties.slug === selectedSlug;
 
   if (selected) {
-    return { color: "#F7BF06", weight: 3, fillColor: "#35A963", fillOpacity: 0.78 };
+    return {
+      color: SELECTED_STROKE,
+      weight: 3,
+      opacity: 1,
+      fillColor: SELECTED_FILL,
+      fillOpacity: 0.72,
+    };
   }
+
   if (activeSector !== "all" && matches) {
-    return { color: "#35A963", weight: 2, fillColor: "#35A963", fillOpacity: 0.55 };
+    return {
+      color: STROKE,
+      weight: 2.2,
+      opacity: 1,
+      fillColor: HOVER_FILL,
+      fillOpacity: 0.58,
+    };
   }
+
   if (activeSector !== "all" && !matches) {
-    return { color: "#8EA7C7", weight: 1, fillColor: "#24436B", fillOpacity: 0.16 };
+    return {
+      color: STROKE,
+      weight: 1,
+      opacity: 0.28,
+      fillColor: FILL_BASE,
+      fillOpacity: 0.35,
+    };
   }
+
   if (hasActivity) {
-    return { color: "#8DC046", weight: 1.5, fillColor: "#35A963", fillOpacity: 0.42 };
+    const activity = (summary?.projects_count ?? 0) + (summary?.opportunities_count ?? 0);
+    return {
+      color: STROKE,
+      weight: 1.6,
+      opacity: 1,
+      fillColor: FILL_ACTIVE,
+      fillOpacity: Math.min(0.78, 0.48 + activity * 0.03),
+    };
   }
-  return { color: "#8EA7C7", weight: 1.1, fillColor: "#24436B", fillOpacity: 0.3 };
+
+  return {
+    color: STROKE,
+    weight: 1.3,
+    opacity: 0.95,
+    fillColor: FILL_BASE,
+    fillOpacity: 0.82,
+  };
 }
 
-function ViewportController({ data, selectedSlug }: { data: DepartmentFeatureCollection; selectedSlug: string | null }) {
+function ViewportController({
+  data,
+  selectedSlug,
+}: {
+  data: DepartmentFeatureCollection;
+  selectedSlug: string | null;
+}) {
   const map = useMap();
   const initialFit = useRef(false);
 
@@ -63,7 +112,7 @@ function ViewportController({ data, selectedSlug }: { data: DepartmentFeatureCol
     const bounds = L.geoJSON(data as unknown as GeoJSON.GeoJsonObject).getBounds();
     if (!bounds.isValid()) return;
     map.fitBounds(bounds, { padding: [12, 12], maxZoom: 8, animate: false });
-    map.setMaxBounds(bounds.pad(0.18));
+    map.setMaxBounds(bounds.pad(0.12));
     initialFit.current = true;
   }, [data, map]);
 
@@ -87,6 +136,11 @@ export function InvestmentMapLeaflet({
   onHover,
 }: Props) {
   const layerRef = useRef<L.GeoJSON | null>(null);
+  const styleRef = useRef(styleDepartment);
+
+  useEffect(() => {
+    styleRef.current = styleDepartment;
+  }, [summaries, activeSector, selectedSlug]);
 
   useEffect(() => {
     layerRef.current?.eachLayer((layer) => {
@@ -103,17 +157,16 @@ export function InvestmentMapLeaflet({
       center={HONDURAS_CENTER}
       zoom={7}
       minZoom={6}
-      maxZoom={10}
+      maxZoom={9}
       maxBounds={HONDURAS_BOUNDS}
-      maxBoundsViscosity={0.86}
-      scrollWheelZoom
-      className="h-full min-h-[440px] w-full bg-[#dce9ff] sm:min-h-[600px]"
+      maxBoundsViscosity={0.92}
+      scrollWheelZoom={false}
+      zoomControl={false}
+      attributionControl={false}
+      className="h-full min-h-[440px] w-full bg-white sm:min-h-[600px]"
+      style={{ background: "#ffffff" }}
       aria-label="Interactive map of Honduras investment departments"
     >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
       <ViewportController data={data} selectedSlug={selectedSlug} />
       <GeoJSON
         ref={layerRef}
@@ -124,21 +177,24 @@ export function InvestmentMapLeaflet({
         }}
         onEachFeature={(feature, layer) => {
           const properties = feature.properties as DepartmentProperties;
+          const pathLayer = layer as L.Path;
           layer.bindTooltip(properties.name, { sticky: true, direction: "top", opacity: 0.92 });
           layer.on({
             click: () => onSelect(properties),
             mouseover: () => {
               onHover(properties);
-              if ("setStyle" in layer) {
-                (layer as L.Path).setStyle({ weight: 3, color: "#F7BF06", fillOpacity: 0.7 });
-                (layer as L.Path).bringToFront();
-              }
+              pathLayer.setStyle({
+                color: STROKE,
+                weight: 2.8,
+                opacity: 1,
+                fillColor: HOVER_FILL,
+                fillOpacity: 0.68,
+              });
+              pathLayer.bringToFront();
             },
             mouseout: () => {
               onHover(null);
-              if ("setStyle" in layer) {
-                (layer as L.Path).setStyle(styleDepartment(properties, summaries, activeSector, selectedSlug));
-              }
+              pathLayer.setStyle(styleRef.current(properties, summaries, activeSector, selectedSlug));
             },
           });
         }}

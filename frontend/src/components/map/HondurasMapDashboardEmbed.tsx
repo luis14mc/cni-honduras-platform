@@ -16,7 +16,7 @@ const HondurasMap = dynamic(() => import("@/src/components/map/HondurasMap"), {
 export function HondurasMapDashboardEmbed() {
   return (
     <div className="relative w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[#001a33]/80 p-3 shadow-[0_0_70px_rgba(0,33,71,0.65)] backdrop-blur">
-      <div className="overflow-hidden rounded-[1.5rem] bg-[#252A58] text-white [&_.leaflet-container]:min-h-[620px] lg:[&_.leaflet-container]:min-h-[680px] [&_.leaflet-container]:rounded-[1.35rem]">
+      <div className="overflow-hidden rounded-[1.5rem] bg-white text-white [&_.leaflet-container]:min-h-[620px] lg:[&_.leaflet-container]:min-h-[680px] [&_.leaflet-container]:rounded-[1.35rem] [&_.leaflet-container]:bg-white">
         <HondurasMap />
       </div>
     </div>
