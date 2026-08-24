@@ -112,7 +112,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="relative min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#dce9ff] shadow-2xl sm:min-h-[600px]">
+          <div className="relative min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
             {geo.status === "loading" ? <MapLoading copy={copy.loadingMap} /> : null}
             {geo.status === "error" ? <MapMessage>{copy.mapError}</MapMessage> : null}
             {geo.status === "ready" && geo.data?.features.length === 0 ? <MapMessage>{copy.noGeometry}</MapMessage> : null}
@@ -130,5 +130,5 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
   );
 }
 
-function MapLoading({ copy }: { copy: string }) { return <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#dce9ff]"><div className="rounded-xl bg-[#001a33]/90 px-5 py-4 text-sm font-bold text-white shadow-xl" role="status">{copy}</div></div>; }
-function MapMessage({ children }: { children: string }) { return <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#dce9ff] p-6 text-center text-sm font-semibold text-[#252A58]">{children}</div>; }
+function MapLoading({ copy }: { copy: string }) { return <div className="absolute inset-0 z-10 flex items-center justify-center bg-white"><div className="rounded-xl bg-[#001a33]/90 px-5 py-4 text-sm font-bold text-white shadow-xl" role="status">{copy}</div></div>; }
+function MapMessage({ children }: { children: string }) { return <div className="absolute inset-0 z-10 flex items-center justify-center bg-white p-6 text-center text-sm font-semibold text-[#252A58]">{children}</div>; }

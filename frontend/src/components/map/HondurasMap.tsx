@@ -24,8 +24,8 @@ const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const DEFAULT_ZOOM = 7;
 const CNI_BLUE = "#334E88";
 const CNI_GREEN = "#32B372";
-const CNI_SKY = "#5fb3d9";
-const CNI_GOLD = "#8DC046";
+const CNI_FILL_BASE = "#E8F1FA";
+const CNI_FILL_ACTIVE = "#C5DCF0";
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
   [12.6, -90.4],
   [17.0, -82.4],
@@ -173,7 +173,7 @@ export default function HondurasMap() {
 
     if (isSelected) {
       return {
-        color: CNI_GOLD,
+        color: CNI_BLUE,
         weight: 3,
         opacity: 1,
         fillColor: CNI_GREEN,
@@ -183,41 +183,41 @@ export default function HondurasMap() {
 
     if (activeSectorSlug !== "all" && matchesSector) {
       return {
-        color: CNI_GOLD,
-        weight: 2.4,
+        color: CNI_BLUE,
+        weight: 2.2,
         opacity: 1,
         fillColor: CNI_GREEN,
-        fillOpacity: 0.62,
+        fillOpacity: 0.58,
       };
     }
 
     if (dimmed) {
       return {
-        color: CNI_SKY,
+        color: CNI_BLUE,
         weight: 1,
         opacity: 0.28,
-        fillColor: CNI_BLUE,
-        fillOpacity: 0.08,
+        fillColor: CNI_FILL_BASE,
+        fillOpacity: 0.35,
       };
     }
 
     if (hasData) {
       const activity = (summary?.projects_count ?? 0) + (summary?.opportunities_count ?? 0);
       return {
-        color: CNI_SKY,
+        color: CNI_BLUE,
         weight: 1.6,
-        opacity: 0.95,
-        fillColor: CNI_GREEN,
-        fillOpacity: Math.min(0.7, 0.38 + activity * 0.035),
+        opacity: 1,
+        fillColor: CNI_FILL_ACTIVE,
+        fillOpacity: Math.min(0.78, 0.48 + activity * 0.03),
       };
     }
 
     return {
-      color: CNI_SKY,
-      weight: 1.2,
-      opacity: 0.8,
-      fillColor: CNI_BLUE,
-      fillOpacity: 0.38,
+      color: CNI_BLUE,
+      weight: 1.3,
+      opacity: 0.95,
+      fillColor: CNI_FILL_BASE,
+      fillOpacity: 0.82,
     };
   }, [activeSectorSlug, selectedSlug, summaryBySlug]);
 
@@ -284,8 +284,7 @@ export default function HondurasMap() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#252A58] shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(95,179,217,0.24),transparent_30%),linear-gradient(135deg,rgba(0,33,71,0.72),rgba(0,10,30,0.95))]" />
+        <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white shadow-[0_30px_100px_rgba(0,0,0,0.45)]">
           {loadState === "loading" ? (
             <div className="relative flex min-h-[620px] items-center justify-center lg:min-h-[680px]">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#8DC046]">
@@ -300,7 +299,7 @@ export default function HondurasMap() {
             </div>
           ) : departmentCount === 0 ? (
             <div className="relative flex min-h-[620px] items-center justify-center p-6 lg:min-h-[680px]">
-              <p className="text-sm text-[#d5e3ff]">
+              <p className="text-sm text-[#334E88]">
                 No hay geometrías de departamentos disponibles.
               </p>
             </div>
@@ -312,12 +311,12 @@ export default function HondurasMap() {
               maxZoom={9}
               zoomSnap={0.25}
               maxBounds={HONDURAS_BOUNDS}
-              maxBoundsViscosity={0.85}
-              scrollWheelZoom
+              maxBoundsViscosity={0.92}
+              scrollWheelZoom={false}
               zoomControl={false}
               attributionControl={false}
-              className="relative z-10 h-full w-full bg-[#252A58]"
-              style={{ minHeight: "680px", background: "#252A58" }}
+              className="relative z-10 h-full w-full bg-white"
+              style={{ minHeight: "680px", background: "#ffffff" }}
             >
               <FitBounds data={departments} />
 
@@ -339,10 +338,11 @@ export default function HondurasMap() {
                       },
                       mouseover: () => {
                         pathLayer.setStyle({
-                          color: CNI_GOLD,
-                          weight: 3,
+                          color: CNI_BLUE,
+                          weight: 2.8,
                           opacity: 1,
-                          fillOpacity: 0.75,
+                          fillColor: CNI_GREEN,
+                          fillOpacity: 0.68,
                         });
                         pathLayer.bringToFront();
                       },
@@ -563,14 +563,12 @@ function FitBounds({ data }: { data: DepartmentFeatureCollection | null }) {
     if (!bounds.isValid()) return;
 
     map.fitBounds(bounds, {
-      padding: [8, 8],
+      padding: [12, 12],
       maxZoom: 8,
       animate: false,
     });
 
-    const fittedZoom = map.getZoom();
-    map.setZoom(Math.min(map.getMaxZoom(), fittedZoom + 0.5), { animate: false });
-    map.setMaxBounds(bounds.pad(0.18));
+    map.setMaxBounds(bounds.pad(0.12));
   }, [data, map]);
 
   return null;
@@ -579,10 +577,10 @@ function FitBounds({ data }: { data: DepartmentFeatureCollection | null }) {
 function MapLegend() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[#24436B]/70 px-4 py-3 shadow-[0_18px_60px_rgba(0,0,0,0.22)] backdrop-blur">
-      <LegendItem color="bg-[#32B372]" label="Con inversión" />
-      <LegendItem color="bg-[#334E88]/80" label="Sin datos públicos" />
-      <LegendItem color="bg-[#8DC046]" label="Seleccionado" />
-      <LegendItem color="bg-[#334E88]/25" label="Atenuado por filtro" />
+      <LegendItem color="bg-[#C5DCF0]" label="Con inversión" />
+      <LegendItem color="bg-[#E8F1FA]" label="Sin datos públicos" />
+      <LegendItem color="bg-[#32B372]" label="Seleccionado" />
+      <LegendItem color="bg-[#E8F1FA]/60" label="Atenuado por filtro" />
     </div>
   );
 }
