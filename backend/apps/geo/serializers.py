@@ -146,6 +146,7 @@ def municipality_feature(municipality: Municipality) -> dict:
             "name": municipality.name,
             "slug": municipality.slug,
             "code": municipality.code,
+            "department_slug": municipality.department.slug,
             "department": municipality.department.slug,
             "center_lat": municipality.center_lat,
             "center_lng": municipality.center_lng,

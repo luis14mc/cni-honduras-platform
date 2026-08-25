@@ -48,7 +48,13 @@ class GeoContractApiTests(TestCase):
         payload = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(payload["features"]), 1)
+        self.assertEqual(payload["features"][0]["properties"]["department_slug"], "cortes")
         self.assertEqual(payload["features"][0]["properties"]["department"], "cortes")
+
+    def test_municipalities_geojson_requires_department(self):
+        response = self.client.get("/api/v1/geo/municipalities/geojson/")
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("department", response.json()["detail"])
 
     def test_project_location_is_geojson_lon_lat_and_null_is_supported(self):
         project = InvestmentProject.objects.create(

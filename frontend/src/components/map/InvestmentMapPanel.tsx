@@ -2,30 +2,50 @@
 
 import type { Locale } from "@/src/i18n/config";
 import type { InvestmentMapCopy } from "@/src/i18n/copy/investmentMap";
-import type { InvestmentProject } from "@/src/types/investment";
-import type { DepartmentProperties, MapDepartmentSummary } from "@/src/lib/types/investment-map";
+import type {
+  DepartmentProperties,
+  MapDepartmentSummary,
+  MapInvestmentProject,
+  MunicipalityProperties,
+} from "@/src/lib/types/investment-map";
 import { formatMapInvestment, formatMapJobs } from "@/src/lib/types/investment-map";
 
 type Props = {
   locale: Locale;
   copy: InvestmentMapCopy;
   department: DepartmentProperties | null;
+  municipality: MunicipalityProperties | null;
+  project: MapInvestmentProject | null;
   summary: MapDepartmentSummary | undefined;
-  projects: InvestmentProject[];
+  projects: MapInvestmentProject[];
   projectsLoading: boolean;
   projectsError: boolean;
-  onClear: () => void;
+  municipalitiesLoading: boolean;
+  municipalitiesError: boolean;
+  municipalitiesEmpty: boolean;
+  onClearDepartment: () => void;
+  onClearMunicipality: () => void;
+  onClearProject: () => void;
+  onSelectProject: (project: MapInvestmentProject) => void;
 };
 
 export function InvestmentMapPanel({
   locale,
   copy,
   department,
+  municipality,
+  project,
   summary,
   projects,
   projectsLoading,
   projectsError,
-  onClear,
+  municipalitiesLoading,
+  municipalitiesError,
+  municipalitiesEmpty,
+  onClearDepartment,
+  onClearMunicipality,
+  onClearProject,
+  onSelectProject,
 }: Props) {
   if (!department) {
     return (
@@ -40,15 +60,54 @@ export function InvestmentMapPanel({
     );
   }
 
+  if (project) {
+    return (
+      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedProject}: ${project.title}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedProject}</p>
+            <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{project.title}</h2>
+          </div>
+          <button type="button" onClick={onClearProject} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
+            {copy.clearProject}
+          </button>
+        </div>
+        <dl className="mt-7 space-y-3 text-sm">
+          <DetailRow label={copy.activeSectors} value={project.sector.name} />
+          <DetailRow label={copy.selectedDepartment} value={project.department?.name ?? department.name} />
+          <DetailRow label={copy.selectedMunicipality} value={project.municipality?.name ?? municipality?.name ?? "—"} />
+          <DetailRow label={locale === "es" ? "Etapa" : "Stage"} value={copy.stage[project.stage] ?? project.stage} />
+          <DetailRow label={copy.investment} value={formatMapInvestment(project.investment_amount, locale)} />
+          <DetailRow label={copy.jobs} value={formatMapJobs(project.estimated_jobs, locale)} />
+        </dl>
+      </aside>
+    );
+  }
+
   const hasActivity = Boolean(summary && summary.projects_count + summary.opportunities_count > 0);
+  const emptyProjectsMessage = municipality
+    ? copy.noGeolocatedProjectsMunicipality
+    : copy.noGeolocatedProjectsDepartment;
+
   return (
     <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedDepartment}: ${department.name}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedDepartment}</p>
           <h2 className="mt-2 text-3xl font-extrabold tracking-tight">{department.name}</h2>
+          {municipality ? (
+            <div className="mt-4 flex items-start justify-between gap-3 rounded-xl border border-[#8DC046]/30 bg-[#35A963]/10 p-3">
+              <div>
+                <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-[#8DC046]">{copy.selectedMunicipality}</p>
+                <p className="mt-1 text-lg font-bold">{municipality.name}</p>
+              </div>
+              <button type="button" onClick={onClearMunicipality} className="rounded-lg border border-white/20 px-2.5 py-1.5 text-[11px] font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f]">
+                {copy.clearMunicipality}
+              </button>
+            </div>
+          ) : null}
         </div>
-        <button type="button" onClick={onClear} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
+        <button type="button" onClick={onClearDepartment} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
           {copy.clear}
         </button>
       </div>
@@ -75,16 +134,29 @@ export function InvestmentMapPanel({
       )}
 
       <div className="mt-8 border-t border-white/10 pt-6">
-        <h3 className="text-lg font-bold">{copy.projectList}</h3>
+        <h3 className="text-lg font-bold">{copy.geolocatedProjects}</h3>
+        {municipalitiesLoading ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingMunicipalities}</p> : null}
+        {municipalitiesError ? <p className="mt-4 rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.municipalitiesError}</p> : null}
+        {!municipalitiesLoading && !municipalitiesError && municipalitiesEmpty ? (
+          <p className="mt-3 text-xs text-[#d5e3ff]/65">{copy.noMunicipalities}</p>
+        ) : null}
         {projectsLoading ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingProjects}</p> : null}
         {projectsError ? <p className="mt-4 rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.projectsError}</p> : null}
-        {!projectsLoading && !projectsError && projects.length === 0 ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.noProjects}</p> : null}
+        {!projectsLoading && !projectsError && projects.length === 0 ? (
+          <p className="mt-4 text-sm text-[#d5e3ff]/70">{emptyProjectsMessage}</p>
+        ) : null}
         <ul className="mt-4 space-y-3">
-          {projects.slice(0, 5).map((project) => (
-            <li key={project.id} className="rounded-xl border border-white/10 bg-[#252A58]/55 p-4">
-              <p className="font-bold leading-snug">{project.title}</p>
-              <p className="mt-1 text-xs text-[#d5e3ff]/75">{project.sector.name} · {copy.stage[project.project_stage] ?? project.project_stage}</p>
-              <p className="mt-3 text-xs text-[#d5e3ff]/80">{formatMapInvestment(project.investment_amount, locale)} · {formatMapJobs(project.estimated_jobs, locale)} {copy.jobs.toLowerCase()}</p>
+          {projects.slice(0, 8).map((item) => (
+            <li key={item.id}>
+              <button
+                type="button"
+                onClick={() => onSelectProject(item)}
+                className="w-full rounded-xl border border-white/10 bg-[#252A58]/55 p-4 text-left transition hover:border-[#8DC046]/50 hover:bg-[#252A58]/80"
+              >
+                <p className="font-bold leading-snug">{item.title}</p>
+                <p className="mt-1 text-xs text-[#d5e3ff]/75">{item.sector.name} · {copy.stage[item.stage] ?? item.stage}</p>
+                <p className="mt-3 text-xs text-[#d5e3ff]/80">{formatMapInvestment(item.investment_amount, locale)} · {formatMapJobs(item.estimated_jobs, locale)} {copy.jobs.toLowerCase()}</p>
+              </button>
             </li>
           ))}
         </ul>
@@ -95,4 +167,13 @@ export function InvestmentMapPanel({
 
 function PanelHint({ label, value, wide = false }: { label: string; value: string; wide?: boolean }) {
   return <div className={`rounded-xl border border-white/10 bg-[#252A58]/60 p-3 ${wide ? "col-span-2" : ""}`}><dt className="font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#b6c2d3]">{label}</dt><dd className="mt-1 text-lg font-extrabold">{value}</dd></div>;
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#252A58]/55 px-4 py-3">
+      <dt className="font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#b6c2d3]">{label}</dt>
+      <dd className="mt-1 font-semibold text-[#f4f7ff]">{value}</dd>
+    </div>
+  );
 }

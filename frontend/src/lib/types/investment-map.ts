@@ -61,6 +61,93 @@ export type DepartmentFeatureCollection = {
   features: DepartmentFeature[];
 };
 
+// ---------------------------------------------------------------------------
+// GeoJSON — municipios
+// ---------------------------------------------------------------------------
+
+export type MunicipalityProperties = {
+  name: string;
+  slug: string;
+  code?: string;
+  department_slug: string;
+  department?: string;
+  center_lat?: number | null;
+  center_lng?: number | null;
+};
+
+export type MunicipalityFeature = {
+  type: "Feature";
+  id: number;
+  geometry: GeoJSONGeometry | null;
+  properties: MunicipalityProperties;
+};
+
+export type MunicipalityFeatureCollection = {
+  type: "FeatureCollection";
+  features: MunicipalityFeature[];
+};
+
+// ---------------------------------------------------------------------------
+// Map projects — GET /api/v1/investment/projects/?has_location=true
+// ---------------------------------------------------------------------------
+
+export type MapInvestmentProject = {
+  id: number;
+  title: string;
+  slug: string;
+  sector: MapSector;
+  department: MapDepartmentCenter | null;
+  municipality: {
+    id: number;
+    name: string;
+    slug: string;
+    code: string;
+  } | null;
+  stage: string;
+  investment_amount: string | null;
+  estimated_jobs: number | null;
+  location: GeoJSON.Point | null;
+  latitude: number | null;
+  longitude: number | null;
+  featured: boolean;
+};
+
+export type MapSelectionState = {
+  department: DepartmentProperties | null;
+  municipality: MunicipalityProperties | null;
+  project: MapInvestmentProject | null;
+};
+
+export function hasProjectCoordinates(
+  project: Pick<MapInvestmentProject, "latitude" | "longitude">,
+): boolean {
+  return project.latitude != null && project.longitude != null;
+}
+
+export function filterMapProjectsByMunicipality(
+  projects: MapInvestmentProject[],
+  municipalitySlug: string | null,
+): MapInvestmentProject[] {
+  if (!municipalitySlug) return projects;
+  return projects.filter((project) => project.municipality?.slug === municipalitySlug);
+}
+
+export function getMarkerProjects(projects: MapInvestmentProject[]): MapInvestmentProject[] {
+  return projects.filter(hasProjectCoordinates);
+}
+
+export function clearMapProject(state: MapSelectionState): MapSelectionState {
+  return { ...state, project: null };
+}
+
+export function clearMapMunicipality(state: MapSelectionState): MapSelectionState {
+  return { ...state, municipality: null, project: null };
+}
+
+export function clearMapDepartment(): MapSelectionState {
+  return { department: null, municipality: null, project: null };
+}
+
 /** Legacy response shape kept for the existing deprecated map component. */
 export type DepartmentApiItem = {
   id: number;

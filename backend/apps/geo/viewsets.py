@@ -1,5 +1,5 @@
 from django.http import Http404
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -60,6 +60,12 @@ class MunicipalityViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="geojson")
     def geojson(self, request):
+        department_slug = request.query_params.get("department")
+        if not department_slug:
+            return Response(
+                {"detail": "Query parameter 'department' is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         queryset = self.get_queryset().only(
             "id",
             "department_id",
