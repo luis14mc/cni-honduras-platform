@@ -13,10 +13,10 @@ export default async function RecursosPage({ params }: { params: Promise<{ local
   const { locale: raw } = await params;
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
-  const documents = await loadAsyncData(
-    () => getDocuments(locale, { featured: true }),
-    [] as CmsDocument[],
-  );
+  const [sectorPortfolios, opportunityPortfolios] = await Promise.all([
+    loadAsyncData(() => getDocuments(locale, { documentType: "sector_portfolio" }), [] as CmsDocument[]),
+    loadAsyncData(() => getDocuments(locale, { documentType: "opportunity_portfolio" }), [] as CmsDocument[]),
+  ]);
 
-  return <RecursosPageView locale={locale} documents={documents} />;
+  return <RecursosPageView locale={locale} sectorPortfolios={sectorPortfolios} opportunityPortfolios={opportunityPortfolios} />;
 }

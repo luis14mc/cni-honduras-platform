@@ -32,7 +32,11 @@ export interface NewsArticle {
 }
 
 export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "estudios";
-export type PortfolioDocumentType = "project_sheet" | "opportunity_card";
+export type PortfolioDocumentType =
+  | "project_sheet"
+  | "opportunity_card"
+  | "sector_portfolio"
+  | "opportunity_portfolio";
 
 export interface CmsDocument {
   id: number;

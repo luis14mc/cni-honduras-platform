@@ -14,7 +14,7 @@ import type {
 } from "@/src/lib/strapi/types";
 import { normalizeSectorSlug, sectorsMatch } from "@/src/lib/strapi/sector";
 import { STRAPI_COLLECTION_PATHS } from "@/src/lib/strapi/types";
-import type { CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory } from "@/src/types/cms";
+import type { CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
 import type {
   InvestmentOpportunity,
   OpportunityMetric,
@@ -217,7 +217,10 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
     category: isDocumentCategory(categoryRaw) ? categoryRaw : "biblioteca",
     is_featured: Boolean(raw.featured),
     document_type:
-      raw.document_type === "project_sheet" || raw.document_type === "opportunity_card"
+      raw.document_type === "project_sheet" ||
+      raw.document_type === "opportunity_card" ||
+      raw.document_type === "sector_portfolio" ||
+      raw.document_type === "opportunity_portfolio"
         ? raw.document_type
         : undefined,
     sector: asString(raw.sector) || undefined,
@@ -348,7 +351,7 @@ export type EditorialListOptions = {
   featured?: boolean;
   category?: string;
   sector?: string;
-  documentType?: "project_sheet" | "opportunity_card";
+  documentType?: PortfolioDocumentType;
 };
 
 function withListFilters(extra: Record<string, string>, options?: EditorialListOptions): Record<string, string> {

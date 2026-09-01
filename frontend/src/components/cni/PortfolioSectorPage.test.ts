@@ -44,6 +44,8 @@ describe("PortfolioSectorPage document selection", () => {
     document(2, "opportunity_card", "energia"),
     document(3, "project_sheet", "turismo"),
     document(4, "project_sheet", "energia", 1),
+    document(5, "sector_portfolio", "energia"),
+    document(6, "opportunity_portfolio", ""),
   ];
 
   it("never mixes project sheets and opportunity cards", () => {
