@@ -7,7 +7,6 @@ import { SectorIntro } from "@/src/components/cni/sector/SectorIntro";
 import { SectorBenefits } from "@/src/components/cni/sector/SectorBenefits";
 import { SectorOpportunities } from "@/src/components/cni/sector/SectorOpportunities";
 import { SectorSuccessStories } from "@/src/components/cni/sector/SectorSuccessStories";
-import { SectorProjects } from "@/src/components/cni/sector/SectorProjects";
 import { SectorGuide } from "@/src/components/cni/sector/SectorGuide";
 import { sectorPhotoHeaders, SECTOR_ICON_SIZE } from "@/src/lib/sectorIcons";
 import { designImages } from "@/src/lib/designAssets";
@@ -20,14 +19,13 @@ import { withLocale, getSectorHref } from "@/src/i18n/path";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
 import type { AsyncData } from "@/src/lib/asyncData";
-import type { InvestmentOpportunity, InvestmentProject, SuccessStory } from "@/src/types/investment";
+import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
 
 type Props = {
   locale: Locale;
   slug: SectorSlug;
   sector: SectorCopy;
   opportunities: AsyncData<InvestmentOpportunity[]>;
-  projects: AsyncData<InvestmentProject[]>;
   successStories: AsyncData<SuccessStory[]>;
 };
 
@@ -36,7 +34,6 @@ export function SectorDetailView({
   slug,
   sector,
   opportunities,
-  projects,
   successStories,
 }: Props) {
   const page = getSectorPageContent(slug, locale);
@@ -71,7 +68,6 @@ export function SectorDetailView({
       <SectorBenefits title={page.benefits.title} items={page.benefits.items} />
       <SectorOpportunities locale={locale} result={opportunities} />
       <SectorSuccessStories locale={locale} result={successStories} />
-      <SectorProjects locale={locale} result={projects} />
 
       <section className={cn("bg-[#f8f9ff] py-16 md:py-20", "border-t border-cni-primary/8")}>
         <div className={layout.container}>

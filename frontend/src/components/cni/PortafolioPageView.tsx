@@ -1,207 +1,105 @@
-import Image from "next/image";
 import Link from "next/link";
-import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
-import { PortafolioCatalog } from "@/src/components/cni/PortafolioCatalog";
+import { ArrowRight, FileText, PanelsTopLeft } from "lucide-react";
+import { PageHero } from "@/src/components/cni/PageHero";
 import { designImages } from "@/src/lib/designAssets";
-import {
-  getSectors as getStaticSectors,
-  isSectorSlug,
-  type SectorSlug,
-} from "@/src/data/investmentSectors";
 import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
-import type { AsyncData } from "@/src/lib/asyncData";
-import type {
-  InvestmentOpportunity,
-  InvestmentProject,
-  Sector,
-} from "@/src/types/investment";
 
 const copy = {
   es: {
-    titleA: "Portafolio de",
-    titleB: "inversión",
-    description:
-      "Proyectos y oportunidades estratégicas en los corredores de desarrollo de Honduras, evaluados para crecimiento sostenible.",
-    heroCatalog: "Ver catálogo",
-    heroMap: "Mapa de inversiones",
-    heroSubmit: "Postular un proyecto",
-    catalogEyebrow: "Catálogo institucional",
-    catalogTitle: "Oportunidades y proyectos",
-    catalogLead:
-      "Filtre por tipo y sector. Vacío no es error: si no hay fichas, el catálogo está en actualización.",
-    viewCases: "Casos de éxito",
-    ctaEyebrow: "Acompañamiento CNI",
-    ctaTitle1: "Estructure su entrada",
-    ctaTitle2: "con respaldo institucional",
-    ctaDesc:
-      "Asesoría técnica, marco legal y seguimiento para inversionistas que evalúan o postulan proyectos en Honduras.",
-    ctaPrimary: "Contactar al CNI",
-    ctaSecondary: "Postular proyecto",
-    ctaResources: "Recursos",
+    title: "PORTAFOLIO DE INVERSIONES",
+    description: "Explore las oportunidades de inversión de Honduras organizadas por tipo y sector.",
+    eyebrow: "Inversión en Honduras",
+    sectionTitle: "Explore el portafolio",
+    sectionDescription: "Seleccione el tipo de recurso que desea consultar.",
+    cards: [
+      {
+        title: "Fichas de Proyectos",
+        description: "Consulte las fichas de proyectos organizadas por sector de inversión.",
+        cta: "Ver fichas de proyectos",
+        href: "/portafolio/fichas-proyectos",
+        icon: FileText,
+      },
+      {
+        title: "Opportunity Cards",
+        description: "Explore las tarjetas de oportunidades organizadas por sector de inversión.",
+        cta: "Ver Opportunity Cards",
+        href: "/portafolio/opportunity-cards",
+        icon: PanelsTopLeft,
+      },
+    ],
   },
   en: {
-    titleA: "Investment",
-    titleB: "portfolio",
-    description:
-      "Strategic projects and opportunities in Honduras’s development corridors, evaluated for sustainable growth.",
-    heroCatalog: "View catalog",
-    heroMap: "Investment map",
-    heroSubmit: "Submit a project",
-    catalogEyebrow: "Institutional catalog",
-    catalogTitle: "Opportunities and projects",
-    catalogLead:
-      "Filter by type and sector. Empty is not an error: if no records appear, the catalog is being updated.",
-    viewCases: "Success stories",
-    ctaEyebrow: "CNI support",
-    ctaTitle1: "Structure your entry",
-    ctaTitle2: "with institutional backing",
-    ctaDesc:
-      "Technical advice, legal framing and follow-up for investors evaluating or submitting projects in Honduras.",
-    ctaPrimary: "Contact CNI",
-    ctaSecondary: "Submit a project",
-    ctaResources: "Resources",
+    title: "INVESTMENT PORTFOLIO",
+    description: "Explore investment opportunities in Honduras organized by type and sector.",
+    eyebrow: "Investment in Honduras",
+    sectionTitle: "Explore the portfolio",
+    sectionDescription: "Select the type of resource you want to view.",
+    cards: [
+      {
+        title: "Project Sheets",
+        description: "View project sheets organized by investment sector.",
+        cta: "View project sheets",
+        href: "/portafolio/fichas-proyectos",
+        icon: FileText,
+      },
+      {
+        title: "Opportunity Cards",
+        description: "Explore opportunity cards organized by investment sector.",
+        cta: "View Opportunity Cards",
+        href: "/portafolio/opportunity-cards",
+        icon: PanelsTopLeft,
+      },
+    ],
   },
 } as const;
 
-type Props = {
-  locale: Locale;
-  projects: AsyncData<InvestmentProject[]>;
-  opportunities: AsyncData<InvestmentOpportunity[]>;
-  sectors: AsyncData<Sector[]>;
-};
-
-function sectorNav(locale: Locale, apiSectors: Sector[]): { slug: SectorSlug; label: string }[] {
-  const staticList = getStaticSectors(locale);
-  const labels = new Map(
-    apiSectors
-      .filter((s): s is Sector & { slug: SectorSlug } => isSectorSlug(s.slug))
-      .map((s) => [s.slug, s.name] as const),
-  );
-  return staticList
-    .filter((s): s is typeof s & { slug: SectorSlug } => isSectorSlug(s.slug))
-    .map((s) => ({ slug: s.slug, label: labels.get(s.slug) || s.name }));
-}
-
-export function PortafolioPageView({ locale, projects, opportunities, sectors }: Props) {
+export function PortafolioPageView({ locale }: { locale: Locale }) {
   const c = copy[locale];
-  const L = (path: string) => withLocale(locale, path);
-  const navSectors = sectorNav(locale, sectors.data);
 
   return (
     <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9fa]">
-      <header className="relative flex min-h-screen items-center overflow-hidden bg-[#000a1e] pt-32 pb-24 text-white">
-        <div className="absolute inset-0">
-          <Image
-            src={designImages.portfolio.hero}
-            alt={locale === "es" ? "Portafolio de inversión" : "Investment portfolio"}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-[0.42]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#000a1e]/70 via-[#000a1e]/35 to-transparent" />
-          <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
-        </div>
-        <div className={cn("relative z-10 w-full", layout.container)}>
-          <div className="max-w-3xl">
-            <h1 className={cn("text-white", t.heroTitle)}>
-              {c.titleA} <span className="text-[#32B372]">{c.titleB}</span>
-            </h1>
-            <p className={cn("mt-6 max-w-2xl text-white/80", t.heroLead)}>{c.description}</p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              <a
-                href="#catalogo"
-                className="rounded bg-[#32B372] px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
-              >
-                {c.heroCatalog}
-              </a>
-              <Link
-                href={L("/portafolio/mapa")}
-                className="rounded border border-white px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
-              >
-                {c.heroMap}
-              </Link>
-              <Link
-                href={L("/portafolio/postulacion")}
-                className="rounded border border-white px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
-              >
-                {c.heroSubmit}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <PageHero
+        eyebrow={c.eyebrow}
+        title={c.title}
+        description={c.description}
+        imageSrc={designImages.portfolio.hero}
+        imageAlt=""
+        heightClass="min-h-[560px] pt-28 md:min-h-[680px]"
+        imageClassName="absolute inset-0 object-cover opacity-45"
+        overlayClassName="bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/65 to-[#000a1e]/25"
+      />
 
-      <section id="catalogo" className={cn("bg-white", layout.section)}>
+      <section className={cn("bg-white", layout.section)} aria-labelledby="portfolio-options-title">
         <div className={layout.container}>
-          <div className="mb-10 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl">
-              <p className={t.eyebrow}>{c.catalogEyebrow}</p>
-              <h2 className={cn("mt-3", t.h2)}>{c.catalogTitle}</h2>
-              <div className={cn("mt-4", t.sectionRule)} />
-              <p className={cn("mt-6", t.lead)}>{c.catalogLead}</p>
-            </div>
-            <Link
-              href={L("/portafolio/casos")}
-              className="inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-[#32B372] transition hover:text-cni-primary"
-            >
-              {c.viewCases}
-            </Link>
+          <div className="max-w-2xl">
+            <h2 id="portfolio-options-title" className={t.h2}>{c.sectionTitle}</h2>
+            <div className={cn("mt-4", t.sectionRule)} />
+            <p className={cn("mt-6", t.lead)}>{c.sectionDescription}</p>
           </div>
-          <PortafolioCatalog
-            locale={locale}
-            sectors={navSectors}
-            projects={projects}
-            opportunities={opportunities}
-          />
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
-        <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />
-        <div className={cn("relative z-10", layout.container)}>
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            <div>
-              <p className={t.eyebrowOnDark}>{c.ctaEyebrow}</p>
-              <h2 className={cn("mt-3 text-white", t.h2OnDark)}>
-                {c.ctaTitle1} <span className="text-[#32B372]">{c.ctaTitle2}</span>
-              </h2>
-              <p className="mt-6 max-w-xl font-body text-lg leading-relaxed text-white/80">{c.ctaDesc}</p>
-              <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {c.cards.map((card) => {
+              const Icon = card.icon;
+              return (
                 <Link
-                  href={L("/contacto")}
-                  className="rounded bg-[#32B372] px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
+                  key={card.href}
+                  href={withLocale(locale, card.href)}
+                  className="group flex min-h-72 flex-col rounded-xl border border-cni-primary/10 bg-[#f8f9ff] p-7 shadow-sm transition hover:-translate-y-1 hover:border-[#32B372]/40 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372] sm:p-9"
                 >
-                  {c.ctaPrimary}
+                  <span className="flex h-14 w-14 items-center justify-center rounded-lg bg-cni-primary text-white" aria-hidden>
+                    <Icon className="h-7 w-7" />
+                  </span>
+                  <h3 className={cn("mt-7", t.h3)}>{card.title}</h3>
+                  <p className="mt-4 flex-1 font-body text-base leading-relaxed text-cni-primary/70">{card.description}</p>
+                  <span className="mt-8 inline-flex items-center gap-2 font-headline text-xs font-bold uppercase tracking-[0.16em] text-[#168654]">
+                    {card.cta}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
+                  </span>
                 </Link>
-                <Link
-                  href={L("/portafolio/postulacion")}
-                  className="rounded border border-white px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
-                >
-                  {c.ctaSecondary}
-                </Link>
-                <Link
-                  href={L("/recursos")}
-                  className="rounded border border-white/40 px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white/80 transition hover:border-white hover:text-white"
-                >
-                  {c.ctaResources}
-                </Link>
-              </div>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm">
-              <MaterialIcon name="verified_user" className="text-5xl text-[#32B372]" />
-              <p className="mt-4 font-display text-xl font-extrabold text-white">
-                {locale === "es" ? "Asesoría sin costo" : "No-cost advisory"}
-              </p>
-              <p className="mt-2 font-body text-sm leading-relaxed text-white/70">
-                {locale === "es"
-                  ? "El CNI acompaña la evaluación, la instalación y el aftercare. No sustituye la decisión de inversión."
-                  : "CNI supports evaluation, setup and aftercare. It does not replace the investment decision."}
-              </p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </section>

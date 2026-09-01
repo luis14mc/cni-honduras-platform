@@ -24,6 +24,8 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/live": "/vivir",
     "/live/quality-of-life": "/vivir/calidad-de-vida",
     "/portfolio": "/portafolio",
+    "/portfolio/project-sheets": "/portafolio/fichas-proyectos",
+    "/portfolio/opportunity-cards": "/portafolio/opportunity-cards",
     "/portfolio/success-stories": "/portafolio/casos",
     "/portfolio/submit": "/portafolio/postulacion",
     "/application": "/postulacion",

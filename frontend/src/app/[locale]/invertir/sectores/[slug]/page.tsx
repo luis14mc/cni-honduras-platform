@@ -7,11 +7,11 @@ import {
   mergeSectorWithApi,
   SECTOR_SLUGS,
 } from "@/src/data/investmentSectors";
-import { getProjectsBySector, getSector } from "@/src/services/investment";
+import { getSector } from "@/src/services/investment";
 import { getOpportunities, getSuccessStories } from "@/src/lib/strapi/editorial";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 import { loadAsyncData } from "@/src/lib/asyncData";
-import type { InvestmentOpportunity, InvestmentProject, SuccessStory } from "@/src/types/investment";
+import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
 
 export function generateStaticParams() {
   return SECTOR_SLUGS.map((slug) => ({ slug }));
@@ -37,10 +37,9 @@ export default async function SectorPage({
     sector = fallback;
   }
 
-  const [opportunities, successStories, projects] = await Promise.all([
+  const [opportunities, successStories] = await Promise.all([
     loadAsyncData(() => getOpportunities(locale, { sector: slug }), [] as InvestmentOpportunity[]),
     loadAsyncData(() => getSuccessStories(locale, { sector: slug }), [] as SuccessStory[]),
-    loadAsyncData(() => getProjectsBySector(slug), [] as InvestmentProject[]),
   ]);
 
   return (
@@ -49,7 +48,6 @@ export default async function SectorPage({
       slug={slug}
       sector={sector}
       opportunities={opportunities}
-      projects={projects}
       successStories={successStories}
     />
   );
