@@ -3,6 +3,7 @@ import { StrapiApiError } from "@/src/lib/strapi/client";
 import {
   getNews,
   getNewsBySlug,
+  getOpportunities,
   getOpportunityBySlug,
   getSuccessStories,
   mapDocument,
@@ -308,5 +309,25 @@ describe("editorial fetch", () => {
     const opp = await getOpportunityBySlug("es", "opp");
     expect(JSON.stringify(opp)).not.toContain("secret");
     expect(JSON.stringify(opp)).not.toContain("internal_notes");
+  });
+
+  it("removes the retired Naco solar project from lists and detail", async () => {
+    vi.stubEnv("STRAPI_URL", "https://strapi.test");
+    const retired = {
+      id: 20,
+      title: "Planta Solar Fotovoltaica 20 MW para Mercado de Oportunidad en Naco, Cortés",
+      slug: "planta-solar-naco",
+      sector: "energia",
+    };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: [retired], meta: {} }),
+      }),
+    );
+
+    await expect(getOpportunities("es")).resolves.toEqual([]);
+    await expect(getOpportunityBySlug("es", retired.slug)).rejects.toMatchObject({ status: 404 });
   });
 });

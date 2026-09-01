@@ -224,12 +224,12 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     canonical: "/portafolio",
     enMirror: "/en/portfolio",
     title: {
-      es: "Portafolio de Inversiones Honduras · Proyectos Ready-to-Invest",
-      en: "Honduras Investment Portfolio · Ready-to-Invest Projects",
+      es: "PORTAFOLIO DE INVERSIONES · CNI Honduras",
+      en: "INVESTMENT PORTFOLIO · CNI Honduras",
     },
     description: {
-      es: "Catálogo estructurado de proyectos de inversión en Honduras con CAPEX, proyecciones de empleo, ubicación y métricas de viabilidad por sector.",
-      en: "Structured catalog of investment projects in Honduras with CAPEX, employment projections, location and viability metrics by sector.",
+      es: "Explore las fichas de proyectos y Opportunity Cards de Honduras organizadas por sector de inversión.",
+      en: "Explore Honduras project sheets and Opportunity Cards organized by investment sector.",
     },
   },
   "portafolio-casos": {
