@@ -309,18 +309,6 @@ export function mapOpportunity(raw: unknown): InvestmentOpportunity | null {
   return mapped;
 }
 
-const RETIRED_OPPORTUNITY_TITLE = "planta solar fotovoltaica 20 mw para mercado de oportunidad en naco cortes";
-
-function isRetiredOpportunity(item: InvestmentOpportunity): boolean {
-  const normalizedTitle = item.title
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9]+/g, " ")
-    .trim()
-    .toLowerCase();
-  return normalizedTitle === RETIRED_OPPORTUNITY_TITLE;
-}
-
 async function fetchCollection<T>(
   path: string,
   locale: Locale,
@@ -460,10 +448,7 @@ export async function getOpportunities(
     extra,
   );
   return matchesRequestedSector(
-    rows
-      .map(mapOpportunity)
-      .filter((item): item is InvestmentOpportunity => item != null)
-      .filter((item) => !isRetiredOpportunity(item)),
+    rows.map(mapOpportunity).filter((item): item is InvestmentOpportunity => item != null),
     options?.sector,
   );
 }
@@ -476,7 +461,7 @@ export async function getOpportunityBySlug(locale: Locale, slug: string): Promis
     populateExtra(["featured_image", "public_metrics"]),
   );
   const mapped = mapOpportunity(raw);
-  if (!mapped || isRetiredOpportunity(mapped)) {
+  if (!mapped) {
     throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.investmentOpportunities);
   }
   return mapped;
