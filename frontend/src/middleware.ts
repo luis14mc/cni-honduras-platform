@@ -16,6 +16,12 @@ function isStaticAsset(pathname: string): boolean {
   );
 }
 
+function localeRequestHeaders(request: NextRequest, pathname: string): Headers {
+  const headers = new Headers(request.headers);
+  headers.set("x-cni-locale", pathname === "/en" || pathname.startsWith("/en/") ? "en" : "es");
+  return headers;
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -63,10 +69,14 @@ export function middleware(request: NextRequest) {
   if (internal && internal !== normalized) {
     const url = request.nextUrl.clone();
     url.pathname = internal;
-    return NextResponse.rewrite(url);
+    return NextResponse.rewrite(url, {
+      request: { headers: localeRequestHeaders(request, normalized) },
+    });
   }
 
-  return NextResponse.next();
+  return NextResponse.next({
+    request: { headers: localeRequestHeaders(request, normalized) },
+  });
 }
 
 export const config = {

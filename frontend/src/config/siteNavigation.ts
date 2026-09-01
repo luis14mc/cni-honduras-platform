@@ -120,6 +120,11 @@ function buildPathIndex(): Record<Locale, Map<string, PathEntry>> {
       label: { es: "Otros Documentos", en: "Other Documents" },
       path: { es: "/recursos/biblioteca", en: "/en/resources/library" },
     },
+    {
+      id: "recursos-estudios",
+      label: { es: "Estudios CNI", en: "CNI Studies" },
+      path: { es: "/recursos/estudios", en: "/en/resources/studies" },
+    },
   ];
   walkNodes(extra, "es", es);
   walkNodes(extra, "en", en);

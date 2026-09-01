@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { headers } from "next/headers";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "@/src/app/globals.css";
@@ -152,13 +153,14 @@ const websiteJsonLd = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = (await headers()).get("x-cni-locale") === "en" ? "en" : "es";
   return (
-    <html lang="es" className={cn("scroll-smooth", montserrat.variable, aptos.variable)}>
+    <html lang={locale} className={cn("scroll-smooth", montserrat.variable, aptos.variable)}>
       <head>
         <link
           rel="stylesheet"
