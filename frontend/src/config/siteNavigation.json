@@ -28,6 +28,16 @@
         "path": { "es": "/portafolio", "en": "/en/portfolio" }
       },
       {
+        "id": "crecer-fichas-proyectos",
+        "label": { "es": "Fichas de Proyectos", "en": "Project Sheets" },
+        "path": { "es": "/portafolio/fichas-proyectos", "en": "/en/portfolio/project-sheets" }
+      },
+      {
+        "id": "crecer-opportunity-cards",
+        "label": { "es": "Opportunity Cards", "en": "Opportunity Cards" },
+        "path": { "es": "/portafolio/opportunity-cards", "en": "/en/portfolio/opportunity-cards" }
+      },
+      {
         "id": "crecer-casos",
         "label": { "es": "Casos de Éxito", "en": "Success Stories" },
         "path": { "es": "/portafolio/casos", "en": "/en/portfolio/success-stories" }

@@ -32,6 +32,11 @@ export interface NewsArticle {
 }
 
 export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "estudios";
+export type PortfolioDocumentType =
+  | "project_sheet"
+  | "opportunity_card"
+  | "sector_portfolio"
+  | "opportunity_portfolio";
 
 export interface CmsDocument {
   id: number;
@@ -45,6 +50,8 @@ export interface CmsDocument {
   description: string;
   category: DocumentCategory;
   is_featured: boolean;
+  document_type?: PortfolioDocumentType;
+  sector?: string;
   order: number;
   cover_image: MediaAssetLite | null;
   file_type: string;
