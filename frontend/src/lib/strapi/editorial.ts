@@ -216,7 +216,12 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
     description: asString(raw.description),
     category: isDocumentCategory(categoryRaw) ? categoryRaw : "biblioteca",
     is_featured: Boolean(raw.featured),
-    order: 0,
+    document_type:
+      raw.document_type === "project_sheet" || raw.document_type === "opportunity_card"
+        ? raw.document_type
+        : undefined,
+    sector: asString(raw.sector) || undefined,
+    order: typeof raw.order === "number" ? raw.order : 0,
     cover_image: toMediaAsset(raw.cover, title),
     file_type: fileMime(raw.file),
     file_size_bytes: fileSizeBytes(raw.file),
@@ -343,12 +348,14 @@ export type EditorialListOptions = {
   featured?: boolean;
   category?: string;
   sector?: string;
+  documentType?: "project_sheet" | "opportunity_card";
 };
 
 function withListFilters(extra: Record<string, string>, options?: EditorialListOptions): Record<string, string> {
   const next = { ...extra };
   if (options?.featured) next["filters[featured][$eq]"] = "true";
   if (options?.category) next["filters[category][$eq]"] = options.category;
+  if (options?.documentType) next["filters[document_type][$eq]"] = options.documentType;
   return next;
 }
 
@@ -389,10 +396,12 @@ export async function getDocuments(locale: Locale, options?: EditorialListOption
   const extra = withListFilters(
     {
       ...populateExtra(["file", "cover"]),
-      "sort[0]": "publishedAt:desc",
+      "sort[0]": "order:asc",
+      "sort[1]": "title:asc",
     },
     options,
   );
+  if (options?.sector) extra["filters[sector][$eq]"] = options.sector;
   const rows = await fetchCollection<StrapiDocument>(STRAPI_COLLECTION_PATHS.documents, locale, extra);
   return rows.map((row) => mapDocument(row, locale)).filter((item): item is CmsDocument => item != null);
 }
