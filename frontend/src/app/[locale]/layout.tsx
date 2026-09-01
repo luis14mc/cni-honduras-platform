@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import Navbar from "@/src/components/layout/Navbar";
 import Footer from "@/src/components/layout/Footer";
 import { SiteBannerBar } from "@/src/components/layout/SiteBannerBar";
-import { HtmlLang } from "@/src/components/layout/HtmlLang";
 import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
@@ -50,7 +49,6 @@ export default async function LocaleLayout({
 
   return (
     <>
-      <HtmlLang locale={locale} />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded focus:bg-[#252A58] focus:px-4 focus:py-2 focus:text-white"
