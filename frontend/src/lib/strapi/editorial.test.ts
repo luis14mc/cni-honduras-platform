@@ -113,6 +113,22 @@ describe("mapDocument", () => {
     expect(doc?.file_url).toBeNull();
     expect(doc?.has_resource).toBe(false);
   });
+
+  it("maps a localized consolidated portfolio without requiring a sector", () => {
+    const doc = mapDocument({
+      id: 5,
+      title: "Investment Opportunities Portfolio",
+      slug: "investment-opportunities-portfolio",
+      document_type: "opportunity_portfolio",
+      order: 1,
+    }, "en");
+    expect(doc).toMatchObject({
+      language: "en",
+      document_type: "opportunity_portfolio",
+      order: 1,
+    });
+    expect(doc?.sector).toBeUndefined();
+  });
 });
 
 describe("mapSuccessStory", () => {

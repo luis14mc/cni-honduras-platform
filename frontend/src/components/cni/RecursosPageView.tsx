@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { BrandPageHero, brandHeroCta } from "@/src/components/cni/BrandPageHero";
-import { RecursosDocsCatalog } from "@/src/components/cni/RecursosDocsCatalog";
+import { DownloadablePortfolios } from "@/src/components/cni/DownloadablePortfolios";
 import { designImages } from "@/src/lib/designAssets";
 import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
@@ -18,7 +18,7 @@ const copy = {
       "Guías, estudios y documentos del CNI para apoyar el aterrizaje de capital en Honduras.",
     heroImageAlt: "Centro de recursos CNI",
     heroCats: "Ver categorías",
-    heroDocs: "Documentos destacados",
+    heroDocs: "Portafolios descargables",
     heroContact: "Contactar al CNI",
     catsEyebrow: "Navegación",
     catsTitle: "Categorías",
@@ -31,10 +31,6 @@ const copy = {
       { icon: "folder_managed", title: "Portafolio", text: "Proyectos y oportunidades públicas.", href: "/portafolio" },
       { icon: "gavel", title: "Marco legal", text: "LPPI, ZOLI y servicios jurídicos del CNI.", href: "/cni/servicios-legales" },
     ],
-    docsEyebrow: "Actualizados",
-    docsTitle: "Documentos destacados",
-    docsLead: "Publicados en el CMS. Vacío no es error: si no hay fichas, el catálogo está en actualización.",
-    viewAll: "Ver institucionales",
     ctaEyebrow: "Acompañamiento CNI",
     ctaTitle1: "¿Necesita asesoría",
     ctaTitle2: "técnica?",
@@ -48,7 +44,7 @@ const copy = {
     description: "CNI guides, studies and documents to support capital landing in Honduras.",
     heroImageAlt: "CNI resource center",
     heroCats: "View categories",
-    heroDocs: "Featured documents",
+    heroDocs: "Downloadable portfolios",
     heroContact: "Contact CNI",
     catsEyebrow: "Navigation",
     catsTitle: "Categories",
@@ -61,10 +57,6 @@ const copy = {
       { icon: "folder_managed", title: "Portfolio", text: "Public projects and opportunities.", href: "/portafolio" },
       { icon: "gavel", title: "Legal framework", text: "LPPI, ZOLI and CNI legal services.", href: "/cni/servicios-legales" },
     ],
-    docsEyebrow: "Updated",
-    docsTitle: "Featured documents",
-    docsLead: "Published in the CMS. Empty is not an error: if no records appear, the catalog is being updated.",
-    viewAll: "View institutional",
     ctaEyebrow: "CNI support",
     ctaTitle1: "Need technical",
     ctaTitle2: "advice?",
@@ -76,10 +68,11 @@ const copy = {
 
 type Props = {
   locale: Locale;
-  documents: AsyncData<CmsDocument[]>;
+  sectorPortfolios: AsyncData<CmsDocument[]>;
+  opportunityPortfolios: AsyncData<CmsDocument[]>;
 };
 
-export function RecursosPageView({ locale, documents }: Props) {
+export function RecursosPageView({ locale, sectorPortfolios, opportunityPortfolios }: Props) {
   const c = copy[locale];
   const L = (path: string) => withLocale(locale, path);
 
@@ -133,25 +126,7 @@ export function RecursosPageView({ locale, documents }: Props) {
         </div>
       </section>
 
-      <section id="documentos" className={cn("bg-[#f3f4f5]", layout.section)}>
-        <div className={layout.container}>
-          <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div className="max-w-2xl">
-              <p className={t.eyebrow}>{c.docsEyebrow}</p>
-              <h2 className={cn("mt-3", t.h2)}>{c.docsTitle}</h2>
-              <div className={cn("mt-4", t.sectionRule)} />
-              <p className={cn("mt-6", t.lead)}>{c.docsLead}</p>
-            </div>
-            <Link
-              href={L("/recursos/institucional")}
-              className="font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-[#32B372]"
-            >
-              {c.viewAll}
-            </Link>
-          </div>
-          <RecursosDocsCatalog locale={locale} documents={documents} />
-        </div>
-      </section>
+      <DownloadablePortfolios locale={locale} sectorPortfolios={sectorPortfolios} opportunityPortfolios={opportunityPortfolios} />
 
       <section className="relative overflow-hidden bg-[#000a1e] py-24 text-white">
         <div className="site-footer-mesh pointer-events-none absolute inset-0 opacity-[0.16]" aria-hidden />

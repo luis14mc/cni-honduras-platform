@@ -94,7 +94,7 @@
     },
     "document_type": {
       "type": "enumeration",
-      "enum": ["project_sheet", "opportunity_card"],
+      "enum": ["project_sheet", "opportunity_card", "sector_portfolio", "opportunity_portfolio"],
       "pluginOptions": {
         "i18n": {
           "localized": false
