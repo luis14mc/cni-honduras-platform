@@ -224,8 +224,8 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     canonical: "/portafolio",
     enMirror: "/en/portfolio",
     title: {
-      es: "PORTAFOLIO DE INVERSIONES · CNI Honduras",
-      en: "INVESTMENT PORTFOLIO · CNI Honduras",
+      es: "PORTAFOLIO DE INVERSIONES",
+      en: "INVESTMENT PORTFOLIO",
     },
     description: {
       es: "Explore las fichas de proyectos y Opportunity Cards de Honduras organizadas por sector de inversión.",
