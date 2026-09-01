@@ -91,6 +91,34 @@
           "localized": false
         }
       }
+    },
+    "document_type": {
+      "type": "enumeration",
+      "enum": ["project_sheet", "opportunity_card"],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "sector": {
+      "type": "enumeration",
+      "enum": ["turismo", "energia", "infraestructura", "agroindustria", "manufactura"],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     }
   }
 }

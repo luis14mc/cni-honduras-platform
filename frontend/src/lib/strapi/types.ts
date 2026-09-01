@@ -73,6 +73,9 @@ export interface StrapiDocument {
   category?: string | null;
   resource_key?: string | null;
   featured?: boolean;
+  document_type?: "project_sheet" | "opportunity_card" | null;
+  sector?: string | null;
+  order?: number | null;
   locale?: StrapiLocale;
   publishedAt?: string | null;
 }

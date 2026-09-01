@@ -3,6 +3,7 @@ import { StrapiApiError } from "@/src/lib/strapi/client";
 import {
   getNews,
   getNewsBySlug,
+  getDocuments,
   getOpportunityBySlug,
   getSuccessStories,
   mapDocument,
@@ -80,6 +81,9 @@ describe("mapDocument", () => {
         category: "institucional",
         resource_key: "memoria-anual",
         featured: true,
+        document_type: "project_sheet",
+        sector: "energia",
+        order: 2,
         publishedAt: "2026-02-01T00:00:00.000Z",
       },
       "es",
@@ -90,6 +94,9 @@ describe("mapDocument", () => {
       category: "institucional",
       resource_key: "memoria-anual",
       is_featured: true,
+      document_type: "project_sheet",
+      sector: "energia",
+      order: 2,
       language: "es",
       file: "https://cdn.example/es/memoria.pdf",
       file_url: "https://cdn.example/es/memoria.pdf",
@@ -97,6 +104,14 @@ describe("mapDocument", () => {
     });
     expect(doc?.cover_image?.file).toContain("cover.webp");
     expect(doc?.file_size_bytes).toBe(250 * 1024);
+  });
+
+  it("maps a missing cover and file without inventing media", () => {
+    const doc = mapDocument({ id: 4, title: "Ficha", slug: "ficha", order: 0 }, "en");
+    expect(doc?.language).toBe("en");
+    expect(doc?.cover_image).toBeNull();
+    expect(doc?.file_url).toBeNull();
+    expect(doc?.has_resource).toBe(false);
   });
 });
 
@@ -231,6 +246,27 @@ describe("editorial fetch", () => {
       }),
     );
     await expect(getNews("en")).resolves.toEqual([]);
+  });
+
+  it("filters portfolio documents by type, sector and locale with stable ordering", async () => {
+    vi.stubEnv("STRAPI_URL", "https://strapi.test");
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [], meta: { pagination: { total: 0 } } }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      getDocuments("en", { documentType: "opportunity_card", sector: "turismo" }),
+    ).resolves.toEqual([]);
+    const url = String(fetchMock.mock.calls[0]?.[0]);
+    expect(url).toContain("locale=en");
+    expect(url).toContain("filters%5Bdocument_type%5D%5B%24eq%5D=opportunity_card");
+    expect(url).toContain("filters%5Bsector%5D%5B%24eq%5D=turismo");
+    expect(url).toContain("sort%5B0%5D=order%3Aasc");
+    expect(url).toContain("sort%5B1%5D=title%3Aasc");
+    expect(url).toContain("populate%5Bfile%5D=true");
+    expect(url).toContain("populate%5Bcover%5D=true");
   });
 
   it("throws on HTTP errors without leaking Django fallback", async () => {
