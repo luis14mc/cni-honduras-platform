@@ -84,7 +84,7 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     noPublicData: "Sin datos públicos",
     selected: "Seleccionado",
     filtered: "Fuera del filtro",
-    attribution: "© OpenStreetMap contributors",
+    attribution: "Datos geográficos CNI Honduras",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -126,6 +126,6 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     noPublicData: "No public data",
     selected: "Selected",
     filtered: "Outside filter",
-    attribution: "© OpenStreetMap contributors",
+    attribution: "CNI Honduras geographic data",
   },
 };

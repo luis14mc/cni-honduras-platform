@@ -4,12 +4,14 @@ import {
   clearMapMunicipality,
   clearMapProject,
   filterMapProjectsByMunicipality,
+  filterMapProjectsBySector,
   formatMapInvestment,
   formatMapJobs,
   getMapTotals,
   getMarkerProjects,
   hasProjectCoordinates,
   indexSummaries,
+  toLeafletProjectPosition,
   type MapInvestmentProject,
   type MapDepartmentSummary,
   type MapSelectionState,
@@ -78,10 +80,24 @@ describe("investment map pure helpers", () => {
     expect(filterMapProjectsByMunicipality(projects, null)).toHaveLength(2);
   });
 
+  it("filters marker projects by sector", () => {
+    const tourism = mapProject("tourism", "san-pedro-sula", 15.5);
+    const energy = { ...mapProject("energy", "san-pedro-sula", 15.6), sector: { ...tourism.sector, slug: "energia" } };
+    expect(filterMapProjectsBySector([tourism, energy], "turismo")).toEqual([tourism]);
+    expect(filterMapProjectsBySector([tourism, energy], null)).toHaveLength(2);
+  });
+
   it("excludes projects without coordinates from marker candidates", () => {
     const projects = [mapProject("with-point", "san-pedro-sula", 15.5), mapProject("without-point", "san-pedro-sula", null)];
     expect(hasProjectCoordinates(projects[0])).toBe(true);
     expect(getMarkerProjects(projects)).toEqual([projects[0]]);
+  });
+
+  it("converts GeoDjango coordinates to Leaflet latitude-longitude order", () => {
+    const project = mapProject("point", "san-pedro-sula", 15.5);
+    expect(project.location?.coordinates).toEqual([-87.2, 15.5]);
+    expect(toLeafletProjectPosition(project)).toEqual([15.5, -87.2]);
+    expect(toLeafletProjectPosition({ latitude: 91, longitude: -87.2 })).toBeNull();
   });
 
   it("resets map selection in cascade", () => {

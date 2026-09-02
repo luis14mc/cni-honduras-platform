@@ -121,7 +121,23 @@ export type MapSelectionState = {
 export function hasProjectCoordinates(
   project: Pick<MapInvestmentProject, "latitude" | "longitude">,
 ): boolean {
-  return project.latitude != null && project.longitude != null;
+  return (
+    project.latitude != null &&
+    project.longitude != null &&
+    Number.isFinite(project.latitude) &&
+    Number.isFinite(project.longitude) &&
+    project.latitude >= -90 &&
+    project.latitude <= 90 &&
+    project.longitude >= -180 &&
+    project.longitude <= 180
+  );
+}
+
+export function toLeafletProjectPosition(
+  project: Pick<MapInvestmentProject, "latitude" | "longitude">,
+): [number, number] | null {
+  if (!hasProjectCoordinates(project)) return null;
+  return [project.latitude!, project.longitude!];
 }
 
 export function filterMapProjectsByMunicipality(
@@ -130,6 +146,14 @@ export function filterMapProjectsByMunicipality(
 ): MapInvestmentProject[] {
   if (!municipalitySlug) return projects;
   return projects.filter((project) => project.municipality?.slug === municipalitySlug);
+}
+
+export function filterMapProjectsBySector(
+  projects: MapInvestmentProject[],
+  sectorSlug: string | null,
+): MapInvestmentProject[] {
+  if (!sectorSlug) return projects;
+  return projects.filter((project) => project.sector.slug === sectorSlug);
 }
 
 export function getMarkerProjects(projects: MapInvestmentProject[]): MapInvestmentProject[] {

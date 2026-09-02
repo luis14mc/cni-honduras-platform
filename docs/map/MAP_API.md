@@ -5,7 +5,7 @@ All endpoints below are available under `/api/v1/`.
 ## Boundary GeoJSON
 
 - `GET /geo/departments/geojson/` returns active departments as a GeoJSON `FeatureCollection`.
-- `GET /geo/municipalities/geojson/` returns active municipalities.
+- `GET /geo/municipalities/geojson/` returns active municipalities for legacy consumers. The investment map does not call this unfiltered endpoint.
 - `GET /geo/municipalities/geojson/?department=<slug>` limits municipalities to one department.
 - `GET /geo/municipalities/geojson/?region=<slug>` limits municipalities to departments in a CNI region.
 
@@ -15,7 +15,7 @@ Boundary feature properties are deliberately limited to `name`, `slug`, `code`, 
 
 `GET /investment/projects/` retains the existing filters: `sector`, `department`, `region`, `municipality`, `stage`, and `featured`. `has_location=true|false` filters projects by their canonical `location` PointField.
 
-Project responses expose `location` as a GeoJSON Point plus `latitude` and `longitude`. All three values are null when no point is stored. The point coordinates are always `[longitude, latitude]`; coordinates are never inferred from a municipality.
+Project responses expose `location` as a GeoJSON Point plus `latitude` and `longitude`. All three values are null when no point is stored. The point coordinates are always `[longitude, latitude]`; coordinates are never inferred from a municipality. List requests with `has_location=true` use the lightweight marker serializer and return an unpaginated array scoped by the requested filters.
 
 ## Map Summary
 

@@ -13,6 +13,7 @@ import type {
   MunicipalityFeatureCollection,
   MunicipalityProperties,
 } from "@/src/lib/types/investment-map";
+import { toLeafletProjectPosition } from "@/src/lib/types/investment-map";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -156,6 +157,10 @@ function ViewportController({
     map.setMaxBounds(bounds.pad(0.12));
     initialFit.current = true;
   }, [data, map]);
+
+  useEffect(() => {
+    map.setMaxZoom(selectedDepartmentSlug ? 12 : 9);
+  }, [map, selectedDepartmentSlug]);
 
   useEffect(() => {
     if (selectedMunicipalitySlug && municipalities) {
@@ -341,12 +346,13 @@ export function InvestmentMapLeaflet({
         />
       ) : null}
       {markerProjects.map((project) => {
-        if (project.latitude == null || project.longitude == null) return null;
+        const position = toLeafletProjectPosition(project);
+        if (!position) return null;
         const selected = project.id === selectedProjectId;
         return (
           <CircleMarker
             key={project.id}
-            center={[project.latitude, project.longitude]}
+            center={position}
             radius={selected ? 9 : 7}
             pathOptions={{
               color: STROKE,

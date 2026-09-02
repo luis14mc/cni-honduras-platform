@@ -75,6 +75,7 @@ export function getGeolocatedMapProjects(options: {
   departmentSlug: string;
   municipalitySlug?: string;
   sectorSlug?: string;
+  locale?: Locale;
 }): Promise<import("@/src/lib/types/investment-map").MapInvestmentProject[]> {
   const params = new URLSearchParams({
     department: options.departmentSlug,
@@ -88,13 +89,18 @@ export function getGeolocatedMapProjects(options: {
   }
   return apiGet<import("@/src/lib/types/investment-map").MapInvestmentProject[]>(
     `${BASE}/projects/?${params.toString()}`,
+    { locale: options.locale },
   );
 }
 
-export function getMapSummary(sectorSlug?: string): Promise<import("@/src/lib/types/investment-map").MapDepartmentSummary[]> {
+export function getMapSummary(
+  sectorSlug?: string,
+  locale?: Locale,
+): Promise<import("@/src/lib/types/investment-map").MapDepartmentSummary[]> {
   const query = sectorSlug ? `?sector=${encodeURIComponent(sectorSlug)}` : "";
   return apiGet<import("@/src/lib/types/investment-map").MapDepartmentSummary[]>(
     `${BASE}/map-summary/${query}`,
+    { locale },
   );
 }
 

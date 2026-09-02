@@ -13,6 +13,7 @@ import type {
 } from "@/src/lib/types/investment-map";
 import {
   filterMapProjectsByMunicipality,
+  filterMapProjectsBySector,
   getMapTotals,
   getMarkerProjects,
   indexSummaries,
@@ -69,7 +70,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
 
   useEffect(() => {
     let cancelled = false;
-    getMapSummary(activeSector === "all" ? undefined : activeSector)
+    getMapSummary(activeSector === "all" ? undefined : activeSector, locale)
       .then((data) => {
         if (cancelled) return;
         setSummary({ status: "ready", data });
@@ -81,7 +82,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
         setSummarySector(activeSector);
       });
     return () => { cancelled = true; };
-  }, [activeSector]);
+  }, [activeSector, locale]);
 
   useEffect(() => {
     if (!selectedDepartment) return;
@@ -108,6 +109,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
     getGeolocatedMapProjects({
       departmentSlug: selectedDepartment.slug,
       sectorSlug: activeSector === "all" ? undefined : activeSector,
+      locale,
     })
       .then((data) => {
         if (cancelled) return;
@@ -120,7 +122,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
         setProjectsKey(requestKey);
       });
     return () => { cancelled = true; };
-  }, [activeSector, selectedDepartment]);
+  }, [activeSector, locale, selectedDepartment]);
 
   const handleSelectDepartment = useCallback((department: DepartmentProperties) => {
     setSelectedDepartment(department);
@@ -152,7 +154,16 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
     setSelectedProject(null);
   }, []);
 
-  const summaries = useMemo(() => indexSummaries(summary.data), [summary.data]);
+  const handleSectorChange = useCallback((sector: string) => {
+    setActiveSector(sector);
+    setSelectedProject(null);
+  }, []);
+
+  const visibleSummary = useMemo(
+    () => (summarySector === activeSector ? summary.data : []),
+    [activeSector, summary.data, summarySector],
+  );
+  const summaries = useMemo(() => indexSummaries(visibleSummary), [visibleSummary]);
   const selectedSummary = selectedDepartment ? summaries.get(selectedDepartment.slug) : undefined;
   const summaryLoading = summarySector !== activeSector;
   const selectedProjectsKey = selectedDepartment ? `${selectedDepartment.slug}:${activeSector}` : null;
@@ -162,11 +173,14 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
     [projects.data, projectsKey, selectedProjectsKey],
   );
   const visibleProjects = useMemo(
-    () => filterMapProjectsByMunicipality(projectsForDepartment, selectedMunicipality?.slug ?? null),
-    [projectsForDepartment, selectedMunicipality],
+    () => filterMapProjectsByMunicipality(
+      filterMapProjectsBySector(projectsForDepartment, activeSector === "all" ? null : activeSector),
+      selectedMunicipality?.slug ?? null,
+    ),
+    [activeSector, projectsForDepartment, selectedMunicipality],
   );
   const markerProjects = useMemo(() => getMarkerProjects(visibleProjects), [visibleProjects]);
-  const nationalCounts = useMemo(() => getMapTotals(summary.data), [summary.data]);
+  const nationalCounts = useMemo(() => getMapTotals(visibleSummary), [visibleSummary]);
   const municipalitiesLoading = Boolean(
     selectedDepartment && municipalitiesKey !== selectedDepartment.slug,
   );
@@ -195,7 +209,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="min-w-0 flex-1">
               <label htmlFor="investment-map-sector" className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.filterLabel}</label>
-              <select id="investment-map-sector" value={activeSector} onChange={(event) => setActiveSector(event.target.value)} className="mt-2 block w-full max-w-xl rounded-xl border border-white/15 bg-[#001a33] px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-[#F7BF06] focus:ring-2 focus:ring-[#F7BF06]/30">
+              <select id="investment-map-sector" value={activeSector} onChange={(event) => handleSectorChange(event.target.value)} className="mt-2 block w-full max-w-xl rounded-xl border border-white/15 bg-[#001a33] px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-[#F7BF06] focus:ring-2 focus:ring-[#F7BF06]/30">
                 <option value="all">{copy.allSectors}</option>
                 {sectors.map((sector) => <option key={sector.slug} value={sector.slug}>{sector.name}</option>)}
               </select>
@@ -262,7 +276,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
           />
         </div>
 
-        {summaryLoading && summary.data.length === 0 ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingData}</p> : null}
+        {summaryLoading ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingData}</p> : null}
         {summary.status === "error" && !summaryLoading ? <p className="mt-4 rounded-xl border border-red-200/20 bg-red-950/25 p-4 text-sm text-red-100">{copy.summaryError}</p> : null}
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#d5e3ff]/55"><span>{copy.withActivity} · {copy.selected} · {copy.filtered}</span><span>{copy.attribution}</span></div>
       </div>
