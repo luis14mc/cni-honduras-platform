@@ -40,6 +40,12 @@ type Props = {
   selectedMunicipalitySlug: string | null;
   markerProjects: MapInvestmentProject[];
   selectedProjectId: number | null;
+  selectedProjectPosition: [number, number] | null;
+  projectFocusKey: number;
+  mapAriaLabel: string;
+  mapInstructions: string;
+  zoomInLabel: string;
+  zoomOutLabel: string;
   onSelectDepartment: (properties: DepartmentProperties) => void;
   onSelectMunicipality: (properties: MunicipalityProperties) => void;
   onSelectProject: (project: MapInvestmentProject) => void;
@@ -143,15 +149,33 @@ function ViewportController({
   selectedDepartmentSlug,
   selectedMunicipalitySlug,
   municipalities,
+  selectedProjectPosition,
+  projectFocusKey,
+  zoomInLabel,
+  zoomOutLabel,
 }: {
   data: DepartmentFeatureCollection;
   selectedDepartmentSlug: string | null;
   selectedMunicipalitySlug: string | null;
   municipalities: MunicipalityFeatureCollection | null;
+  selectedProjectPosition: [number, number] | null;
+  projectFocusKey: number;
+  zoomInLabel: string;
+  zoomOutLabel: string;
 }) {
   const map = useMap();
   const initialFit = useRef(false);
   const previousDepartment = useRef<string | null>(null);
+
+  useEffect(() => {
+    const container = map.getContainer();
+    const zoomIn = container.querySelector<HTMLElement>(".leaflet-control-zoom-in");
+    const zoomOut = container.querySelector<HTMLElement>(".leaflet-control-zoom-out");
+    zoomIn?.setAttribute("aria-label", zoomInLabel);
+    zoomIn?.setAttribute("title", zoomInLabel);
+    zoomOut?.setAttribute("aria-label", zoomOutLabel);
+    zoomOut?.setAttribute("title", zoomOutLabel);
+  }, [map, zoomInLabel, zoomOutLabel]);
 
   useEffect(() => {
     if (initialFit.current || data.features.length === 0) return;
@@ -197,6 +221,15 @@ function ViewportController({
     }
   }, [data, map, municipalities, selectedDepartmentSlug, selectedMunicipalitySlug]);
 
+  useEffect(() => {
+    if (!selectedProjectPosition || projectFocusKey === 0) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    map.flyTo(selectedProjectPosition, Math.min(Math.max(map.getZoom(), 9), 10), {
+      animate: !reducedMotion,
+      duration: reducedMotion ? 0 : 0.7,
+    });
+  }, [map, projectFocusKey, selectedProjectPosition]);
+
   return null;
 }
 
@@ -209,6 +242,12 @@ export function InvestmentMapLeaflet({
   selectedMunicipalitySlug,
   markerProjects,
   selectedProjectId,
+  selectedProjectPosition,
+  projectFocusKey,
+  mapAriaLabel,
+  mapInstructions,
+  zoomInLabel,
+  zoomOutLabel,
   onSelectDepartment,
   onSelectMunicipality,
   onSelectProject,
@@ -264,17 +303,22 @@ export function InvestmentMapLeaflet({
       maxBounds={HONDURAS_BOUNDS}
       maxBoundsViscosity={0.92}
       scrollWheelZoom={false}
-      zoomControl={false}
+      zoomControl
       attributionControl={false}
       className="h-full min-h-[440px] w-full bg-white sm:min-h-[600px]"
       style={{ background: "#ffffff" }}
-      aria-label="Interactive map of Honduras investment departments"
+      aria-label={mapAriaLabel}
+      aria-description={mapInstructions}
     >
       <ViewportController
         data={data}
         selectedDepartmentSlug={selectedDepartmentSlug}
         selectedMunicipalitySlug={selectedMunicipalitySlug}
         municipalities={municipalities}
+        selectedProjectPosition={selectedProjectPosition}
+        projectFocusKey={projectFocusKey}
+        zoomInLabel={zoomInLabel}
+        zoomOutLabel={zoomOutLabel}
       />
       <GeoJSON
         ref={departmentLayerRef}
@@ -370,7 +414,7 @@ export function InvestmentMapLeaflet({
             eventHandlers={{
               click: () => onSelectProject(project),
             }}
-          />
+          ><Tooltip direction="top">{project.title}</Tooltip></CircleMarker>
         );
       })}
       {infrastructure.map((feature) => {

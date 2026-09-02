@@ -155,6 +155,98 @@ export type InfrastructureFeatureCollection = {
 
 export type InfrastructureCache = Partial<Record<InfrastructureLayer, InfrastructureFeatureCollection>>;
 
+export type MapQueryState = {
+  sector: string | null;
+  department: string | null;
+  municipality: string | null;
+  project: string | null;
+};
+
+export type MapSearchResult =
+  | { type: "department"; id: string; label: string; department: DepartmentProperties }
+  | { type: "municipality"; id: string; label: string; municipality: MunicipalityProperties }
+  | { type: "project"; id: string; label: string; project: MapInvestmentProject };
+
+const QUERY_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export function normalizeMapSearch(value: string): string {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().trim().replace(/\s+/g, " ");
+}
+
+function searchRank(label: string, query: string): number {
+  const normalized = normalizeMapSearch(label);
+  if (normalized === query) return 0;
+  if (normalized.startsWith(query) || normalized.split(/\s+/).some((word) => word.startsWith(query))) return 1;
+  if (normalized.includes(query)) return 2;
+  return -1;
+}
+
+export function searchInvestmentMap(
+  query: string,
+  departments: DepartmentProperties[],
+  municipalities: MunicipalityProperties[] = [],
+  projects: MapInvestmentProject[] = [],
+  limit = 8,
+): MapSearchResult[] {
+  const normalizedQuery = normalizeMapSearch(query);
+  if (!normalizedQuery || limit <= 0) return [];
+  const candidates: MapSearchResult[] = [
+    ...departments.map((department) => ({ type: "department" as const, id: `department-${department.slug}`, label: department.name, department })),
+    ...municipalities.map((municipality) => ({ type: "municipality" as const, id: `municipality-${municipality.slug}`, label: municipality.name, municipality })),
+    ...projects.map((project) => ({ type: "project" as const, id: `project-${project.slug}`, label: project.title, project })),
+  ];
+  const groupOrder = { department: 0, municipality: 1, project: 2 } as const;
+  return candidates
+    .map((result, order) => ({ result, order, rank: searchRank(result.label, normalizedQuery) }))
+    .filter((item) => item.rank >= 0)
+    .sort((a, b) => groupOrder[a.result.type] - groupOrder[b.result.type] || a.rank - b.rank || a.order - b.order)
+    .slice(0, limit)
+    .map(({ result }) => result);
+}
+
+export function parseMapQueryState(input: Record<string, string | string[] | undefined>): MapQueryState {
+  const read = (key: keyof MapQueryState) => {
+    const value = input[key];
+    return typeof value === "string" && QUERY_SLUG.test(value) ? value : null;
+  };
+  return { sector: read("sector"), department: read("department"), municipality: read("municipality"), project: read("project") };
+}
+
+export function serializeMapQueryState(current: URLSearchParams, state: MapQueryState): string {
+  const next = new URLSearchParams(current);
+  for (const [key, value] of Object.entries(state)) {
+    if (value) next.set(key, value);
+    else next.delete(key);
+  }
+  next.delete("q");
+  return next.toString();
+}
+
+export function getMapVisibleCounts(visibleProjects: number, loadedMunicipalities: number, activeLayers: number) {
+  return { visibleProjects, loadedMunicipalities, activeLayers };
+}
+
+export function resetMapFilters<T extends {
+  activeSector: string;
+  department: DepartmentProperties | null;
+  municipality: MunicipalityProperties | null;
+  project: MapInvestmentProject | null;
+  selectedInfrastructure: InfrastructureFeature | null;
+  search: string;
+  activeInfrastructureLayers: ReadonlySet<InfrastructureLayer>;
+  infrastructureCache: InfrastructureCache;
+}>(state: T): T {
+  return {
+    ...state,
+    activeSector: "all",
+    department: null,
+    municipality: null,
+    project: null,
+    selectedInfrastructure: null,
+    search: "",
+  };
+}
+
 export function toggleInfrastructureLayer(
   layers: ReadonlySet<InfrastructureLayer>,
   layer: InfrastructureLayer,
@@ -231,6 +323,14 @@ export function toLeafletProjectPosition(
 ): [number, number] | null {
   if (!hasProjectCoordinates(project)) return null;
   return [project.latitude!, project.longitude!];
+}
+
+export function getProjectFocus(
+  project: Pick<MapInvestmentProject, "id" | "latitude" | "longitude"> | null,
+): { position: [number, number]; key: number } | null {
+  if (!project) return null;
+  const position = toLeafletProjectPosition(project);
+  return position ? { position, key: project.id } : null;
 }
 
 export function filterMapProjectsByMunicipality(

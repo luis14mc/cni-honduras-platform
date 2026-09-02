@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { investmentMapCopy } from "@/src/i18n/copy/investmentMap";
 import {
   clearMapDepartment,
   clearMapMunicipality,
@@ -19,6 +20,13 @@ import {
   toLeafletPointPosition,
   toggleInfrastructureLayer,
   updateInfrastructureCache,
+  getMapVisibleCounts,
+  getProjectFocus,
+  normalizeMapSearch,
+  parseMapQueryState,
+  resetMapFilters,
+  searchInvestmentMap,
+  serializeMapQueryState,
   type InfrastructureFeature,
   type MapInvestmentProject,
   type MapDepartmentSummary,
@@ -169,5 +177,49 @@ describe("investment map pure helpers", () => {
       project: null,
       infrastructure: null,
     });
+  });
+
+  it("normalizes accents and ranks exact, word-prefix, then substring matches", () => {
+    expect(normalizeMapSearch("  Cortés  ")).toBe("cortes");
+    const departments = ["La Paz", "Paz del Norte", "Copán"].map((name, id) => ({ name, slug: `d-${id}` }));
+    const results = searchInvestmentMap("paz", departments, [], [mapProject("proyecto-paz", null, 15)]);
+    expect(results.map((item) => item.label)).toEqual(["La Paz", "Paz del Norte", "proyecto-paz"]);
+    expect(results.map((item) => item.type)).toEqual(["department", "department", "project"]);
+  });
+
+  it("searches only supplied loaded records and enforces a total limit", () => {
+    const departments = Array.from({ length: 10 }, (_, id) => ({ name: `San ${id}`, slug: `san-${id}` }));
+    expect(searchInvestmentMap("san", departments)).toHaveLength(8);
+    expect(searchInvestmentMap("missing", departments, [], [mapProject("loaded-project", null, 15)])).toEqual([]);
+  });
+
+  it("resets filters while preserving infrastructure layers and cache", () => {
+    const layers = new Set<"airport">(["airport"]);
+    const cache = { airport: { type: "FeatureCollection" as const, features: [] } };
+    const reset = resetMapFilters({ activeSector: "turismo", department: { name: "Cortés", slug: "cortes" }, municipality: null, project: mapProject("p", null, 15), selectedInfrastructure: infrastructure, search: "cor", activeInfrastructureLayers: layers, infrastructureCache: cache });
+    expect(reset).toMatchObject({ activeSector: "all", department: null, municipality: null, project: null, selectedInfrastructure: null, search: "" });
+    expect(reset.activeInfrastructureLayers).toBe(layers);
+    expect(reset.infrastructureCache).toBe(cache);
+  });
+
+  it("returns real visible counts and a validated project focus", () => {
+    expect(getMapVisibleCounts(3, 18, 1)).toEqual({ visibleProjects: 3, loadedMunicipalities: 18, activeLayers: 1 });
+    expect(getProjectFocus(mapProject("focus", null, 15.5))).toEqual({ position: [15.5, -87.2], key: 5 });
+    expect(getProjectFocus(null)).toBeNull();
+  });
+
+  it("parses syntactically valid map params and serializes without stale map state", () => {
+    expect(parseMapQueryState({ sector: "energia", department: ["cortes"], municipality: "San Pedro", project: "p-1" })).toEqual({ sector: "energia", department: null, municipality: null, project: "p-1" });
+    const current = new URLSearchParams("ref=campaign&q=old&department=old");
+    expect(serializeMapQueryState(current, { sector: null, department: "cortes", municipality: null, project: null })).toBe("ref=campaign&department=cortes");
+  });
+
+  it("covers the canonical search, map and stage labels in Spanish and English", () => {
+    expect(investmentMapCopy.es.searchPlaceholder).toBe("Buscar departamento, municipio o proyecto");
+    expect(investmentMapCopy.en.searchPlaceholder).toBe("Search department, municipality or project");
+    expect(investmentMapCopy.es.mapAriaLabel).toContain("Honduras");
+    expect(investmentMapCopy.en.stageLabel).toBe("Stage");
+    expect(investmentMapCopy.es.clearSearch).toBeTruthy();
+    expect(investmentMapCopy.en.searchResults).toBeTruthy();
   });
 });
