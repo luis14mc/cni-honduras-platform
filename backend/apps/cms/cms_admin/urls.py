@@ -18,6 +18,7 @@ from .viewsets_s2t3 import (
     PageAdminViewSet,
     SectorAdminViewSet,
 )
+from apps.forms.internal_viewsets import ProjectApplicationInternalViewSet
 from .views import CSRFView, DashboardView, LoginView, LogoutView, MeView, SearchView
 
 app_name = "cms-admin"
@@ -34,6 +35,7 @@ router.register("pages", PageAdminViewSet, basename="pages")
 router.register("users", CMSUserAdminViewSet, basename="users")
 router.register("groups", CMSGroupAdminViewSet, basename="groups")
 router.register("institutional-links", InstitutionalLinkAdminViewSet, basename="institutional-links")
+router.register("project-applications", ProjectApplicationInternalViewSet, basename="project-applications")
 
 urlpatterns = [
     path("csrf/", CSRFView.as_view(), name="csrf"),

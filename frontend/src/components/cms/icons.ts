@@ -4,6 +4,7 @@
 import {
   FileText,
   Images,
+  Inbox,
   Layers,
   LayoutDashboard,
   LayoutTemplate,
@@ -30,6 +31,7 @@ export const CMS_ICONS: Record<string, LucideIcon> = {
   Users,
   Shield,
   Settings,
+  Inbox,
 };
 
 export function cmsIcon(name: string): LucideIcon {
