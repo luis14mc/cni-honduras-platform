@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CNIRegion, Department, Municipality
+from .models import CNIRegion, Department, Municipality, StrategicInfrastructure
 
 
 @admin.register(Department)
@@ -61,3 +61,13 @@ class MunicipalityAdmin(admin.ModelAdmin):
         ("Metadatos", {"fields": ("created_at", "updated_at")}),
     )
 
+
+@admin.register(StrategicInfrastructure)
+class StrategicInfrastructureAdmin(admin.ModelAdmin):
+    list_display = ("name", "infrastructure_type", "department", "municipality", "is_active")
+    list_filter = ("infrastructure_type", "is_active", "department")
+    search_fields = ("name", "slug", "operator", "source_name")
+    readonly_fields = ("created_at", "updated_at")
+    prepopulated_fields = {"slug": ("name",)}
+    autocomplete_fields = ("department", "municipality")
+    ordering = ("name",)

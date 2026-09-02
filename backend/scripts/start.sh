@@ -16,6 +16,9 @@ if [[ "${IMPORT_HONDURAS_GEO:-false}" == "true" ]]; then
   python manage.py import_honduras_geo
 fi
 
+echo "Synchronizing strategic infrastructure..."
+python manage.py import_strategic_infrastructure
+
 # Temporary bootstrap only: set CREATE_DJANGO_SUPERUSER=true in Render for the first
 # deploy/login, then remove it or set to false after confirming admin access.
 if [[ "${CREATE_DJANGO_SUPERUSER:-false}" == "true" ]]; then

@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Plane } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { investmentMapCopy } from "@/src/i18n/copy/investmentMap";
 import type {
@@ -10,6 +11,9 @@ import type {
   MapInvestmentProject,
   MunicipalityFeatureCollection,
   MunicipalityProperties,
+  InfrastructureCache,
+  InfrastructureFeature,
+  InfrastructureLayer,
 } from "@/src/lib/types/investment-map";
 import {
   filterMapProjectsByMunicipality,
@@ -17,6 +21,8 @@ import {
   getMapTotals,
   getMarkerProjects,
   indexSummaries,
+  toggleInfrastructureLayer,
+  updateInfrastructureCache,
 } from "@/src/lib/types/investment-map";
 import {
   getDepartmentGeoJson,
@@ -24,6 +30,7 @@ import {
   getMapSummary,
   getMunicipalityGeoJson,
   getSectors,
+  getInfrastructureGeoJson,
 } from "@/src/services/investmentMap";
 import type { DepartmentFeatureCollection } from "@/src/lib/types/investment-map";
 import type { Sector } from "@/src/types/investment";
@@ -56,6 +63,12 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
   const [projectsKey, setProjectsKey] = useState<string | null>(null);
   const [hoveredDepartment, setHoveredDepartment] = useState<DepartmentProperties | null>(null);
   const [hoveredMunicipality, setHoveredMunicipality] = useState<MunicipalityProperties | null>(null);
+  const [activeInfrastructureLayers, setActiveInfrastructureLayers] = useState<Set<InfrastructureLayer>>(new Set());
+  const [infrastructureCache, setInfrastructureCache] = useState<InfrastructureCache>({});
+  const infrastructureCacheRef = useRef<InfrastructureCache>({});
+  const infrastructureRequests = useRef<Partial<Record<InfrastructureLayer, Promise<unknown>>>>({});
+  const [infrastructureStatus, setInfrastructureStatus] = useState<Record<InfrastructureLayer, "idle" | "loading" | "ready" | "error">>({ port: "idle", airport: "idle" });
+  const [selectedInfrastructure, setSelectedInfrastructure] = useState<InfrastructureFeature | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,6 +140,38 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
   const handleSelectDepartment = useCallback((department: DepartmentProperties) => {
     setSelectedDepartment(department);
     setSelectedMunicipality(null);
+    setSelectedProject(null);
+  }, []);
+
+  const handleToggleInfrastructure = useCallback((layer: InfrastructureLayer) => {
+    setActiveInfrastructureLayers((current) => {
+      const next = toggleInfrastructureLayer(current, layer);
+      if (!next.has(layer)) {
+        setSelectedInfrastructure((selected) => selected?.properties.infrastructure_type === layer ? null : selected);
+      }
+      return next;
+    });
+
+    if (infrastructureCacheRef.current[layer] || infrastructureRequests.current[layer]) return;
+    setInfrastructureStatus((current) => ({ ...current, [layer]: "loading" }));
+    const request = getInfrastructureGeoJson(layer, locale)
+      .then((data) => {
+        infrastructureCacheRef.current = updateInfrastructureCache(infrastructureCacheRef.current, layer, data);
+        setInfrastructureCache(infrastructureCacheRef.current);
+        setInfrastructureStatus((current) => ({ ...current, [layer]: "ready" }));
+      })
+      .catch(() => setInfrastructureStatus((current) => ({ ...current, [layer]: "error" })))
+      .finally(() => { delete infrastructureRequests.current[layer]; });
+    infrastructureRequests.current[layer] = request;
+  }, [locale]);
+
+  const handleSelectProject = useCallback((project: MapInvestmentProject) => {
+    setSelectedProject(project);
+    setSelectedInfrastructure(null);
+  }, []);
+
+  const handleSelectInfrastructure = useCallback((feature: InfrastructureFeature) => {
+    setSelectedInfrastructure(feature);
     setSelectedProject(null);
   }, []);
 
@@ -239,11 +284,24 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
                 selectedProjectId={selectedProject?.id ?? null}
                 onSelectDepartment={handleSelectDepartment}
                 onSelectMunicipality={handleSelectMunicipality}
-                onSelectProject={setSelectedProject}
+                onSelectProject={handleSelectProject}
+                infrastructure={Array.from(activeInfrastructureLayers).flatMap(
+                  (layer) => infrastructureCache[layer]?.features ?? [],
+                )}
+                selectedInfrastructureId={selectedInfrastructure?.properties.id ?? null}
+                onSelectInfrastructure={handleSelectInfrastructure}
                 onHoverDepartment={setHoveredDepartment}
                 onHoverMunicipality={setHoveredMunicipality}
               />
             ) : null}
+            <fieldset className="absolute left-3 top-3 z-[500] min-w-[190px] rounded-xl border border-[#334E88]/20 bg-white/95 p-3 text-[#001a33] shadow-lg backdrop-blur-sm sm:left-4 sm:top-4">
+              <legend className="px-1 font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#334E88]">{copy.infrastructureLayers}</legend>
+              {(["airport"] as const).map((layer) => {
+                const Icon = Plane;
+                const status = infrastructureStatus[layer];
+                return <label key={layer} className="mt-2 flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-bold hover:bg-[#E8F1FA]"><input type="checkbox" checked={activeInfrastructureLayers.has(layer)} onChange={() => handleToggleInfrastructure(layer)} className="h-4 w-4 accent-[#32B372]" /><Icon aria-hidden="true" size={15} /><span className="flex-1">{copy.airports}</span>{status === "loading" ? <span role="status" className="text-[10px] text-[#334E88]">{copy.layerLoading}</span> : null}{status === "error" ? <span role="status" className="text-[10px] text-red-700">{copy.layerError}</span> : null}</label>;
+              })}
+            </fieldset>
             {municipalitiesLoading ? (
               <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-lg bg-[#001a33]/90 px-3 py-2 text-xs font-bold text-white shadow-lg" role="status">
                 {copy.loadingMunicipalities}
@@ -262,6 +320,7 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
             department={selectedDepartment}
             municipality={selectedMunicipality}
             project={selectedProject}
+            infrastructure={selectedInfrastructure}
             summary={selectedSummary}
             projects={visibleProjects}
             projectsLoading={projectsLoading}
@@ -272,7 +331,8 @@ export function InvestmentMapDashboard({ locale }: { locale: Locale }) {
             onClearDepartment={handleClearDepartment}
             onClearMunicipality={handleClearMunicipality}
             onClearProject={handleClearProject}
-            onSelectProject={setSelectedProject}
+            onClearInfrastructure={() => setSelectedInfrastructure(null)}
+            onSelectProject={handleSelectProject}
           />
         </div>
 

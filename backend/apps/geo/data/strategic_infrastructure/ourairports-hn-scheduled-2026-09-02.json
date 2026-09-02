@@ -1,0 +1,23 @@
+{
+  "provenance": {
+    "dataset": "OurAirports Honduras airports.csv",
+    "version": "scheduled-service-snapshot-2026-09-02",
+    "date": "2026-09-02",
+    "source_url": "https://ourairports.com/countries/HN/airports.csv",
+    "source_revision": "d27027ba44140de187960d71a98260de6a94b38e",
+    "license": "The Unlicense (public domain dedication)",
+    "license_url": "https://github.com/davidmegginson/ourairports-data/blob/main/LICENSE",
+    "selection": "iso_country=HN and scheduled_service=1",
+    "license_caveat": "OurAirports provides no warranty of accuracy or fitness; verify operational status with the relevant aviation authority."
+  },
+  "records": [
+    {"name":"Ramón Villeda Morales International Airport","slug":"mhlm","type":"airport","longitude":-87.923599,"latitude":15.4526,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4661,"ident":"MHLM","gps_code":"MHLM","icao_code":"MHLM","iata_code":"SAP"},"last_updated":"2026-02-08T23:39:26+00:00","type":"large_airport"}},
+    {"name":"Toncontín Airport","slug":"mhtg","type":"airport","longitude":-87.217201,"latitude":14.0609,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4666,"ident":"MHTG","gps_code":"MHTG","icao_code":"MHTG","iata_code":"TGU"},"last_updated":"2026-02-08T23:43:49+00:00","type":"medium_airport"}},
+    {"name":"Juan Manuel Gálvez International Airport","slug":"mhro","type":"airport","longitude":-86.523003,"latitude":16.316799,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4663,"ident":"MHRO","gps_code":"MHRO","icao_code":"MHRO","iata_code":"RTB"},"last_updated":"2026-02-08T23:47:09+00:00","type":"large_airport"}},
+    {"name":"Palmerola International Airport","slug":"mhsc","type":"airport","longitude":-87.621201,"latitude":14.3824,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4664,"ident":"MHSC","gps_code":"MHPR","icao_code":"MHPR","iata_code":"XPL"},"last_updated":"2026-02-08T23:42:03+00:00","type":"large_airport"}},
+    {"name":"Golosón International Airport","slug":"mhlc","type":"airport","longitude":-86.852997,"latitude":15.7425,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4660,"ident":"MHLC","gps_code":"MHLC","icao_code":"MHLC","iata_code":"LCE"},"last_updated":"2026-02-17T05:01:30+00:00","type":"medium_airport"}},
+    {"name":"La Laguna Airport","slug":"mhnj","type":"airport","longitude":-85.906601,"latitude":16.4454,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":4662,"ident":"MHNJ","gps_code":"MHNJ","icao_code":"MHNJ","iata_code":"GJA"},"last_updated":"2016-06-07T05:03:09+00:00","type":"medium_airport"}},
+    {"name":"Utila Airport","slug":"mhut","type":"airport","longitude":-86.880302,"latitude":16.1131,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":32522,"ident":"MHUT","gps_code":"MHUT","icao_code":"MHUT","iata_code":"UII"},"last_updated":"2016-06-07T06:01:05+00:00","type":"small_airport"}},
+    {"name":"Puerto Lempira Airport","slug":"mhpl","type":"airport","longitude":-83.781197,"latitude":15.2622,"operator":"","status":"","source_name":"OurAirports","source_url":"https://ourairports.com/countries/HN/airports.csv","metadata":{"identifiers":{"ourairports_id":32153,"ident":"MHPL","gps_code":"MHPL","icao_code":"MHPL","iata_code":"PEU"},"last_updated":"2022-03-18T12:37:31+00:00","type":"small_airport"}}
+  ]
+}

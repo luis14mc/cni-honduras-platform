@@ -3,13 +3,15 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import CNIRegion, Department, Municipality
+from .models import CNIRegion, Department, Municipality, StrategicInfrastructure
 from .serializers import (
     CNIRegionSerializer,
     DepartmentSerializer,
     MunicipalitySerializer,
     departments_feature_collection,
     municipalities_feature_collection,
+    StrategicInfrastructureSerializer,
+    infrastructure_feature_collection,
 )
 
 
@@ -84,3 +86,27 @@ class MunicipalityViewSet(viewsets.ReadOnlyModelViewSet):
             raise Http404
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class StrategicInfrastructureViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = StrategicInfrastructureSerializer
+    lookup_field = "slug"
+
+    def get_queryset(self):
+        queryset = StrategicInfrastructure.objects.select_related(
+            "department", "municipality"
+        ).filter(is_active=True)
+        infrastructure_type = self.request.query_params.get("type")
+        if infrastructure_type:
+            queryset = queryset.filter(infrastructure_type=infrastructure_type)
+        department = self.request.query_params.get("department")
+        if department:
+            queryset = queryset.filter(department__slug=department)
+        municipality = self.request.query_params.get("municipality")
+        if municipality:
+            queryset = queryset.filter(municipality__slug=municipality)
+        return queryset.order_by(*StrategicInfrastructure._meta.ordering)
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        return Response(infrastructure_feature_collection(self.get_queryset()))

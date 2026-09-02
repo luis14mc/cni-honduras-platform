@@ -116,7 +116,100 @@ export type MapSelectionState = {
   department: DepartmentProperties | null;
   municipality: MunicipalityProperties | null;
   project: MapInvestmentProject | null;
+  infrastructure: InfrastructureFeature | null;
 };
+
+export type InfrastructureLayer = "port" | "airport";
+
+export type InfrastructurePlace = {
+  id: number;
+  name: string;
+  slug: string;
+  code: string;
+};
+
+export type InfrastructureProperties = {
+  id: number;
+  name: string;
+  slug: string;
+  infrastructure_type: InfrastructureLayer;
+  department: InfrastructurePlace | null;
+  municipality: InfrastructurePlace | null;
+  operator: string;
+  status: string;
+  source_name: string;
+  source_url: string;
+};
+
+export type InfrastructureFeature = {
+  type: "Feature";
+  id?: number;
+  geometry: { type: "Point"; coordinates: [number, number] };
+  properties: InfrastructureProperties;
+};
+
+export type InfrastructureFeatureCollection = {
+  type: "FeatureCollection";
+  features: InfrastructureFeature[];
+};
+
+export type InfrastructureCache = Partial<Record<InfrastructureLayer, InfrastructureFeatureCollection>>;
+
+export function toggleInfrastructureLayer(
+  layers: ReadonlySet<InfrastructureLayer>,
+  layer: InfrastructureLayer,
+): Set<InfrastructureLayer> {
+  const next = new Set(layers);
+  if (next.has(layer)) next.delete(layer);
+  else next.add(layer);
+  return next;
+}
+
+export function updateInfrastructureCache(
+  cache: InfrastructureCache,
+  layer: InfrastructureLayer,
+  data: InfrastructureFeatureCollection,
+): InfrastructureCache {
+  if (cache[layer] === data) return cache;
+  return { ...cache, [layer]: data };
+}
+
+export function selectMapProject(
+  state: MapSelectionState,
+  project: MapInvestmentProject,
+): MapSelectionState {
+  return { ...state, project, infrastructure: null };
+}
+
+export function selectMapInfrastructure(
+  state: MapSelectionState,
+  infrastructure: InfrastructureFeature,
+): MapSelectionState {
+  return { ...state, project: null, infrastructure };
+}
+
+export function disableInfrastructureLayer(
+  state: MapSelectionState,
+  layer: InfrastructureLayer,
+): MapSelectionState {
+  return state.infrastructure?.properties.infrastructure_type === layer
+    ? { ...state, infrastructure: null }
+    : state;
+}
+
+export function changeMapSector<T extends { activeSector: string; activeInfrastructureLayers: ReadonlySet<InfrastructureLayer> }>(
+  state: T,
+  activeSector: string,
+): T {
+  return { ...state, activeSector };
+}
+
+export function toLeafletPointPosition(coordinates: [number, number]): [number, number] | null {
+  const [longitude, latitude] = coordinates;
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return null;
+  return [latitude, longitude];
+}
 
 export function hasProjectCoordinates(
   project: Pick<MapInvestmentProject, "latitude" | "longitude">,
@@ -169,7 +262,7 @@ export function clearMapMunicipality(state: MapSelectionState): MapSelectionStat
 }
 
 export function clearMapDepartment(): MapSelectionState {
-  return { department: null, municipality: null, project: null };
+  return { department: null, municipality: null, project: null, infrastructure: null };
 }
 
 /** Legacy response shape kept for the existing deprecated map component. */

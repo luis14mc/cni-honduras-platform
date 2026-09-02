@@ -9,6 +9,8 @@ import type {
   MapDepartmentSummary,
   MapInvestmentProject,
   MunicipalityFeatureCollection,
+  InfrastructureFeatureCollection,
+  InfrastructureLayer,
 } from "@/src/lib/types/investment-map";
 import type { Sector } from "@/src/types/investment";
 
@@ -23,6 +25,14 @@ export function getMunicipalityGeoJson(
   return apiGet<MunicipalityFeatureCollection>(
     `/geo/municipalities/geojson/?${params.toString()}`,
   );
+}
+
+export function getInfrastructureGeoJson(
+  type: InfrastructureLayer,
+  locale: "es" | "en",
+): Promise<InfrastructureFeatureCollection> {
+  const params = new URLSearchParams({ type, lang: locale });
+  return apiGet<InfrastructureFeatureCollection>(`/geo/infrastructure/geojson/?${params.toString()}`);
 }
 
 export { getGeolocatedMapProjects, getMapSummary, getSectors };

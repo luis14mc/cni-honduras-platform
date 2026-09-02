@@ -41,6 +41,18 @@ export type InvestmentMapCopy = {
   selected: string;
   filtered: string;
   attribution: string;
+  infrastructureLayers: string;
+  ports: string;
+  airports: string;
+  layerLoading: string;
+  layerError: string;
+  selectedInfrastructure: string;
+  clearInfrastructure: string;
+  infrastructureType: string;
+  operator: string;
+  status: string;
+  source: string;
+  viewSource: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -85,6 +97,18 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     selected: "Seleccionado",
     filtered: "Fuera del filtro",
     attribution: "Datos geográficos CNI Honduras",
+    infrastructureLayers: "Infraestructura estratégica",
+    ports: "Puertos",
+    airports: "Aeropuertos",
+    layerLoading: "Cargando",
+    layerError: "No disponible",
+    selectedInfrastructure: "Infraestructura seleccionada",
+    clearInfrastructure: "Limpiar infraestructura",
+    infrastructureType: "Tipo",
+    operator: "Operador",
+    status: "Estado",
+    source: "Fuente",
+    viewSource: "Consultar fuente",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -127,5 +151,17 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     selected: "Selected",
     filtered: "Outside filter",
     attribution: "CNI Honduras geographic data",
+    infrastructureLayers: "Strategic infrastructure",
+    ports: "Ports",
+    airports: "Airports",
+    layerLoading: "Loading",
+    layerError: "Unavailable",
+    selectedInfrastructure: "Selected infrastructure",
+    clearInfrastructure: "Clear infrastructure",
+    infrastructureType: "Type",
+    operator: "Operator",
+    status: "Status",
+    source: "Source",
+    viewSource: "View source",
   },
 };
