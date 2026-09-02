@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import L, { type PathOptions } from "leaflet";
-import { CircleMarker, GeoJSON, MapContainer, useMap } from "react-leaflet";
+import { CircleMarker, GeoJSON, MapContainer, Marker, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type {
@@ -12,8 +12,9 @@ import type {
   MapInvestmentProject,
   MunicipalityFeatureCollection,
   MunicipalityProperties,
+  InfrastructureFeature,
 } from "@/src/lib/types/investment-map";
-import { toLeafletProjectPosition } from "@/src/lib/types/investment-map";
+import { toLeafletPointPosition, toLeafletProjectPosition } from "@/src/lib/types/investment-map";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -44,6 +45,9 @@ type Props = {
   onSelectProject: (project: MapInvestmentProject) => void;
   onHoverDepartment: (properties: DepartmentProperties | null) => void;
   onHoverMunicipality: (properties: MunicipalityProperties | null) => void;
+  infrastructure: InfrastructureFeature[];
+  selectedInfrastructureId: number | null;
+  onSelectInfrastructure: (feature: InfrastructureFeature) => void;
 };
 
 function styleDepartment(
@@ -210,6 +214,9 @@ export function InvestmentMapLeaflet({
   onSelectProject,
   onHoverDepartment,
   onHoverMunicipality,
+  infrastructure,
+  selectedInfrastructureId,
+  onSelectInfrastructure,
 }: Props) {
   const departmentLayerRef = useRef<L.GeoJSON | null>(null);
   const municipalityLayerRef = useRef<L.GeoJSON | null>(null);
@@ -365,6 +372,18 @@ export function InvestmentMapLeaflet({
             }}
           />
         );
+      })}
+      {infrastructure.map((feature) => {
+        const position = toLeafletPointPosition(feature.geometry.coordinates);
+        if (!position) return null;
+        const selected = feature.properties.id === selectedInfrastructureId;
+        const icon = L.divIcon({
+          className: "",
+          iconSize: [selected ? 34 : 30, selected ? 34 : 30],
+          iconAnchor: [selected ? 17 : 15, selected ? 17 : 15],
+          html: `<span style="display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#F7BF06;color:#001a33;border:${selected ? "3" : "2"}px solid white;box-shadow:0 2px 8px rgba(0,26,51,.35)" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 9.5 14.5M15 5l4 4M2 16l6 1 1 5 3-7 7-3-5-1-1-5Z"/></svg></span>`,
+        });
+        return <Marker key={`${feature.properties.infrastructure_type}-${feature.properties.id}`} position={position} icon={icon} eventHandlers={{ click: () => onSelectInfrastructure(feature) }} keyboard riseOnHover title={feature.properties.name}><Tooltip direction="top">{feature.properties.name}</Tooltip></Marker>;
       })}
     </MapContainer>
   );

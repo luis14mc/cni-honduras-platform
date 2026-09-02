@@ -7,6 +7,7 @@ import type {
   MapDepartmentSummary,
   MapInvestmentProject,
   MunicipalityProperties,
+  InfrastructureFeature,
 } from "@/src/lib/types/investment-map";
 import { formatMapInvestment, formatMapJobs } from "@/src/lib/types/investment-map";
 
@@ -16,6 +17,7 @@ type Props = {
   department: DepartmentProperties | null;
   municipality: MunicipalityProperties | null;
   project: MapInvestmentProject | null;
+  infrastructure: InfrastructureFeature | null;
   summary: MapDepartmentSummary | undefined;
   projects: MapInvestmentProject[];
   projectsLoading: boolean;
@@ -26,6 +28,7 @@ type Props = {
   onClearDepartment: () => void;
   onClearMunicipality: () => void;
   onClearProject: () => void;
+  onClearInfrastructure: () => void;
   onSelectProject: (project: MapInvestmentProject) => void;
 };
 
@@ -35,6 +38,7 @@ export function InvestmentMapPanel({
   department,
   municipality,
   project,
+  infrastructure,
   summary,
   projects,
   projectsLoading,
@@ -45,8 +49,31 @@ export function InvestmentMapPanel({
   onClearDepartment,
   onClearMunicipality,
   onClearProject,
+  onClearInfrastructure,
   onSelectProject,
 }: Props) {
+  if (infrastructure) {
+    const details = infrastructure.properties;
+    const sourceUrl = getSafeSourceUrl(details.source_url);
+    return (
+      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedInfrastructure}: ${details.name}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div><p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedInfrastructure}</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight">{details.name}</h2></div>
+          <button type="button" onClick={onClearInfrastructure} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.clearInfrastructure}</button>
+        </div>
+        <dl className="mt-7 space-y-3 text-sm">
+          <DetailRow label={copy.infrastructureType} value={details.infrastructure_type === "airport" ? copy.airports : copy.ports} />
+          <DetailRow label={copy.selectedDepartment} value={details.department?.name ?? "—"} />
+          <DetailRow label={copy.selectedMunicipality} value={details.municipality?.name ?? "—"} />
+          <DetailRow label={copy.operator} value={details.operator || "—"} />
+          <DetailRow label={copy.status} value={details.status || "—"} />
+          <DetailRow label={copy.source} value={details.source_name || "—"} />
+        </dl>
+        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-lg border border-[#8DC046]/50 px-4 py-2 text-sm font-bold text-[#d8ef9f] transition hover:bg-[#35A963]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.viewSource}</a> : null}
+      </aside>
+    );
+  }
+
   if (!department) {
     return (
       <aside className="flex min-h-[360px] flex-col justify-center rounded-[1.5rem] border border-white/10 bg-[#24436B] p-6 text-white shadow-xl lg:min-h-0" aria-live="polite">
@@ -163,6 +190,15 @@ export function InvestmentMapPanel({
       </div>
     </aside>
   );
+}
+
+function getSafeSourceUrl(value: string): string | null {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;
+  } catch {
+    return null;
+  }
 }
 
 function PanelHint({ label, value, wide = false }: { label: string; value: string; wide?: boolean }) {

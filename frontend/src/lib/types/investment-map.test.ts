@@ -12,6 +12,14 @@ import {
   hasProjectCoordinates,
   indexSummaries,
   toLeafletProjectPosition,
+  changeMapSector,
+  disableInfrastructureLayer,
+  selectMapInfrastructure,
+  selectMapProject,
+  toLeafletPointPosition,
+  toggleInfrastructureLayer,
+  updateInfrastructureCache,
+  type InfrastructureFeature,
   type MapInvestmentProject,
   type MapDepartmentSummary,
   type MapSelectionState,
@@ -49,6 +57,50 @@ const mapProject = (
 });
 
 describe("investment map pure helpers", () => {
+  const infrastructure: InfrastructureFeature = {
+    type: "Feature",
+    geometry: { type: "Point", coordinates: [-87.9, 15.8] },
+    properties: { id: 7, name: "Puerto", slug: "puerto", infrastructure_type: "port", department: null, municipality: null, operator: "ENP", status: "active", source_name: "CNI", source_url: "https://example.com" },
+  };
+
+  it("toggles infrastructure layers without mutating the source set", () => {
+    const source = new Set<"port" | "airport">(["port"]);
+    expect(toggleInfrastructureLayer(source, "airport")).toEqual(new Set(["port", "airport"]));
+    expect(toggleInfrastructureLayer(source, "port")).toEqual(new Set());
+    expect(source).toEqual(new Set(["port"]));
+  });
+
+  it("caches each infrastructure response once and preserves other layers", () => {
+    const data = { type: "FeatureCollection" as const, features: [infrastructure] };
+    const cache = updateInfrastructureCache({}, "port", data);
+    expect(updateInfrastructureCache(cache, "port", data)).toBe(cache);
+    expect(updateInfrastructureCache(cache, "airport", { ...data })).toMatchObject({ port: data, airport: data });
+  });
+
+  it("keeps project and infrastructure selections mutually exclusive", () => {
+    const state: MapSelectionState = { department: null, municipality: null, project: null, infrastructure };
+    const project = mapProject("p", null, 15.5);
+    expect(selectMapProject(state, project)).toMatchObject({ project, infrastructure: null });
+    expect(selectMapInfrastructure({ ...state, project }, infrastructure)).toMatchObject({ project: null, infrastructure });
+  });
+
+  it("converts infrastructure Point coordinates to Leaflet order", () => {
+    expect(toLeafletPointPosition([-87.9, 15.8])).toEqual([15.8, -87.9]);
+    expect(toLeafletPointPosition([-181, 15.8])).toBeNull();
+  });
+
+  it("clears selected infrastructure only when its layer is disabled", () => {
+    const state: MapSelectionState = { department: null, municipality: null, project: null, infrastructure };
+    expect(disableInfrastructureLayer(state, "airport")).toBe(state);
+    expect(disableInfrastructureLayer(state, "port").infrastructure).toBeNull();
+  });
+
+  it("changes sector without modifying active infrastructure layers", () => {
+    const layers = new Set<"port" | "airport">(["port"]);
+    const next = changeMapSector({ activeSector: "all", activeInfrastructureLayers: layers }, "tourism");
+    expect(next.activeSector).toBe("tourism");
+    expect(next.activeInfrastructureLayers).toBe(layers);
+  });
   it("indexes map summaries by department slug", () => {
     const indexed = indexSummaries([summary("cortes", 2, "100"), summary("atlantida", 1, null)]);
     expect(indexed.get("cortes")?.projects_count).toBe(2);
@@ -105,6 +157,7 @@ describe("investment map pure helpers", () => {
       department: { name: "Cortés", slug: "cortes" },
       municipality: { name: "SPS", slug: "san-pedro-sula", department_slug: "cortes" },
       project: mapProject("p1", "san-pedro-sula", 15.5),
+      infrastructure: null,
     };
     expect(clearMapProject(base).project).toBeNull();
     expect(clearMapProject(base).municipality?.slug).toBe("san-pedro-sula");
@@ -114,6 +167,7 @@ describe("investment map pure helpers", () => {
       department: null,
       municipality: null,
       project: null,
+      infrastructure: null,
     });
   });
 });

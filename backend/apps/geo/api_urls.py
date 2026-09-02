@@ -1,10 +1,16 @@
 from rest_framework.routers import DefaultRouter
 
-from .viewsets import CNIRegionViewSet, DepartmentViewSet, MunicipalityViewSet
+from .viewsets import (
+    CNIRegionViewSet,
+    DepartmentViewSet,
+    MunicipalityViewSet,
+    StrategicInfrastructureViewSet,
+)
 
 router = DefaultRouter()
 router.register(r"departments", DepartmentViewSet, basename="geo-department")
 router.register(r"regions", CNIRegionViewSet, basename="geo-region")
 router.register(r"municipalities", MunicipalityViewSet, basename="geo-municipality")
+router.register(r"infrastructure", StrategicInfrastructureViewSet, basename="geo-infrastructure")
 
 urlpatterns = router.urls
