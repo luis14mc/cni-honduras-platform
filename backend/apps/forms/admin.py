@@ -1,12 +1,11 @@
 from django.contrib import admin
-from django.utils import timezone
 
 from .models import (
     AdvisoryRequest,
     ContactSubmission,
     ProjectApplication,
+    ProjectApplicationStatus,
     ResourceDownloadLead,
-    SubmissionStatus,
 )
 
 
@@ -26,26 +25,27 @@ class ContactSubmissionAdmin(BaseSubmissionAdmin):
 @admin.register(ProjectApplication)
 class ProjectApplicationAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
+        "reference_code",
         "full_name",
         "email",
         "company",
         "project_name",
-        "sector",
+        "sector_ref",
         "investment_range",
         "status",
         "crm_synced",
         "created_at",
     )
-    list_filter = ("status", "sector", "investment_range", "crm_synced", "created_at")
-    search_fields = ("full_name", "email", "company", "project_name", "details")
-    readonly_fields = ("created_at", "updated_at", "crm_synced", "crm_record_id")
+    list_filter = ("status", "sector_ref", "investment_range", "created_at")
+    search_fields = ("reference_code", "full_name", "email", "company")
+    readonly_fields = ("reference_code", "created_at", "updated_at", "crm_synced", "crm_record_id")
     date_hierarchy = "created_at"
     actions = (
         "marcar_como_en_revision",
         "marcar_como_contactado",
-        "marcar_como_cerrado",
-        "marcar_como_spam",
+        "marcar_como_calificado",
+        "marcar_como_rechazado",
+        "marcar_como_convertido",
     )
 
     fieldsets = (
@@ -57,6 +57,7 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
                     "email",
                     "phone",
                     "company",
+                    "website",
                     "country",
                     "consent",
                     "source",
@@ -69,7 +70,10 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
                 "fields": (
                     "project_name",
                     "sector",
+                    "sector_ref",
                     "department",
+                    "department_ref",
+                    "municipality",
                     "project_location",
                     "investment_range",
                     "estimated_investment",
@@ -84,6 +88,7 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "status",
+                    "reference_code",
                     "crm_synced",
                     "crm_record_id",
                 )
@@ -102,19 +107,23 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
 
     @admin.action(description="Marcar como en revisión")
     def marcar_como_en_revision(self, request, queryset):
-        queryset.update(status=SubmissionStatus.IN_REVIEW)
+        queryset.update(status=ProjectApplicationStatus.REVIEWING)
 
     @admin.action(description="Marcar como contactado")
     def marcar_como_contactado(self, request, queryset):
-        queryset.update(status=SubmissionStatus.CONTACTED)
+        queryset.update(status=ProjectApplicationStatus.CONTACTED)
 
-    @admin.action(description="Marcar como cerrado")
-    def marcar_como_cerrado(self, request, queryset):
-        queryset.update(status=SubmissionStatus.CLOSED)
+    @admin.action(description="Marcar como calificado")
+    def marcar_como_calificado(self, request, queryset):
+        queryset.update(status=ProjectApplicationStatus.QUALIFIED)
 
-    @admin.action(description="Marcar como spam")
-    def marcar_como_spam(self, request, queryset):
-        queryset.update(status=SubmissionStatus.SPAM)
+    @admin.action(description="Marcar como rechazado")
+    def marcar_como_rechazado(self, request, queryset):
+        queryset.update(status=ProjectApplicationStatus.REJECTED)
+
+    @admin.action(description="Marcar como convertido")
+    def marcar_como_convertido(self, request, queryset):
+        queryset.update(status=ProjectApplicationStatus.CONVERTED)
 
 
 @admin.register(AdvisoryRequest)

@@ -1,192 +1,30 @@
+const shared = {
+  ranges: ["under_10m", "10m_50m", "50m_100m", "over_100m"] as const,
+};
+
 export const postulacionPageCopy = {
   es: {
-    hero: {
-      eyebrow: "¿TIENES UN PROYECTO DE INVERSIÓN?",
-      title: "Postula tu proyecto",
-      description:
-        "Un proyecto de inversión es una iniciativa lista para desarrollarse, que ya cuenta con estudios técnicos, financieros y de mercado, y que permite a un inversionista conocer con claridad qué se va a ejecutar, cuánto debe invertir y qué beneficios puede esperar.",
-    },
-    benefits: {
-      title: "¿Por qué postular tu proyecto en el CNI?",
-      subtitle:
-        "El Consejo Nacional de Inversiones (CNI) brinda acompañamiento gratuito y confidencial a inversionistas nacionales e internacionales para facilitar la promoción de proyectos estratégicos e instalar su inversión en Honduras.",
-      list: [
-        {
-          title: "Acompañamiento integral",
-          desc: "Asesoría técnica personalizada durante todo el proceso de inversión.",
-          icon: "support_agent",
-        },
-        {
-          title: "Confidencialidad garantizada",
-          desc: "Protegemos la información de su proyecto con altos estándares institucionales.",
-          icon: "lock",
-        },
-        {
-          title: "Conexión con capital y aliados",
-          desc: "Facilitamos el acercamiento con potenciales aliados financieros sujeto a su disponibilidad y criterios.",
-          icon: "handshake",
-        },
-        {
-          title: "Seguimiento técnico",
-          desc: "Monitoreo continuo para asegurar el avance de su inversión.",
-          icon: "query_stats",
-        },
-      ],
-    },
-    form: {
-      title: "¡Cuéntenos sobre tu proyecto y un ejecutivo del CNI te contactará!",
-      sections: {
-        personal: "Datos del Inversionista",
-        project: "Datos del Proyecto",
-      },
-      labels: {
-        name: "Nombre",
-        lastName: "Apellidos",
-        company: "Nombre de empresa",
-        role: "Cargo",
-        email: "Correo electrónico",
-        website: "Sitio web",
-        country: "País de origen",
-        projectName: "Nombre del proyecto",
-        sector: "Sector estratégico",
-        sectorOther: "Especifique sector",
-        presenceInHonduras: "¿Tiene presencia en Honduras?",
-        projectType: "Tipo Proyecto",
-        shortDesc: "Descripción corta del proyecto",
-        investmentAmount: "Monto de inversión en millones de dólares",
-        feasibilityStudies: "¿Tiene estudios de factibilidad?",
-        completionDate: "Fecha de culminación",
-        projectStage: "Etapa del proyecto",
-        consent: "Consentimiento",
-        submit: "Enviar",
-      },
-      options: {
-        sectors: [
-          "Energía",
-          "Infraestructura",
-          "Agroindustria",
-          "Manufactura",
-          "Turismo y Hospitalidad",
-          "Logística y Transporte",
-          "Otros",
-        ],
-        presence: ["Sí", "No", "En evaluación"],
-        projectTypes: ["Nuevo proyecto", "Expansión"],
-        amounts: [
-          "Menos de 10 millones de dólares",
-          "De 10 a 50 millones de dólares",
-          "De 50 a 100 millones de dólares",
-          "Mayor de 100 millones de dólares",
-        ],
-        studies: ["Sí", "En proceso", "No"],
-        stages: [
-          "Estructura de planificación",
-          "Tramitología",
-          "Ejecución y monitoreo",
-          "Empresa en Operación (expansión)",
-        ],
-      },
-      consentText:
-        "El Consejo Nacional de Inversiones (CNI) se compromete a proteger y respetar su privacidad. La información proporcionada será utilizada únicamente para administrar su solicitud y brindarle acompañamiento institucional respecto a su proyecto de inversión. Al marcar esta casilla y hacer clic en “Enviar”, autorizo al CNI a almacenar y procesar la información personal proporcionada para gestionar mi solicitud. Asimismo, acepto que el CNI pueda comunicarse conmigo para dar seguimiento a mi proyecto y compartir información institucional relacionada con oportunidades de inversión, servicios o contenidos relevantes.",
-      opportunityCardNote:
-        "Para entrar al proceso como opportunity card debe contar con:\n- Datos de mercado\n- Mercado potencial\n- Experiencia de inversión",
-      successMsg: "¡Gracias! Tu proyecto ha sido enviado correctamente. Un ejecutivo se pondrá en contacto pronto.",
-      required: "Obligatorio"
-    },
+    metadata: { title: "Postula tu proyecto | CNI Honduras", description: "Presenta tu proyecto de inversión para recibir acompañamiento institucional del CNI." },
+    hero: { eyebrow: "INVERSIÓN EN HONDURAS", title: "Postula tu proyecto", description: "Comparta su iniciativa con el CNI. Nuestro equipo revisará la información para orientar su ruta de inversión en Honduras." },
+    intro: { title: "Información para evaluar su iniciativa", text: "Complete los campos requeridos. La información será tratada de forma confidencial y utilizada para dar seguimiento a su proyecto." },
+    sections: { contact: "Contacto", company: "Empresa", project: "Proyecto", investment: "Inversión", location: "Ubicación", consent: "Consentimiento" },
+    labels: { contact_name: "Nombre de contacto", email: "Correo electrónico", phone: "Teléfono", country: "País", company_name: "Nombre de la empresa", website: "Sitio web", project_name: "Nombre del proyecto", sector: "Sector", project_description: "Descripción del proyecto", investment_range: "Rango de inversión", estimated_jobs: "Empleos estimados", department: "Departamento", municipality: "Municipio", consent: "Autorizo al CNI a almacenar y procesar esta información y a contactarme para dar seguimiento al proyecto.", submit: "Enviar proyecto", submitAnother: "Enviar otro proyecto", portfolio: "Ver portafolio", home: "Ir al inicio", reference: "Código de referencia" },
+    placeholders: { contact_name: "Nombre y apellido", email: "correo@empresa.com", phone: "+504 0000-0000", country: "País de origen", company_name: "Empresa u organización", website: "https://empresa.com", project_name: "Nombre de la iniciativa", project_description: "Describa el alcance, etapa actual y objetivos del proyecto.", estimated_jobs: "Ej. 120", select: "Seleccione una opción", selectDepartment: "Seleccione un departamento", selectMunicipality: "Seleccione un municipio" },
+    rangeLabels: ["Menos de US$10 millones", "US$10 a US$50 millones", "US$50 a US$100 millones", "Más de US$100 millones"],
+    required: "Obligatorio", optional: "Opcional", loadingDepartments: "Cargando departamentos...", loadingMunicipalities: "Cargando municipios...", geoError: "No se pudieron cargar las ubicaciones. Intente nuevamente.", municipalityError: "No se pudieron cargar los municipios.", sectorError: "No se pudieron cargar los sectores.", municipalityDisabled: "Seleccione primero un departamento", submitting: "Enviando...", serverError: "No pudimos recibir el proyecto. Revise los campos o intente nuevamente.", success: "Su proyecto fue recibido correctamente.", validation: { required: "Este campo es obligatorio.", email: "Ingrese un correo válido.", url: "Ingrese una URL válida.", description: "Ingrese al menos 20 caracteres.", jobs: "Ingrese un número entero mayor o igual a cero.", consent: "Debe aceptar el consentimiento." },
+    benefits: { title: "Acompañamiento institucional", list: ["Orientación técnica para su proyecto", "Tratamiento confidencial de la información", "Seguimiento por el equipo del CNI"] },
+    ...shared,
   },
   en: {
-    hero: {
-      eyebrow: "DO YOU HAVE AN INVESTMENT PROJECT?",
-      title: "Submit your project",
-      description:
-        "An investment project is a ready-to-develop initiative that already has technical, financial, and market studies, allowing an investor to clearly understand what will be executed, how much to invest, and what benefits to expect.",
-    },
-    benefits: {
-      title: "Why submit your project to the CNI?",
-      subtitle:
-        "The National Investment Council (CNI) provides free and confidential support to national and international investors to facilitate the promotion of strategic projects and establish their investment in Honduras.",
-      list: [
-        {
-          title: "Comprehensive support",
-          desc: "Personalized technical advisory throughout the entire investment process.",
-          icon: "support_agent",
-        },
-        {
-          title: "Guaranteed confidentiality",
-          desc: "We protect your project information with high institutional standards.",
-          icon: "lock",
-        },
-        {
-          title: "Connection with capital and partners",
-          desc: "We facilitate introductions to potential financial partners subject to their availability and criteria.",
-          icon: "handshake",
-        },
-        {
-          title: "Technical follow-up",
-          desc: "Continuous monitoring to ensure the progress of your investment.",
-          icon: "query_stats",
-        },
-      ],
-    },
-    form: {
-      title: "Tell us about your project and a CNI executive will contact you!",
-      sections: {
-        personal: "Investor Data",
-        project: "Project Data",
-      },
-      labels: {
-        name: "First Name",
-        lastName: "Last Name",
-        company: "Company Name",
-        role: "Position",
-        email: "Email address",
-        website: "Website",
-        country: "Country of origin",
-        projectName: "Project Name",
-        sector: "Strategic Sector",
-        sectorOther: "Specify sector",
-        presenceInHonduras: "Do you have presence in Honduras?",
-        projectType: "Project Type",
-        shortDesc: "Short project description",
-        investmentAmount: "Investment amount in millions of dollars",
-        feasibilityStudies: "Do you have feasibility studies?",
-        completionDate: "Estimated completion date",
-        projectStage: "Project stage",
-        consent: "Consent",
-        submit: "Submit",
-      },
-      options: {
-        sectors: [
-          "Energy",
-          "Infrastructure",
-          "Agroindustry",
-          "Manufacturing",
-          "Tourism & Hospitality",
-          "Logistics & Transportation",
-          "Other",
-        ],
-        presence: ["Yes", "No", "Under evaluation"],
-        projectTypes: ["New project", "Expansion"],
-        amounts: [
-          "Under 10 million dollars",
-          "10 to 50 million dollars",
-          "50 to 100 million dollars",
-          "Over 100 million dollars",
-        ],
-        studies: ["Yes", "In progress", "No"],
-        stages: [
-          "Planning structure",
-          "Permitting",
-          "Execution & monitoring",
-          "Operating company (expansion)",
-        ],
-      },
-      consentText:
-        "The National Investment Council (CNI) is committed to protecting and respecting your privacy. The information provided will be used solely to manage your request and provide institutional support regarding your investment project. By checking this box and clicking 'Submit', I authorize the CNI to store and process the personal information provided to manage my request. Likewise, I accept that the CNI may contact me to follow up on my project and share institutional information related to investment opportunities, services, or relevant content.",
-      opportunityCardNote:
-        "To enter the process as an opportunity card, you must have:\n- Market data\n- Potential market\n- Investment experience",
-      successMsg: "Thank you! Your project has been submitted successfully. An executive will contact you shortly.",
-      required: "Required"
-    },
+    metadata: { title: "Submit your project | CNI Honduras", description: "Submit your investment project for institutional support from CNI." },
+    hero: { eyebrow: "INVESTING IN HONDURAS", title: "Submit your project", description: "Share your initiative with CNI. Our team will review the information to guide your investment path in Honduras." },
+    intro: { title: "Information to assess your initiative", text: "Complete the required fields. Your information will be handled confidentially and used to follow up on your project." },
+    sections: { contact: "Contact", company: "Company", project: "Project", investment: "Investment", location: "Location", consent: "Consent" },
+    labels: { contact_name: "Contact name", email: "Email address", phone: "Phone", country: "Country", company_name: "Company name", website: "Website", project_name: "Project name", sector: "Sector", project_description: "Project description", investment_range: "Investment range", estimated_jobs: "Estimated jobs", department: "Department", municipality: "Municipality", consent: "I authorize CNI to store and process this information and contact me to follow up on the project.", submit: "Submit project", submitAnother: "Submit another project", portfolio: "View portfolio", home: "Go to home", reference: "Reference code" },
+    placeholders: { contact_name: "First and last name", email: "email@company.com", phone: "+1 000 000 0000", country: "Country of origin", company_name: "Company or organization", website: "https://company.com", project_name: "Initiative name", project_description: "Describe the project's scope, current stage, and goals.", estimated_jobs: "E.g. 120", select: "Select an option", selectDepartment: "Select a department", selectMunicipality: "Select a municipality" },
+    rangeLabels: ["Under US$10 million", "US$10 to US$50 million", "US$50 to US$100 million", "Over US$100 million"],
+    required: "Required", optional: "Optional", loadingDepartments: "Loading departments...", loadingMunicipalities: "Loading municipalities...", geoError: "Locations could not be loaded. Please try again.", municipalityError: "Municipalities could not be loaded.", sectorError: "Sectors could not be loaded.", municipalityDisabled: "Select a department first", submitting: "Submitting...", serverError: "We could not receive your project. Review the fields or try again.", success: "Your project was submitted successfully.", validation: { required: "This field is required.", email: "Enter a valid email address.", url: "Enter a valid URL.", description: "Enter at least 20 characters.", jobs: "Enter a whole number greater than or equal to zero.", consent: "You must accept the consent." },
+    benefits: { title: "Institutional support", list: ["Technical guidance for your project", "Confidential handling of information", "Follow-up by the CNI team"] },
+    ...shared,
   },
-};
+} as const;

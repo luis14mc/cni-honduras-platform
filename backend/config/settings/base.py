@@ -172,6 +172,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": "120/min",
         "forms": "10/min",
+        "project_submissions": "5/hour",
         "cms_login": env("DJANGO_CMS_LOGIN_THROTTLE", default="10/min"),
     },
 }

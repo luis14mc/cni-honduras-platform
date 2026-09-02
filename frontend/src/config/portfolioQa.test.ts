@@ -8,6 +8,11 @@ describe("portfolio QA regressions", () => {
     expect(resolveHref("en", "/recursos/estudios")).toBe("/en/resources/studies");
   });
 
+  it("resolves official project submission URLs", () => {
+    expect(resolveHref("en", "/postula-tu-proyecto")).toBe("/en/submit-your-project");
+    expect(resolveHref("es", "/en/submit-your-project")).toBe("/postula-tu-proyecto");
+  });
+
   it("leaves the global metadata template to append the CNI brand once", () => {
     const metadata = buildMetadata(PAGE_SEO.portafolio, "en");
     expect(metadata.title).toBe("INVESTMENT PORTFOLIO");

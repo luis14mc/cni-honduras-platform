@@ -144,7 +144,7 @@ export function CasosPageView({ locale, stories }: Props) {
                   {c.ctaPrimary}
                 </Link>
                 <Link
-                  href={L("/portafolio/postulacion")}
+                  href={L("/postula-tu-proyecto")}
                   className="rounded border border-white px-8 py-4 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-white transition hover:bg-white hover:text-[#000a1e]"
                 >
                   {c.ctaSecondary}

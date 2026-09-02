@@ -103,7 +103,7 @@ function buildPathIndex(): Record<Locale, Map<string, PathEntry>> {
     {
       id: "postulacion",
       label: { es: "Postulación de Proyectos", en: "Project Application" },
-      path: { es: "/postulacion", en: "/en/application" },
+      path: { es: "/postula-tu-proyecto", en: "/en/submit-your-project" },
     },
     {
       id: "recursos-institucional",

@@ -28,6 +28,7 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/portfolio/opportunity-cards": "/portafolio/opportunity-cards",
     "/portfolio/success-stories": "/portafolio/casos",
     "/portfolio/submit": "/portafolio/postulacion",
+    "/submit-your-project": "/postulacion",
     "/application": "/postulacion",
     "/portfolio/map": "/portafolio/mapa",
     "/resources": "/recursos",
@@ -76,12 +77,12 @@ function buildMaps() {
   es.set("/tramites", "/es/tramites");
   es.set("/facilidades-migratorias", "/es/facilidades-migratorias");
   es.set("/prensa", "/es/prensa");
-  es.set("/postulacion", "/es/postulacion");
+  es.set("/postula-tu-proyecto", "/es/postulacion");
   en.set("/en/advisory", "/en/asesoria");
   en.set("/en/procedures", "/en/tramites");
   en.set("/en/migratory-facilities", "/en/facilidades-migratorias");
   en.set("/en/news", "/en/prensa");
-  en.set("/en/application", "/en/postulacion");
+  en.set("/en/submit-your-project", "/en/postulacion");
   // Categorías de recursos
   es.set("/recursos/institucional", "/es/recursos/institucional");
   es.set("/recursos/tecnicos", "/es/recursos/tecnicos");
@@ -136,6 +137,12 @@ export function resolveInternalPath(pathname: string): string | null {
 
 /** Redirecciones permanentes desde URLs legacy. */
 export const legacyRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string | null }> = [
+  { from: /^\/postulacion\/?$/, to: () => "/postula-tu-proyecto" },
+  { from: /^\/postulacion-de-proyectos\/?$/, to: () => "/postula-tu-proyecto" },
+  { from: /^\/portafolio\/postulacion\/?$/, to: () => "/postula-tu-proyecto" },
+  { from: /^\/en\/application\/?$/, to: () => "/en/submit-your-project" },
+  { from: /^\/en\/postulacion-de-proyectos\/?$/, to: () => "/en/submit-your-project" },
+  { from: /^\/en\/portfolio\/submit\/?$/, to: () => "/en/submit-your-project" },
   {
     from: /^\/es(\/.*)?$/,
     to: (p) => (p === "/es" ? "/" : p.slice(3) || "/"),

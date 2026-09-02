@@ -394,7 +394,7 @@ export function HomePageView({
               {hc.postulacion.description}
             </p>
             <Link
-              href={L("/postulacion-de-proyectos")}
+              href={L("/postula-tu-proyecto")}
               className="bg-cni-primary text-white px-10 py-4 rounded-DEFAULT font-headline font-bold text-[12px] tracking-[0.2em] uppercase hover:bg-cni-gold hover:text-cni-primary transition-all inline-flex items-center gap-4"
             >
               {postExtra.ctaProject}
