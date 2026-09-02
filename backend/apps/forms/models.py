@@ -1,4 +1,7 @@
+import uuid
+
 from django.db import models
+from django.utils import timezone
 
 
 class SubmissionStatus(models.TextChoices):
@@ -7,6 +10,26 @@ class SubmissionStatus(models.TextChoices):
     CONTACTED = "contacted", "Contactado"
     CLOSED = "closed", "Cerrado"
     SPAM = "spam", "Spam"
+
+
+class ProjectApplicationStatus(models.TextChoices):
+    NEW = "new", "Nuevo"
+    REVIEWING = "reviewing", "En revisión"
+    CONTACTED = "contacted", "Contactado"
+    QUALIFIED = "qualified", "Calificado"
+    REJECTED = "rejected", "Rechazado"
+    CONVERTED = "converted", "Convertido"
+
+
+class InvestmentRange(models.TextChoices):
+    UNDER_10M = "under_10m", "Menos de USD 10 millones"
+    FROM_10M_TO_50M = "10m_50m", "USD 10 a 50 millones"
+    FROM_50M_TO_100M = "50m_100m", "USD 50 a 100 millones"
+    OVER_100M = "over_100m", "Más de USD 100 millones"
+
+
+def generate_project_reference() -> str:
+    return f"CNI-PROJ-{timezone.now().year}-{uuid.uuid4().hex[:8].upper()}"
 
 
 class BaseSubmission(models.Model):
@@ -51,6 +74,46 @@ class ContactSubmission(BaseSubmission):
 
 
 class ProjectApplication(BaseSubmission):
+    reference_code = models.CharField(
+        max_length=23,
+        unique=True,
+        db_index=True,
+        editable=False,
+        default=generate_project_reference,
+        verbose_name="Código de referencia",
+    )
+    website = models.URLField(blank=True, default="", verbose_name="Sitio web")
+    sector_ref = models.ForeignKey(
+        "investment.Sector",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="project_submissions",
+        verbose_name="Sector canónico",
+    )
+    department_ref = models.ForeignKey(
+        "geo.Department",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="project_submissions",
+        verbose_name="Departamento canónico",
+    )
+    municipality = models.ForeignKey(
+        "geo.Municipality",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="project_submissions",
+        verbose_name="Municipio",
+    )
+    status = models.CharField(
+        max_length=16,
+        choices=ProjectApplicationStatus.choices,
+        default=ProjectApplicationStatus.NEW,
+        db_index=True,
+        verbose_name="Estado",
+    )
     project_name = models.CharField(
         max_length=255, blank=True, default="", verbose_name="Nombre del proyecto"
     )
@@ -62,7 +125,11 @@ class ProjectApplication(BaseSubmission):
         max_length=255, blank=True, default="", verbose_name="Ubicación del proyecto"
     )
     investment_range = models.CharField(
-        max_length=150, blank=True, default="", verbose_name="Rango de inversión"
+        max_length=20,
+        choices=InvestmentRange.choices,
+        blank=True,
+        default="",
+        verbose_name="Rango de inversión",
     )
     estimated_investment = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True, verbose_name="Inversión estimada"

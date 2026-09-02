@@ -1,10 +1,12 @@
 import logging
 from decimal import Decimal
 
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, status, viewsets
+from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-from apps.forms.throttles import FormsRateThrottle
+from apps.forms.throttles import FormsRateThrottle, ProjectSubmissionRateThrottle
 from apps.integrations.models import WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED, WEBHOOK_SOURCE_WEBSITE, WebhookEvent
 
 from .models import AdvisoryRequest, ContactSubmission, ProjectApplication, ResourceDownloadLead
@@ -30,6 +32,7 @@ def build_project_application_webhook_payload(submission: ProjectApplication) ->
 
     return {
         "submission_id": submission.pk,
+        "reference_code": submission.reference_code,
         "full_name": submission.full_name,
         "email": submission.email,
         "phone": submission.phone,
@@ -37,7 +40,10 @@ def build_project_application_webhook_payload(submission: ProjectApplication) ->
         "country": submission.country,
         "project_name": submission.project_name,
         "sector": submission.sector,
+        "sector_slug": submission.sector_ref.slug if submission.sector_ref else "",
         "department": submission.department,
+        "department_slug": submission.department_ref.slug if submission.department_ref else "",
+        "municipality_slug": submission.municipality.slug if submission.municipality else "",
         "project_location": submission.project_location,
         "investment_range": submission.investment_range,
         "estimated_investment": estimated_investment,
@@ -72,6 +78,15 @@ class ContactSubmissionViewSet(PublicCreateViewSet):
 class ProjectApplicationViewSet(PublicCreateViewSet):
     queryset = ProjectApplication.objects.all()
     serializer_class = ProjectApplicationSerializer
+    parser_classes = (JSONParser,)
+    throttle_classes = (ProjectSubmissionRateThrottle,)
+    max_payload_size = 64 * 1024
+
+    def create(self, request, *args, **kwargs):
+        content_length = request.META.get("CONTENT_LENGTH")
+        if content_length and int(content_length) > self.max_payload_size:
+            return Response({"detail": "Payload demasiado grande."}, status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE)
+        return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         super().perform_create(serializer)

@@ -41,6 +41,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  entries.push({ url: `${base}/postula-tu-proyecto`, changeFrequency: "monthly", priority: 0.8 });
+  entries.push({ url: `${base}/en/submit-your-project`, changeFrequency: "monthly", priority: 0.8 });
+
   for (const slug of getAllResourceCategorySlugs()) {
     entries.push({
       url: `${base}/recursos/${slug}`,

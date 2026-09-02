@@ -6,17 +6,18 @@ import { makeGenerateMetadata } from "@/src/lib/seo";
 import { getSectors } from "@/src/services/investment";
 import type { Sector } from "@/src/types/investment";
 import { loadAsyncData } from "@/src/lib/asyncData";
+import { postulacionPageCopy } from "@/src/i18n/copy/postulacionPage";
 
 export const generateMetadata = makeGenerateMetadata({
-  canonical: "/postulacion",
-  enMirror: "/en/application",
+  canonical: "/postula-tu-proyecto",
+  enMirror: "/en/submit-your-project",
   title: {
-    es: "Postulación de Proyectos | CNI Honduras",
-    en: "Project Application | CNI Honduras",
+    es: postulacionPageCopy.es.metadata.title,
+    en: postulacionPageCopy.en.metadata.title,
   },
   description: {
-    es: "Postule su proyecto de inversión ante el CNI para recibir acompañamiento institucional.",
-    en: "Submit your investment project to CNI for institutional support.",
+    es: postulacionPageCopy.es.metadata.description,
+    en: postulacionPageCopy.en.metadata.description,
   },
 });
 

@@ -23,12 +23,14 @@ export const API_BASE_URL = (
 export class ApiError extends Error {
   readonly status: number;
   readonly path: string;
+  readonly data: unknown;
 
-  constructor(message: string, status: number, path: string) {
+  constructor(message: string, status: number, path: string, data?: unknown) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.path = path;
+    this.data = data;
   }
 }
 
@@ -63,8 +65,10 @@ export async function apiGet<T>(path: string, options: FetchOptions = {}): Promi
 
   if (!response.ok) {
     let detail = response.statusText;
+    let data: unknown;
     try {
       const body: unknown = await response.json();
+      data = body;
       if (
         body &&
         typeof body === "object" &&
@@ -81,6 +85,7 @@ export async function apiGet<T>(path: string, options: FetchOptions = {}): Promi
       `HTTP ${response.status} ${response.statusText}: ${detail}`,
       response.status,
       path,
+      data,
     );
   }
 
@@ -118,8 +123,10 @@ export async function apiPost<TResponse, TPayload = unknown>(
 
   if (!response.ok) {
     let detail = response.statusText;
+    let data: unknown;
     try {
       const body: unknown = await response.json();
+      data = body;
       if (
         body &&
         typeof body === "object" &&
@@ -136,6 +143,7 @@ export async function apiPost<TResponse, TPayload = unknown>(
       `HTTP ${response.status} ${response.statusText}: ${detail}`,
       response.status,
       path,
+      data,
     );
   }
 
