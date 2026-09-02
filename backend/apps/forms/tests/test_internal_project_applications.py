@@ -127,6 +127,7 @@ class ProjectApplicationInternalAPITests(CMSAdminTestCase):
             project_name="Hotel Boutique",
             sector="turismo",
             department="cortes",
+            department_ref=self.department,
             investment_range="under_10m",
             status=ProjectApplicationStatus.REVIEWING,
             source="website_project_submission",
@@ -186,6 +187,40 @@ class ProjectApplicationInternalAPITests(CMSAdminTestCase):
                 event_type=ProjectApplicationHistoryEventType.ASSIGNED,
             ).exists()
         )
+
+    def test_patch_rejects_staff_without_change_permission_as_assignee(self):
+        """PATCH no debe aceptar assigned_to de staff sin permiso change_projectapplication."""
+        original_assignee_id = self.application.assigned_to_id
+        self.client.force_login(self.assignee)
+        response = self.client.patch(
+            self.detail_url,
+            {"assigned_to": self.unauthorized_staff.pk},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.application.refresh_from_db()
+        self.assertEqual(self.application.assigned_to_id, original_assignee_id)
+        self.assertFalse(
+            ProjectApplicationHistory.objects.filter(
+                application=self.application,
+                event_type__in=(
+                    ProjectApplicationHistoryEventType.ASSIGNED,
+                    ProjectApplicationHistoryEventType.REASSIGNED,
+                ),
+            ).exists()
+        )
+
+    def test_patch_assignee_accepts_superuser(self):
+        superuser = User.objects.create_superuser(
+            username="superassign",
+            password="pw-super-123",
+            email="super@example.com",
+        )
+        self.client.force_login(self.assignee)
+        response = self.client.patch(self.detail_url, {"assigned_to": superuser.pk}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.application.refresh_from_db()
+        self.assertEqual(self.application.assigned_to_id, superuser.pk)
 
     def test_patch_unassign_creates_history(self):
         self.application.assigned_to = self.assignee
@@ -247,6 +282,7 @@ class ProjectApplicationInternalAPITests(CMSAdminTestCase):
         response = self.client.get(self.assignable_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(any(item["id"] == self.assignee.pk for item in response.data))
+        self.assertFalse(any(item["id"] == self.unauthorized_staff.pk for item in response.data))
         self.assertEqual(set(response.data[0].keys()), {"id", "name", "email"})
 
     @patch("apps.forms.viewsets.enqueue_project_application_webhook")
@@ -280,6 +316,7 @@ class ProjectApplicationInternalAPITests(CMSAdminTestCase):
     def test_management_update_rolls_back_on_history_failure(self, _record_history):
         self.client.force_login(self.assignee)
         original_status = self.application.status
+        self.client.raise_request_exception = False
         response = self.client.patch(self.detail_url, {"status": "reviewing"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
         self.application.refresh_from_db()

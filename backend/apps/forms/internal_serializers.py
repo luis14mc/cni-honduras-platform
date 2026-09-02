@@ -98,10 +98,31 @@ class ProjectApplicationDetailSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+def assignable_staff_users_queryset():
+    """Staff activos elegibles como responsable: superuser o permiso change_projectapplication."""
+    perm_q = Q(
+        groups__permissions__content_type__app_label="forms_app",
+        groups__permissions__codename="change_projectapplication",
+    ) | Q(
+        user_permissions__content_type__app_label="forms_app",
+        user_permissions__codename="change_projectapplication",
+    )
+    return (
+        User.objects.filter(is_staff=True, is_active=True)
+        .filter(Q(is_superuser=True) | perm_q)
+        .distinct()
+        .order_by("first_name", "username")
+    )
+
+
+def filter_assignable_staff_users(user: User):
+    return assignable_staff_users_queryset()
+
+
 class ProjectApplicationPatchSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=ProjectApplicationStatus.choices, required=False)
     assigned_to = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.filter(is_staff=True, is_active=True),
+        queryset=assignable_staff_users_queryset(),
         required=False,
         allow_null=True,
     )
@@ -147,19 +168,3 @@ class ProjectApplicationHistorySerializer(serializers.ModelSerializer):
             "created_at",
         )
         read_only_fields = fields
-
-
-def filter_assignable_staff_users(user: User):
-    perm_q = Q(
-        groups__permissions__content_type__app_label="forms_app",
-        groups__permissions__codename="change_projectapplication",
-    ) | Q(
-        user_permissions__content_type__app_label="forms_app",
-        user_permissions__codename="change_projectapplication",
-    )
-    return (
-        User.objects.filter(is_staff=True, is_active=True)
-        .filter(Q(is_superuser=True) | perm_q)
-        .distinct()
-        .order_by("first_name", "username")
-    )
