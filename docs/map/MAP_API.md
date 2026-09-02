@@ -57,3 +57,9 @@ These categories are not shown in the layer control. Empty or mock layers must n
 ### Frontend Loading
 
 Infrastructure is not fetched during initial map load. Activating a supported layer starts one request and stores its `FeatureCollection` in an in-memory session cache. Deactivation hides the markers without deleting cached data; reactivation does not refetch. In-flight requests are deduplicated, and sector changes neither alter active infrastructure layers nor request them again.
+
+### Frontend URL State
+
+The App Router map page supports `sector`, `department`, `municipality`, and `project` slug query parameters. Values are validated against each dataset as it loads in that order; invalid or stale values are omitted from the canonical URL. The transient search text is never persisted.
+
+Marker clustering is intentionally deferred. Current requests are department-scoped and the observed marker volume does not justify the extra interaction complexity or dependency; clustering should be reconsidered if production volumes cause measurable overlap or rendering degradation.

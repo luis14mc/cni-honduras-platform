@@ -53,6 +53,28 @@ export type InvestmentMapCopy = {
   status: string;
   source: string;
   viewSource: string;
+  searchLabel: string;
+  searchPlaceholder: string;
+  searchNoResults: string;
+  clearSearch: string;
+  searchResults: string;
+  panelEyebrow: string;
+  searchGroups: Record<"department" | "municipality" | "project", string>;
+  clearFilters: string;
+  currentFilters: string;
+  activeLayersCount: string;
+  visibleProjectsCount: string;
+  loadedMunicipalitiesCount: string;
+  legend: string;
+  legendDepartment: string;
+  legendMunicipality: string;
+  legendProject: string;
+  legendSelectedProject: string;
+  mapAriaLabel: string;
+  mapInstructions: string;
+  stageLabel: string;
+  zoomIn: string;
+  zoomOut: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -109,6 +131,28 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     status: "Estado",
     source: "Fuente",
     viewSource: "Consultar fuente",
+    searchLabel: "Buscar en el mapa",
+    searchPlaceholder: "Buscar departamento, municipio o proyecto",
+    searchNoResults: "No hay resultados cargados para esta búsqueda.",
+    clearSearch: "Limpiar búsqueda",
+    searchResults: "Resultados de búsqueda del mapa",
+    panelEyebrow: "CNI · Honduras",
+    searchGroups: { department: "Departamentos", municipality: "Municipios cargados", project: "Proyectos cargados" },
+    clearFilters: "Limpiar filtros",
+    currentFilters: "Filtros activos",
+    activeLayersCount: "Capas activas",
+    visibleProjectsCount: "Proyectos visibles",
+    loadedMunicipalitiesCount: "Municipios cargados",
+    legend: "Leyenda",
+    legendDepartment: "Departamento",
+    legendMunicipality: "Municipio",
+    legendProject: "Proyecto",
+    legendSelectedProject: "Proyecto seleccionado",
+    mapAriaLabel: "Mapa interactivo de inversión de Honduras",
+    mapInstructions: "Use los controles de zoom o seleccione un resultado de búsqueda para navegar el mapa.",
+    stageLabel: "Etapa",
+    zoomIn: "Acercar mapa",
+    zoomOut: "Alejar mapa",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -163,5 +207,27 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     status: "Status",
     source: "Source",
     viewSource: "View source",
+    searchLabel: "Search the map",
+    searchPlaceholder: "Search department, municipality or project",
+    searchNoResults: "No loaded results match this search.",
+    clearSearch: "Clear search",
+    searchResults: "Map search results",
+    panelEyebrow: "CNI · Honduras",
+    searchGroups: { department: "Departments", municipality: "Loaded municipalities", project: "Loaded projects" },
+    clearFilters: "Clear filters",
+    currentFilters: "Active filters",
+    activeLayersCount: "Active layers",
+    visibleProjectsCount: "Visible projects",
+    loadedMunicipalitiesCount: "Loaded municipalities",
+    legend: "Legend",
+    legendDepartment: "Department",
+    legendMunicipality: "Municipality",
+    legendProject: "Project",
+    legendSelectedProject: "Selected project",
+    mapAriaLabel: "Interactive investment map of Honduras",
+    mapInstructions: "Use the zoom controls or select a search result to navigate the map.",
+    stageLabel: "Stage",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
   },
 };
