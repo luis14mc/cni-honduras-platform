@@ -51,6 +51,20 @@ export const CMS_NAV: CmsNavGroup[] = [
     ],
   },
   {
+    key: "submissions",
+    label: "Formularios",
+    items: [
+      {
+        key: "project-applications",
+        label: "Postulaciones",
+        href: "/cms/postulaciones",
+        icon: "Inbox",
+        anyPerm: ["forms_app.view_projectapplication", "forms_app.change_projectapplication"],
+        ready: true,
+      },
+    ],
+  },
+  {
     key: "library",
     label: "Biblioteca",
     items: [

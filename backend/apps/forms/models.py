@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
@@ -138,11 +139,104 @@ class ProjectApplication(BaseSubmission):
         null=True, blank=True, verbose_name="Empleos esperados"
     )
     consent = models.BooleanField(default=False, verbose_name="Consentimiento de contacto")
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_project_applications",
+        verbose_name="Responsable interno",
+    )
 
     class Meta(BaseSubmission.Meta):
         abstract = False
         verbose_name = "Postulación de proyecto"
         verbose_name_plural = "Postulaciones de proyectos"
+
+
+class ProjectApplicationHistoryEventType(models.TextChoices):
+    STATUS_CHANGED = "status_changed", "Cambio de estado"
+    ASSIGNED = "assigned", "Asignado"
+    REASSIGNED = "reassigned", "Reasignado"
+    UNASSIGNED = "unassigned", "Sin asignar"
+    NOTE_ADDED = "note_added", "Nota agregada"
+
+
+class ProjectApplicationNote(models.Model):
+    application = models.ForeignKey(
+        ProjectApplication,
+        on_delete=models.CASCADE,
+        related_name="notes",
+        verbose_name="Postulación",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="project_application_notes",
+        verbose_name="Autor",
+    )
+    body = models.TextField(max_length=5000, verbose_name="Contenido")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        verbose_name = "Nota interna de postulación"
+        verbose_name_plural = "Notas internas de postulaciones"
+
+    def __str__(self) -> str:
+        return f"Nota #{self.pk} — {self.application.reference_code}"
+
+
+class ProjectApplicationHistory(models.Model):
+    application = models.ForeignKey(
+        ProjectApplication,
+        on_delete=models.CASCADE,
+        related_name="history_entries",
+        verbose_name="Postulación",
+    )
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="project_application_history_actions",
+        verbose_name="Actor",
+    )
+    event_type = models.CharField(
+        max_length=32,
+        choices=ProjectApplicationHistoryEventType.choices,
+        db_index=True,
+        verbose_name="Tipo de evento",
+    )
+    from_status = models.CharField(max_length=16, blank=True, default="", verbose_name="Estado anterior")
+    to_status = models.CharField(max_length=16, blank=True, default="", verbose_name="Estado nuevo")
+    from_assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name="Responsable anterior",
+    )
+    to_assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+        verbose_name="Responsable nuevo",
+    )
+    metadata = models.JSONField(default=dict, blank=True, verbose_name="Metadatos")
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ("-created_at", "-id")
+        verbose_name = "Historial de postulación"
+        verbose_name_plural = "Historial de postulaciones"
+
+    def __str__(self) -> str:
+        return f"{self.application.reference_code} — {self.event_type}"
 
 
 class AdvisoryRequest(BaseSubmission):

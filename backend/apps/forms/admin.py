@@ -4,6 +4,8 @@ from .models import (
     AdvisoryRequest,
     ContactSubmission,
     ProjectApplication,
+    ProjectApplicationHistory,
+    ProjectApplicationNote,
     ProjectApplicationStatus,
     ResourceDownloadLead,
 )
@@ -22,6 +24,35 @@ class ContactSubmissionAdmin(BaseSubmissionAdmin):
     pass
 
 
+class ProjectApplicationNoteInline(admin.TabularInline):
+    model = ProjectApplicationNote
+    extra = 0
+    readonly_fields = ("author", "body", "created_at")
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class ProjectApplicationHistoryInline(admin.TabularInline):
+    model = ProjectApplicationHistory
+    extra = 0
+    readonly_fields = (
+        "actor",
+        "event_type",
+        "from_status",
+        "to_status",
+        "from_assignee",
+        "to_assignee",
+        "metadata",
+        "created_at",
+    )
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(ProjectApplication)
 class ProjectApplicationAdmin(admin.ModelAdmin):
     list_display = (
@@ -33,13 +64,15 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
         "sector_ref",
         "investment_range",
         "status",
+        "assigned_to",
         "crm_synced",
         "created_at",
     )
-    list_filter = ("status", "sector_ref", "investment_range", "created_at")
+    list_filter = ("status", "sector_ref", "investment_range", "assigned_to", "created_at")
     search_fields = ("reference_code", "full_name", "email", "company")
     readonly_fields = ("reference_code", "created_at", "updated_at", "crm_synced", "crm_record_id")
     date_hierarchy = "created_at"
+    inlines = (ProjectApplicationNoteInline, ProjectApplicationHistoryInline)
     actions = (
         "marcar_como_en_revision",
         "marcar_como_contactado",
@@ -88,6 +121,7 @@ class ProjectApplicationAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "status",
+                    "assigned_to",
                     "reference_code",
                     "crm_synced",
                     "crm_record_id",
