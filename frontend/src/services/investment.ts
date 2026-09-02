@@ -71,10 +71,36 @@ export function getProjectsByDepartment(
   return apiGetList<InvestmentProject>(`${BASE}/projects/?${params.toString()}`);
 }
 
-export function getMapSummary(sectorSlug?: string): Promise<import("@/src/lib/types/investment-map").MapDepartmentSummary[]> {
+export function getGeolocatedMapProjects(options: {
+  departmentSlug: string;
+  municipalitySlug?: string;
+  sectorSlug?: string;
+  locale?: Locale;
+}): Promise<import("@/src/lib/types/investment-map").MapInvestmentProject[]> {
+  const params = new URLSearchParams({
+    department: options.departmentSlug,
+    has_location: "true",
+  });
+  if (options.municipalitySlug) {
+    params.set("municipality", options.municipalitySlug);
+  }
+  if (options.sectorSlug) {
+    params.set("sector", options.sectorSlug);
+  }
+  return apiGet<import("@/src/lib/types/investment-map").MapInvestmentProject[]>(
+    `${BASE}/projects/?${params.toString()}`,
+    { locale: options.locale },
+  );
+}
+
+export function getMapSummary(
+  sectorSlug?: string,
+  locale?: Locale,
+): Promise<import("@/src/lib/types/investment-map").MapDepartmentSummary[]> {
   const query = sectorSlug ? `?sector=${encodeURIComponent(sectorSlug)}` : "";
   return apiGet<import("@/src/lib/types/investment-map").MapDepartmentSummary[]>(
     `${BASE}/map-summary/${query}`,
+    { locale },
   );
 }
 

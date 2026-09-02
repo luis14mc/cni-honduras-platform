@@ -1,12 +1,35 @@
 import { apiGet } from "@/src/lib/api";
-import { getMapSummary, getProjectsByDepartment, getSectors } from "@/src/services/investment";
-import type { DepartmentFeatureCollection } from "@/src/lib/types/investment-map";
-import type { InvestmentProject, Sector } from "@/src/types/investment";
-import type { MapDepartmentSummary } from "@/src/lib/types/investment-map";
+import {
+  getGeolocatedMapProjects,
+  getMapSummary,
+  getSectors,
+} from "@/src/services/investment";
+import type {
+  DepartmentFeatureCollection,
+  MapDepartmentSummary,
+  MapInvestmentProject,
+  MunicipalityFeatureCollection,
+} from "@/src/lib/types/investment-map";
+import type { Sector } from "@/src/types/investment";
 
 export function getDepartmentGeoJson(): Promise<DepartmentFeatureCollection> {
   return apiGet<DepartmentFeatureCollection>("/geo/departments/geojson/");
 }
 
-export { getMapSummary, getProjectsByDepartment, getSectors };
-export type { DepartmentFeatureCollection, InvestmentProject, MapDepartmentSummary, Sector };
+export function getMunicipalityGeoJson(
+  departmentSlug: string,
+): Promise<MunicipalityFeatureCollection> {
+  const params = new URLSearchParams({ department: departmentSlug });
+  return apiGet<MunicipalityFeatureCollection>(
+    `/geo/municipalities/geojson/?${params.toString()}`,
+  );
+}
+
+export { getGeolocatedMapProjects, getMapSummary, getSectors };
+export type {
+  DepartmentFeatureCollection,
+  MapDepartmentSummary,
+  MapInvestmentProject,
+  MunicipalityFeatureCollection,
+  Sector,
+};

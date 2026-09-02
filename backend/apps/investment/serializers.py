@@ -2,7 +2,7 @@ import json
 
 from rest_framework import serializers
 
-from apps.geo.models import Department
+from apps.geo.models import Department, Municipality
 from apps.geo.serializers import (
     CNIRegionSerializer,
     DepartmentLiteSerializer,
@@ -116,6 +116,52 @@ class InvestmentOpportunitySerializer(serializers.ModelSerializer):
                 obj.metrics.filter(is_public=True).order_by("order", "id")[:PUBLIC_METRIC_LIMIT]
             )
         return OpportunityMetricPublicSerializer(rows, many=True).data
+
+
+class MunicipalityMapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Municipality
+        fields = ("id", "name", "slug", "code")
+
+
+class InvestmentProjectMapSerializer(serializers.ModelSerializer):
+    """Lightweight serializer for georeferenced map markers."""
+
+    sector = SectorLiteSerializer(read_only=True)
+    department = DepartmentLiteSerializer(read_only=True)
+    municipality = MunicipalityMapSerializer(read_only=True)
+    location = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
+    stage = serializers.CharField(source="project_stage", read_only=True)
+    featured = serializers.BooleanField(source="is_featured", read_only=True)
+
+    class Meta:
+        model = InvestmentProject
+        fields = (
+            "id",
+            "title",
+            "slug",
+            "sector",
+            "department",
+            "municipality",
+            "stage",
+            "investment_amount",
+            "estimated_jobs",
+            "location",
+            "latitude",
+            "longitude",
+            "featured",
+        )
+
+    def get_location(self, obj: InvestmentProject) -> dict | None:
+        return json.loads(obj.location.geojson) if obj.location else None
+
+    def get_latitude(self, obj: InvestmentProject) -> float | None:
+        return obj.location.y if obj.location else None
+
+    def get_longitude(self, obj: InvestmentProject) -> float | None:
+        return obj.location.x if obj.location else None
 
 
 class InvestmentProjectSerializer(serializers.ModelSerializer):

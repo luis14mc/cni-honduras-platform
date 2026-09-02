@@ -23,6 +23,7 @@ from .models import InvestmentOpportunity, InvestmentProject, Sector, SuccessSto
 from .serializers import (
     DepartmentMapSummarySerializer,
     InvestmentOpportunitySerializer,
+    InvestmentProjectMapSerializer,
     InvestmentProjectSerializer,
     SectorSerializer,
     SuccessStorySerializer,
@@ -66,6 +67,20 @@ class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModel
 class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = InvestmentProjectSerializer
     lookup_field = "slug"
+
+    def get_serializer_class(self):
+        if self.action == "list" and parse_bool_param(
+            self.request.query_params.get("has_location")
+        ):
+            return InvestmentProjectMapSerializer
+        return InvestmentProjectSerializer
+
+    def paginate_queryset(self, queryset):
+        if self.action == "list" and parse_bool_param(
+            self.request.query_params.get("has_location")
+        ):
+            return None
+        return super().paginate_queryset(queryset)
 
     def get_queryset(self):
         queryset = (

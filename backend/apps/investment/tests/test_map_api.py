@@ -50,7 +50,50 @@ class InvestmentMapApiTests(TestCase):
         response = self.client.get(
             "/api/v1/investment/projects/?sector=turismo&department=cortes&municipality=san-pedro&stage=implementing&has_location=true"
         )
-        self.assertEqual([item["slug"] for item in response.json()["results"]], ["ubicado"])
+        self.assertEqual([item["slug"] for item in response.json()], ["ubicado"])
+
+    def test_has_location_map_serializer_and_department_filter(self):
+        self.project(
+            "map-marker",
+            department=self.department,
+            municipality=self.municipality,
+            location=Point(-87.2, 14.1, srid=4326),
+            investment_amount=500,
+            estimated_jobs=25,
+            is_featured=True,
+        )
+        self.project("other-dept", department=self.other_department, location=Point(-87.0, 14.0, srid=4326))
+        response = self.client.get("/api/v1/investment/projects/?department=cortes&has_location=true")
+        payload = response.json()
+        self.assertEqual(len(payload), 1)
+        project = payload[0]
+        self.assertEqual(project["slug"], "map-marker")
+        self.assertEqual(project["latitude"], 14.1)
+        self.assertEqual(project["longitude"], -87.2)
+        self.assertEqual(project["stage"], "promotion")
+        self.assertTrue(project["featured"])
+        self.assertNotIn("description", project)
+        self.assertNotIn("region", project)
+
+    def test_sector_and_municipality_filters_with_has_location(self):
+        self.project(
+            "turismo-sps",
+            department=self.department,
+            municipality=self.municipality,
+            sector=self.tourism,
+            location=Point(-87.2, 14.1, srid=4326),
+        )
+        self.project(
+            "energia-sps",
+            department=self.department,
+            municipality=self.municipality,
+            sector=self.energy,
+            location=Point(-87.3, 14.2, srid=4326),
+        )
+        response = self.client.get(
+            "/api/v1/investment/projects/?department=cortes&sector=turismo&municipality=san-pedro&has_location=true"
+        )
+        self.assertEqual([item["slug"] for item in response.json()], ["turismo-sps"])
 
     def test_map_summary_sector_and_stage_filters(self):
         self.project(

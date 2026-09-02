@@ -131,21 +131,21 @@ def department_feature(dept: Department) -> dict:
 def departments_feature_collection(qs) -> dict:
     return {
         "type": "FeatureCollection",
-        "features": [department_feature(d) for d in qs],
+        "features": [department_feature(department) for department in qs],
     }
 
 
 def municipality_feature(municipality: Municipality) -> dict:
+    geometry = json.loads(municipality.geometry.geojson) if municipality.geometry else None
     return {
         "type": "Feature",
         "id": municipality.id,
-        "geometry": json.loads(municipality.geometry.geojson)
-        if municipality.geometry
-        else None,
+        "geometry": geometry,
         "properties": {
             "name": municipality.name,
             "slug": municipality.slug,
             "code": municipality.code,
+            "department_slug": municipality.department.slug,
             "department": municipality.department.slug,
             "center_lat": municipality.center_lat,
             "center_lng": municipality.center_lng,
@@ -153,8 +153,8 @@ def municipality_feature(municipality: Municipality) -> dict:
     }
 
 
-def municipalities_feature_collection(qs) -> dict:
+def municipalities_feature_collection(queryset) -> dict:
     return {
         "type": "FeatureCollection",
-        "features": [municipality_feature(municipality) for municipality in qs],
+        "features": [municipality_feature(municipality) for municipality in queryset],
     }
