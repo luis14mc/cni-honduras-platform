@@ -43,7 +43,7 @@ Draft & Publish + i18n (`es` default, `en`) en todos:
 
 | Tipo | REST | Notas |
 |------|------|--------|
-| News | `GET /api/news` | UID interno `news-item` (Strapi exige singular ≠ plural). `content` blocks, `featured_image`, SEO |
+| News | `GET /api/news` | UID interno `news-item`. Dynamic Zone (`content.*`), `cover`, `lead_points`, `excerpt`, `location_date`, SEO. Draft & Publish |
 | Document | `GET /api/documents` | `file` y `cover` localizados (ES/EN pueden diferir). `resource_key` compartido |
 | Success Story | `GET /api/success-stories` | `sector` es **string** (no se duplica el modelo Django `Sector`) |
 | Investment Opportunity | `GET /api/investment-opportunities` | `public_metrics` (máx. 4). `internal_notes` es editorial y se omite en REST público |
@@ -51,7 +51,7 @@ Draft & Publish + i18n (`es` default, `en`) en todos:
 Populate explícito de media (ejemplos):
 
 ```http
-GET /api/news?locale=es&populate=featured_image
+GET /api/news?locale=es&populate[cover]=true&populate[content][on][content.image][populate]=image&populate[lead_points]=true
 GET /api/documents?locale=en&populate=file,cover
 GET /api/success-stories?locale=es&populate=logo,featured_image,person_photo
 GET /api/investment-opportunities?locale=es&populate=featured_image,public_metrics

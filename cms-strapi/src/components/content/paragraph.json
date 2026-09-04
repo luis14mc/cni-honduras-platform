@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_content_paragraphs",
+  "info": {
+    "displayName": "Paragraph",
+    "icon": "paragraph",
+    "description": "Body paragraph block."
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

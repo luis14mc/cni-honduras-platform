@@ -5,7 +5,7 @@
     "singularName": "news-item",
     "pluralName": "news",
     "displayName": "News",
-    "description": "Editorial news, press and announcements (Strapi parallel CMS). REST: /api/news"
+    "description": "Editorial news, press and announcements. REST: GET /api/news?locale=es&populate[cover]=true&populate[content][populate]=*"
   },
   "options": {
     "draftAndPublish": true
@@ -35,27 +35,8 @@
         }
       }
     },
-    "summary": {
+    "excerpt": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "content": {
-      "type": "blocks",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "featured_image": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": ["images"],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -67,6 +48,49 @@
       "pluginOptions": {
         "i18n": {
           "localized": false
+        }
+      }
+    },
+    "location_date": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "lead_points": {
+      "type": "component",
+      "repeatable": true,
+      "component": "news.lead-point",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "content.paragraph",
+        "content.heading",
+        "content.image",
+        "content.quote"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
         }
       }
     },
@@ -83,6 +107,16 @@
     "featured": {
       "type": "boolean",
       "default": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
       "pluginOptions": {
         "i18n": {
           "localized": false
