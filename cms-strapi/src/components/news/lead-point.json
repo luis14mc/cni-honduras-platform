@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_news_lead_points",
+  "info": {
+    "displayName": "Lead point",
+    "icon": "bulletList",
+    "description": "Introductory bullet for a news article."
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_content_images",
+  "info": {
+    "displayName": "Image",
+    "icon": "picture",
+    "description": "Inline image with caption and alt text."
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "caption": {
+      "type": "text"
+    },
+    "alt_text": {
+      "type": "string"
+    }
+  }
+}

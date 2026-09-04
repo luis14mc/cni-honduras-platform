@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_content_headings",
+  "info": {
+    "displayName": "Heading",
+    "icon": "heading",
+    "description": "Section heading (h2 or h3)."
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    },
+    "level": {
+      "type": "enumeration",
+      "enum": ["h2", "h3"],
+      "default": "h2",
+      "required": true
+    }
+  }
+}
