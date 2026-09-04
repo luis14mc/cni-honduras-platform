@@ -1,8 +1,11 @@
 import type { Core } from '@strapi/strapi';
 import { bootstrapStrapi } from './bootstrap';
+import { registerNewsCoverDocumentMiddleware } from './register/news-cover-document-middleware';
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
+    registerNewsCoverDocumentMiddleware(strapi);
+
     strapi.server.routes([
       {
         method: 'GET',
