@@ -19,14 +19,20 @@ const newsRaw = {
   documentId: "abc",
   title: "Anuncio CNI",
   slug: "anuncio-cni",
-  summary: "Resumen",
+  excerpt: "Resumen",
   content: [
     {
-      type: "paragraph",
-      children: [{ type: "text", text: "Hola Honduras" }],
+      __component: "content.paragraph",
+      text: "Hola Honduras",
+    },
+    {
+      __component: "content.heading",
+      text: "Subtítulo",
+      level: "h2",
     },
   ],
-  featured_image: { url: "https://cdn.example/news.webp", alternativeText: "Hero" },
+  cover: { url: "https://cdn.example/news.webp", alternativeText: "Hero" },
+  lead_points: [{ text: "Punto 1" }, { text: "Punto 2" }],
   published_date: "2026-08-01T12:00:00.000Z",
   category: "press_release",
   featured: true,
@@ -60,7 +66,22 @@ describe("mapNews", () => {
     expect(item?.featured_image?.file).toBe("https://cdn.example/news.webp");
     expect(item?.featured_image?.file_url).toBe("https://cdn.example/news.webp");
     expect(item?.content).toContain("Hola Honduras");
+    expect(item?.content).toContain("Subtítulo");
     expect(item?.rich_content?.[0]?.type).toBe("paragraph");
+    expect(item?.lead_points).toEqual(["Punto 1", "Punto 2"]);
+  });
+
+  it("supports legacy summary and featured_image aliases", () => {
+    const legacy = mapNews({
+      id: 1,
+      title: "Legacy",
+      slug: "legacy",
+      summary: "Resumen legacy",
+      featured_image: { url: "https://cdn.example/legacy.webp" },
+      content: [{ type: "paragraph", children: [{ type: "text", text: "Body" }] }],
+    });
+    expect(legacy?.summary).toBe("Resumen legacy");
+    expect(legacy?.featured_image?.file).toBe("https://cdn.example/legacy.webp");
   });
 
   it("returns null when slug is missing", () => {
@@ -246,7 +267,9 @@ describe("editorial fetch", () => {
     expect(url).toContain("https://strapi.test/api/news");
     expect(url).toContain("locale=es");
     expect(url).toContain("filters%5Bslug%5D%5B%24eq%5D=anuncio-cni");
-    expect(url).toContain("populate%5Bfeatured_image%5D=true");
+    expect(url).toContain("populate%5Bcover%5D=true");
+    expect(url).toContain("populate%5Blead_points%5D=true");
+    expect(url).toContain("populate%5Bcontent%5D%5Bon%5D%5Bcontent.image%5D%5Bpopulate%5D=image");
     expect(url).not.toContain("populate=*");
     const init = fetchMock.mock.calls[0]?.[1] as { next?: { revalidate?: number } };
     expect(init.next?.revalidate).toBe(60);
@@ -262,6 +285,20 @@ describe("editorial fetch", () => {
       }),
     );
     await expect(getNews("en")).resolves.toEqual([]);
+  });
+
+  it("populates cover only for news list requests", async () => {
+    vi.stubEnv("STRAPI_URL", "https://strapi.test");
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: [], meta: { pagination: { total: 0 } } }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await getNews("es");
+    const url = String(fetchMock.mock.calls[0]?.[0]);
+    expect(url).toContain("populate%5Bcover%5D=true");
+    expect(url).not.toContain("lead_points");
   });
 
   it("filters portfolio documents by type, sector and locale with stable ordering", async () => {

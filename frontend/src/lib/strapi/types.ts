@@ -50,9 +50,17 @@ export interface StrapiNews {
   documentId: string;
   title: string;
   slug: string;
+  /** Current Strapi field (replaces legacy `summary`). */
+  excerpt?: string | null;
+  /** @deprecated Legacy alias — prefer `excerpt`. */
   summary?: string | null;
   content?: unknown;
+  /** Current Strapi media field (replaces legacy `featured_image`). */
+  cover?: StrapiMedia | null;
+  /** @deprecated Legacy alias — prefer `cover`. */
   featured_image?: StrapiMedia | null;
+  lead_points?: Array<{ id?: number; text?: string | null }> | null;
+  location_date?: string | null;
   published_date?: string | null;
   category?: string | null;
   featured?: boolean;

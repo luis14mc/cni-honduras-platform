@@ -2,6 +2,13 @@ import type { Locale } from "@/src/i18n/config";
 import { strapiGet, StrapiApiError } from "@/src/lib/strapi/client";
 import { parseStrapiBlocks, plainTextFromInlines } from "@/src/lib/strapi/blocks";
 import { getStrapiMediaUrl } from "@/src/lib/strapi/media";
+import {
+  mapNewsDynamicZoneToNewsBlocks,
+  newsDetailPopulateExtra,
+  newsListPopulateExtra,
+  parseLeadPoints,
+  resolveNewsRichContent,
+} from "@/src/lib/strapi/newsContent";
 import type { StrapiBlock } from "@/src/lib/strapi/blocks";
 import type {
   StrapiDocument,
@@ -145,9 +152,21 @@ function isDocumentCategory(value: string): value is DocumentCategory {
 
 function blocksPlainText(blocks: StrapiBlock[]): string {
   return blocks
-    .map((block) => plainTextFromInlines(block.children))
+    .map((block) => {
+      if (block.type === "image") return block.image?.caption ?? "";
+      return plainTextFromInlines(block.children);
+    })
+    .filter(Boolean)
     .join("\n\n")
     .trim();
+}
+
+function newsCoverMedia(raw: UnknownRecord): unknown {
+  return raw.cover ?? raw.featured_image;
+}
+
+function newsExcerpt(raw: UnknownRecord): string {
+  return asString(raw.excerpt) || asString(raw.summary);
 }
 
 function populateExtra(fields: string[]): Record<string, string> {
@@ -172,17 +191,20 @@ export function mapNews(raw: unknown): NewsArticle | null {
   const title = asString(raw.title).trim();
   const slug = asString(raw.slug).trim();
   if (!title || !slug) return null;
-  const rich = parseStrapiBlocks(raw.content);
+  const rich = resolveNewsRichContent(raw.content);
+  const contentBlocks = mapNewsDynamicZoneToNewsBlocks(raw.content);
   const published = asString(raw.published_date) || asString(raw.publishedAt);
   const categoryRaw = asString(raw.category);
-  const image = toMediaAsset(raw.featured_image, title);
+  const image = toMediaAsset(newsCoverMedia(raw), title);
+  const leadPoints = parseLeadPoints(raw.lead_points);
   return {
     id: typeof raw.id === "number" ? raw.id : 0,
     title,
     slug,
-    summary: asString(raw.summary),
+    summary: newsExcerpt(raw),
     content: blocksPlainText(rich),
-    rich_content: rich,
+    content_blocks: contentBlocks.length ? contentBlocks : undefined,
+    rich_content: rich.length ? rich : null,
     featured_image: image,
     category: isNewsCategory(categoryRaw) ? categoryRaw : "news",
     author_name: "",
@@ -192,6 +214,7 @@ export function mapNews(raw: unknown): NewsArticle | null {
     published_at: published || new Date(0).toISOString(),
     seo_title: asString(raw.seo_title),
     seo_description: asString(raw.seo_description),
+    ...(leadPoints.length ? { lead_points: leadPoints } : {}),
   };
 }
 
@@ -373,7 +396,7 @@ function matchesRequestedSector<T extends { sector?: SectorLite | null }>(
 export async function getNews(locale: Locale, options?: EditorialListOptions): Promise<NewsArticle[]> {
   const extra = withListFilters(
     {
-      ...populateExtra(["featured_image"]),
+      ...newsListPopulateExtra(),
       "sort[0]": "published_date:desc",
       "sort[1]": "publishedAt:desc",
     },
@@ -388,7 +411,7 @@ export async function getNewsBySlug(locale: Locale, slug: string): Promise<NewsA
     STRAPI_COLLECTION_PATHS.news,
     locale,
     slug,
-    populateExtra(["featured_image"]),
+    newsDetailPopulateExtra(),
   );
   const mapped = mapNews(raw);
   if (!mapped) throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.news);

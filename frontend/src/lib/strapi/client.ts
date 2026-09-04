@@ -160,7 +160,7 @@ export async function strapiGetList<T>(
 
 /** Explicit media populate for list endpoints (prefer over populate=* in production). */
 export const STRAPI_MEDIA_POPULATE = {
-  news: "featured_image",
+  news: "cover",
   documents: "file,cover",
   successStories: "logo,featured_image,person_photo",
   investmentOpportunities: "featured_image,public_metrics",
