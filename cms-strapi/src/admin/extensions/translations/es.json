@@ -1,4 +1,10 @@
 {
+  "News": "Noticias",
+  "content.paragraph": "Párrafo",
+  "content.heading": "Subtítulo",
+  "content.image": "Imagen",
+  "content.quote": "Cita",
+  "news.lead-point": "Punto destacado",
   "content-manager.content-types.api::news-item.news-item.title": "Título",
   "content-manager.content-types.api::news-item.news-item.slug": "Slug",
   "content-manager.content-types.api::news-item.news-item.excerpt": "Resumen",

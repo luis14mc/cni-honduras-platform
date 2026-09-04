@@ -1,7 +1,7 @@
 {
   "collectionName": "components_content_images",
   "info": {
-    "displayName": "Imagen",
+    "displayName": "Image",
     "icon": "picture",
     "description": "Inline image with caption and alt text."
   },

@@ -1,7 +1,7 @@
 {
   "collectionName": "components_content_headings",
   "info": {
-    "displayName": "Subtítulo",
+    "displayName": "Heading",
     "icon": "heading",
     "description": "Section heading (h2 or h3)."
   },
