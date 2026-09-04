@@ -29,6 +29,8 @@ export interface NewsArticle {
   published_at: string;
   seo_title: string;
   seo_description: string;
+  /** Strapi `lead_points` (optional editorial bullets). */
+  lead_points?: string[];
 }
 
 export type DocumentCategory = "institucional" | "tecnicos" | "biblioteca" | "estudios";
