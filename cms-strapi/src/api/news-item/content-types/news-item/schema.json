@@ -4,7 +4,7 @@
   "info": {
     "singularName": "news-item",
     "pluralName": "news",
-    "displayName": "News",
+    "displayName": "Noticias",
     "description": "Editorial news, press and announcements. REST: GET /api/news?locale=es&populate[cover]=true&populate[content][populate]=*"
   },
   "options": {
