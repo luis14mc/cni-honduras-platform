@@ -11,6 +11,7 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "ci:wait-health": "node scripts/wait-for-health.mjs",
+    "audit:media": "node scripts/audit-media.mjs",
     "validate:news-schema": "node scripts/validate-news-schema.mjs",
     "test:news-cover-media": "node scripts/test-news-cover-media.mjs",
     "test:news-cover-media:integration": "node scripts/test-news-cover-media.mjs --integration",
