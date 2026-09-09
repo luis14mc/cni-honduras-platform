@@ -7,8 +7,6 @@ import {
   mergeSectorWithApi,
   SECTOR_SLUGS,
 } from "@/src/data/investmentSectors";
-import { getSector } from "@/src/services/investment";
-import { getOpportunities, getSuccessStories } from "@/src/lib/strapi/editorial";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
@@ -31,6 +29,9 @@ export default async function SectorPage({
 
   let sector = fallback;
   try {
+    // Load the Django integration lazily so a runtime/env initialization failure
+    // cannot prevent sector pages from rendering their static institutional copy.
+    const { getSector } = await import("@/src/services/investment");
     const apiSector = await getSector(slug, { locale });
     sector = mergeSectorWithApi(fallback, apiSector);
   } catch {
@@ -38,8 +39,16 @@ export default async function SectorPage({
   }
 
   const [opportunities, successStories] = await Promise.all([
-    loadAsyncData(() => getOpportunities(locale, { sector: slug }), [] as InvestmentOpportunity[]),
-    loadAsyncData(() => getSuccessStories(locale, { sector: slug }), [] as SuccessStory[]),
+    loadAsyncData(async () => {
+      // Keep Strapi behind the existing AsyncData fallback, including failures
+      // that happen while importing/initializing the server-only CMS module.
+      const { getOpportunities } = await import("@/src/lib/strapi/editorial");
+      return getOpportunities(locale, { sector: slug });
+    }, [] as InvestmentOpportunity[]),
+    loadAsyncData(async () => {
+      const { getSuccessStories } = await import("@/src/lib/strapi/editorial");
+      return getSuccessStories(locale, { sector: slug });
+    }, [] as SuccessStory[]),
   ]);
 
   return (
