@@ -11,6 +11,11 @@ import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
 
+// These pages read live server-side data from Django/Strapi. Vercel was attempting
+// to statically render them and failing at runtime with digest DYNAMIC_SERVER_USAGE.
+// Force request-time rendering so Next.js does not enter the static-generation path.
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return SECTOR_SLUGS.map((slug) => ({ slug }));
 }
