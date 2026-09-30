@@ -114,6 +114,10 @@ class InvestmentOpportunity(EditorialModel):
     is_featured = models.BooleanField(default=False, db_index=True)
     order = models.PositiveIntegerField(default=0)
 
+    # Ubicación en el mapa; si es nula se usa el centro del departamento
+    # (ver ``map_coordinates``). Mismo patrón que InvestmentProject.location.
+    location = models.PointField(srid=4326, null=True, blank=True)
+
     class Meta:
         ordering = ("order", "-is_featured", "-published_at", "-created_at", "-id")
         verbose_name = "Oportunidad de inversión"
@@ -122,6 +126,20 @@ class InvestmentOpportunity(EditorialModel):
     def __str__(self) -> str:
         code = f" [{self.code}]" if self.code else ""
         return f"{self.title or self.slug}{code}"
+
+    @property
+    def map_coordinates(self) -> tuple[float, float] | None:
+        """Coordenadas (lng, lat) para el mapa.
+
+        Usa ``location`` si está definida; si no, cae al centro del
+        departamento asociado. Devuelve ``None`` si no hay forma de ubicarla.
+        """
+        if self.location:
+            return (self.location.x, self.location.y)
+        dept = self.department
+        if dept and dept.center_lng is not None and dept.center_lat is not None:
+            return (dept.center_lng, dept.center_lat)
+        return None
 
     @property
     def is_public(self) -> bool:

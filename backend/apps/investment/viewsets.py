@@ -12,6 +12,7 @@ from django.db.models import (
 )
 from django.db.models.functions import Coalesce
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -27,6 +28,8 @@ from .serializers import (
     InvestmentProjectSerializer,
     SectorSerializer,
     SuccessStorySerializer,
+    opportunities_feature_collection,
+    projects_feature_collection,
 )
 
 
@@ -62,6 +65,11 @@ class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModel
         if featured is not None:
             queryset = queryset.filter(is_featured=featured)
         return queryset
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        """Capa del mapa: oportunidades como puntos (ubicación o centro de departamento)."""
+        return Response(opportunities_feature_collection(self.get_queryset()))
 
 
 class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
@@ -106,6 +114,12 @@ class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
         if has_location is not None:
             queryset = queryset.filter(location__isnull=not has_location)
         return queryset
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        """Capa del mapa: proyectos georreferenciados como puntos."""
+        queryset = self.get_queryset().filter(location__isnull=False)
+        return Response(projects_feature_collection(queryset))
 
 
 class SuccessStoryViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
