@@ -242,6 +242,78 @@ class SuccessStorySerializer(serializers.ModelSerializer):
         )
 
 
+def _sector_properties(sector) -> dict | None:
+    if sector is None:
+        return None
+    return {"id": sector.id, "name": sector.name, "slug": sector.slug, "color_hex": sector.color_hex}
+
+
+def _place_slug(place) -> str | None:
+    return place.slug if place is not None else None
+
+
+def opportunity_feature(opp: InvestmentOpportunity) -> dict | None:
+    """GeoJSON Feature (punto) de una oportunidad. None si no se puede ubicar."""
+    coords = opp.map_coordinates
+    if coords is None:
+        return None
+    return {
+        "type": "Feature",
+        "id": opp.id,
+        "geometry": {"type": "Point", "coordinates": [coords[0], coords[1]]},
+        "properties": {
+            "id": opp.id,
+            "layer": "opportunity",
+            "code": opp.code,
+            "title": opp.title,
+            "slug": opp.slug,
+            "sector": _sector_properties(opp.sector),
+            "department": _place_slug(opp.department),
+            "status": opp.lifecycle_status,
+            "estimated_investment": (
+                str(opp.estimated_investment) if opp.estimated_investment is not None else None
+            ),
+            "estimated_jobs": opp.estimated_jobs,
+            "approximate": opp.location is None,
+        },
+    }
+
+
+def opportunities_feature_collection(queryset) -> dict:
+    features = [feature for opp in queryset if (feature := opportunity_feature(opp)) is not None]
+    return {"type": "FeatureCollection", "features": features}
+
+
+def project_feature(project: InvestmentProject) -> dict | None:
+    """GeoJSON Feature (punto) de un proyecto. None si no tiene ubicación."""
+    if not project.location:
+        return None
+    return {
+        "type": "Feature",
+        "id": project.id,
+        "geometry": {"type": "Point", "coordinates": [project.location.x, project.location.y]},
+        "properties": {
+            "id": project.id,
+            "layer": "project",
+            "title": project.title,
+            "slug": project.slug,
+            "sector": _sector_properties(project.sector),
+            "department": _place_slug(project.department),
+            "municipality": _place_slug(project.municipality),
+            "stage": project.project_stage,
+            "investment_amount": (
+                str(project.investment_amount) if project.investment_amount is not None else None
+            ),
+            "estimated_jobs": project.estimated_jobs,
+        },
+    }
+
+
+def projects_feature_collection(queryset) -> dict:
+    features = [feature for p in queryset if (feature := project_feature(p)) is not None]
+    return {"type": "FeatureCollection", "features": features}
+
+
 class DepartmentMapCenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
