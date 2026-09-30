@@ -6,8 +6,8 @@ import { PageHero } from "@/src/components/cni/PageHero";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import { Section } from "@/src/components/cni/Section";
 import { buildDetailMetadata } from "@/src/lib/seo";
-import { getOpportunityBySlug } from "@/src/lib/strapi/editorial";
-import { StrapiApiError } from "@/src/lib/strapi/client";
+import { getOpportunity } from "@/src/services/investment";
+import { ApiError } from "@/src/lib/api";
 import type { InvestmentOpportunity } from "@/src/types/investment";
 
 const copy = {
@@ -61,7 +61,7 @@ export async function generateMetadata({
   const { locale: raw, slug } = await params;
   const locale: Locale = isLocale(raw) ? (raw as Locale) : "es";
   try {
-    const opp = await getOpportunityBySlug(locale, slug);
+    const opp = await getOpportunity(slug, { locale });
     return buildDetailMetadata({
       locale,
       slugPath: `/crecer/oportunidades/${slug}`,
@@ -87,9 +87,9 @@ export default async function OpportunityDetailPage({
   let opp: InvestmentOpportunity | null = null;
   let loadError = false;
   try {
-    opp = await getOpportunityBySlug(locale, slug);
+    opp = await getOpportunity(slug, { locale });
   } catch (error) {
-    if (error instanceof StrapiApiError && error.status === 404) {
+    if (error instanceof ApiError && error.status === 404) {
       notFound();
     }
     loadError = true;

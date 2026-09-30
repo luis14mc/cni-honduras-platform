@@ -3,7 +3,8 @@ import { isLocale } from "@/src/i18n/config";
 import type { Locale } from "@/src/i18n/config";
 import { CrecerPageView } from "@/src/components/cni/CrecerPageView";
 import { loadAsyncData } from "@/src/lib/asyncData";
-import { getOpportunities, getSuccessStories } from "@/src/lib/strapi/editorial";
+import { getOpportunities } from "@/src/services/investment";
+import { getSuccessStories } from "@/src/lib/strapi/editorial";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
@@ -16,7 +17,7 @@ export default async function CrecerPage({ params }: { params: Promise<{ locale:
   const locale = raw as Locale;
 
   const [opportunities, stories] = await Promise.all([
-    loadAsyncData(() => getOpportunities(locale), [] as InvestmentOpportunity[]),
+    loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]),
     loadAsyncData(() => getSuccessStories(locale), [] as SuccessStory[]),
   ]);
 

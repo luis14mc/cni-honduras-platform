@@ -8,7 +8,7 @@ import { crecerPageCopy } from "@/src/i18n/copy/crecerPage";
 import { withLocale } from "@/src/i18n/path";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
-import { getOpportunities } from "@/src/lib/strapi/editorial";
+import { getOpportunities } from "@/src/services/investment";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity } from "@/src/types/investment";
 import { layout } from "@/src/lib/typography";
@@ -26,7 +26,7 @@ export default async function OportunidadesPage({
   const locale = raw as Locale;
   const c = crecerPageCopy[locale];
   const L = (path: string) => withLocale(locale, path);
-  const result = await loadAsyncData(() => getOpportunities(locale), [] as InvestmentOpportunity[]);
+  const result = await loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]);
 
   return (
     <div className="al-crecer flex flex-1 flex-col bg-[#f4f6fb]">
