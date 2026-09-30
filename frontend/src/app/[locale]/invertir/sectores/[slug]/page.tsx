@@ -45,10 +45,9 @@ export default async function SectorPage({
 
   const [opportunities, successStories] = await Promise.all([
     loadAsyncData(async () => {
-      // Keep Strapi behind the existing AsyncData fallback, including failures
-      // that happen while importing/initializing the server-only CMS module.
-      const { getOpportunities } = await import("@/src/lib/strapi/editorial");
-      return getOpportunities(locale, { sector: slug });
+      // Oportunidades = fuente Django (dominio de inversión, alimenta también el mapa).
+      const { getOpportunitiesBySector } = await import("@/src/services/investment");
+      return getOpportunitiesBySector(slug, { locale });
     }, [] as InvestmentOpportunity[]),
     loadAsyncData(async () => {
       const { getSuccessStories } = await import("@/src/lib/strapi/editorial");
