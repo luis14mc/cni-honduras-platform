@@ -24,6 +24,7 @@ import { type as t } from "@/src/lib/typography";
 import { strategicAlliesLevel1, strategicAlliesLevel2, strategicAllyLogoSize } from "@/src/data/strategicAllies";
 import { InterestLinksSection } from "@/src/components/cni/InterestLinksSection";
 import { HomeHeroSection } from "@/src/components/cni/HomeHeroSection";
+import { HomeMapPreview } from "@/src/components/map/HomeMapPreview";
 
 type LoadStatus = "ok" | "error";
 
@@ -435,25 +436,26 @@ export function HomePageView({
         <div className="max-w-screen-2xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
-            {/* Left Column: Institutional Image */}
+            {/* Left Column: Interactive investment map (antes: imagen estática mapa-nuevo.png) */}
             <div className="relative group w-full h-full flex items-center justify-center">
               {/* Decorative elements */}
-              <div className="absolute -inset-4 border border-cni-gold/20 rounded-[40px] group-hover:scale-105 group-hover:border-cni-gold/40 transition-all duration-700 pointer-events-none"></div>
-              <div className="absolute -inset-8 border border-white/5 rounded-[50px] group-hover:scale-105 transition-all duration-1000 pointer-events-none"></div>
-              
-              <div className="relative w-full aspect-square md:h-[600px] overflow-visible flex items-center justify-center p-4">
-                
+              <div className="absolute -inset-4 border border-cni-gold/20 rounded-[40px] group-hover:border-cni-gold/40 transition-all duration-700 pointer-events-none"></div>
+              <div className="absolute -inset-8 border border-white/5 rounded-[50px] transition-all duration-1000 pointer-events-none"></div>
+
+              <div className="relative w-full overflow-visible p-2">
                 {/* Ambient Radial Glow Behind the Map */}
-                <div className="absolute w-[280px] h-[280px] md:w-[450px] md:h-[450px] bg-gradient-to-tr from-cni-gold/20 to-cni-primary/40 rounded-full blur-[60px] md:blur-[90px] pointer-events-none group-hover:bg-cni-gold/30 group-hover:scale-110 transition-all duration-1000 z-0"></div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[450px] md:h-[450px] bg-gradient-to-tr from-cni-gold/20 to-cni-primary/40 rounded-full blur-[60px] md:blur-[90px] pointer-events-none z-0"></div>
 
-                <Image
-                  alt="Mapa de Honduras"
-                  className="object-contain p-4 transition-all duration-700 group-hover:scale-[1.03] group-hover:-translate-y-2 z-10 drop-shadow-[0_20px_20px_rgba(233,193,118,0.15)]"
-                  src="/images/home/mapa-nuevo.png"
-                  fill
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-
+                <div className="relative z-10">
+                  <HomeMapPreview locale={locale} />
+                </div>
+                <Link
+                  href={L("/portafolio/mapa")}
+                  className="relative z-10 mt-6 inline-flex items-center gap-2 font-headline text-xs font-bold uppercase tracking-[0.18em] text-cni-gold transition hover:text-white"
+                >
+                  {locale === "es" ? "Explorar el mapa de inversión completo" : "Explore the full investment map"}
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </Link>
               </div>
             </div>
 

@@ -49,7 +49,7 @@ export function SectorOpportunities({ locale, result }: Props) {
             {items.map((opportunity, index) => (
               <Link
                 key={opportunity.slug}
-                href={withLocale(locale, `/crecer/oportunidades/${opportunity.slug}`)}
+                href={withLocale(locale, `/portafolio/oportunidades/${opportunity.slug}`)}
                 className="al-sector-data-card group flex flex-col rounded-xl border border-cni-primary/8 bg-[#f8f9ff] p-7 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-xl"
               >
                 <div className="flex items-start justify-between">

@@ -121,7 +121,7 @@ Referencia funcional: Opportunity Card **Complejo Ecoturístico El Cajón** (`OC
 4. Publish con `cms.can_publish` → `status=published`, `published_at` set
 5. Publish inválido → HTTP 400
 6. Público: `GET /api/v1/investment/opportunities/?lang=` **sin** `fund_uses` / `target_customer` / `market_demand` / métricas internas
-7. Detalle: `/es/crecer/oportunidades/{slug}` — hero estático; CTA contacto
+7. Detalle: `/portafolio/oportunidades/{slug}` (EN: `/en/portfolio/opportunities/{slug}`) — hero estático; CTA contacto
 8. Admin retrieve sí incluye CAPEX y métricas internas
 
 ### CI fix (runs #49 / #50 / #51 / #52)

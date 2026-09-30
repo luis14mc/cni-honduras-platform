@@ -2,6 +2,8 @@ import type { MetadataRoute } from "next";
 import { API_BASE_URL, unwrapPage } from "@/src/lib/api";
 import { getAllResourceCategorySlugs } from "@/src/data/resourceCategoryMeta";
 import { getNews, getSuccessStories } from "@/src/lib/strapi/editorial";
+import { getOpportunities } from "@/src/services/investment";
+import { resolveHref } from "@/src/config/siteNavigation";
 import type { Locale } from "@/src/i18n/config";
 
 const LOCALES = ["es", "en"] as const;
@@ -45,12 +47,21 @@ async function fetchStrapiSlugs(
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cni.hn";
-  const staticPaths = ["/", "/prensa", "/recursos", "/portafolio/casos", "/invertir/sectores"];
+  const staticPaths = [
+    "/",
+    "/prensa",
+    "/recursos",
+    "/portafolio/casos",
+    "/portafolio/oportunidades",
+    "/portafolio/mapa",
+    "/invertir/sectores",
+  ];
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of LOCALES) {
     for (const path of staticPaths) {
-      const localized = locale === "es" ? path : `/en${path === "/" ? "" : path}`;
+      // URL pública canónica del idioma (p. ej. /prensa -> /en/news), no `/en` + ruta en español.
+      const localized = resolveHref(locale, path);
       entries.push({
         url: `${base}${localized}`,
         changeFrequency: "weekly",
@@ -89,6 +100,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const slug of caseSlugs) {
       entries.push({ url: `${base}${casePrefix}/${slug}`, changeFrequency: "monthly", priority: 0.6 });
     }
+  }
+
+  // Oportunidades: desde Django (fuente única; un registro bilingüe con el mismo slug).
+  let opportunitySlugs: string[] = [];
+  try {
+    opportunitySlugs = (await getOpportunities({ locale: "es" })).map((o) => o.slug).filter(Boolean);
+  } catch {
+    opportunitySlugs = [];
+  }
+  for (const slug of opportunitySlugs) {
+    entries.push({ url: `${base}/portafolio/oportunidades/${slug}`, changeFrequency: "monthly", priority: 0.6 });
+    entries.push({ url: `${base}/en/portfolio/opportunities/${slug}`, changeFrequency: "monthly", priority: 0.6 });
   }
 
   // Sectores: se mantienen desde Django (las páginas de sectores se alimentan de Django).
