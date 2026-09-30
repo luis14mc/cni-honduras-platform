@@ -64,7 +64,8 @@ export async function generateMetadata({
     const opp = await getOpportunity(slug, { locale });
     return buildDetailMetadata({
       locale,
-      slugPath: `/crecer/oportunidades/${slug}`,
+      slugPath: `/portafolio/oportunidades/${slug}`,
+      enMirrorPath: `/en/portfolio/opportunities/${slug}`,
       title: opp.title,
       description: opp.summary,
     });
@@ -100,7 +101,7 @@ export default async function OpportunityDetailPage({
       <div className="flex flex-1 flex-col bg-[#f8f9ff]">
         <Section tone="surface">
           <Link
-            href={L("/crecer/oportunidades")}
+            href={L("/portafolio/oportunidades")}
             className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
           >
             ← {t.back}
@@ -136,7 +137,7 @@ export default async function OpportunityDetailPage({
 
       <Section tone="surface">
         <Link
-          href={L("/crecer/oportunidades")}
+          href={L("/portafolio/oportunidades")}
           className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
         >
           ← {t.back}

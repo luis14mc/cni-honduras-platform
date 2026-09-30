@@ -140,7 +140,7 @@ export function CrecerPageView({ locale, opportunities, stories }: Props) {
               <p className={cn("mt-3", t.lead)}>{c.portfolioDescription}</p>
             </div>
             <Link
-              href={L("/crecer/oportunidades")}
+              href={L("/portafolio/oportunidades")}
               className="inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-[#32B372] transition hover:text-cni-primary"
             >
               {c.portfolioAll}
@@ -160,7 +160,7 @@ export function CrecerPageView({ locale, opportunities, stories }: Props) {
             <div className="grid auto-rows-[280px] grid-cols-1 gap-4 md:grid-cols-4 md:gap-6">
               {featured ? (
                 <Link
-                  href={L(`/crecer/oportunidades/${featured.slug}`)}
+                  href={L(`/portafolio/oportunidades/${featured.slug}`)}
                   className="group relative overflow-hidden rounded-xl md:col-span-2 md:row-span-2"
                 >
                   <Image
@@ -187,7 +187,7 @@ export function CrecerPageView({ locale, opportunities, stories }: Props) {
 
               {secondary ? (
                 <Link
-                  href={L(`/crecer/oportunidades/${secondary.slug}`)}
+                  href={L(`/portafolio/oportunidades/${secondary.slug}`)}
                   className="group relative overflow-hidden rounded-xl md:col-span-2"
                 >
                   <Image
@@ -212,7 +212,7 @@ export function CrecerPageView({ locale, opportunities, stories }: Props) {
               {compact.map((item, index) => (
                 <Link
                   key={item.slug}
-                  href={L(`/crecer/oportunidades/${item.slug}`)}
+                  href={L(`/portafolio/oportunidades/${item.slug}`)}
                   className={cn(
                     "flex flex-col justify-between rounded-xl border p-6 transition",
                     index === 0

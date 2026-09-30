@@ -9,12 +9,29 @@ import { withLocale } from "@/src/i18n/path";
 import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { getOpportunities } from "@/src/services/investment";
+import { getDocuments } from "@/src/lib/strapi/editorial";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import type { InvestmentOpportunity } from "@/src/types/investment";
+import type { CmsDocument } from "@/src/types/cms";
 import { layout } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
 
-export const generateMetadata = makeGenerateMetadata(PAGE_SEO["crecer-oportunidades"]);
+export const generateMetadata = makeGenerateMetadata(PAGE_SEO["portafolio-oportunidades"]);
+
+const cardsCopy = {
+  es: {
+    back: "Portafolio de Inversiones",
+    cardsEyebrow: "Opportunity Cards",
+    cardsTitle: "Fichas descargables",
+    download: "Ver / Descargar PDF",
+  },
+  en: {
+    back: "Investment Portfolio",
+    cardsEyebrow: "Opportunity Cards",
+    cardsTitle: "Downloadable cards",
+    download: "View / Download PDF",
+  },
+} as const;
 
 export default async function OportunidadesPage({
   params,
@@ -25,8 +42,19 @@ export default async function OportunidadesPage({
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const c = crecerPageCopy[locale];
+  const t = cardsCopy[locale];
   const L = (path: string) => withLocale(locale, path);
-  const result = await loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]);
+  // Oportunidades = Django (fuente única, también alimenta el mapa).
+  // Opportunity Cards PDF = documentos de Strapi (se muestran solo si existen).
+  const [result, cards] = await Promise.all([
+    loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]),
+    loadAsyncData(
+      () => getDocuments(locale, { documentType: "opportunity_card" }),
+      [] as CmsDocument[],
+    ),
+  ]);
+  const downloadableCards =
+    cards.status === "error" ? [] : cards.data.filter((doc) => Boolean(doc.file_url));
 
   return (
     <div className="al-crecer flex flex-1 flex-col bg-[#f4f6fb]">
@@ -46,11 +74,11 @@ export default async function OportunidadesPage({
         </div>
         <div className={cn("relative z-10 w-full pb-12 pt-8", layout.container)}>
           <Link
-            href={L("/crecer")}
+            href={L("/portafolio")}
             className="mb-8 inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-white/70 transition hover:text-white"
           >
             <ArrowRight className="h-3.5 w-3.5 rotate-180" aria-hidden />
-            {locale === "es" ? "Crecer en Honduras" : "Grow in Honduras"}
+            {t.back}
           </Link>
           <p className="mb-4 font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#32B372]">
             {c.portfolioEyebrow}
@@ -77,7 +105,7 @@ export default async function OportunidadesPage({
               {result.data.map((item, index) => (
                 <Link
                   key={item.slug}
-                  href={L(`/crecer/oportunidades/${item.slug}`)}
+                  href={L(`/portafolio/oportunidades/${item.slug}`)}
                   className="al-crecer-row group grid grid-cols-1 gap-4 px-6 py-6 transition-colors hover:bg-white md:grid-cols-12 md:items-center md:px-8"
                 >
                   <span className="font-headline text-[11px] font-bold tracking-[0.18em] text-[#32B372] md:col-span-1">
@@ -104,6 +132,44 @@ export default async function OportunidadesPage({
           )}
         </div>
       </section>
+
+      {downloadableCards.length > 0 ? (
+        <section className={cn("bg-[#f4f6fb]", layout.section)}>
+          <div className={layout.container}>
+            <p className="mb-2 font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#32B372]">
+              {t.cardsEyebrow}
+            </p>
+            <h2 className="mb-8 font-display text-3xl font-extrabold text-cni-primary">{t.cardsTitle}</h2>
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {downloadableCards.map((doc) => (
+                <li key={doc.slug}>
+                  <a
+                    href={doc.file_url ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex h-full flex-col justify-between rounded-2xl border border-cni-primary/10 bg-white p-6 transition hover:border-[#32B372]/40 hover:shadow-md"
+                  >
+                    <div>
+                      {doc.sector ? (
+                        <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-cni-on-surface-variant/55">
+                          {doc.sector}
+                        </p>
+                      ) : null}
+                      <h3 className="mt-1 font-display text-lg font-extrabold text-cni-primary group-hover:text-[#0E7A7C]">
+                        {doc.title}
+                      </h3>
+                    </div>
+                    <span className="mt-4 inline-flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-cni-primary">
+                      {t.download}
+                      <ArrowUpRight className="h-4 w-4" aria-hidden />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

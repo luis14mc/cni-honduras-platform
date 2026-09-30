@@ -19,13 +19,12 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/invest/why-honduras": "/invertir/por-que-honduras",
     "/invest/sectors": "/invertir/sectores",
     "/grow": "/crecer",
-    "/grow/opportunities": "/crecer/oportunidades",
     "/grow/aftercare": "/crecer/acompanamiento",
     "/live": "/vivir",
     "/live/quality-of-life": "/vivir/calidad-de-vida",
     "/portfolio": "/portafolio",
     "/portfolio/project-sheets": "/portafolio/fichas-proyectos",
-    "/portfolio/opportunity-cards": "/portafolio/opportunity-cards",
+    "/portfolio/opportunities": "/portafolio/oportunidades",
     "/portfolio/success-stories": "/portafolio/casos",
     "/portfolio/submit": "/portafolio/postulacion",
     "/submit-your-project": "/postulacion",
@@ -44,6 +43,8 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
   if (sector) return `/invertir/sectores/${sector[1]}`;
   const story = enTail.match(/^\/portfolio\/success-stories\/([^/]+)$/);
   if (story) return `/portafolio/casos/${story[1]}`;
+  const opportunity = enTail.match(/^\/portfolio\/opportunities\/([^/]+)$/);
+  if (opportunity) return `/portafolio/oportunidades/${opportunity[1]}`;
   const news = enTail.match(/^\/news\/([^/]+)$/);
   if (news) return `/prensa/${news[1]}`;
   const resource = enTail.match(/^\/resources\/([^/]+)$/);
@@ -143,6 +144,19 @@ export const legacyRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: strin
   { from: /^\/en\/application\/?$/, to: () => "/en/submit-your-project" },
   { from: /^\/en\/postulacion-de-proyectos\/?$/, to: () => "/en/submit-your-project" },
   { from: /^\/en\/portfolio\/submit\/?$/, to: () => "/en/submit-your-project" },
+  // Oportunidades: unificadas en Portafolio con slug localizado (sep-2026).
+  // Antes vivían en /crecer/oportunidades (fuera del menú) y las fichas PDF en
+  // /portafolio/opportunity-cards (slug en inglés también en español).
+  {
+    from: /^\/crecer\/oportunidades(\/[^/]+)?$/,
+    to: (p) => p.replace(/^\/crecer\/oportunidades/, "/portafolio/oportunidades"),
+  },
+  { from: /^\/portafolio\/opportunity-cards$/, to: () => "/portafolio/oportunidades" },
+  {
+    from: /^\/en\/grow\/opportunities(\/[^/]+)?$/,
+    to: (p) => p.replace(/^\/en\/grow\/opportunities/, "/en/portfolio/opportunities"),
+  },
+  { from: /^\/en\/portfolio\/opportunity-cards$/, to: () => "/en/portfolio/opportunities" },
   {
     from: /^\/es(\/.*)?$/,
     to: (p) => (p === "/es" ? "/" : p.slice(3) || "/"),

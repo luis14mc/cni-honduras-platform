@@ -97,16 +97,16 @@ export const PAGE_SEO: Record<string, PageSeo> = {
     },
     keywords: ["Ready to Invest Honduras", "Portafolio CNI", "Casos de éxito Honduras"],
   },
-  "crecer-oportunidades": {
-    canonical: "/crecer/oportunidades",
-    enMirror: "/en/grow/opportunities",
+  "portafolio-oportunidades": {
+    canonical: "/portafolio/oportunidades",
+    enMirror: "/en/portfolio/opportunities",
     title: {
-      es: "Oportunidades de Crecimiento · Inversión en Honduras",
-      en: "Growth Opportunities · Investment in Honduras",
+      es: "Oportunidades de Inversión · Opportunity Cards del CNI",
+      en: "Investment Opportunities · CNI Opportunity Cards",
     },
     description: {
-      es: "Ventanas de oportunidad sectoriales identificadas por el CNI para inversión, expansión y reinversión en Honduras.",
-      en: "CNI-identified sector opportunity windows for investment, expansion and reinvestment in Honduras.",
+      es: "Oportunidades de inversión priorizadas por el CNI en Honduras, con sus Opportunity Cards descargables por sector.",
+      en: "Investment opportunities prioritized by CNI in Honduras, with downloadable Opportunity Cards by sector.",
     },
   },
   "crecer-acompanamiento": {

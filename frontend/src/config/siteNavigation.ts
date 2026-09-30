@@ -26,6 +26,38 @@ const NEWS_PATH_PREFIX: LocalizedString = {
   en: "/en/news",
 };
 
+/**
+ * Rutas de detalle con slug (`<prefijo>/<slug>`) y su equivalente por idioma.
+ * Sin esta tabla, `resolveHref("en", ...)` no encuentra el espejo y cae a `/en`
+ * (la portada), rompiendo los enlaces de las fichas en inglés.
+ */
+export const DETAIL_PATH_PREFIXES: LocalizedString[] = [
+  SECTOR_PATH_PREFIX,
+  NEWS_PATH_PREFIX,
+  { es: "/portafolio/oportunidades", en: "/en/portfolio/opportunities" },
+  { es: "/portafolio/casos", en: "/en/portfolio/success-stories" },
+];
+
+/** Traduce `<prefijo>/<slug>` de cualquier idioma al prefijo del idioma destino. */
+function translateDetailPath(normalized: string, targetLocale: Locale): string | undefined {
+  for (const prefixes of DETAIL_PATH_PREFIXES) {
+    for (const from of [prefixes.es, prefixes.en]) {
+      if (normalized.startsWith(`${from}/`)) {
+        const slug = normalized.slice(from.length + 1);
+        if (slug && !slug.includes("/")) return `${prefixes[targetLocale]}/${slug}`;
+      }
+    }
+  }
+  return undefined;
+}
+
+/** Separa `ruta?query#hash` en la ruta y el sufijo que se conserva tal cual. */
+function splitSuffix(path: string): { base: string; suffix: string } {
+  const index = path.search(/[?#]/);
+  if (index === -1) return { base: path, suffix: "" };
+  return { base: path.slice(0, index), suffix: path.slice(index) };
+}
+
 function buildSectorChildren(): SiteNavNode[] {
   return getSectors("es").map((sector) => ({
     id: `sector-${sector.slug}`,
@@ -106,6 +138,16 @@ function buildPathIndex(): Record<Locale, Map<string, PathEntry>> {
       path: { es: "/postula-tu-proyecto", en: "/en/submit-your-project" },
     },
     {
+      id: "crecer-acompanamiento",
+      label: { es: "Acompañamiento", en: "Aftercare" },
+      path: { es: "/crecer/acompanamiento", en: "/en/grow/aftercare" },
+    },
+    {
+      id: "facilidades-migratorias",
+      label: { es: "Facilidades Migratorias", en: "Migratory Facilities" },
+      path: { es: "/facilidades-migratorias", en: "/en/migratory-facilities" },
+    },
+    {
       id: "recursos-institucional",
       label: { es: "Recursos Institucionales", en: "Institutional Resources" },
       path: { es: "/recursos/institucional", en: "/en/resources/institutional" },
@@ -172,38 +214,19 @@ export function getPathById(id: string, locale: Locale): string | undefined {
 
 /** Ruta espejo al cambiar de idioma (misma página lógica). */
 export function getMirrorPath(pathname: string, targetLocale: Locale): string {
-  const normalized = normalizePath(pathname);
+  const { base, suffix } = splitSuffix(pathname);
+  const normalized = normalizePath(base);
   const currentLocale = getLocaleFromPathname(normalized);
   const index = pathIndex[currentLocale];
   const entry = index.get(normalized);
 
   if (entry) {
-    const hash = pathname.includes("#") ? pathname.slice(pathname.indexOf("#")) : "";
-    return `${entry.node.path[targetLocale]}${hash}`;
+    return `${entry.node.path[targetLocale]}${suffix}`;
   }
 
-  const sectorMatch = normalized.match(
-    currentLocale === "es"
-      ? /^\/invertir\/sectores\/([^/]+)$/
-      : /^\/en\/invest\/sectors\/([^/]+)$/,
-  );
-  if (sectorMatch) {
-    const slug = sectorMatch[1]!;
-    const base = targetLocale === "es" ? SECTOR_PATH_PREFIX.es : SECTOR_PATH_PREFIX.en;
-    const hash = pathname.includes("#") ? pathname.slice(pathname.indexOf("#")) : "";
-    return `${base}/${slug}${hash}`;
-  }
-
-  const newsMatch = normalized.match(
-    currentLocale === "es"
-      ? /^\/prensa\/([^/]+)$/
-      : /^\/en\/news\/([^/]+)$/,
-  );
-  if (newsMatch) {
-    const slug = newsMatch[1]!;
-    const base = targetLocale === "es" ? NEWS_PATH_PREFIX.es : NEWS_PATH_PREFIX.en;
-    const hash = pathname.includes("#") ? pathname.slice(pathname.indexOf("#")) : "";
-    return `${base}/${slug}${hash}`;
+  const detail = translateDetailPath(normalized, targetLocale);
+  if (detail) {
+    return `${detail}${suffix}`;
   }
 
   return targetLocale === "es" ? "/" : "/en";
@@ -261,9 +284,10 @@ const LEGACY_ES_PATHS: Record<string, string> = {
 
 /** Resuelve un path canónico (ES) o path público al href del locale activo. */
 export function resolveHref(locale: Locale, path: string): string {
-  const [rawPath, hash] = path.split("#");
-  const normalized = normalizePath(rawPath ?? path);
-  const suffix = hash ? `#${hash}` : "";
+  // Conserva `?query` y `#hash`: antes el query quedaba pegado a la ruta y el
+  // índice no la encontraba (p. ej. `/contacto?opportunity=x` caía a `/en`).
+  const { base, suffix } = splitSuffix(path);
+  const normalized = normalizePath(base);
 
   const legacy = LEGACY_ES_PATHS[normalized];
   if (legacy) return resolveHref(locale, legacy) + suffix;
@@ -273,18 +297,9 @@ export function resolveHref(locale: Locale, path: string): string {
     if (entry) return `${entry.node.path[locale]}${suffix}`;
   }
 
-  const sectorMatch = normalized.match(/^\/invertir\/sectores\/([^/]+)$/);
-  if (sectorMatch) {
-    const slug = sectorMatch[1]!;
-    const base = locale === "es" ? SECTOR_PATH_PREFIX.es : SECTOR_PATH_PREFIX.en;
-    return `${base}/${slug}${suffix}`;
-  }
-
-  const newsMatch = normalized.match(/^\/prensa\/([^/]+)$/);
-  if (newsMatch) {
-    const slug = newsMatch[1]!;
-    const base = locale === "es" ? NEWS_PATH_PREFIX.es : NEWS_PATH_PREFIX.en;
-    return `${base}/${slug}${suffix}`;
+  const detail = translateDetailPath(normalized, locale);
+  if (detail) {
+    return `${detail}${suffix}`;
   }
 
   if (locale === "en" && !normalized.startsWith("/en")) {

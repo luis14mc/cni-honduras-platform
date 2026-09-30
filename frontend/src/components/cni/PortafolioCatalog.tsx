@@ -125,7 +125,7 @@ export function PortafolioCatalog({ locale, sectors, projects, opportunities }: 
           sectorSlug: item.sector?.slug ?? "",
           sectorName: item.sector?.name ?? "",
           meta: [STATUS[locale][item.status], amount].filter(Boolean).join(" · "),
-          href: withLocale(locale, `/crecer/oportunidades/${item.slug}`),
+          href: withLocale(locale, `/portafolio/oportunidades/${item.slug}`),
         });
       }
     }
