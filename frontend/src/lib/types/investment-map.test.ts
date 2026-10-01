@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { investmentMapCopy } from "@/src/i18n/copy/investmentMap";
@@ -34,6 +34,9 @@ import {
   filterMapProjectsByRegion,
   getProjectsInvestmentTotal,
   stripRegionSlivers,
+  createLazyLayerLoader,
+  getActiveInfrastructureLabels,
+  localizeInfrastructure,
   type TerritorialRegionFeatureCollection,
   type TerritorialRegionFeature,
   type InfrastructureFeature,
@@ -110,6 +113,52 @@ describe("investment map pure helpers", () => {
     const state: MapSelectionState = { department: null, municipality: null, project: null, infrastructure };
     expect(disableInfrastructureLayer(state, "airport")).toBe(state);
     expect(disableInfrastructureLayer(state, "port").infrastructure).toBeNull();
+  });
+
+  it("requests ports only once their layer is activated, and only once", async () => {
+    const fetchLayer = vi.fn(async (layer: "port" | "airport") => ({ type: "FeatureCollection" as const, features: layer === "port" ? [infrastructure] : [] }));
+    const loader = createLazyLayerLoader(fetchLayer);
+    expect(fetchLayer).not.toHaveBeenCalled();
+
+    expect(loader.load("airport")).not.toBeNull();
+    expect(fetchLayer).toHaveBeenCalledTimes(1);
+    expect(fetchLayer).not.toHaveBeenCalledWith("port");
+
+    const request = loader.load("port");
+    expect(loader.load("port")).toBeNull();
+    await expect(request).resolves.toMatchObject({ features: [infrastructure] });
+    expect(loader.load("port")).toBeNull();
+    expect(loader.get("port")?.features).toHaveLength(1);
+    expect(fetchLayer.mock.calls.filter(([layer]) => layer === "port")).toHaveLength(1);
+  });
+
+  it("allows retrying a layer whose request failed", async () => {
+    const fetchLayer = vi.fn().mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce("ok");
+    const loader = createLazyLayerLoader<"port", string>(fetchLayer);
+    await expect(loader.load("port")).rejects.toThrow("offline");
+    await expect(loader.load("port")).resolves.toBe("ok");
+    expect(fetchLayer).toHaveBeenCalledTimes(2);
+  });
+
+  it("lists only the active infrastructure layers in the filters chip", () => {
+    const labels = { airport: "Aeropuertos", port: "Puertos" };
+    expect(getActiveInfrastructureLabels(new Set(), labels)).toEqual([]);
+    expect(getActiveInfrastructureLabels(new Set(["port"]), labels)).toEqual(["Puertos"]);
+    expect(getActiveInfrastructureLabels(new Set(["airport"]), labels)).toEqual(["Aeropuertos"]);
+    expect(getActiveInfrastructureLabels(new Set(["port", "airport"]), labels)).toEqual(["Aeropuertos", "Puertos"]);
+  });
+
+  it("localizes port name, coast and description with Spanish fallback", () => {
+    const port = {
+      name: "Puerto Cortés",
+      description: "Principal puerto",
+      source_name: "CNI – curaduría",
+      details: { name_en: "Port of Puerto Cortés", coast: "Caribe", coast_en: "Caribbean", description_en: "Leading port", source_name_en: "CNI – curation", category: "principal" },
+    };
+    expect(localizeInfrastructure(port, "es")).toEqual({ name: "Puerto Cortés", coast: "Caribe", description: "Principal puerto", sourceName: "CNI – curaduría" });
+    expect(localizeInfrastructure(port, "en")).toEqual({ name: "Port of Puerto Cortés", coast: "Caribbean", description: "Leading port", sourceName: "CNI – curation" });
+    expect(localizeInfrastructure({ name: "Toncontín Airport", source_name: "OurAirports" }, "en")).toEqual({ name: "Toncontín Airport", coast: "", description: "", sourceName: "OurAirports" });
+    expect(Object.keys(investmentMapCopy.en.portCategories)).toEqual(Object.keys(investmentMapCopy.es.portCategories));
   });
 
   it("changes sector without modifying active infrastructure layers", () => {

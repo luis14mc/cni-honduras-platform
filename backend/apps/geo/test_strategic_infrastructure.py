@@ -4,6 +4,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from rest_framework.test import APIClient
 
+from apps.geo.management.commands.import_strategic_infrastructure import DATASET_DIR
 from apps.geo.models import Department, Municipality, StrategicInfrastructure
 
 
@@ -61,11 +62,12 @@ class StrategicInfrastructureApiTests(TestCase):
             set(feature["properties"]),
             {
                 "id", "name", "slug", "infrastructure_type", "department", "municipality",
-                "operator", "status", "source_name", "source_url",
+                "operator", "status", "source_name", "source_url", "description", "details",
             },
         )
-        for forbidden in ("metadata", "description", "created_at", "updated_at"):
+        for forbidden in ("metadata", "created_at", "updated_at"):
             self.assertNotIn(forbidden, feature["properties"])
+        self.assertEqual(feature["properties"]["details"], {})
         self.assertEqual(feature["properties"]["department"]["slug"], "cortes")
         self.assertEqual(
             feature["properties"]["municipality"]["slug"], "san-pedro-sula"
@@ -112,12 +114,21 @@ class StrategicInfrastructureApiTests(TestCase):
             self.airport.full_clean()
 
 
+PORT_SLUGS = {
+    "puerto-cortes", "puerto-castilla", "san-lorenzo-henecan", "la-ceiba", "tela",
+    "roatan-coxen-hole", "roatan-mahogany-bay", "trujillo-banana-coast", "puerto-lempira",
+    "amapala",
+}
+
+
 class StrategicInfrastructureImporterTests(TestCase):
     def test_import_is_idempotent_and_preserves_source_and_exact_set(self):
         call_command("import_strategic_infrastructure", verbosity=0)
         call_command("import_strategic_infrastructure", verbosity=0)
 
-        records = StrategicInfrastructure.objects.order_by("slug")
+        records = StrategicInfrastructure.objects.filter(
+            infrastructure_type="airport"
+        ).order_by("slug")
         self.assertEqual(records.count(), 8)
         self.assertEqual(
             set(records.values_list("slug", flat=True)),
@@ -146,3 +157,41 @@ class StrategicInfrastructureImporterTests(TestCase):
         airport = StrategicInfrastructure.objects.get(slug="mhlm")
         self.assertEqual(airport.department, department)
         self.assertEqual(airport.municipality, municipality)
+
+    def test_default_import_loads_every_dataset_including_ports(self):
+        call_command("import_strategic_infrastructure", verbosity=0)
+        call_command("import_strategic_infrastructure", verbosity=0)
+
+        self.assertEqual(StrategicInfrastructure.objects.count(), 18)
+        ports = StrategicInfrastructure.objects.filter(infrastructure_type="port")
+        self.assertEqual(set(ports.values_list("slug", flat=True)), PORT_SLUGS)
+        cortes = ports.get(slug="puerto-cortes")
+        self.assertTrue(cortes.description.startswith("Principal puerto"))
+        self.assertFalse(cortes.metadata["coords_verified"])
+
+    def test_port_geojson_returns_ten_ports_with_bilingual_details(self):
+        call_command("import_strategic_infrastructure", verbosity=0)
+
+        response = APIClient().get("/api/v1/geo/infrastructure/geojson/?type=port")
+
+        self.assertEqual(response.status_code, 200)
+        features = response.json()["features"]
+        self.assertEqual({item["properties"]["slug"] for item in features}, PORT_SLUGS)
+        cortes = next(item for item in features if item["properties"]["slug"] == "puerto-cortes")
+        self.assertEqual(cortes["geometry"]["coordinates"], [-87.944, 15.846])
+        details = cortes["properties"]["details"]
+        self.assertEqual(details["name_en"], "Port of Puerto Cortés")
+        self.assertEqual(details["category"], "principal")
+        self.assertEqual((details["coast"], details["coast_en"]), ("Caribe", "Caribbean"))
+        self.assertTrue(details["description_en"])
+        self.assertTrue(cortes["properties"]["description"])
+
+    def test_explicit_dataset_argument_imports_only_that_file(self):
+        call_command(
+            "import_strategic_infrastructure",
+            DATASET_DIR / "ports-hn-cni-2026-10-01.json",
+            verbosity=0,
+        )
+
+        self.assertEqual(StrategicInfrastructure.objects.count(), 10)
+        self.assertFalse(StrategicInfrastructure.objects.exclude(infrastructure_type="port").exists())

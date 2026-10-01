@@ -1,4 +1,5 @@
 import type { Locale } from "@/src/i18n/config";
+import type { PortCategory } from "@/src/lib/types/investment-map";
 
 export type InvestmentMapCopy = {
   eyebrow: string;
@@ -91,6 +92,12 @@ export type InvestmentMapCopy = {
   selectedRegion: string;
   selectRegion: string;
   noProjectsInRegion: string;
+  infrastructureCategory: string;
+  infrastructureCoast: string;
+  infrastructureDescription: string;
+  portCategories: Record<PortCategory, string>;
+  statusLabels: Record<string, string>;
+  approximateLocation: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -190,6 +197,12 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     selectedRegion: "Región seleccionada",
     selectRegion: "Selecciona una región en el mapa",
     noProjectsInRegion: "No hay proyectos geolocalizados en esta región.",
+    infrastructureCategory: "Categoría",
+    infrastructureCoast: "Costa",
+    infrastructureDescription: "Descripción",
+    portCategories: { principal: "Principal", secundario: "Secundario", cruceros: "Cruceros", cabotaje: "Cabotaje" },
+    statusLabels: { operativo: "Operativo" },
+    approximateLocation: "Ubicación aproximada, pendiente de validación con la ENP.",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -287,5 +300,11 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     selectedRegion: "Selected region",
     selectRegion: "Select a region on the map",
     noProjectsInRegion: "There are no geolocated projects in this region.",
+    infrastructureCategory: "Category",
+    infrastructureCoast: "Coast",
+    infrastructureDescription: "Description",
+    portCategories: { principal: "Main", secundario: "Secondary", cruceros: "Cruise", cabotaje: "Coastal shipping" },
+    statusLabels: { operativo: "Operational" },
+    approximateLocation: "Approximate location, pending validation with the ENP (National Port Company).",
   },
 };

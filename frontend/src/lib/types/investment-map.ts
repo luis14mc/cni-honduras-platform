@@ -251,6 +251,21 @@ export type InfrastructureProperties = {
   status: string;
   source_name: string;
   source_url: string;
+  description?: string;
+  details?: InfrastructureDetails;
+};
+
+export type PortCategory = "principal" | "secundario" | "cruceros" | "cabotaje";
+
+/** Display-only subset of the backend metadata; Spanish values with optional `_en` variants. */
+export type InfrastructureDetails = {
+  name_en?: string;
+  category?: PortCategory | string;
+  coast?: string;
+  coast_en?: string;
+  description_en?: string;
+  source_name_en?: string;
+  coords_verified?: boolean;
 };
 
 export type InfrastructureFeature = {
@@ -382,6 +397,61 @@ export function toggleInfrastructureLayer(
   if (next.has(layer)) next.delete(layer);
   else next.add(layer);
   return next;
+}
+
+export const INFRASTRUCTURE_LAYERS: readonly InfrastructureLayer[] = ["airport", "port"];
+
+/** Labels of the active layers in the fixed checkbox order, for the filters chip. */
+export function getActiveInfrastructureLabels(
+  layers: ReadonlySet<InfrastructureLayer>,
+  labels: Record<InfrastructureLayer, string>,
+): string[] {
+  return INFRASTRUCTURE_LAYERS.filter((layer) => layers.has(layer)).map((layer) => labels[layer]);
+}
+
+export type LocalizedInfrastructure = {
+  name: string;
+  coast: string;
+  description: string;
+  sourceName: string;
+};
+
+export function localizeInfrastructure(
+  properties: Pick<InfrastructureProperties, "name" | "description" | "details"> & { source_name?: string },
+  locale: "es" | "en",
+): LocalizedInfrastructure {
+  const details = properties.details ?? {};
+  const en = locale === "en";
+  return {
+    name: (en && details.name_en) || properties.name,
+    coast: (en && details.coast_en) || details.coast || "",
+    description: (en && details.description_en) || properties.description || "",
+    sourceName: (en && details.source_name_en) || properties.source_name || "",
+  };
+}
+
+/**
+ * Fetches each layer at most once: nothing is requested until `load` is called, concurrent
+ * calls share the in-flight request and a failed request can be retried.
+ */
+export function createLazyLayerLoader<K extends string, T>(fetchLayer: (key: K) => Promise<T>) {
+  const loaded = new Map<K, T>();
+  const pending = new Map<K, Promise<T>>();
+  return {
+    get: (key: K): T | undefined => loaded.get(key),
+    /** Returns the new request, or null when the layer is already loaded or loading. */
+    load(key: K): Promise<T> | null {
+      if (loaded.has(key) || pending.has(key)) return null;
+      const request = fetchLayer(key)
+        .then((data) => {
+          loaded.set(key, data);
+          return data;
+        })
+        .finally(() => pending.delete(key));
+      pending.set(key, request);
+      return request;
+    },
+  };
 }
 
 export function updateInfrastructureCache(

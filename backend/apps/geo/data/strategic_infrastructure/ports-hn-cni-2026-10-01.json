@@ -1,0 +1,222 @@
+{
+ "provenance": {
+  "dataset": "Puertos de Honduras (CNI)",
+  "version": "2026-10-01",
+  "date": "2026-10-01",
+  "source_url": "https://www.enp.hn",
+  "license": "Datos de hechos públicos; curaduría CNI",
+  "license_caveat": "Coordenadas aproximadas (±300 m). Verificar contra ENP/OSM antes de producción; ajustar y poner coords_verified=true."
+ },
+ "records": [
+  {
+   "name": "Puerto Cortés",
+   "slug": "puerto-cortes",
+   "type": "port",
+   "longitude": -87.944,
+   "latitude": 15.846,
+   "operator": "Empresa Nacional Portuaria (ENP) / Operadora Portuaria Centroamericana (OPC)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of Puerto Cortés",
+    "category": "principal",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Principal puerto de Centroamérica por volumen; contenedores y graneles; certificado Container Security Initiative.",
+    "description_en": "Central America's leading port by volume; containers and bulk cargo; Container Security Initiative certified.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto Castilla",
+   "slug": "puerto-castilla",
+   "type": "port",
+   "longitude": -85.965,
+   "latitude": 15.998,
+   "operator": "Empresa Nacional Portuaria (ENP)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of Puerto Castilla",
+    "category": "principal",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Puerto de aguas profundas en Trujillo, Colón; graneles, palma africana y contenedores.",
+    "description_en": "Deep-water port in Trujillo, Colón; bulk cargo, African palm and containers.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto de San Lorenzo (Henecán)",
+   "slug": "san-lorenzo-henecan",
+   "type": "port",
+   "longitude": -87.439,
+   "latitude": 13.412,
+   "operator": "Empresa Nacional Portuaria (ENP)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of San Lorenzo (Henecán)",
+    "category": "principal",
+    "coast": "Pacífico",
+    "coast_en": "Pacific",
+    "description": "Único puerto de Honduras en el Pacífico (Golfo de Fonseca); granos, combustibles y azúcar.",
+    "description_en": "Honduras's only Pacific port (Gulf of Fonseca); grain, fuel and sugar.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto de La Ceiba (Muelle de Cabotaje)",
+   "slug": "la-ceiba",
+   "type": "port",
+   "longitude": -86.7569,
+   "latitude": 15.7939,
+   "operator": "Empresa Nacional Portuaria (ENP)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of La Ceiba",
+    "category": "secundario",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Cabotaje y conexión con Islas de la Bahía.",
+    "description_en": "Coastal shipping and connection to the Bay Islands.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto de Tela",
+   "slug": "tela",
+   "type": "port",
+   "longitude": -87.4558,
+   "latitude": 15.7839,
+   "operator": "Empresa Nacional Portuaria (ENP)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of Tela",
+    "category": "secundario",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Puerto menor; carga general y turismo.",
+    "description_en": "Minor port; general cargo and tourism.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto de Roatán (Coxen Hole)",
+   "slug": "roatan-coxen-hole",
+   "type": "port",
+   "longitude": -86.539,
+   "latitude": 16.317,
+   "operator": "Empresa Nacional Portuaria (ENP)",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of Roatán (Coxen Hole)",
+    "category": "cruceros",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Terminal de cruceros y carga para Islas de la Bahía.",
+    "description_en": "Cruise and cargo terminal for the Bay Islands.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Mahogany Bay (Roatán)",
+   "slug": "roatan-mahogany-bay",
+   "type": "port",
+   "longitude": -86.499,
+   "latitude": 16.326,
+   "operator": "Carnival Corporation",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Mahogany Bay Cruise Center (Roatán)",
+    "category": "cruceros",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Terminal privada de cruceros en Dixon Cove.",
+    "description_en": "Private cruise terminal in Dixon Cove.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Banana Coast (Trujillo)",
+   "slug": "trujillo-banana-coast",
+   "type": "port",
+   "longitude": -85.96,
+   "latitude": 15.922,
+   "operator": "Privado",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Banana Coast Cruise Port (Trujillo)",
+    "category": "cruceros",
+    "coast": "Caribe",
+    "coast_en": "Caribbean",
+    "description": "Terminal de cruceros en Trujillo, Colón.",
+    "description_en": "Cruise terminal in Trujillo, Colón.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto Lempira",
+   "slug": "puerto-lempira",
+   "type": "port",
+   "longitude": -83.777,
+   "latitude": 15.265,
+   "operator": "Municipal",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Puerto Lempira dock",
+    "category": "cabotaje",
+    "coast": "Caribe (Laguna de Caratasca)",
+    "coast_en": "Caribbean (Caratasca Lagoon)",
+    "description": "Muelle lagunar; conexión de La Mosquitia.",
+    "description_en": "Lagoon dock; connects La Mosquitia.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  },
+  {
+   "name": "Puerto de Amapala",
+   "slug": "amapala",
+   "type": "port",
+   "longitude": -87.649,
+   "latitude": 13.293,
+   "operator": "Municipal / ENP",
+   "status": "operativo",
+   "source_name": "CNI – curaduría interna (verificar con ENP)",
+   "source_url": "https://www.enp.hn",
+   "metadata": {
+    "name_en": "Port of Amapala",
+    "category": "cabotaje",
+    "coast": "Pacífico",
+    "coast_en": "Pacific",
+    "description": "Isla del Tigre, Golfo de Fonseca; pasajeros y turismo.",
+    "description_en": "Isla del Tigre, Gulf of Fonseca; passengers and tourism.",
+    "coords_verified": false,
+    "source_name_en": "CNI – internal curation (to be verified with ENP)"
+   }
+  }
+ ]
+}
