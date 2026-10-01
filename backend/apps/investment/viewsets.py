@@ -13,6 +13,7 @@ from django.db.models import (
 from django.db.models.functions import Coalesce
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -33,6 +34,12 @@ from .serializers import (
 )
 
 
+class InvestmentCatalogPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = "page_size"
+    max_page_size = 200
+
+
 class SectorViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = SectorSerializer
     lookup_field = "slug"
@@ -44,11 +51,12 @@ class SectorViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
 class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = InvestmentOpportunitySerializer
     lookup_field = "slug"
+    pagination_class = InvestmentCatalogPagination
 
     def get_queryset(self):
         queryset = (
             InvestmentOpportunity.objects.published()
-            .select_related("sector", "department", "region")
+            .select_related("sector", "department", "region", "region__parent", "cover_image")
             .prefetch_related("metrics")
             .filter(Q(sector__isnull=True) | Q(sector__is_active=True))
             .order_by(*InvestmentOpportunity._meta.ordering)
@@ -72,9 +80,10 @@ class InvestmentOpportunityViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModel
         return Response(opportunities_feature_collection(self.get_queryset()))
 
 
-class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
+class InvestmentProjectViewSet(LocalizedViewSetMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = InvestmentProjectSerializer
     lookup_field = "slug"
+    pagination_class = InvestmentCatalogPagination
 
     def get_serializer_class(self):
         if self.action == "list" and parse_bool_param(
@@ -93,7 +102,7 @@ class InvestmentProjectViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = (
             InvestmentProject.objects.select_related(
-                "sector", "department", "region", "municipality"
+                "sector", "department", "region", "region__parent", "municipality", "cover_image"
             )
             .filter(is_public=True, sector__is_active=True)
             .order_by(*InvestmentProject._meta.ordering)

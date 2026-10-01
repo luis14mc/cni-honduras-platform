@@ -2,13 +2,12 @@ import json
 
 from rest_framework import serializers
 
-from apps.geo.models import Department, Municipality
+from apps.geo.models import CNIRegion, Department, Municipality
 from apps.geo.serializers import (
-    CNIRegionSerializer,
     DepartmentLiteSerializer,
     MunicipalityLiteSerializer,
 )
-from apps.media_library.serializers import MediaAssetLiteSerializer
+from apps.media_library.serializers import MediaAssetLiteSerializer, absolute_file_url
 
 from .models import (
     InvestmentOpportunity,
@@ -27,6 +26,33 @@ class SectorLiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sector
         fields = ("id", "name", "slug", "icon", "color_hex")
+
+
+class RegionRefSerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CNIRegion
+        fields = ("id", "name", "slug", "code", "level", "parent")
+
+    def get_parent(self, obj: CNIRegion) -> dict | None:
+        parent = obj.parent
+        if parent is None:
+            return None
+        return {
+            "id": parent.id,
+            "name": parent.name,
+            "slug": parent.slug,
+            "code": parent.code,
+            "level": parent.level,
+        }
+
+
+def cover_image_url(obj, context) -> str | None:
+    asset = getattr(obj, "cover_image", None)
+    if asset is None:
+        return None
+    return absolute_file_url(asset.file, context)
 
 
 class SectorSerializer(serializers.ModelSerializer):
@@ -66,11 +92,17 @@ class InvestmentOpportunitySerializer(serializers.ModelSerializer):
     """Public teaser serializer — never expose CAPEX or internal narrative fields."""
 
     sector = SectorLiteSerializer(read_only=True)
+    department = DepartmentLiteSerializer(read_only=True)
+    region = RegionRefSerializer(read_only=True)
     metrics = serializers.SerializerMethodField()
     status = serializers.CharField(source="lifecycle_status", read_only=True)
     is_public = serializers.SerializerMethodField()
     summary = serializers.SerializerMethodField()
     value_proposition = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
+    location = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
+    longitude = serializers.SerializerMethodField()
 
     class Meta:
         model = InvestmentOpportunity
@@ -82,6 +114,8 @@ class InvestmentOpportunitySerializer(serializers.ModelSerializer):
             "summary",
             "value_proposition",
             "sector",
+            "department",
+            "region",
             "estimated_investment",
             "estimated_jobs",
             "status",
@@ -91,7 +125,34 @@ class InvestmentOpportunitySerializer(serializers.ModelSerializer):
             "order",
             "metrics",
             "published_at",
+            "cover_image_url",
+            "location_text",
+            "amount_text",
+            "amount_notes",
+            "phase",
+            "phase_detail",
+            "investment_type",
+            "location",
+            "latitude",
+            "longitude",
         )
+
+    def get_cover_image_url(self, obj: InvestmentOpportunity) -> str | None:
+        return cover_image_url(obj, self.context)
+
+    def get_location(self, obj: InvestmentOpportunity) -> dict | None:
+        coords = obj.map_coordinates
+        if coords is None:
+            return None
+        return {"type": "Point", "coordinates": [coords[0], coords[1]]}
+
+    def get_latitude(self, obj: InvestmentOpportunity) -> float | None:
+        coords = obj.map_coordinates
+        return coords[1] if coords else None
+
+    def get_longitude(self, obj: InvestmentOpportunity) -> float | None:
+        coords = obj.map_coordinates
+        return coords[0] if coords else None
 
     def get_is_public(self, obj: InvestmentOpportunity) -> bool:
         return True
@@ -167,16 +228,18 @@ class InvestmentProjectMapSerializer(serializers.ModelSerializer):
 class InvestmentProjectSerializer(serializers.ModelSerializer):
     sector = SectorLiteSerializer(read_only=True)
     department = DepartmentLiteSerializer(read_only=True)
-    region = CNIRegionSerializer(read_only=True)
+    region = RegionRefSerializer(read_only=True)
     municipality = MunicipalityLiteSerializer(read_only=True)
     location = serializers.SerializerMethodField()
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = InvestmentProject
         fields = (
             "id",
+            "code",
             "title",
             "slug",
             "summary",
@@ -193,9 +256,19 @@ class InvestmentProjectSerializer(serializers.ModelSerializer):
             "project_stage",
             "is_public",
             "is_featured",
+            "cover_image_url",
+            "location_text",
+            "amount_text",
+            "amount_notes",
+            "phase",
+            "phase_detail",
+            "investment_type",
             "created_at",
             "updated_at",
         )
+
+    def get_cover_image_url(self, obj: InvestmentProject) -> str | None:
+        return cover_image_url(obj, self.context)
 
     def get_location(self, obj: InvestmentProject) -> dict | None:
         return json.loads(obj.location.geojson) if obj.location else None

@@ -117,6 +117,20 @@ class InvestmentOpportunity(EditorialModel):
     # Ubicación en el mapa; si es nula se usa el centro del departamento
     # (ver ``map_coordinates``). Mismo patrón que InvestmentProject.location.
     location = models.PointField(srid=4326, null=True, blank=True)
+    cover_image = models.ForeignKey(
+        MediaAsset,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    location_text = models.CharField(max_length=300, blank=True, default="")
+    amount_text = models.CharField(max_length=120, blank=True, default="")
+    amount_notes = models.JSONField(default=list, blank=True)
+    phase = models.CharField(max_length=120, blank=True, default="")
+    phase_detail = models.CharField(max_length=200, blank=True, default="")
+    investment_type = models.TextField(blank=True, default="")
+    extra_locations = models.JSONField(default=list, blank=True)
 
     class Meta:
         ordering = ("order", "-is_featured", "-published_at", "-created_at", "-id")
@@ -249,6 +263,7 @@ class ProjectStage(models.TextChoices):
 class InvestmentProject(TimeStampedModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=275, unique=True, db_index=True)
+    code = models.CharField(max_length=30, null=True, blank=True, unique=True)
     summary = models.TextField(blank=True, default="")
     description = models.TextField(blank=True, default="")
 
@@ -279,6 +294,20 @@ class InvestmentProject(TimeStampedModel):
         related_name="projects",
     )
     location = models.PointField(srid=4326, null=True, blank=True)
+    cover_image = models.ForeignKey(
+        MediaAsset,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    location_text = models.CharField(max_length=300, blank=True, default="")
+    amount_text = models.CharField(max_length=120, blank=True, default="")
+    amount_notes = models.JSONField(default=list, blank=True)
+    phase = models.CharField(max_length=120, blank=True, default="")
+    phase_detail = models.CharField(max_length=200, blank=True, default="")
+    investment_type = models.TextField(blank=True, default="")
+    extra_locations = models.JSONField(default=list, blank=True)
 
     investment_amount = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True

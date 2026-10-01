@@ -62,7 +62,7 @@ class InvestmentOpportunityAdmin(EditorialAdminMixin, TranslationAdmin):
     search_fields = ("code", "title", "slug", "summary", "description")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = EditorialAdminMixin.readonly_fields
-    autocomplete_fields = ("sector", "department", "region")
+    autocomplete_fields = ("sector", "department", "region", "cover_image")
     inlines = [OpportunityMetricInline, OpportunityFundUseInline]
 
     fieldsets = (
@@ -93,7 +93,25 @@ class InvestmentOpportunityAdmin(EditorialAdminMixin, TranslationAdmin):
                 )
             },
         ),
-        ("Clasificación", {"fields": ("sector", "department", "region")}),
+        (
+            "Clasificación",
+            {"fields": ("sector", "department", "region", "cover_image")},
+        ),
+        (
+            "Ficha CNI",
+            {
+                "fields": (
+                    "location_text",
+                    "amount_text",
+                    "amount_notes",
+                    "phase",
+                    "phase_detail",
+                    "investment_type",
+                    "extra_locations",
+                    "location",
+                )
+            },
+        ),
         ("Legacy métricas", {"fields": ("estimated_investment", "estimated_jobs")}),
         ("Auditoría", {"fields": ("created_at", "updated_at", "created_by", "updated_by")}),
     )
@@ -110,16 +128,30 @@ class InvestmentOpportunityAdmin(EditorialAdminMixin, TranslationAdmin):
 
 @admin.register(InvestmentProject)
 class InvestmentProjectAdmin(admin.ModelAdmin):
-    list_display = ("title", "sector", "project_stage", "is_public", "is_featured", "updated_at")
-    list_filter = ("project_stage", "is_public", "is_featured", "sector")
-    search_fields = ("title", "slug", "summary", "description")
+    list_display = ("code", "title", "sector", "phase", "project_stage", "is_public", "is_featured", "updated_at")
+    list_filter = ("project_stage", "phase", "is_public", "is_featured", "sector")
+    search_fields = ("code", "title", "slug", "summary", "description", "location_text")
     prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")
-    autocomplete_fields = ("sector", "department", "region", "municipality")
+    autocomplete_fields = ("sector", "department", "region", "municipality", "cover_image")
 
     fieldsets = (
-        (None, {"fields": ("title", "slug", "summary", "description")}),
-        ("Clasificación", {"fields": ("sector", "department", "region", "municipality")}),
+        (None, {"fields": ("code", "title", "slug", "summary", "description")}),
+        ("Clasificación", {"fields": ("sector", "department", "region", "municipality", "cover_image")}),
+        (
+            "Ficha CNI",
+            {
+                "fields": (
+                    "location_text",
+                    "amount_text",
+                    "amount_notes",
+                    "phase",
+                    "phase_detail",
+                    "investment_type",
+                    "extra_locations",
+                )
+            },
+        ),
         ("Datos", {"fields": ("investment_amount", "estimated_jobs", "project_stage", "location")}),
         ("Visibilidad", {"fields": ("is_public", "is_featured")}),
         ("Metadatos", {"fields": ("created_at", "updated_at")}),
