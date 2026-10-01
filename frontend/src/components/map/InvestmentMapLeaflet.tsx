@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import L, { type PathOptions } from "leaflet";
-import { CircleMarker, GeoJSON, MapContainer, Marker, Pane, Tooltip, useMap } from "react-leaflet";
+import { AttributionControl, CircleMarker, GeoJSON, MapContainer, Marker, Pane, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type {
@@ -16,11 +16,16 @@ import type {
   InfrastructureLayer,
   PoloType,
   PortCategory,
+  RoadClass,
+  RoadCorridorFeature,
+  RoadCorridorFeatureCollection,
+  RoadCorridorProperties,
   TerritorialRegionFeature,
   TerritorialRegionFeatureCollection,
   TerritorialRegionProperties,
 } from "@/src/lib/types/investment-map";
 import {
+  formatRoadLabel,
   localizeInfrastructure,
   toLeafletPointPosition,
   toLeafletProjectPosition,
@@ -42,7 +47,27 @@ const MARKER_FILL = "#32B372";
 const MARKER_SELECTED = "#F7BF06";
 // overlayPane (departments, municipalities) is 400 and markerPane is 600.
 const REGIONS_PANE_Z = 450;
+// Above every polygon layer (regions included) and below project markers.
+const ROADS_PANE_Z = 455;
 const PROJECTS_PANE_Z = 460;
+const ROAD_STYLES: Record<RoadClass, PathOptions> = {
+  primaria: { color: "#F7BF06", weight: 3.5, opacity: 1 },
+  secundaria: { color: "#FFFFFF", weight: 2, opacity: 0.8 },
+};
+const ROAD_STRATEGIC_HALO: PathOptions = { color: "#001a33", weight: 6, opacity: 0.9 };
+// White lines vanish on the light department fill, so secondary roads get a thin casing.
+const ROAD_SECONDARY_CASING: PathOptions = { color: "#334E88", weight: 3.5, opacity: 0.45 };
+const OSM_COPYRIGHT_URL = "https://www.openstreetmap.org/copyright";
+
+function styleRoad(properties: RoadCorridorProperties, selectedRoadCode: string | null): PathOptions {
+  const base = ROAD_STYLES[properties.road_class] ?? ROAD_STYLES.secundaria;
+  if (properties.code !== selectedRoadCode) return base;
+  return { ...base, weight: (base.weight ?? 2) + 2, opacity: 1 };
+}
+
+function styleRoadCasing(properties: RoadCorridorProperties): PathOptions {
+  return properties.is_strategic ? ROAD_STRATEGIC_HALO : ROAD_SECONDARY_CASING;
+}
 
 // SVG bodies mirror lucide-react's Plane and Anchor icons (divIcon needs raw HTML).
 const INFRASTRUCTURE_MARKERS: Record<InfrastructureLayer, { background: string; color: string; svg: string }> = {
@@ -123,6 +148,11 @@ type Props = {
   selectedInfrastructureId: number | null;
   onSelectInfrastructure: (feature: InfrastructureFeature) => void;
   infrastructureCopy?: InfrastructureTooltipCopy;
+  roads?: RoadCorridorFeatureCollection | null;
+  selectedRoadCode?: string | null;
+  onSelectRoad?: (feature: RoadCorridorFeature) => void;
+  /** Visible OSM credit (ODbL), shown in Leaflet's attribution control while roads are drawn. */
+  roadAttribution?: string;
   regions?: TerritorialRegionFeatureCollection | null;
   regionTooltipCopy?: RegionTooltipCopy;
   regionMode?: boolean;
@@ -351,6 +381,10 @@ export function InvestmentMapLeaflet({
   selectedInfrastructureId,
   onSelectInfrastructure,
   infrastructureCopy,
+  roads = null,
+  selectedRoadCode = null,
+  onSelectRoad,
+  roadAttribution = "© OpenStreetMap contributors",
   regions,
   regionTooltipCopy,
   regionMode = false,
@@ -362,6 +396,7 @@ export function InvestmentMapLeaflet({
   // onEachFeature handlers are bound once per layer mount; read the latest values from refs.
   const selectedRegionCodeRef = useRef(selectedRegionCode);
   const onSelectRegionRef = useRef(onSelectRegion);
+  const onSelectRoadRef = useRef(onSelectRoad);
   const selectedRegion = regionMode && selectedRegionCode
     ? regions?.features.find((feature) => feature.properties.code === selectedRegionCode) ?? null
     : null;
@@ -369,7 +404,8 @@ export function InvestmentMapLeaflet({
   useEffect(() => {
     selectedRegionCodeRef.current = selectedRegionCode;
     onSelectRegionRef.current = onSelectRegion;
-  }, [onSelectRegion, selectedRegionCode]);
+    onSelectRoadRef.current = onSelectRoad;
+  }, [onSelectRegion, onSelectRoad, selectedRegionCode]);
 
   useEffect(() => {
     regionLayerRef.current?.eachLayer((layer) => {
@@ -551,6 +587,35 @@ export function InvestmentMapLeaflet({
                     if (code && code === selectedRegionCodeRef.current) (other as L.Path).bringToFront();
                   });
                 },
+              });
+            }}
+          />
+        </Pane>
+      ) : null}
+      {roads && roads.features.length > 0 ? (
+        <Pane name="cni-roads" style={{ zIndex: ROADS_PANE_Z }}>
+          <AttributionControl position="bottomright" prefix={false} />
+          <GeoJSON
+            data={{ ...roads, features: roads.features.filter((feature) => feature.properties.is_strategic || feature.properties.road_class === "secundaria") } as unknown as GeoJSON.GeoJsonObject}
+            interactive={false}
+            style={(feature) => styleRoadCasing(feature?.properties as RoadCorridorProperties)}
+          />
+          <GeoJSON
+            key={selectedRoadCode ?? "none"}
+            data={roads as unknown as GeoJSON.GeoJsonObject}
+            attribution={`<a href="${OSM_COPYRIGHT_URL}" target="_blank" rel="noopener noreferrer">${escapeHtml(roadAttribution)}</a>`}
+            style={(feature) => styleRoad(feature?.properties as RoadCorridorProperties, selectedRoadCode)}
+            onEachFeature={(feature, layer) => {
+              const properties = feature.properties as RoadCorridorProperties;
+              const pathLayer = layer as L.Path;
+              layer.bindTooltip(escapeHtml(formatRoadLabel(properties)), { sticky: true, direction: "top", opacity: 0.95 });
+              layer.on({
+                click: () => onSelectRoadRef.current?.(feature as unknown as RoadCorridorFeature),
+                mouseover: () => {
+                  const base = styleRoad(properties, selectedRoadCode);
+                  pathLayer.setStyle({ weight: (base.weight ?? 2) + 1.5, opacity: 1 });
+                },
+                mouseout: () => pathLayer.setStyle(styleRoad(properties, selectedRoadCode)),
               });
             }}
           />

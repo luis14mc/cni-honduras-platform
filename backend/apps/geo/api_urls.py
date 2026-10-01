@@ -4,6 +4,7 @@ from .viewsets import (
     CNIRegionViewSet,
     DepartmentViewSet,
     MunicipalityViewSet,
+    RoadCorridorViewSet,
     StrategicInfrastructureViewSet,
 )
 
@@ -12,5 +13,6 @@ router.register(r"departments", DepartmentViewSet, basename="geo-department")
 router.register(r"regions", CNIRegionViewSet, basename="geo-region")
 router.register(r"municipalities", MunicipalityViewSet, basename="geo-municipality")
 router.register(r"infrastructure", StrategicInfrastructureViewSet, basename="geo-infrastructure")
+router.register(r"roads", RoadCorridorViewSet, basename="geo-road")
 
 urlpatterns = router.urls

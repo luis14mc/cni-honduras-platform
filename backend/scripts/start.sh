@@ -22,6 +22,9 @@ python manage.py import_strategic_infrastructure
 echo "Synchronizing territorial regions (macro/sub/polo)..."
 python manage.py import_territorial_regions || echo "WARN: import_territorial_regions falló; el servidor arranca igual"
 
+echo "Synchronizing road corridors (OSM)..."
+python manage.py import_road_corridors || echo "WARN: import_road_corridors falló; el servidor arranca igual"
+
 # Temporary bootstrap only: set CREATE_DJANGO_SUPERUSER=true in Render for the first
 # deploy/login, then remove it or set to false after confirming admin access.
 if [[ "${CREATE_DJANGO_SUPERUSER:-false}" == "true" ]]; then

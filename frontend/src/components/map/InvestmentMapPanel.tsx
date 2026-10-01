@@ -9,6 +9,7 @@ import type {
   MunicipalityProperties,
   InfrastructureFeature,
   PortCategory,
+  RoadCorridorFeature,
   TerritorialRegionFeature,
 } from "@/src/lib/types/investment-map";
 import {
@@ -40,6 +41,8 @@ type Props = {
   regionMode?: boolean;
   region?: TerritorialRegionFeature | null;
   onClearRegion?: () => void;
+  road?: RoadCorridorFeature | null;
+  onClearRoad?: () => void;
 };
 
 export function InvestmentMapPanel({
@@ -64,7 +67,30 @@ export function InvestmentMapPanel({
   regionMode = false,
   region = null,
   onClearRegion,
+  road = null,
+  onClearRoad,
 }: Props) {
+  if (road) {
+    const details = road.properties;
+    const sourceUrl = getSafeSourceUrl(details.source_url);
+    return (
+      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedRoad}: ${details.name}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div><p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedRoad}</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight">{details.name}</h2>{details.is_strategic ? <p className="mt-2 inline-flex rounded-full bg-[#F7BF06]/15 px-3 py-1 text-xs font-bold text-[#F7BF06]">{copy.strategicCorridor}</p> : null}</div>
+          <button type="button" onClick={onClearRoad} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.clearRoad}</button>
+        </div>
+        <dl className="mt-7 space-y-3 text-sm">
+          <DetailRow label={copy.roadRef} value={details.ref || "—"} />
+          <DetailRow label={copy.roadClass} value={copy.roadClasses[details.road_class] ?? details.road_class} />
+          <DetailRow label={copy.roadLength} value={details.length_km ? `${details.length_km} km` : "—"} />
+          <DetailRow label={copy.source} value={details.source_name || "—"} />
+        </dl>
+        {details.description ? <p className="mt-5 text-sm leading-6 text-[#d5e3ff]">{details.description}</p> : null}
+        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-lg border border-[#8DC046]/50 px-4 py-2 text-sm font-bold text-[#d8ef9f] transition hover:bg-[#35A963]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.viewSource}</a> : null}
+      </aside>
+    );
+  }
+
   if (infrastructure) {
     const details = infrastructure.properties;
     const sourceUrl = getSafeSourceUrl(details.source_url);

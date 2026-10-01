@@ -282,6 +282,42 @@ export type InfrastructureFeatureCollection = {
 
 export type InfrastructureCache = Partial<Record<InfrastructureLayer, InfrastructureFeatureCollection>>;
 
+export type RoadClass = "primaria" | "secundaria";
+
+export type RoadCorridorProperties = {
+  id: number;
+  code: string;
+  ref: string;
+  name: string;
+  road_class: RoadClass;
+  length_km: number;
+  is_strategic: boolean;
+  description: string;
+  source_name: string;
+  source_url: string;
+};
+
+export type RoadCorridorFeature = {
+  type: "Feature";
+  id?: number;
+  geometry: { type: "MultiLineString"; coordinates: [number, number][][] } | null;
+  properties: RoadCorridorProperties;
+};
+
+export type RoadCorridorFeatureCollection = {
+  type: "FeatureCollection";
+  features: RoadCorridorFeature[];
+};
+
+/** "CA-5 · Corredor del Caribe · 478 km"; the ref is skipped when the name already starts with it. */
+export function formatRoadLabel(properties: Pick<RoadCorridorProperties, "ref" | "name" | "length_km">): string {
+  const parts = properties.ref && !properties.name.startsWith(properties.ref)
+    ? [properties.ref, properties.name]
+    : [properties.name];
+  if (properties.length_km > 0) parts.push(`${properties.length_km} km`);
+  return parts.join(" · ");
+}
+
 export type MapQueryState = {
   sector: string | null;
   department: string | null;
@@ -404,9 +440,11 @@ export const INFRASTRUCTURE_LAYERS: readonly InfrastructureLayer[] = ["airport",
 /** Labels of the active layers in the fixed checkbox order, for the filters chip. */
 export function getActiveInfrastructureLabels(
   layers: ReadonlySet<InfrastructureLayer>,
-  labels: Record<InfrastructureLayer, string>,
+  labels: Record<InfrastructureLayer, string> & { roads?: string },
+  roadsActive = false,
 ): string[] {
-  return INFRASTRUCTURE_LAYERS.filter((layer) => layers.has(layer)).map((layer) => labels[layer]);
+  const active = INFRASTRUCTURE_LAYERS.filter((layer) => layers.has(layer)).map((layer) => labels[layer]);
+  return roadsActive && labels.roads ? [...active, labels.roads] : active;
 }
 
 export type LocalizedInfrastructure = {

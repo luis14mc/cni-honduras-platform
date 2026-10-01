@@ -36,6 +36,7 @@ import {
   stripRegionSlivers,
   createLazyLayerLoader,
   getActiveInfrastructureLabels,
+  formatRoadLabel,
   localizeInfrastructure,
   type TerritorialRegionFeatureCollection,
   type TerritorialRegionFeature,
@@ -146,6 +147,19 @@ describe("investment map pure helpers", () => {
     expect(getActiveInfrastructureLabels(new Set(["port"]), labels)).toEqual(["Puertos"]);
     expect(getActiveInfrastructureLabels(new Set(["airport"]), labels)).toEqual(["Aeropuertos"]);
     expect(getActiveInfrastructureLabels(new Set(["port", "airport"]), labels)).toEqual(["Aeropuertos", "Puertos"]);
+    const withRoads = { ...labels, roads: "Red vial principal" };
+    expect(getActiveInfrastructureLabels(new Set(), withRoads, true)).toEqual(["Red vial principal"]);
+    expect(getActiveInfrastructureLabels(new Set(["port"]), withRoads, true)).toEqual(["Puertos", "Red vial principal"]);
+    expect(getActiveInfrastructureLabels(new Set(["port"]), withRoads, false)).toEqual(["Puertos"]);
+  });
+
+  it("formats road tooltips with ref, name and km", () => {
+    expect(formatRoadLabel({ ref: "CA-13", name: "Corredor del Caribe", length_km: 478 })).toBe("CA-13 · Corredor del Caribe · 478 km");
+    expect(formatRoadLabel({ ref: "CA-5", name: "CA-5", length_km: 333 })).toBe("CA-5 · 333 km");
+    expect(formatRoadLabel({ ref: "", name: "Canal Seco", length_km: 0 })).toBe("Canal Seco");
+    expect(investmentMapCopy.en.roadClasses).toMatchObject({ primaria: "Primary", secundaria: "Secondary" });
+    expect(investmentMapCopy.es.osmAttribution).toContain("OpenStreetMap");
+    expect(investmentMapCopy.en.osmAttribution).toBe("© OpenStreetMap contributors");
   });
 
   it("localizes port name, coast and description with Spanish fallback", () => {
