@@ -8,9 +8,15 @@ import type {
   MapInvestmentProject,
   MunicipalityProperties,
   InfrastructureFeature,
+  PortCategory,
   TerritorialRegionFeature,
 } from "@/src/lib/types/investment-map";
-import { formatMapInvestment, formatMapJobs, getProjectsInvestmentTotal } from "@/src/lib/types/investment-map";
+import {
+  formatMapInvestment,
+  formatMapJobs,
+  getProjectsInvestmentTotal,
+  localizeInfrastructure,
+} from "@/src/lib/types/investment-map";
 
 type Props = {
   locale: Locale;
@@ -62,20 +68,27 @@ export function InvestmentMapPanel({
   if (infrastructure) {
     const details = infrastructure.properties;
     const sourceUrl = getSafeSourceUrl(details.source_url);
+    const localized = localizeInfrastructure(details, locale);
+    const category = details.details?.category;
+    const isPort = details.infrastructure_type === "port";
     return (
-      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedInfrastructure}: ${details.name}`}>
+      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedInfrastructure}: ${localized.name}`}>
         <div className="flex items-start justify-between gap-3">
-          <div><p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedInfrastructure}</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight">{details.name}</h2></div>
+          <div><p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedInfrastructure}</p><h2 className="mt-2 text-2xl font-extrabold tracking-tight">{localized.name}</h2></div>
           <button type="button" onClick={onClearInfrastructure} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.clearInfrastructure}</button>
         </div>
         <dl className="mt-7 space-y-3 text-sm">
-          <DetailRow label={copy.infrastructureType} value={details.infrastructure_type === "airport" ? copy.airports : copy.ports} />
+          <DetailRow label={copy.infrastructureType} value={isPort ? copy.ports : copy.airports} />
+          {isPort ? <DetailRow label={copy.infrastructureCategory} value={(category && copy.portCategories[category as PortCategory]) || category || "—"} /> : null}
+          {isPort ? <DetailRow label={copy.infrastructureCoast} value={localized.coast || "—"} /> : null}
           <DetailRow label={copy.selectedDepartment} value={details.department?.name ?? "—"} />
           <DetailRow label={copy.selectedMunicipality} value={details.municipality?.name ?? "—"} />
           <DetailRow label={copy.operator} value={details.operator || "—"} />
-          <DetailRow label={copy.status} value={details.status || "—"} />
-          <DetailRow label={copy.source} value={details.source_name || "—"} />
+          <DetailRow label={copy.status} value={copy.statusLabels[details.status] ?? (details.status || "—")} />
+          <DetailRow label={copy.source} value={localized.sourceName || "—"} />
         </dl>
+        {localized.description ? <p className="mt-5 text-sm leading-6 text-[#d5e3ff]"><span className="sr-only">{copy.infrastructureDescription}: </span>{localized.description}</p> : null}
+        {details.details?.coords_verified === false ? <p className="mt-3 text-xs italic text-[#d5e3ff]/75">{copy.approximateLocation}</p> : null}
         {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-lg border border-[#8DC046]/50 px-4 py-2 text-sm font-bold text-[#d8ef9f] transition hover:bg-[#35A963]/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">{copy.viewSource}</a> : null}
       </aside>
     );

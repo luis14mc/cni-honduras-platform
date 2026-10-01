@@ -13,12 +13,18 @@ import type {
   MunicipalityFeatureCollection,
   MunicipalityProperties,
   InfrastructureFeature,
+  InfrastructureLayer,
   PoloType,
+  PortCategory,
   TerritorialRegionFeature,
   TerritorialRegionFeatureCollection,
   TerritorialRegionProperties,
 } from "@/src/lib/types/investment-map";
-import { toLeafletPointPosition, toLeafletProjectPosition } from "@/src/lib/types/investment-map";
+import {
+  localizeInfrastructure,
+  toLeafletPointPosition,
+  toLeafletProjectPosition,
+} from "@/src/lib/types/investment-map";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -37,6 +43,26 @@ const MARKER_SELECTED = "#F7BF06";
 // overlayPane (departments, municipalities) is 400 and markerPane is 600.
 const REGIONS_PANE_Z = 450;
 const PROJECTS_PANE_Z = 460;
+
+// SVG bodies mirror lucide-react's Plane and Anchor icons (divIcon needs raw HTML).
+const INFRASTRUCTURE_MARKERS: Record<InfrastructureLayer, { background: string; color: string; svg: string }> = {
+  airport: {
+    background: "#F7BF06",
+    color: "#001a33",
+    svg: '<path d="M22 2 9.5 14.5M15 5l4 4M2 16l6 1 1 5 3-7 7-3-5-1-1-5Z"/>',
+  },
+  port: {
+    background: "#334E88",
+    color: "#ffffff",
+    svg: '<path d="M12 6v16"/><path d="m19 13 2-1a9 9 0 0 1-18 0l2 1"/><path d="M9 11h6"/><circle cx="12" cy="4" r="2"/>',
+  },
+};
+
+export type InfrastructureTooltipCopy = {
+  locale: "es" | "en";
+  operator: string;
+  portCategories: Record<PortCategory, string>;
+};
 
 export type RegionTooltipCopy = {
   regionCode: string;
@@ -96,6 +122,7 @@ type Props = {
   infrastructure: InfrastructureFeature[];
   selectedInfrastructureId: number | null;
   onSelectInfrastructure: (feature: InfrastructureFeature) => void;
+  infrastructureCopy?: InfrastructureTooltipCopy;
   regions?: TerritorialRegionFeatureCollection | null;
   regionTooltipCopy?: RegionTooltipCopy;
   regionMode?: boolean;
@@ -323,6 +350,7 @@ export function InvestmentMapLeaflet({
   infrastructure,
   selectedInfrastructureId,
   onSelectInfrastructure,
+  infrastructureCopy,
   regions,
   regionTooltipCopy,
   regionMode = false,
@@ -555,13 +583,31 @@ export function InvestmentMapLeaflet({
         const position = toLeafletPointPosition(feature.geometry.coordinates);
         if (!position) return null;
         const selected = feature.properties.id === selectedInfrastructureId;
+        const marker = INFRASTRUCTURE_MARKERS[feature.properties.infrastructure_type] ?? INFRASTRUCTURE_MARKERS.airport;
         const icon = L.divIcon({
           className: "",
           iconSize: [selected ? 34 : 30, selected ? 34 : 30],
           iconAnchor: [selected ? 17 : 15, selected ? 17 : 15],
-          html: `<span style="display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:#F7BF06;color:#001a33;border:${selected ? "3" : "2"}px solid white;box-shadow:0 2px 8px rgba(0,26,51,.35)" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 9.5 14.5M15 5l4 4M2 16l6 1 1 5 3-7 7-3-5-1-1-5Z"/></svg></span>`,
+          html: `<span style="display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:${marker.background};color:${marker.color};border:${selected ? "3" : "2"}px solid white;box-shadow:0 2px 8px rgba(0,26,51,.35)" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${marker.svg}</svg></span>`,
         });
-        return <Marker key={`${feature.properties.infrastructure_type}-${feature.properties.id}`} position={position} icon={icon} eventHandlers={{ click: () => onSelectInfrastructure(feature) }} keyboard riseOnHover title={feature.properties.name}><Tooltip direction="top">{feature.properties.name}</Tooltip></Marker>;
+        const localized = localizeInfrastructure(feature.properties, infrastructureCopy?.locale ?? "es");
+        const category = feature.properties.details?.category;
+        const isPort = feature.properties.infrastructure_type === "port";
+        return (
+          <Marker key={`${feature.properties.infrastructure_type}-${feature.properties.id}`} position={position} icon={icon} eventHandlers={{ click: () => onSelectInfrastructure(feature) }} keyboard riseOnHover title={localized.name}>
+            <Tooltip direction="top">
+              {isPort && infrastructureCopy ? (
+                <span className="block max-w-[240px] whitespace-normal">
+                  <strong>{localized.name}</strong>
+                  <br />
+                  {[category ? infrastructureCopy.portCategories[category as PortCategory] ?? category : null, localized.coast].filter(Boolean).join(" · ")}
+                  {feature.properties.operator ? <><br />{infrastructureCopy.operator}: {feature.properties.operator}</> : null}
+                  {localized.description ? <><br /><span className="text-[11px]">{localized.description}</span></> : null}
+                </span>
+              ) : localized.name}
+            </Tooltip>
+          </Marker>
+        );
       })}
     </MapContainer>
   );

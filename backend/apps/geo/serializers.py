@@ -215,6 +215,19 @@ class StrategicInfrastructureSerializer(serializers.ModelSerializer):
         return {"type": "Point", "coordinates": [obj.location.x, obj.location.y]}
 
 
+INFRASTRUCTURE_DETAIL_KEYS = (
+    "name_en", "category", "coast", "coast_en", "description_en", "source_name_en",
+    "coords_verified",
+)
+
+
+def _infrastructure_details(metadata) -> dict:
+    """Display-only subset of metadata; identifiers and provenance stay server-side."""
+    if not isinstance(metadata, dict):
+        return {}
+    return {key: metadata[key] for key in INFRASTRUCTURE_DETAIL_KEYS if key in metadata}
+
+
 def infrastructure_feature_collection(queryset) -> dict:
     features = []
     for item in queryset:
@@ -233,6 +246,8 @@ def infrastructure_feature_collection(queryset) -> dict:
                 "status": item.status,
                 "source_name": item.source_name,
                 "source_url": item.source_url,
+                "description": item.description,
+                "details": _infrastructure_details(item.metadata),
             },
         })
     return {"type": "FeatureCollection", "features": features}
