@@ -125,6 +125,39 @@ function ringContains(ring: Ring, lng: number, lat: number): boolean {
   return inside;
 }
 
+function ringArea(ring: Ring): number {
+  let sum = 0;
+  for (let i = 0; i < ring.length - 1; i++) sum += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+  return Math.abs(sum) / 2;
+}
+
+/**
+ * Regions are unions of municipality boundaries that do not tile perfectly, leaving thousands
+ * of sliver holes (< 1e-4 deg²) drawn as stray lines. Real holes (lagoons, enclaves) are
+ * ≥ 1e-3 deg², so anything smaller is dropped.
+ */
+export const REGION_MIN_HOLE_AREA = 1e-3;
+
+export function stripRegionSlivers(
+  collection: TerritorialRegionFeatureCollection,
+  minHoleArea = REGION_MIN_HOLE_AREA,
+): TerritorialRegionFeatureCollection {
+  const cleanPolygon = ([outer, ...holes]: Ring[]) => [outer, ...holes.filter((hole) => ringArea(hole) >= minHoleArea)];
+  return {
+    ...collection,
+    features: collection.features.map((feature) => {
+      const { geometry } = feature;
+      if (geometry?.type === "Polygon") {
+        return { ...feature, geometry: { ...geometry, coordinates: cleanPolygon(geometry.coordinates as Ring[]) } };
+      }
+      if (geometry?.type === "MultiPolygon") {
+        return { ...feature, geometry: { ...geometry, coordinates: (geometry.coordinates as Ring[][]).map(cleanPolygon) } };
+      }
+      return feature;
+    }),
+  };
+}
+
 /** Point-in-polygon for GeoJSON Polygon/MultiPolygon, honoring holes. */
 export function geometryContainsPoint(geometry: GeoJSONGeometry | null, lng: number, lat: number): boolean {
   if (!geometry) return false;
@@ -239,6 +272,9 @@ export type MapQueryState = {
   department: string | null;
   municipality: string | null;
   project: string | null;
+  regionLevel: TerritorialRegionLevel | null;
+  /** Region `code` (R-01, M-03, copan…), only meaningful together with `regionLevel`. */
+  region: string | null;
 };
 
 export type MapSearchResult =
@@ -247,6 +283,8 @@ export type MapSearchResult =
   | { type: "project"; id: string; label: string; project: MapInvestmentProject };
 
 const QUERY_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const QUERY_REGION_CODE = /^[A-Za-z0-9-]+$/;
+export const TERRITORIAL_REGION_LEVELS: readonly TerritorialRegionLevel[] = ["macro", "sub", "polo"];
 
 export function normalizeMapSearch(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().trim().replace(/\s+/g, " ");
@@ -284,11 +322,21 @@ export function searchInvestmentMap(
 }
 
 export function parseMapQueryState(input: Record<string, string | string[] | undefined>): MapQueryState {
-  const read = (key: keyof MapQueryState) => {
+  const read = (key: keyof MapQueryState, pattern = QUERY_SLUG) => {
     const value = input[key];
-    return typeof value === "string" && QUERY_SLUG.test(value) ? value : null;
+    return typeof value === "string" && pattern.test(value) ? value : null;
   };
-  return { sector: read("sector"), department: read("department"), municipality: read("municipality"), project: read("project") };
+  const levelValue = read("regionLevel");
+  const regionLevel = TERRITORIAL_REGION_LEVELS.find((level) => level === levelValue) ?? null;
+  const region = regionLevel ? read("region", QUERY_REGION_CODE) : null;
+  return {
+    sector: read("sector"),
+    department: region ? null : read("department"),
+    municipality: region ? null : read("municipality"),
+    project: read("project"),
+    regionLevel,
+    region,
+  };
 }
 
 export function serializeMapQueryState(current: URLSearchParams, state: MapQueryState): string {
@@ -426,6 +474,27 @@ export function filterMapProjectsBySector(
 ): MapInvestmentProject[] {
   if (!sectorSlug) return projects;
   return projects.filter((project) => project.sector.slug === sectorSlug);
+}
+
+export function filterMapProjectsByRegion(
+  projects: MapInvestmentProject[],
+  region: Pick<TerritorialRegionFeature, "geometry"> | null,
+): MapInvestmentProject[] {
+  if (!region) return projects;
+  return projects.filter(
+    (project) => hasProjectCoordinates(project) && geometryContainsPoint(region.geometry, project.longitude!, project.latitude!),
+  );
+}
+
+/** Sum of declared investment; null when no project declares an amount. */
+export function getProjectsInvestmentTotal(projects: Pick<MapInvestmentProject, "investment_amount">[]): number | null {
+  let total: number | null = null;
+  for (const { investment_amount } of projects) {
+    const amount = Number(investment_amount);
+    if (investment_amount == null || investment_amount === "" || Number.isNaN(amount)) continue;
+    total = (total ?? 0) + amount;
+  }
+  return total;
 }
 
 export function getMarkerProjects(projects: MapInvestmentProject[]): MapInvestmentProject[] {

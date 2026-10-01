@@ -82,6 +82,15 @@ export type InvestmentMapCopy = {
   poloTypes: Record<"Consolidado" | "Detonante" | "Potencial", string>;
   approximateBoundary: string;
   regionsEmpty: string;
+  regionModeDepartments: string;
+  mapViewLabel: string;
+  clearRegion: string;
+  regionProjects: string;
+  regionLevelLabel: string;
+  regionLevelNames: Record<"macro" | "sub" | "polo", string>;
+  selectedRegion: string;
+  selectRegion: string;
+  noProjectsInRegion: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -172,6 +181,15 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     poloTypes: { Consolidado: "Consolidado", Detonante: "Detonante", Potencial: "Potencial" },
     approximateBoundary: "Delimitación aproximada",
     regionsEmpty: "No hay regiones publicadas para esta capa.",
+    regionModeDepartments: "Departamentos",
+    mapViewLabel: "Ver mapa por",
+    clearRegion: "Quitar selección",
+    regionProjects: "Proyectos en la región",
+    regionLevelLabel: "Nivel",
+    regionLevelNames: { macro: "Macroregión", sub: "Subregión", polo: "Polo de desarrollo" },
+    selectedRegion: "Región seleccionada",
+    selectRegion: "Selecciona una región en el mapa",
+    noProjectsInRegion: "No hay proyectos geolocalizados en esta región.",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -260,5 +278,14 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     poloTypes: { Consolidado: "Consolidated", Detonante: "Catalyst", Potencial: "Potential" },
     approximateBoundary: "Approximate boundary",
     regionsEmpty: "No regions are published for this layer.",
+    regionModeDepartments: "Departments",
+    mapViewLabel: "View map by",
+    clearRegion: "Clear selection",
+    regionProjects: "Projects in region",
+    regionLevelLabel: "Level",
+    regionLevelNames: { macro: "Macroregion", sub: "Subregion", polo: "Development hub" },
+    selectedRegion: "Selected region",
+    selectRegion: "Select a region on the map",
+    noProjectsInRegion: "There are no geolocated projects in this region.",
   },
 };

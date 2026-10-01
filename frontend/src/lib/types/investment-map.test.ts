@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { investmentMapCopy } from "@/src/i18n/copy/investmentMap";
 import {
   clearMapDepartment,
@@ -29,6 +31,10 @@ import {
   serializeMapQueryState,
   geometryContainsPoint,
   getRegionLegendItems,
+  filterMapProjectsByRegion,
+  getProjectsInvestmentTotal,
+  stripRegionSlivers,
+  type TerritorialRegionFeatureCollection,
   type TerritorialRegionFeature,
   type InfrastructureFeature,
   type MapInvestmentProject,
@@ -212,9 +218,32 @@ describe("investment map pure helpers", () => {
   });
 
   it("parses syntactically valid map params and serializes without stale map state", () => {
-    expect(parseMapQueryState({ sector: "energia", department: ["cortes"], municipality: "San Pedro", project: "p-1" })).toEqual({ sector: "energia", department: null, municipality: null, project: "p-1" });
+    expect(parseMapQueryState({ sector: "energia", department: ["cortes"], municipality: "San Pedro", project: "p-1" })).toEqual({ sector: "energia", department: null, municipality: null, project: "p-1", regionLevel: null, region: null });
     const current = new URLSearchParams("ref=campaign&q=old&department=old");
-    expect(serializeMapQueryState(current, { sector: null, department: "cortes", municipality: null, project: null })).toBe("ref=campaign&department=cortes");
+    expect(serializeMapQueryState(current, { sector: null, department: "cortes", municipality: null, project: null, regionLevel: null, region: null })).toBe("ref=campaign&department=cortes");
+  });
+
+  it("parses and serializes the territorial region selection", () => {
+    expect(parseMapQueryState({ regionLevel: "sub", region: "R-12" })).toMatchObject({ regionLevel: "sub", region: "R-12" });
+    expect(parseMapQueryState({ regionLevel: "polo", region: "copan" })).toMatchObject({ regionLevel: "polo", region: "copan" });
+    expect(parseMapQueryState({ regionLevel: "macro" })).toMatchObject({ regionLevel: "macro", region: null });
+    expect(parseMapQueryState({ regionLevel: "pais", region: "R-01" })).toMatchObject({ regionLevel: null, region: null });
+    expect(parseMapQueryState({ regionLevel: "sub", region: "R-01<script>" })).toMatchObject({ regionLevel: "sub", region: null });
+    expect(parseMapQueryState({ regionLevel: "sub", region: ["R-01"] })).toMatchObject({ region: null });
+
+    const state = { sector: null, department: null, municipality: null, project: null, regionLevel: "sub" as const, region: "R-12" };
+    expect(serializeMapQueryState(new URLSearchParams("department=cortes"), state)).toBe("regionLevel=sub&region=R-12");
+    expect(serializeMapQueryState(new URLSearchParams("regionLevel=sub&region=R-12"), { ...state, regionLevel: null, region: null })).toBe("");
+  });
+
+  it("gives the region precedence over department and municipality", () => {
+    expect(parseMapQueryState({ department: "cortes", municipality: "san-pedro-sula", regionLevel: "sub", region: "R-01" })).toMatchObject({
+      department: null,
+      municipality: null,
+      regionLevel: "sub",
+      region: "R-01",
+    });
+    expect(parseMapQueryState({ department: "cortes", regionLevel: "sub" })).toMatchObject({ department: "cortes", regionLevel: "sub", region: null });
   });
 
   it("covers the canonical search, map and stage labels in Spanish and English", () => {
@@ -271,3 +300,73 @@ describe("territorial regions", () => {
     expect(investmentMapCopy.es.approximateBoundary).toBe("Delimitación aproximada");
   });
 });
+
+describe("filterMapProjectsByRegion", () => {
+  const at = (slug: string, longitude: number | null, latitude: number | null): MapInvestmentProject => ({
+    ...mapProject(slug, null, latitude),
+    longitude,
+    location: latitude == null || longitude == null ? null : { type: "Point", coordinates: [longitude, latitude] },
+  });
+  const square = { geometry: { type: "Polygon", coordinates: [[[-88, 15], [-87, 15], [-87, 16], [-88, 16], [-88, 15]]] } };
+
+  it("keeps projects inside the region and drops the ones outside", () => {
+    const inside = at("inside", -87.5, 15.5);
+    const outside = at("outside", -86.5, 15.5);
+    expect(filterMapProjectsByRegion([inside, outside], square)).toEqual([inside]);
+  });
+
+  it("excludes projects without coordinates", () => {
+    expect(filterMapProjectsByRegion([at("no-point", null, null)], square)).toEqual([]);
+  });
+
+  it("returns every project when no region is selected", () => {
+    const projects = [at("a", -87.5, 15.5), at("b", null, null)];
+    expect(filterMapProjectsByRegion(projects, null)).toBe(projects);
+  });
+
+  it("matches islands of a MultiPolygon region (R-15 Arrecife Mesoamericano)", () => {
+    const file = readFileSync(resolve(__dirname, "../../../../backend/apps/geo/data/regiones/subregiones.geojson"), "utf-8");
+    const r15 = (JSON.parse(file) as TerritorialRegionFeatureCollectionLike).features.find((feature) => feature.properties.code === "R-15");
+    expect(r15?.geometry?.type).toBe("MultiPolygon");
+    const roatan = at("roatan", -86.53, 16.33);
+    const utila = at("utila", -86.89, 16.1);
+    const guanaja = at("guanaja", -85.89, 16.46);
+    const openSea = at("open-sea", -86.7, 16.2);
+    const laCeiba = at("la-ceiba", -86.78, 15.76);
+    expect(filterMapProjectsByRegion([roatan, utila, guanaja, openSea, laCeiba], r15!)).toEqual([roatan, utila, guanaja]);
+  });
+
+  it("drops sliver holes but keeps real holes in region geometries", () => {
+    const outer = [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]];
+    const sliver = [[0.1, 0.1], [0.101, 0.1], [0.101, 0.101], [0.1, 0.1]];
+    const lagoon = [[0.4, 0.4], [0.6, 0.4], [0.6, 0.6], [0.4, 0.6], [0.4, 0.4]];
+    const cleaned = stripRegionSlivers({
+      type: "FeatureCollection",
+      features: [
+        { type: "Feature", id: 1, geometry: { type: "Polygon", coordinates: [outer, sliver, lagoon] }, properties: { code: "A", name: "A", level: "sub", color: "#000", extra: {} } },
+        { type: "Feature", id: 2, geometry: { type: "MultiPolygon", coordinates: [[outer, sliver]] }, properties: { code: "B", name: "B", level: "sub", color: "#000", extra: {} } },
+      ],
+    });
+    expect(cleaned.features[0].geometry?.coordinates).toEqual([outer, lagoon]);
+    expect(cleaned.features[1].geometry?.coordinates).toEqual([[outer]]);
+    expect(geometryContainsPoint(cleaned.features[0].geometry, 0.1005, 0.1003)).toBe(true);
+    expect(geometryContainsPoint(cleaned.features[0].geometry, 0.5, 0.5)).toBe(false);
+  });
+
+  it("keeps real R-15 islands after removing slivers", () => {
+    const file = readFileSync(resolve(__dirname, "../../../../backend/apps/geo/data/regiones/subregiones.geojson"), "utf-8");
+    const collection = JSON.parse(file) as TerritorialRegionFeatureCollection;
+    const r15 = stripRegionSlivers(collection).features.find((feature) => feature.properties.code === "R-15")!;
+    expect(filterMapProjectsByRegion([at("roatan", -86.53, 16.33), at("open-sea", -86.7, 16.2)], r15).map((p) => p.slug)).toEqual(["roatan"]);
+  });
+
+  it("totals declared investment and returns null when nothing is declared", () => {
+    expect(getProjectsInvestmentTotal([{ investment_amount: "100" }, { investment_amount: "250.5" }, { investment_amount: null }])).toBe(350.5);
+    expect(getProjectsInvestmentTotal([{ investment_amount: null }, { investment_amount: "" }])).toBeNull();
+    expect(getProjectsInvestmentTotal([])).toBeNull();
+  });
+});
+
+type TerritorialRegionFeatureCollectionLike = {
+  features: { properties: { code: string }; geometry: { type: string; coordinates: unknown } | null }[];
+};
