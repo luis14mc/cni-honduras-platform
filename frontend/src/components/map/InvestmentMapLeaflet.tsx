@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import L, { type PathOptions } from "leaflet";
-import { CircleMarker, GeoJSON, MapContainer, Marker, Tooltip, useMap } from "react-leaflet";
+import { CircleMarker, GeoJSON, MapContainer, Marker, Pane, Tooltip, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import type {
@@ -13,8 +13,15 @@ import type {
   MunicipalityFeatureCollection,
   MunicipalityProperties,
   InfrastructureFeature,
+  PoloType,
+  TerritorialRegionFeatureCollection,
+  TerritorialRegionProperties,
 } from "@/src/lib/types/investment-map";
-import { toLeafletPointPosition, toLeafletProjectPosition } from "@/src/lib/types/investment-map";
+import {
+  geometryContainsPoint,
+  toLeafletPointPosition,
+  toLeafletProjectPosition,
+} from "@/src/lib/types/investment-map";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -30,6 +37,33 @@ const SELECTED_FILL = "#32B372";
 const SELECTED_STROKE = "#334E88";
 const MARKER_FILL = "#32B372";
 const MARKER_SELECTED = "#F7BF06";
+// overlayPane (departments, municipalities) is 400 and markerPane is 600.
+const REGIONS_PANE_Z = 450;
+const PROJECTS_PANE_Z = 460;
+
+export type RegionTooltipCopy = {
+  regionCode: string;
+  poloType: string;
+  poloTypes: Record<PoloType, string>;
+  approximateBoundary: string;
+};
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
+}
+
+function regionTooltipHtml(properties: TerritorialRegionProperties, copy: RegionTooltipCopy): string {
+  const lines = [
+    `<strong>${escapeHtml(properties.name)}</strong>`,
+    `${escapeHtml(copy.regionCode)}: ${escapeHtml(properties.code)}`,
+  ];
+  if (properties.level === "polo") {
+    const tipo = properties.extra.tipo;
+    if (tipo) lines.push(`${escapeHtml(copy.poloType)}: ${escapeHtml(copy.poloTypes[tipo] ?? tipo)}`);
+    if (properties.extra.approximate) lines.push(`<em>${escapeHtml(copy.approximateBoundary)}</em>`);
+  }
+  return lines.join("<br/>");
+}
 
 type Props = {
   data: DepartmentFeatureCollection;
@@ -54,6 +88,8 @@ type Props = {
   infrastructure: InfrastructureFeature[];
   selectedInfrastructureId: number | null;
   onSelectInfrastructure: (feature: InfrastructureFeature) => void;
+  regions?: TerritorialRegionFeatureCollection | null;
+  regionTooltipCopy?: RegionTooltipCopy;
 };
 
 function styleDepartment(
@@ -256,7 +292,14 @@ export function InvestmentMapLeaflet({
   infrastructure,
   selectedInfrastructureId,
   onSelectInfrastructure,
+  regions,
+  regionTooltipCopy,
 }: Props) {
+  // Regions sit above departments; while no department is selected a click on a region
+  // still selects the department underneath. With a department selected the region layer
+  // becomes non-interactive so municipalities stay clickable.
+  const regionsInteractive = !selectedDepartmentSlug;
+  const regionLevel = regions?.features[0]?.properties.level ?? "none";
   const departmentLayerRef = useRef<L.GeoJSON | null>(null);
   const municipalityLayerRef = useRef<L.GeoJSON | null>(null);
   const departmentStyleRef = useRef(styleDepartment);
@@ -396,6 +439,39 @@ export function InvestmentMapLeaflet({
           }}
         />
       ) : null}
+      {regions && regionTooltipCopy && regions.features.length > 0 ? (
+        <Pane name="cni-regions" style={{ zIndex: REGIONS_PANE_Z }}>
+          <GeoJSON
+            key={`${regionLevel}-${regionsInteractive ? "interactive" : "static"}`}
+            data={regions as unknown as GeoJSON.GeoJsonObject}
+            interactive={regionsInteractive}
+            style={(feature) => ({
+              color: "#ffffff",
+              weight: 1,
+              opacity: 0.9,
+              fillColor: (feature?.properties as TerritorialRegionProperties).color,
+              fillOpacity: 0.35,
+            })}
+            onEachFeature={(feature, layer) => {
+              if (!regionsInteractive) return;
+              const properties = feature.properties as TerritorialRegionProperties;
+              layer.bindTooltip(regionTooltipHtml(properties, regionTooltipCopy), {
+                sticky: true,
+                direction: "top",
+                opacity: 0.95,
+              });
+              layer.on({
+                click: (event: L.LeafletMouseEvent) => {
+                  const { lat, lng } = event.latlng;
+                  const department = data.features.find((item) => geometryContainsPoint(item.geometry, lng, lat));
+                  if (department) onSelectDepartment(department.properties);
+                },
+              });
+            }}
+          />
+        </Pane>
+      ) : null}
+      <Pane name="cni-projects" style={{ zIndex: PROJECTS_PANE_Z }}>
       {markerProjects.map((project) => {
         const position = toLeafletProjectPosition(project);
         if (!position) return null;
@@ -417,6 +493,7 @@ export function InvestmentMapLeaflet({
           ><Tooltip direction="top">{project.title}</Tooltip></CircleMarker>
         );
       })}
+      </Pane>
       {infrastructure.map((feature) => {
         const position = toLeafletPointPosition(feature.geometry.coordinates);
         if (!position) return null;

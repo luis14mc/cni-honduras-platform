@@ -1,5 +1,5 @@
 from django.http import Http404
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
@@ -10,9 +10,12 @@ from .serializers import (
     MunicipalitySerializer,
     departments_feature_collection,
     municipalities_feature_collection,
+    regions_feature_collection,
     StrategicInfrastructureSerializer,
     infrastructure_feature_collection,
 )
+
+REGION_LEVELS = {value for value, _ in CNIRegion.LEVEL_CHOICES}
 
 
 class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
@@ -40,6 +43,21 @@ class CNIRegionViewSet(viewsets.ReadOnlyModelViewSet):
             .filter(is_active=True)
             .order_by(*CNIRegion._meta.ordering)
         )
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        level = request.query_params.get("level", "sub")
+        if level not in REGION_LEVELS:
+            return Response(
+                {"detail": f"level debe ser uno de: {', '.join(sorted(REGION_LEVELS))}."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        queryset = (
+            CNIRegion.objects.filter(is_active=True, level=level, code__isnull=False)
+            .only("id", "code", "name", "level", "color_hex", "extra", "geometry")
+            .order_by("code")
+        )
+        return Response(regions_feature_collection(queryset))
 
 
 class MunicipalityViewSet(viewsets.ReadOnlyModelViewSet):

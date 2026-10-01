@@ -27,6 +27,9 @@ import {
   resetMapFilters,
   searchInvestmentMap,
   serializeMapQueryState,
+  geometryContainsPoint,
+  getRegionLegendItems,
+  type TerritorialRegionFeature,
   type InfrastructureFeature,
   type MapInvestmentProject,
   type MapDepartmentSummary,
@@ -221,5 +224,50 @@ describe("investment map pure helpers", () => {
     expect(investmentMapCopy.en.stageLabel).toBe("Stage");
     expect(investmentMapCopy.es.clearSearch).toBeTruthy();
     expect(investmentMapCopy.en.searchResults).toBeTruthy();
+  });
+});
+
+describe("territorial regions", () => {
+  const square = (x: number, y: number, size = 1) => [[x, y], [x + size, y], [x + size, y + size], [x, y + size], [x, y]];
+  const region = (code: string, level: TerritorialRegionFeature["properties"]["level"], color: string, extra = {}): TerritorialRegionFeature => ({
+    type: "Feature",
+    id: 1,
+    geometry: { type: "Polygon", coordinates: [square(0, 0)] },
+    properties: { code, name: `Región ${code}`, level, color, extra },
+  });
+
+  it("detects points inside polygons and multipolygons, honoring holes", () => {
+    const withHole = { type: "Polygon", coordinates: [square(0, 0, 4), square(1, 1, 2)] };
+    expect(geometryContainsPoint(withHole, 0.5, 0.5)).toBe(true);
+    expect(geometryContainsPoint(withHole, 2, 2)).toBe(false);
+    const multi = { type: "MultiPolygon", coordinates: [[square(0, 0)], [square(10, 10)]] };
+    expect(geometryContainsPoint(multi, 10.5, 10.5)).toBe(true);
+    expect(geometryContainsPoint(multi, 5, 5)).toBe(false);
+    expect(geometryContainsPoint(null, 0, 0)).toBe(false);
+  });
+
+  it("builds one legend entry per sub/macro region and one per polo type", () => {
+    const labels = investmentMapCopy.en.poloTypes;
+    expect(getRegionLegendItems([region("R-01", "sub", "#7FC731"), region("R-02", "sub", "#9934CC")], labels)).toEqual([
+      { key: "R-01", label: "R-01 · Región R-01", color: "#7FC731" },
+      { key: "R-02", label: "R-02 · Región R-02", color: "#9934CC" },
+    ]);
+    const polos = [
+      region("copan", "polo", "#F9A825", { tipo: "Detonante" }),
+      region("yoro", "polo", "#64B5F6", { tipo: "Potencial" }),
+      region("juticalpa", "polo", "#F9A825", { tipo: "Detonante" }),
+    ];
+    expect(getRegionLegendItems(polos, labels)).toEqual([
+      { key: "Detonante", label: "Catalyst", color: "#F9A825" },
+      { key: "Potencial", label: "Potential", color: "#64B5F6" },
+    ]);
+  });
+
+  it("ships bilingual copy for the territorial regions layer", () => {
+    expect(investmentMapCopy.es.territorialRegions).toBe("Regiones territoriales");
+    expect(investmentMapCopy.en.territorialRegions).toBe("Territorial regions");
+    expect(investmentMapCopy.es.regionLevels.none).toBe("Ninguna");
+    expect(investmentMapCopy.en.approximateBoundary).toBe("Approximate boundary");
+    expect(investmentMapCopy.es.approximateBoundary).toBe("Delimitación aproximada");
   });
 });

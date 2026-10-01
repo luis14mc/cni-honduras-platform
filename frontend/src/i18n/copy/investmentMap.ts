@@ -75,6 +75,13 @@ export type InvestmentMapCopy = {
   stageLabel: string;
   zoomIn: string;
   zoomOut: string;
+  territorialRegions: string;
+  regionLevels: Record<"none" | "macro" | "sub" | "polo", string>;
+  regionCode: string;
+  poloType: string;
+  poloTypes: Record<"Consolidado" | "Detonante" | "Potencial", string>;
+  approximateBoundary: string;
+  regionsEmpty: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -153,6 +160,18 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     stageLabel: "Etapa",
     zoomIn: "Acercar mapa",
     zoomOut: "Alejar mapa",
+    territorialRegions: "Regiones territoriales",
+    regionLevels: {
+      none: "Ninguna",
+      macro: "Macroregiones",
+      sub: "Subregiones",
+      polo: "Polos de desarrollo",
+    },
+    regionCode: "Código",
+    poloType: "Tipo",
+    poloTypes: { Consolidado: "Consolidado", Detonante: "Detonante", Potencial: "Potencial" },
+    approximateBoundary: "Delimitación aproximada",
+    regionsEmpty: "No hay regiones publicadas para esta capa.",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -229,5 +248,17 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     stageLabel: "Stage",
     zoomIn: "Zoom in",
     zoomOut: "Zoom out",
+    territorialRegions: "Territorial regions",
+    regionLevels: {
+      none: "None",
+      macro: "Macroregions",
+      sub: "Subregions",
+      polo: "Development hubs",
+    },
+    regionCode: "Code",
+    poloType: "Type",
+    poloTypes: { Consolidado: "Consolidated", Detonante: "Catalyst", Potencial: "Potential" },
+    approximateBoundary: "Approximate boundary",
+    regionsEmpty: "No regions are published for this layer.",
   },
 };
