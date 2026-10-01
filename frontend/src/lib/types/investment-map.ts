@@ -62,6 +62,85 @@ export type DepartmentFeatureCollection = {
 };
 
 // ---------------------------------------------------------------------------
+// GeoJSON — regiones territoriales
+// ---------------------------------------------------------------------------
+
+export type TerritorialRegionLevel = "macro" | "sub" | "polo";
+
+export type PoloType = "Consolidado" | "Detonante" | "Potencial";
+
+export type TerritorialRegionProperties = {
+  code: string;
+  name: string;
+  level: TerritorialRegionLevel;
+  color: string;
+  extra: {
+    tipo?: PoloType;
+    subregiones?: string[];
+    approximate?: boolean;
+    source?: string;
+  };
+};
+
+export type TerritorialRegionFeature = {
+  type: "Feature";
+  id: number;
+  geometry: GeoJSONGeometry | null;
+  properties: TerritorialRegionProperties;
+};
+
+export type TerritorialRegionFeatureCollection = {
+  type: "FeatureCollection";
+  features: TerritorialRegionFeature[];
+};
+
+export type RegionLegendItem = { key: string; label: string; color: string };
+
+/** Polos share a color per tipo; macro/sub regions have one color each. */
+export function getRegionLegendItems(
+  features: TerritorialRegionFeature[],
+  poloTypeLabels: Record<PoloType, string>,
+): RegionLegendItem[] {
+  const items = new Map<string, RegionLegendItem>();
+  for (const { properties } of features) {
+    if (properties.level === "polo") {
+      const tipo = properties.extra.tipo;
+      if (tipo && !items.has(tipo)) items.set(tipo, { key: tipo, label: poloTypeLabels[tipo] ?? tipo, color: properties.color });
+    } else {
+      items.set(properties.code, { key: properties.code, label: `${properties.code} · ${properties.name}`, color: properties.color });
+    }
+  }
+  return Array.from(items.values());
+}
+
+type Ring = [number, number][];
+
+function ringContains(ring: Ring, lng: number, lat: number): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > lat !== yj > lat && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Point-in-polygon for GeoJSON Polygon/MultiPolygon, honoring holes. */
+export function geometryContainsPoint(geometry: GeoJSONGeometry | null, lng: number, lat: number): boolean {
+  if (!geometry) return false;
+  const polygons =
+    geometry.type === "Polygon"
+      ? [geometry.coordinates as Ring[]]
+      : geometry.type === "MultiPolygon"
+        ? (geometry.coordinates as Ring[][])
+        : [];
+  return polygons.some(
+    ([outer, ...holes]) =>
+      Boolean(outer) && ringContains(outer, lng, lat) && !holes.some((hole) => ringContains(hole, lng, lat)),
+  );
+}
+
+// ---------------------------------------------------------------------------
 // GeoJSON — municipios
 // ---------------------------------------------------------------------------
 

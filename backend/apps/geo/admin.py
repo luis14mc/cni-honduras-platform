@@ -29,17 +29,32 @@ class DepartmentAdmin(admin.ModelAdmin):
 
 @admin.register(CNIRegion)
 class CNIRegionAdmin(admin.ModelAdmin):
-    list_display = ("name", "slug", "color_hex", "is_active", "updated_at")
-    list_filter = ("is_active",)
-    search_fields = ("name", "slug", "description")
+    list_display = ("name", "code", "level", "parent", "slug", "color_hex", "is_active", "updated_at")
+    list_filter = ("is_active", "level")
+    search_fields = ("name", "slug", "code", "description")
     readonly_fields = ("created_at", "updated_at")
     prepopulated_fields = {"slug": ("name",)}
-    filter_horizontal = ("departments",)
+    filter_horizontal = ("departments", "municipalities")
     ordering = ("name",)
 
     fieldsets = (
-        (None, {"fields": ("name", "slug", "description", "color_hex", "is_active")}),
-        ("Departamentos", {"fields": ("departments",)}),
+        (
+            None,
+            {
+                "fields": (
+                    "name",
+                    "slug",
+                    "code",
+                    "level",
+                    "parent",
+                    "description",
+                    "color_hex",
+                    "is_active",
+                )
+            },
+        ),
+        ("Departamentos y municipios", {"fields": ("departments", "municipalities")}),
+        ("Datos adicionales", {"fields": ("extra",)}),
         ("Geometría", {"fields": ("geometry",)}),
         ("Metadatos", {"fields": ("created_at", "updated_at")}),
     )

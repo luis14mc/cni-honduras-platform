@@ -32,10 +32,21 @@ class Department(models.Model):
 
 
 class CNIRegion(models.Model):
+    LEVEL_CHOICES = [("macro", "Macroregión"), ("sub", "Subregión"), ("polo", "Polo de desarrollo")]
+
     name = models.CharField(max_length=120)
     slug = models.SlugField(max_length=140, unique=True, db_index=True)
     description = models.TextField(blank=True, default="")
     color_hex = models.CharField(max_length=7, blank=True, default="")
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, default="sub", db_index=True)
+    code = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="children",
+    )
 
     geometry = models.MultiPolygonField(srid=4326, null=True, blank=True)
     departments = models.ManyToManyField(
@@ -43,6 +54,9 @@ class CNIRegion(models.Model):
         related_name="regions",
         blank=True,
     )
+    municipalities = models.ManyToManyField("Municipality", related_name="cni_regions", blank=True)
+    # Tipo de polo, subregiones que lo componen, approximate y fuente.
+    extra = models.JSONField(default=dict, blank=True)
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

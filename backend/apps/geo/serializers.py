@@ -160,6 +160,44 @@ def municipalities_feature_collection(queryset) -> dict:
     }
 
 
+REGION_SIMPLIFY_TOLERANCE = 0.001
+REGION_COORDINATE_DECIMALS = 5
+
+
+def _round_coordinates(coordinates):
+    if coordinates and isinstance(coordinates[0], (int, float)):
+        return [round(value, REGION_COORDINATE_DECIMALS) for value in coordinates]
+    return [_round_coordinates(item) for item in coordinates]
+
+
+def region_feature(region: CNIRegion) -> dict:
+    geometry = None
+    if region.geometry:
+        geometry = json.loads(
+            region.geometry.simplify(REGION_SIMPLIFY_TOLERANCE, preserve_topology=True).geojson
+        )
+        geometry["coordinates"] = _round_coordinates(geometry["coordinates"])
+    return {
+        "type": "Feature",
+        "id": region.id,
+        "geometry": geometry,
+        "properties": {
+            "code": region.code,
+            "name": region.name,
+            "level": region.level,
+            "color": region.color_hex,
+            "extra": region.extra,
+        },
+    }
+
+
+def regions_feature_collection(queryset) -> dict:
+    return {
+        "type": "FeatureCollection",
+        "features": [region_feature(region) for region in queryset],
+    }
+
+
 class StrategicInfrastructureSerializer(serializers.ModelSerializer):
     type = serializers.CharField(source="infrastructure_type", read_only=True)
     department = serializers.SlugRelatedField(read_only=True, slug_field="slug")
