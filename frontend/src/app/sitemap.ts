@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { API_BASE_URL, unwrapPage } from "@/src/lib/api";
 import { getAllResourceCategorySlugs } from "@/src/data/resourceCategoryMeta";
 import { getNews, getSuccessStories } from "@/src/lib/strapi/editorial";
-import { getOpportunities } from "@/src/services/investment";
+import { getOpportunities, getProjects } from "@/src/services/investment";
 import { resolveHref } from "@/src/config/siteNavigation";
 import type { Locale } from "@/src/i18n/config";
 
@@ -53,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/recursos",
     "/portafolio/casos",
     "/portafolio/oportunidades",
+    "/portafolio/fichas-proyectos",
     "/portafolio/mapa",
     "/invertir/sectores",
   ];
@@ -112,6 +113,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const slug of opportunitySlugs) {
     entries.push({ url: `${base}/portafolio/oportunidades/${slug}`, changeFrequency: "monthly", priority: 0.6 });
     entries.push({ url: `${base}/en/portfolio/opportunities/${slug}`, changeFrequency: "monthly", priority: 0.6 });
+  }
+
+  let projectSlugs: string[] = [];
+  try {
+    projectSlugs = (await getProjects({ locale: "es" })).map((item) => item.slug).filter(Boolean);
+  } catch {
+    projectSlugs = [];
+  }
+  for (const slug of projectSlugs) {
+    entries.push({ url: `${base}/portafolio/fichas-proyectos/${slug}`, changeFrequency: "monthly", priority: 0.6 });
+    entries.push({ url: `${base}/en/portfolio/project-sheets/${slug}`, changeFrequency: "monthly", priority: 0.6 });
   }
 
   // Sectores: se mantienen desde Django (las páginas de sectores se alimentan de Django).

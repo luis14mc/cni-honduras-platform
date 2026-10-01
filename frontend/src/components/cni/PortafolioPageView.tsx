@@ -6,6 +6,9 @@ import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
+import type { AsyncData } from "@/src/lib/asyncData";
+import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
+import { formatUsdMillions, sumAmountUsd, type PortfolioCatalogItem } from "@/src/lib/portfolioCatalog";
 
 const copy = {
   es: {
@@ -16,6 +19,7 @@ const copy = {
     sectionDescription: "Seleccione el tipo de recurso que desea consultar.",
     cards: [
       {
+        kind: "project" as const,
         title: "Fichas de Proyectos",
         description: "Consulte las fichas de proyectos organizadas por sector de inversión.",
         cta: "Ver fichas de proyectos",
@@ -23,6 +27,7 @@ const copy = {
         icon: FileText,
       },
       {
+        kind: "opportunity" as const,
         title: "Opportunity Cards",
         description: "Explore las tarjetas de oportunidades organizadas por sector de inversión.",
         cta: "Ver Opportunity Cards",
@@ -39,6 +44,7 @@ const copy = {
     sectionDescription: "Select the type of resource you want to view.",
     cards: [
       {
+        kind: "project" as const,
         title: "Project Sheets",
         description: "View project sheets organized by investment sector.",
         cta: "View project sheets",
@@ -46,6 +52,7 @@ const copy = {
         icon: FileText,
       },
       {
+        kind: "opportunity" as const,
         title: "Opportunity Cards",
         description: "Explore opportunity cards organized by investment sector.",
         cta: "View Opportunity Cards",
@@ -56,7 +63,24 @@ const copy = {
   },
 } as const;
 
-export function PortafolioPageView({ locale }: { locale: Locale }) {
+type Props = {
+  locale: Locale;
+  projects: AsyncData<PortfolioCatalogItem[]>;
+  opportunities: AsyncData<PortfolioCatalogItem[]>;
+};
+
+function catalogStats(
+  locale: Locale,
+  kind: "project" | "opportunity",
+  data: AsyncData<PortfolioCatalogItem[]>,
+) {
+  if (data.status !== "ok") return null;
+  const catalog = portfolioCatalogCopy[locale];
+  const count = kind === "project" ? catalog.projectsCount(data.data.length) : catalog.opportunitiesCount(data.data.length);
+  return { count, amount: formatUsdMillions(sumAmountUsd(data.data)) };
+}
+
+export function PortafolioPageView({ locale, projects, opportunities }: Props) {
   const c = copy[locale];
 
   return (
@@ -82,6 +106,7 @@ export function PortafolioPageView({ locale }: { locale: Locale }) {
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {c.cards.map((card) => {
               const Icon = card.icon;
+              const stats = catalogStats(locale, card.kind, card.kind === "project" ? projects : opportunities);
               return (
                 <Link
                   key={card.href}
@@ -92,6 +117,14 @@ export function PortafolioPageView({ locale }: { locale: Locale }) {
                     <Icon className="h-7 w-7" />
                   </span>
                   <h3 className={cn("mt-7", t.h3)}>{card.title}</h3>
+                  {stats ? (
+                    <p className="mt-3 font-display text-2xl font-extrabold text-[#001a33]">
+                      {stats.amount}
+                      <span className="ml-2 align-middle font-headline text-xs font-bold uppercase tracking-[0.14em] text-cni-primary/55">
+                        {stats.count}
+                      </span>
+                    </p>
+                  ) : null}
                   <p className="mt-4 flex-1 font-body text-base leading-relaxed text-cni-primary/70">{card.description}</p>
                   <span className="mt-8 inline-flex items-center gap-2 font-headline text-xs font-bold uppercase tracking-[0.16em] text-[#168654]">
                     {card.cta}

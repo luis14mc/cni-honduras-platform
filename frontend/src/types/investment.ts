@@ -77,6 +77,15 @@ export interface OpportunityFundUse {
   order: number;
 }
 
+export interface RegionRef {
+  id: number;
+  name: string;
+  slug: string;
+  code: string | null;
+  level: "macro" | "sub" | "polo" | string;
+  parent?: RegionRef | null;
+}
+
 export interface InvestmentOpportunity {
   id: number;
   code: string;
@@ -91,7 +100,7 @@ export interface InvestmentOpportunity {
   value_proposition?: string;
   sector: SectorLite | null;
   department?: DepartmentLite | null;
-  region?: CNIRegion | null;
+  region?: RegionRef | CNIRegion | null;
   estimated_investment: string | null;
   estimated_jobs: number | null;
   status: OpportunityStatus;
@@ -104,6 +113,16 @@ export interface InvestmentOpportunity {
   published_at?: string | null;
   created_at?: string;
   updated_at?: string;
+  cover_image_url?: string | null;
+  location_text?: string;
+  amount_text?: string;
+  amount_notes?: string[];
+  phase?: string;
+  phase_detail?: string;
+  investment_type?: string;
+  location?: GeoJSON.Point | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 export type ProjectStage =
@@ -117,13 +136,14 @@ export type ProjectStage =
 
 export interface InvestmentProject {
   id: number;
+  code?: string | null;
   title: string;
   slug: string;
   summary: string;
   description: string;
   sector: SectorLite;
   department: DepartmentLite | null;
-  region: CNIRegion | null;
+  region: RegionRef | CNIRegion | null;
   municipality: Municipality | null;
   investment_amount: string | null;
   estimated_jobs: number | null;
@@ -133,6 +153,13 @@ export interface InvestmentProject {
   location: GeoJSON.Point | null;
   latitude: number | null;
   longitude: number | null;
+  cover_image_url?: string | null;
+  location_text?: string;
+  amount_text?: string;
+  amount_notes?: string[];
+  phase?: string;
+  phase_detail?: string;
+  investment_type?: string;
 }
 
 export interface SuccessStory {

@@ -493,12 +493,13 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
       department: selectedDepartment?.slug ?? null,
       municipality: selectedMunicipality?.slug ?? null,
       project: selectedProject?.slug ?? null,
+      opportunity: selectedProject ? null : initialQueryState.opportunity,
       regionLevel: regionLayer === "none" ? null : regionLayer,
       region: selectedRegion?.properties.code ?? null,
     });
     const target = query ? `${pathname}?${query}` : pathname;
     if (`${window.location.pathname}${window.location.search}` !== target) router.replace(target, { scroll: false });
-  }, [activeSector, pathname, queryReady, regionLayer, router, selectedDepartment, selectedMunicipality, selectedProject, selectedRegion]);
+  }, [activeSector, initialQueryState.opportunity, pathname, queryReady, regionLayer, router, selectedDepartment, selectedMunicipality, selectedProject, selectedRegion]);
 
   const chooseSearchResult = (result: MapSearchResult) => {
     if (result.type === "department") handleSelectDepartment(result.department);

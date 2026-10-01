@@ -52,6 +52,8 @@ describe("enlaces en inglés (resolveHref)", () => {
   it.each([
     ["/portafolio/oportunidades", "/en/portfolio/opportunities"],
     ["/portafolio/oportunidades/oc-cni-t002", "/en/portfolio/opportunities/oc-cni-t002"],
+    ["/portafolio/fichas-proyectos", "/en/portfolio/project-sheets"],
+    ["/portafolio/fichas-proyectos/distrito-palmerola", "/en/portfolio/project-sheets/distrito-palmerola"],
     ["/portafolio/casos/caso-demo", "/en/portfolio/success-stories/caso-demo"],
     ["/portafolio/mapa", "/en/portfolio/map"],
     ["/crecer/acompanamiento", "/en/grow/aftercare"],
@@ -65,6 +67,9 @@ describe("enlaces en inglés (resolveHref)", () => {
 
   it("traduce rutas de detalle en inglés de vuelta al español", () => {
     expect(resolveHref("es", "/en/portfolio/opportunities/oc-1")).toBe("/portafolio/oportunidades/oc-1");
+    expect(resolveHref("es", "/en/portfolio/project-sheets/distrito-palmerola")).toBe(
+      "/portafolio/fichas-proyectos/distrito-palmerola",
+    );
   });
 
   it("conserva query y hash", () => {
@@ -76,6 +81,12 @@ describe("selector de idioma (getMirrorPath)", () => {
   it("espeja el detalle de una oportunidad en ambos sentidos", () => {
     expect(getMirrorPath("/portafolio/oportunidades/oc-1", "en")).toBe("/en/portfolio/opportunities/oc-1");
     expect(getMirrorPath("/en/portfolio/opportunities/oc-1", "es")).toBe("/portafolio/oportunidades/oc-1");
+    expect(getMirrorPath("/portafolio/fichas-proyectos/distrito-palmerola", "en")).toBe(
+      "/en/portfolio/project-sheets/distrito-palmerola",
+    );
+    expect(getMirrorPath("/en/portfolio/project-sheets/distrito-palmerola", "es")).toBe(
+      "/portafolio/fichas-proyectos/distrito-palmerola",
+    );
   });
 });
 
@@ -85,10 +96,13 @@ describe("URL pública -> página interna (middleware)", () => {
     ["/portafolio/oportunidades/oc-1", "/es/portafolio/oportunidades/oc-1"],
     ["/en/portfolio/opportunities", "/en/portafolio/oportunidades"],
     ["/en/portfolio/opportunities/oc-1", "/en/portafolio/oportunidades/oc-1"],
+    ["/portafolio/fichas-proyectos/distrito-palmerola", "/es/portafolio/fichas-proyectos/distrito-palmerola"],
+    ["/en/portfolio/project-sheets/distrito-palmerola", "/en/portafolio/fichas-proyectos/distrito-palmerola"],
     ["/en/portfolio/map", "/en/portafolio/mapa"],
     ["/mapa", "/es/portafolio/mapa"],
   ])("%s -> %s", (publicPath, internal) => {
     expect(resolveInternalPath(publicPath)).toBe(internal);
+    expect(internalPageExists(publicPath), publicPath).toBe(true);
   });
 });
 
