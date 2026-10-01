@@ -3,8 +3,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import CNIRegion, Department, Municipality, StrategicInfrastructure
+from apps.core.api import LocalizedViewSetMixin
+
+from .models import CNIRegion, Department, Municipality, RoadCorridor, StrategicInfrastructure
 from .serializers import (
+    roads_feature_collection,
     CNIRegionSerializer,
     DepartmentSerializer,
     MunicipalitySerializer,
@@ -128,3 +131,36 @@ class StrategicInfrastructureViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=["get"], url_path="geojson")
     def geojson(self, request):
         return Response(infrastructure_feature_collection(self.get_queryset()))
+
+
+ROAD_CLASSES = {value for value, _ in RoadCorridor.ROAD_CLASS}
+ROAD_CACHE_SECONDS = 60 * 60
+
+
+class RoadCorridorViewSet(LocalizedViewSetMixin, viewsets.GenericViewSet):
+    """Read-only GeoJSON of the main road network; `?lang=` localizes name/description."""
+
+    queryset = RoadCorridor.objects.none()
+
+    @action(detail=False, methods=["get"], url_path="geojson")
+    def geojson(self, request):
+        queryset = RoadCorridor.objects.filter(is_active=True)
+        road_class = request.query_params.get("class")
+        if road_class is not None:
+            if road_class not in ROAD_CLASSES:
+                return Response(
+                    {"detail": f"class debe ser uno de: {', '.join(sorted(ROAD_CLASSES))}."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            queryset = queryset.filter(road_class=road_class)
+        strategic = request.query_params.get("strategic")
+        if strategic is not None:
+            if strategic not in {"true", "false"}:
+                return Response(
+                    {"detail": "strategic debe ser true o false."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            queryset = queryset.filter(is_strategic=strategic == "true")
+        response = Response(roads_feature_collection(queryset.order_by("ref", "code")))
+        response["Cache-Control"] = f"public, max-age={ROAD_CACHE_SECONDS}"
+        return response

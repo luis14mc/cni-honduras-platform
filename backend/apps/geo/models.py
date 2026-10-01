@@ -172,3 +172,27 @@ class StrategicInfrastructure(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+
+class RoadCorridor(models.Model):
+    ROAD_CLASS = [("primaria", "Primaria"), ("secundaria", "Secundaria")]
+
+    code = models.SlugField(max_length=60, unique=True)
+    ref = models.CharField(max_length=30, blank=True, default="")
+    name = models.CharField(max_length=200)
+    road_class = models.CharField(max_length=12, choices=ROAD_CLASS)
+    geometry = models.MultiLineStringField(srid=4326)
+    length_km = models.PositiveIntegerField(default=0)
+    is_strategic = models.BooleanField(default=False)
+    description = models.TextField(blank=True, default="")
+    source_name = models.CharField(max_length=120)
+    source_url = models.URLField(blank=True, default="")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("ref", "code")
+        verbose_name = "Corredor vial"
+        verbose_name_plural = "Corredores viales"
+
+    def __str__(self) -> str:
+        return f"{self.ref} · {self.name}" if self.ref else self.name

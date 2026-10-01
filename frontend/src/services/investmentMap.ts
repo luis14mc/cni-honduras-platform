@@ -11,6 +11,7 @@ import type {
   MunicipalityFeatureCollection,
   InfrastructureFeatureCollection,
   InfrastructureLayer,
+  RoadCorridorFeatureCollection,
 } from "@/src/lib/types/investment-map";
 import type { Sector } from "@/src/types/investment";
 
@@ -33,6 +34,11 @@ export function getInfrastructureGeoJson(
 ): Promise<InfrastructureFeatureCollection> {
   const params = new URLSearchParams({ type, lang: locale });
   return apiGet<InfrastructureFeatureCollection>(`/geo/infrastructure/geojson/?${params.toString()}`);
+}
+
+export function getRoadCorridorsGeoJson(locale: "es" | "en"): Promise<RoadCorridorFeatureCollection> {
+  const params = new URLSearchParams({ lang: locale });
+  return apiGet<RoadCorridorFeatureCollection>(`/geo/roads/geojson/?${params.toString()}`);
 }
 
 export { getGeolocatedMapProjects, getMapSummary, getSectors };

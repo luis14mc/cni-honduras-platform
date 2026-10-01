@@ -1,5 +1,5 @@
 import type { Locale } from "@/src/i18n/config";
-import type { PortCategory } from "@/src/lib/types/investment-map";
+import type { PortCategory, RoadClass } from "@/src/lib/types/investment-map";
 
 export type InvestmentMapCopy = {
   eyebrow: string;
@@ -98,6 +98,17 @@ export type InvestmentMapCopy = {
   portCategories: Record<PortCategory, string>;
   statusLabels: Record<string, string>;
   approximateLocation: string;
+  roadNetwork: string;
+  legendPrimaryRoad: string;
+  legendSecondaryRoad: string;
+  selectedRoad: string;
+  clearRoad: string;
+  roadRef: string;
+  roadClass: string;
+  roadClasses: Record<RoadClass, string>;
+  roadLength: string;
+  strategicCorridor: string;
+  osmAttribution: string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -203,6 +214,17 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     portCategories: { principal: "Principal", secundario: "Secundario", cruceros: "Cruceros", cabotaje: "Cabotaje" },
     statusLabels: { operativo: "Operativo" },
     approximateLocation: "Ubicación aproximada, pendiente de validación con la ENP.",
+    roadNetwork: "Red vial principal",
+    legendPrimaryRoad: "Corredor primario",
+    legendSecondaryRoad: "Vía secundaria",
+    selectedRoad: "Corredor vial seleccionado",
+    clearRoad: "Limpiar corredor",
+    roadRef: "Código",
+    roadClass: "Clase",
+    roadClasses: { primaria: "Primaria", secundaria: "Secundaria" },
+    roadLength: "Longitud aproximada",
+    strategicCorridor: "Corredor estratégico CNI",
+    osmAttribution: "© colaboradores de OpenStreetMap",
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -306,5 +328,16 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     portCategories: { principal: "Main", secundario: "Secondary", cruceros: "Cruise", cabotaje: "Coastal shipping" },
     statusLabels: { operativo: "Operational" },
     approximateLocation: "Approximate location, pending validation with the ENP (National Port Company).",
+    roadNetwork: "Main road network",
+    legendPrimaryRoad: "Primary corridor",
+    legendSecondaryRoad: "Secondary road",
+    selectedRoad: "Selected road corridor",
+    clearRoad: "Clear corridor",
+    roadRef: "Code",
+    roadClass: "Class",
+    roadClasses: { primaria: "Primary", secundaria: "Secondary" },
+    roadLength: "Approximate length",
+    strategicCorridor: "CNI strategic corridor",
+    osmAttribution: "© OpenStreetMap contributors",
   },
 };

@@ -2,7 +2,7 @@ import json
 
 from rest_framework import serializers
 
-from .models import CNIRegion, Department, Municipality, StrategicInfrastructure
+from .models import CNIRegion, Department, Municipality, RoadCorridor, StrategicInfrastructure
 
 
 class GeometrySerializerMixin:
@@ -251,6 +251,42 @@ def infrastructure_feature_collection(queryset) -> dict:
             },
         })
     return {"type": "FeatureCollection", "features": features}
+
+
+ROAD_SIMPLIFY_TOLERANCE = 0.0008
+
+
+def road_feature(corridor: RoadCorridor) -> dict:
+    geometry = json.loads(
+        corridor.geometry.simplify(ROAD_SIMPLIFY_TOLERANCE, preserve_topology=True).geojson
+    )
+    if geometry["type"] == "LineString":
+        geometry = {"type": "MultiLineString", "coordinates": [geometry["coordinates"]]}
+    geometry["coordinates"] = _round_coordinates(geometry["coordinates"])
+    return {
+        "type": "Feature",
+        "id": corridor.id,
+        "geometry": geometry,
+        "properties": {
+            "id": corridor.id,
+            "code": corridor.code,
+            "ref": corridor.ref,
+            "name": corridor.name,
+            "road_class": corridor.road_class,
+            "length_km": corridor.length_km,
+            "is_strategic": corridor.is_strategic,
+            "description": corridor.description,
+            "source_name": corridor.source_name,
+            "source_url": corridor.source_url,
+        },
+    }
+
+
+def roads_feature_collection(queryset) -> dict:
+    return {
+        "type": "FeatureCollection",
+        "features": [road_feature(corridor) for corridor in queryset],
+    }
 
 
 def _place_properties(place) -> dict | None:

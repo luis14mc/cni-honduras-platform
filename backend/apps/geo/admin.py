@@ -1,6 +1,7 @@
 from django.contrib import admin
+from modeltranslation.admin import TranslationAdmin
 
-from .models import CNIRegion, Department, Municipality, StrategicInfrastructure
+from .models import CNIRegion, Department, Municipality, RoadCorridor, StrategicInfrastructure
 
 
 @admin.register(Department)
@@ -86,3 +87,18 @@ class StrategicInfrastructureAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ("department", "municipality")
     ordering = ("name",)
+
+
+@admin.register(RoadCorridor)
+class RoadCorridorAdmin(TranslationAdmin):
+    list_display = ("ref", "name", "road_class", "length_km", "is_strategic", "is_active")
+    list_editable = ("is_strategic",)
+    list_filter = ("road_class", "is_strategic", "is_active")
+    search_fields = ("ref", "code", "name", "description")
+    ordering = ("ref", "code")
+    # Geometry, ref and length come from OSM and are refreshed by import_road_corridors.
+    readonly_fields = ("code", "ref", "road_class", "length_km", "source_name", "source_url")
+    fields = (
+        "code", "ref", "name", "road_class", "length_km", "is_strategic", "description",
+        "is_active", "source_name", "source_url",
+    )
