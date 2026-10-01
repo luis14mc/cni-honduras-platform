@@ -14,14 +14,11 @@ import type {
   MunicipalityProperties,
   InfrastructureFeature,
   PoloType,
+  TerritorialRegionFeature,
   TerritorialRegionFeatureCollection,
   TerritorialRegionProperties,
 } from "@/src/lib/types/investment-map";
-import {
-  geometryContainsPoint,
-  toLeafletPointPosition,
-  toLeafletProjectPosition,
-} from "@/src/lib/types/investment-map";
+import { toLeafletPointPosition, toLeafletProjectPosition } from "@/src/lib/types/investment-map";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -65,6 +62,17 @@ function regionTooltipHtml(properties: TerritorialRegionProperties, copy: Region
   return lines.join("<br/>");
 }
 
+const REGION_STROKE = "#ffffff";
+const REGION_SELECTED_STROKE = "#F7BF06";
+
+function styleRegion(properties: TerritorialRegionProperties, selectedRegionCode: string | null): PathOptions {
+  const base = { color: REGION_STROKE, weight: 1.5, opacity: 1, fillColor: properties.color };
+  if (properties.code === selectedRegionCode) {
+    return { ...base, color: REGION_SELECTED_STROKE, weight: 3, fillOpacity: 0.75 };
+  }
+  return { ...base, fillOpacity: selectedRegionCode ? 0.2 : 0.55 };
+}
+
 type Props = {
   data: DepartmentFeatureCollection;
   summaries: Map<string, MapDepartmentSummary>;
@@ -90,6 +98,9 @@ type Props = {
   onSelectInfrastructure: (feature: InfrastructureFeature) => void;
   regions?: TerritorialRegionFeatureCollection | null;
   regionTooltipCopy?: RegionTooltipCopy;
+  regionMode?: boolean;
+  selectedRegionCode?: string | null;
+  onSelectRegion?: (code: string | null) => void;
 };
 
 function styleDepartment(
@@ -189,6 +200,7 @@ function ViewportController({
   projectFocusKey,
   zoomInLabel,
   zoomOutLabel,
+  selectedRegion,
 }: {
   data: DepartmentFeatureCollection;
   selectedDepartmentSlug: string | null;
@@ -198,10 +210,12 @@ function ViewportController({
   projectFocusKey: number;
   zoomInLabel: string;
   zoomOutLabel: string;
+  selectedRegion: TerritorialRegionFeature | null;
 }) {
   const map = useMap();
   const initialFit = useRef(false);
   const previousDepartment = useRef<string | null>(null);
+  const previousRegion = useRef<string | null>(null);
 
   useEffect(() => {
     const container = map.getContainer();
@@ -258,6 +272,23 @@ function ViewportController({
   }, [data, map, municipalities, selectedDepartmentSlug, selectedMunicipalitySlug]);
 
   useEffect(() => {
+    const code = selectedRegion?.properties.code ?? null;
+    if (code === previousRegion.current) return;
+    const target = selectedRegion?.geometry ? selectedRegion : previousRegion.current ? data : null;
+    previousRegion.current = code;
+    if (!target) return;
+    const bounds = L.geoJSON(target as unknown as GeoJSON.GeoJsonObject).getBounds();
+    if (bounds.isValid()) {
+      map.fitBounds(
+        bounds,
+        selectedRegion
+          ? { padding: [28, 28], maxZoom: 9, animate: true }
+          : { padding: [12, 12], maxZoom: 8, animate: true },
+      );
+    }
+  }, [data, map, selectedRegion]);
+
+  useEffect(() => {
     if (!selectedProjectPosition || projectFocusKey === 0) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     map.flyTo(selectedProjectPosition, Math.min(Math.max(map.getZoom(), 9), 10), {
@@ -294,12 +325,34 @@ export function InvestmentMapLeaflet({
   onSelectInfrastructure,
   regions,
   regionTooltipCopy,
+  regionMode = false,
+  selectedRegionCode = null,
+  onSelectRegion,
 }: Props) {
-  // Regions sit above departments; while no department is selected a click on a region
-  // still selects the department underneath. With a department selected the region layer
-  // becomes non-interactive so municipalities stay clickable.
-  const regionsInteractive = !selectedDepartmentSlug;
   const regionLevel = regions?.features[0]?.properties.level ?? "none";
+  const regionLayerRef = useRef<L.GeoJSON | null>(null);
+  // onEachFeature handlers are bound once per layer mount; read the latest values from refs.
+  const selectedRegionCodeRef = useRef(selectedRegionCode);
+  const onSelectRegionRef = useRef(onSelectRegion);
+  const selectedRegion = regionMode && selectedRegionCode
+    ? regions?.features.find((feature) => feature.properties.code === selectedRegionCode) ?? null
+    : null;
+
+  useEffect(() => {
+    selectedRegionCodeRef.current = selectedRegionCode;
+    onSelectRegionRef.current = onSelectRegion;
+  }, [onSelectRegion, selectedRegionCode]);
+
+  useEffect(() => {
+    regionLayerRef.current?.eachLayer((layer) => {
+      const properties = (layer as L.Layer & { feature?: GeoJSON.Feature }).feature?.properties as TerritorialRegionProperties | undefined;
+      if (properties && "setStyle" in layer) {
+        const path = layer as L.Path;
+        path.setStyle(styleRegion(properties, selectedRegionCode));
+        if (properties.code === selectedRegionCode) path.bringToFront();
+      }
+    });
+  }, [regions, selectedRegionCode]);
   const departmentLayerRef = useRef<L.GeoJSON | null>(null);
   const municipalityLayerRef = useRef<L.GeoJSON | null>(null);
   const departmentStyleRef = useRef(styleDepartment);
@@ -362,7 +415,9 @@ export function InvestmentMapLeaflet({
         projectFocusKey={projectFocusKey}
         zoomInLabel={zoomInLabel}
         zoomOutLabel={zoomOutLabel}
+        selectedRegion={selectedRegion}
       />
+      {!regionMode ? (
       <GeoJSON
         ref={departmentLayerRef}
         data={data as unknown as GeoJSON.GeoJsonObject}
@@ -403,7 +458,8 @@ export function InvestmentMapLeaflet({
           });
         }}
       />
-      {municipalities && municipalities.features.length > 0 ? (
+      ) : null}
+      {!regionMode && municipalities && municipalities.features.length > 0 ? (
         <GeoJSON
           key={selectedDepartmentSlug ?? "none"}
           ref={municipalityLayerRef}
@@ -439,32 +495,33 @@ export function InvestmentMapLeaflet({
           }}
         />
       ) : null}
-      {regions && regionTooltipCopy && regions.features.length > 0 ? (
+      {regionMode && regions && regionTooltipCopy && regions.features.length > 0 ? (
         <Pane name="cni-regions" style={{ zIndex: REGIONS_PANE_Z }}>
           <GeoJSON
-            key={`${regionLevel}-${regionsInteractive ? "interactive" : "static"}`}
+            key={regionLevel}
+            ref={regionLayerRef}
             data={regions as unknown as GeoJSON.GeoJsonObject}
-            interactive={regionsInteractive}
-            style={(feature) => ({
-              color: "#ffffff",
-              weight: 1,
-              opacity: 0.9,
-              fillColor: (feature?.properties as TerritorialRegionProperties).color,
-              fillOpacity: 0.35,
-            })}
+            style={(feature) => styleRegion(feature?.properties as TerritorialRegionProperties, selectedRegionCodeRef.current)}
             onEachFeature={(feature, layer) => {
-              if (!regionsInteractive) return;
               const properties = feature.properties as TerritorialRegionProperties;
+              const pathLayer = layer as L.Path;
               layer.bindTooltip(regionTooltipHtml(properties, regionTooltipCopy), {
                 sticky: true,
                 direction: "top",
                 opacity: 0.95,
               });
               layer.on({
-                click: (event: L.LeafletMouseEvent) => {
-                  const { lat, lng } = event.latlng;
-                  const department = data.features.find((item) => geometryContainsPoint(item.geometry, lng, lat));
-                  if (department) onSelectDepartment(department.properties);
+                click: () => onSelectRegionRef.current?.(properties.code),
+                mouseover: () => {
+                  pathLayer.setStyle({ weight: 3, fillOpacity: 0.75 });
+                  pathLayer.bringToFront();
+                },
+                mouseout: () => {
+                  pathLayer.setStyle(styleRegion(properties, selectedRegionCodeRef.current));
+                  regionLayerRef.current?.eachLayer((other) => {
+                    const code = ((other as L.Layer & { feature?: GeoJSON.Feature }).feature?.properties as TerritorialRegionProperties | undefined)?.code;
+                    if (code && code === selectedRegionCodeRef.current) (other as L.Path).bringToFront();
+                  });
                 },
               });
             }}

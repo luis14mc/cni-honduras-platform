@@ -72,15 +72,15 @@ export function getProjectsByDepartment(
 }
 
 export function getGeolocatedMapProjects(options: {
-  departmentSlug: string;
+  departmentSlug?: string;
   municipalitySlug?: string;
   sectorSlug?: string;
   locale?: Locale;
 }): Promise<import("@/src/lib/types/investment-map").MapInvestmentProject[]> {
-  const params = new URLSearchParams({
-    department: options.departmentSlug,
-    has_location: "true",
-  });
+  const params = new URLSearchParams({ has_location: "true" });
+  if (options.departmentSlug) {
+    params.set("department", options.departmentSlug);
+  }
   if (options.municipalitySlug) {
     params.set("municipality", options.municipalitySlug);
   }
