@@ -210,3 +210,10 @@
     100% { transform: translateX(0%); }
   }
 }
+
+/* Mapa de inversión: Chrome dibuja el foco de un <path> SVG como el recuadro de su bounding box.
+   Los <path> de Leaflet no entran en el orden de tabulación, así que solo reciben foco por clic;
+   los marcadores sí son tabulables y conservan su indicador de foco. */
+.leaflet-container path.leaflet-interactive:focus {
+  outline: none;
+}
