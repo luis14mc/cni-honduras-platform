@@ -22,16 +22,11 @@ type Props = {
   item: PortfolioCatalogItem;
   pdfUrl?: string | null;
   pdfLabel?: string;
+  onOpen: () => void;
 };
 
-export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
+export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel, onOpen }: Props) {
   const t = portfolioCatalogCopy[locale];
-  const detailHref = withLocale(
-    locale,
-    item.kind === "project"
-      ? `/portafolio/fichas-proyectos/${item.slug}`
-      : `/portafolio/oportunidades/${item.slug}`,
-  );
   const mapHref = withLocale(
     locale,
     item.kind === "project"
@@ -121,12 +116,13 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
             <MetaBox label={t.phaseLabel} value={item.phase || "—"} />
           </div>
 
-          <Link
-            href={detailHref}
+          <button
+            type="button"
+            onClick={onOpen}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[11px] bg-[#334E88] px-4 py-3.5 text-center font-body text-[13px] font-extrabold text-white transition hover:bg-[#252A58] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F7BF06]"
           >
             {ctaLabel} →
-          </Link>
+          </button>
 
           <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <Link

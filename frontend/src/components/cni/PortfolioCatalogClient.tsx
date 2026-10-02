@@ -8,6 +8,7 @@ import { withLocale } from "@/src/i18n/path";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
 import {
   applyUnifiedFilters,
+  matchDocumentByCode,
   PORTFOLIO_CATALOG_SECTORS,
   serializeUnifiedFilters,
   type PortfolioCatalogItem,
@@ -17,7 +18,9 @@ import {
 import { getSectorDisplayName } from "@/src/data/investmentSectors";
 import { PortfolioDocumentCard } from "@/src/components/cni/PortfolioDocumentCard";
 import { PortfolioItemCard } from "@/src/components/cni/PortfolioItemCard";
+import { PortfolioItemModal } from "@/src/components/cni/PortfolioItemModal";
 import type { CmsDocument } from "@/src/types/cms";
+import { documentOpenUrl } from "@/src/lib/cmsDocuments";
 import { cn } from "@/src/lib/utils";
 
 type Props = {
@@ -41,6 +44,7 @@ export function PortfolioCatalogClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filtersState, setFiltersState] = useState<UnifiedPortfolioFilters>(initialFilters);
+  const [selectedItem, setSelectedItem] = useState<PortfolioCatalogItem | null>(null);
 
   const searchParamsKey = searchParams.toString();
   const syncedFilters = useMemo<UnifiedPortfolioFilters>(
@@ -96,6 +100,8 @@ export function PortfolioCatalogClient({
 
   const docType = documentTypeForTab[filtersState.tipo];
   const tabDocuments = documents.filter((doc) => doc.document_type === docType && doc.file_url);
+  const selectedDocument = selectedItem ? matchDocumentByCode(documents, selectedItem.code) : null;
+  const selectedPdf = selectedDocument ? documentOpenUrl(selectedDocument) : null;
   const searchPlaceholder =
     filtersState.tipo === "oportunidades" ? t.searchPlaceholderOpportunities : t.searchPlaceholder;
 
@@ -110,13 +116,19 @@ export function PortfolioCatalogClient({
           >
             <TabButton
               active={filtersState.tipo === "proyectos"}
-              onClick={() => update({ tipo: "proyectos", sector: null })}
+              onClick={() => {
+                setSelectedItem(null);
+                update({ tipo: "proyectos", sector: null });
+              }}
             >
               {t.projectsTab}
             </TabButton>
             <TabButton
               active={filtersState.tipo === "oportunidades"}
-              onClick={() => update({ tipo: "oportunidades", sector: null })}
+              onClick={() => {
+                setSelectedItem(null);
+                update({ tipo: "oportunidades", sector: null });
+              }}
             >
               {t.opportunitiesTab}
             </TabButton>
@@ -172,10 +184,22 @@ export function PortfolioCatalogClient({
         ) : (
           <div className="grid grid-cols-1 items-stretch gap-7 sm:grid-cols-2 xl:grid-cols-3">
             {filteredItems.map((item) => (
-              <PortfolioItemCard key={`${item.kind}-${item.slug}`} locale={locale} item={item} />
+              <PortfolioItemCard
+                key={`${item.kind}-${item.slug}`}
+                locale={locale}
+                item={item}
+                onOpen={() => setSelectedItem(item)}
+              />
             ))}
           </div>
         )}
+
+        <PortfolioItemModal
+          locale={locale}
+          item={selectedItem}
+          pdfUrl={selectedPdf}
+          onClose={() => setSelectedItem(null)}
+        />
 
         {tabDocuments.length > 0 ? (
           <section className="mt-16 rounded-[18px] border border-[#e4e8ef] bg-white p-6 shadow-sm sm:p-8">

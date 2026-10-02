@@ -51,6 +51,7 @@ export type PortfolioCatalogItem = {
   sectorSlug: string;
   sectorName: string;
   phase: string;
+  phaseDetail: string;
   amountText: string;
   amountNote: string;
   amountUsd: number;
@@ -282,6 +283,7 @@ export function projectToCatalogItem(project: InvestmentProject, locale: Locale)
     sectorSlug: project.sector?.slug || "",
     sectorName: project.sector?.name || "",
     phase: project.phase || "",
+    phaseDetail: project.phase_detail || "",
     amountText: project.amount_text || "",
     amountNote: project.amount_notes?.[0] || "",
     amountUsd: toAmountUsd(project.investment_amount),
@@ -308,6 +310,7 @@ export function opportunityToCatalogItem(
     sectorSlug: opportunity.sector?.slug || "",
     sectorName: opportunity.sector?.name || "",
     phase: opportunity.phase || "",
+    phaseDetail: opportunity.phase_detail || "",
     amountText: opportunity.amount_text || "",
     amountNote: opportunity.amount_notes?.[0] || "",
     amountUsd: toAmountUsd(opportunity.estimated_investment),
@@ -414,6 +417,7 @@ export function seedToCatalogItem(
     sectorSlug: sectorMeta.slug,
     sectorName: sectorMeta.name,
     phase: record.phase || "",
+    phaseDetail: record.phase_detail || "",
     amountText: record.amount_text || "",
     amountNote: record.amount_notes?.[0] ?? "",
     amountUsd: typeof record.amount_usd === "number" ? record.amount_usd : 0,
@@ -459,8 +463,12 @@ function hydrateCatalogItem(
     ...django,
     coverImageUrl: django.coverImageUrl || seedItem.coverImageUrl,
     amountText: django.amountText || seedItem.amountText,
+    amountNote: django.amountNote || seedItem.amountNote,
     locationText: django.locationText || seedItem.locationText,
     description: django.description || seedItem.description,
+    phase: django.phase || seedItem.phase,
+    phaseDetail: django.phaseDetail || seedItem.phaseDetail,
+    investmentType: django.investmentType || seedItem.investmentType,
   };
 }
 

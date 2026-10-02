@@ -35,6 +35,7 @@ function item(overrides: Partial<PortfolioCatalogItem>): PortfolioCatalogItem {
     sectorSlug: "energia",
     sectorName: "Energía",
     phase: "Fase 1",
+    phaseDetail: "Estructuración y Planificación",
     amountText: "USD 10 MM",
     amountNote: "CAPEX",
     amountUsd: 10_000_000,
@@ -140,6 +141,7 @@ describe("portfolio seed fallback", () => {
     expect(found?.item.code).toBe("FP-CNI-I010");
     expect(found?.record.amount_text).toContain("USD");
     expect(found?.item.description.length).toBeGreaterThan(40);
+    expect(found?.item.phaseDetail).toBe("Ejecución y Monitoreo");
     const missing = getSeedBySlug("project", "no-existe", "es");
     expect(missing).toBeNull();
   });

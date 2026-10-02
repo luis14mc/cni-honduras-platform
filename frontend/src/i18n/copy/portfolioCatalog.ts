@@ -45,6 +45,9 @@ export const portfolioCatalogCopy = {
     searchPlaceholderOpportunities: "Buscar oportunidades...",
     viewDetails: "Ver detalles",
     viewOpportunity: "Ver oportunidad",
+    requestFullSheet: "Solicitar ficha completa",
+    downloadFile: "Descargar",
+    closeModal: "Cerrar",
     clearFilters: "Limpiar filtros",
     noResults: "No se encontraron resultados.",
     showing: (n: number, kind: "projects" | "opportunities", sector?: string | null) =>
@@ -99,6 +102,9 @@ export const portfolioCatalogCopy = {
     searchPlaceholderOpportunities: "Search opportunities...",
     viewDetails: "View details",
     viewOpportunity: "View opportunity",
+    requestFullSheet: "Request full sheet",
+    downloadFile: "Download",
+    closeModal: "Close",
     clearFilters: "Clear filters",
     noResults: "No results were found.",
     showing: (n: number, kind: "projects" | "opportunities", sector?: string | null) =>
