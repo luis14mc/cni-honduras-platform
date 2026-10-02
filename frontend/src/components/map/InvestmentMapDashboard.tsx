@@ -66,7 +66,15 @@ const INFRASTRUCTURE_LAYER_OPTIONS: { layer: InfrastructureLayer; Icon: typeof P
   { layer: "port", Icon: Anchor },
 ];
 
-export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: Locale; initialQueryState: MapQueryState }) {
+export function InvestmentMapDashboard({
+  locale,
+  initialQueryState,
+  seedMapProjects,
+}: {
+  locale: Locale;
+  initialQueryState: MapQueryState;
+  seedMapProjects?: MapInvestmentProject[];
+}) {
   const copy = investmentMapCopy[locale];
   const router = useRouter();
   const pathname = usePathname();
@@ -199,6 +207,14 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
     if (!selectedDepartment) return;
     let cancelled = false;
     const requestKey = `${selectedDepartment.slug}:${activeSector}`;
+    const filterSeed = (items: MapInvestmentProject[]) => {
+      const filtered = items.filter((item) => {
+        if (activeSector !== "all" && item.sector.slug !== activeSector) return false;
+        // Seed records no traen department.slug, así que mostramos todos cuando el seed está activo.
+        return true;
+      });
+      return filtered;
+    };
     getGeolocatedMapProjects({
       departmentSlug: selectedDepartment.slug,
       sectorSlug: activeSector === "all" ? undefined : activeSector,
@@ -206,12 +222,13 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
     })
       .then((data) => {
         if (cancelled) return;
-        setProjects({ status: "ready", data });
+        const finalData = data.length > 0 ? data : filterSeed(seedMapProjects ?? []);
+        setProjects({ status: "ready", data: finalData });
         setProjectsKey(requestKey);
-        loadedProjectsRef.current = data;
+        loadedProjectsRef.current = finalData;
         const slug = initialQueryRef.current.project;
         if (initialQueryRef.current.municipality === null) {
-          const project = data.find((item) => item.slug === slug) ?? null;
+          const project = finalData.find((item) => item.slug === slug) ?? null;
           initialQueryRef.current.project = null;
           if (project && (!hydratedMunicipalityRef.current || project.municipality?.slug === hydratedMunicipalityRef.current)) {
             setSelectedProject(project);
@@ -221,8 +238,10 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
       })
       .catch(() => {
         if (cancelled) return;
-        setProjects({ status: "error", data: [] });
+        const fallback = filterSeed(seedMapProjects ?? []);
+        setProjects({ status: "ready", data: fallback });
         setProjectsKey(requestKey);
+        loadedProjectsRef.current = fallback;
       });
     return () => { cancelled = true; };
   }, [activeSector, locale, selectedDepartment]);
@@ -306,14 +325,16 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
     if (!regionMode) return;
     let cancelled = false;
     const requestKey = locale;
+    const seedFallback = seedMapProjects ?? [];
     getGeolocatedMapProjects({ locale })
       .then((data) => {
         if (cancelled) return;
-        setRegionProjects({ status: "ready", data });
+        const finalData = data.length > 0 ? data : seedFallback;
+        setRegionProjects({ status: "ready", data: finalData });
         setRegionProjectsKey(requestKey);
         const slug = initialQueryRef.current.project;
         initialQueryRef.current.project = null;
-        const project = slug ? data.find((item) => item.slug === slug) ?? null : null;
+        const project = slug ? finalData.find((item) => item.slug === slug) ?? null : null;
         if (project) {
           setSelectedProject(project);
           setProjectFocusKey((key) => key + 1);
@@ -321,11 +342,11 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
       })
       .catch(() => {
         if (cancelled) return;
-        setRegionProjects({ status: "error", data: [] });
+        setRegionProjects({ status: "ready", data: seedFallback });
         setRegionProjectsKey(requestKey);
       });
     return () => { cancelled = true; };
-  }, [locale, regionMode]);
+  }, [locale, regionMode, seedMapProjects]);
 
   const handleSelectRegion = useCallback((code: string | null) => {
     setSelectedRegionCode((current) => (code === null || current === code ? null : code));

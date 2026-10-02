@@ -5,9 +5,13 @@ import {
   formatPoloLabel,
   formatSubregionLabel,
   formatUsdMillions,
+  getSeedBySlug,
+  getSeedCatalog,
+  getSeedMapProjects,
   groupPortfolioItemsBySector,
   matchDocumentByCode,
   parsePortfolioFilters,
+  resolveCatalogSource,
   serializePortfolioFilters,
   slugifyPhase,
   sumAmountUsd,
@@ -88,5 +92,67 @@ describe("portfolio catalog grouping and filters", () => {
     expect(sumAmountUsd([{ amountUsd: 5_504_000_000 }, { amountUsd: 211_000_000 }])).toBe(5_715_000_000);
     expect(formatPoloLabel({ name: "Polo Copán", level: "polo" })).toBe("Polo Copán");
     expect(formatPoloLabel({ name: "Golfo de Fonseca", level: "sub", parent: { name: "Sur", level: "macro" } })).toBeNull();
+  });
+});
+
+describe("portfolio seed fallback", () => {
+  it("maps the seed record into a catalog item with image, sector, amount and subregion", () => {
+    const items = getSeedCatalog("opportunity", "es").data;
+    const opp = items.find((item) => item.code === "OC-CNI-A007");
+    expect(opp).toBeDefined();
+    expect(opp?.title).toBe("Aguacate Hass Fresco y Aceite Extra Virgen");
+    expect(opp?.coverImageUrl).toBe("/images/portafolio/oportunidades/aguacate-hass-fresco-y-aceite-extra-virgen.webp");
+    expect(opp?.sectorSlug).toBe("agroindustria");
+    expect(opp?.sectorName).toBe("Agroindustria");
+    expect(opp?.amountText).toBe("USD 5.6 MM");
+    expect(opp?.amountUsd).toBe(5_600_000);
+    expect(opp?.subregionLabel).toBe("Región 1: Valle de Sula");
+    expect(opp?.latitude).toBeCloseTo(15.50378);
+    expect(opp?.longitude).toBeCloseTo(-88.07102);
+    expect(opp?.id).toBeLessThan(0);
+  });
+
+  it("uses the Spanish and English display names for sectorSlug", () => {
+    const es = getSeedCatalog("project", "es").data;
+    const en = getSeedCatalog("project", "en").data;
+    const energiaEs = es.find((i) => i.code === "FP-CNI-E009");
+    const energiaEn = en.find((i) => i.code === "FP-CNI-E009");
+    expect(energiaEs?.sectorSlug).toBe("energia");
+    expect(energiaEs?.sectorName).toBe("Energía");
+    expect(energiaEn?.sectorName).toBe("Energy");
+  });
+
+  it("returns 17 opportunities and 25 projects from the seed", () => {
+    expect(getSeedCatalog("opportunity", "es").data).toHaveLength(17);
+    expect(getSeedCatalog("project", "es").data).toHaveLength(25);
+  });
+
+  it("looks up a seed record by slug for the detail page", () => {
+    const found = getSeedBySlug("project", "distrito-palmerola", "es");
+    expect(found).not.toBeNull();
+    expect(found?.item.code).toBe("FP-CNI-I010");
+    expect(found?.record.amount_text).toContain("USD");
+    const missing = getSeedBySlug("project", "no-existe", "es");
+    expect(missing).toBeNull();
+  });
+
+  it("provides seed points with lat/lng for the map fallback", () => {
+    const points = getSeedMapProjects();
+    expect(points.length).toBeGreaterThanOrEqual(40);
+    const allHaveCoords = points.every((p) => p.latitude !== null && p.longitude !== null);
+    expect(allHaveCoords).toBe(true);
+    const district = points.find((p) => p.slug === "distrito-palmerola");
+    expect(district).toBeDefined();
+    expect(district?.sector.slug).toBe("infraestructura");
+  });
+
+  it("uses Django data when it has items, and falls back to seed when Django is empty or errored", () => {
+    const djangoOk = { status: "ok" as const, data: [{ slug: "x" } as unknown as PortfolioCatalogItem] };
+    const djangoEmpty = { status: "ok" as const, data: [] as PortfolioCatalogItem[] };
+    const djangoError = { status: "error" as const, data: [] as PortfolioCatalogItem[] };
+    const seed = getSeedCatalog("project", "es");
+    expect(resolveCatalogSource(djangoOk, seed)).toBe(djangoOk);
+    expect(resolveCatalogSource(djangoEmpty, seed)).toBe(seed);
+    expect(resolveCatalogSource(djangoError, seed)).toBe(seed);
   });
 });

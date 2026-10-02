@@ -2,6 +2,8 @@ import type { Locale } from "@/src/i18n/config";
 import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentOpportunity, InvestmentProject, RegionRef } from "@/src/types/investment";
 import type { SectorSlug } from "@/src/data/investmentSectors";
+import { getSectorDisplayName, isSectorSlug } from "@/src/data/investmentSectors";
+import seedData from "@/src/data/portafolioCni2026.json";
 
 export const PORTFOLIO_CATALOG_SECTORS = [
   "agroindustria",
@@ -199,4 +201,202 @@ export function opportunityToCatalogItem(
     latitude: opportunity.latitude ?? null,
     longitude: opportunity.longitude ?? null,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Seed fallback (frontend/public + JSON import). Used when Django devuelve []
+// o falla. Los IDs son (-i) para no chocar con los IDs reales de Django.
+// ---------------------------------------------------------------------------
+
+type SeedLocation = { lat: number | null; lng: number | null };
+
+export type SeedPortfolioRecord = {
+  kind: "proyecto" | "oportunidad";
+  code: string;
+  title: string;
+  slug: string;
+  sector: string;
+  location_text: string;
+  description: string;
+  amount_text: string;
+  amount_usd: number | null;
+  amount_notes: string[];
+  phase: string;
+  phase_detail: string;
+  investment_type: string;
+  image: string;
+  locations: SeedLocation[];
+  subregion: string | null;
+  macroregion: string | null;
+  polos: string[];
+  region_doc: string | null;
+};
+
+type SeedFile = {
+  oportunidades: SeedPortfolioRecord[];
+  proyectos: SeedPortfolioRecord[];
+};
+
+const seed: SeedFile = seedData as SeedFile;
+
+const SEED_SUBS: Record<string, string> = {
+  "R-01": "Valle de Sula",
+  "R-02": "Valle de Comayagua",
+  "R-03": "Occidente",
+  "R-04": "Valle de Lean",
+  "R-05": "Valle del Aguán",
+  "R-06": "Cordillera Nombre de Dios",
+  "R-07": "Norte de Olancho",
+  "R-08": "Valle de Olancho",
+  "R-09": "Biosfera del Río Plátano",
+  "R-10": "La Mosquitia",
+  "R-11": "El Paraíso",
+  "R-12": "Distrito Central",
+  "R-13": "Golfo de Fonseca",
+  "R-14": "Lempa",
+  "R-15": "Arrecife Mesoamericano",
+  "R-16": "Santa Bárbara",
+};
+
+function seedSubregionLabel(code: string | null, locale: Locale): string | null {
+  if (!code) return null;
+  const name = SEED_SUBS[code];
+  if (!name) return null;
+  const match = code.match(/^R-0*([1-9]\d*)$/);
+  if (!match) return name;
+  const prefix = locale === "en" ? "Region" : "Región";
+  return `${prefix} ${match[1]}: ${name}`;
+}
+
+function seedImageUrl(image: string): string {
+  return `/images/portafolio/${image.replace(/^imagenes\//, "")}`;
+}
+
+function seedSectorMeta(sector: string, locale: Locale): { slug: string; name: string } {
+  if (isSectorSlug(sector)) {
+    return { slug: sector, name: getSectorDisplayName(locale, sector) };
+  }
+  return { slug: sector, name: sector };
+}
+
+export function seedToCatalogItem(
+  record: SeedPortfolioRecord,
+  kind: PortfolioKind,
+  locale: Locale,
+  index: number,
+): PortfolioCatalogItem {
+  const sectorMeta = seedSectorMeta(record.sector, locale);
+  const firstLocation = record.locations?.[0] ?? { lat: null, lng: null };
+  return {
+    kind,
+    id: -(index + 1),
+    slug: record.slug,
+    code: record.code || "",
+    title: record.title,
+    coverImageUrl: seedImageUrl(record.image),
+    sectorSlug: sectorMeta.slug,
+    sectorName: sectorMeta.name,
+    phase: record.phase || "",
+    amountText: record.amount_text || "",
+    amountNote: record.amount_notes?.[0] ?? "",
+    amountUsd: typeof record.amount_usd === "number" ? record.amount_usd : 0,
+    locationText: record.location_text || "",
+    subregionLabel: seedSubregionLabel(record.subregion, locale),
+    investmentType: record.investment_type || "",
+    latitude: firstLocation.lat ?? null,
+    longitude: firstLocation.lng ?? null,
+  };
+}
+
+export type SeedCatalogSource = {
+  status: "ok";
+  data: PortfolioCatalogItem[];
+};
+
+export function getSeedCatalog(kind: PortfolioKind, locale: Locale): SeedCatalogSource {
+  const records = kind === "project" ? seed.proyectos : seed.oportunidades;
+  const data = records.map((record, index) => seedToCatalogItem(record, kind, locale, index));
+  return { status: "ok", data };
+}
+
+export function getSeedBySlug(
+  kind: PortfolioKind,
+  slug: string,
+  locale: Locale,
+): { item: PortfolioCatalogItem; record: SeedPortfolioRecord } | null {
+  const records = kind === "project" ? seed.proyectos : seed.oportunidades;
+  const index = records.findIndex((record) => record.slug === slug);
+  if (index < 0) return null;
+  return {
+    item: seedToCatalogItem(records[index], kind, locale, index),
+    record: records[index],
+  };
+}
+
+/** Fuente de catálogo: si Django trae datos, los usa; si está vacío o falló, usa el seed. */
+export function resolveCatalogSource<T extends { status: string; data: unknown[] }>(
+  django: T,
+  seedSource: SeedCatalogSource,
+): T | SeedCatalogSource {
+  if (django.status === "ok" && django.data.length > 0) return django;
+  return seedSource;
+}
+
+// ---------------------------------------------------------------------------
+// Seed → MapInvestmentProject (para el fallback en /portafolio/mapa cuando
+// Django devuelve []). Se mantienen los IDs negativos para no chocar con Django.
+// El color_hex por defecto toma la paleta institucional del sector (verde/teal).
+// ---------------------------------------------------------------------------
+
+import type { MapInvestmentProject, MapSector } from "@/src/lib/types/investment-map";
+
+const SEED_SECTOR_COLOR: Record<string, string> = {
+  agroindustria: "#8DC046",
+  manufactura: "#252A58",
+  turismo: "#0E7A7C",
+  energia: "#35A963",
+  infraestructura: "#334E88",
+  logistica: "#168654",
+};
+
+function toSeedMapProject(
+  record: SeedPortfolioRecord,
+  kindType: "project" | "opportunity",
+  index: number,
+): MapInvestmentProject | null {
+  const firstLocation = record.locations?.[0];
+  if (!firstLocation || firstLocation.lat == null || firstLocation.lng == null) return null;
+  const sectorMeta = seedSectorMeta(record.sector, "es");
+  const mapSector: MapSector = {
+    id: -(index + 1),
+    name: sectorMeta.name,
+    slug: sectorMeta.slug,
+    icon: "",
+    color_hex: SEED_SECTOR_COLOR[sectorMeta.slug] ?? "#252A58",
+  };
+  return {
+    id: -(index + 1),
+    title: record.title,
+    slug: record.slug,
+    sector: mapSector,
+    department: null,
+    municipality: null,
+    stage: record.phase || "",
+    investment_amount: typeof record.amount_usd === "number" ? String(record.amount_usd) : null,
+    estimated_jobs: null,
+    location: { type: "Point", coordinates: [firstLocation.lng, firstLocation.lat] },
+    latitude: firstLocation.lat,
+    longitude: firstLocation.lng,
+    featured: false,
+  };
+}
+
+export function getSeedMapProjects(): MapInvestmentProject[] {
+  const projects = seed.proyectos
+    .map((record, index) => toSeedMapProject(record, "project", index))
+    .filter((item): item is MapInvestmentProject => item !== null);
+  const opportunities = seed.oportunidades
+    .map((record, index) => toSeedMapProject(record, "opportunity", index + projects.length))
+    .filter((item): item is MapInvestmentProject => item !== null);
+  return [...projects, ...opportunities];
 }

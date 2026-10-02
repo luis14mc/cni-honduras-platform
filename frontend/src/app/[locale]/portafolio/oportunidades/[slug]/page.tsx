@@ -11,9 +11,9 @@ import { getOpportunity } from "@/src/services/investment";
 import { ApiError } from "@/src/lib/api";
 import type { InvestmentOpportunity, RegionRef } from "@/src/types/investment";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
-import { formatPoloLabel, formatSubregionLabel } from "@/src/lib/portfolioCatalog";
+import { formatPoloLabel, formatSubregionLabel, getSeedBySlug } from "@/src/lib/portfolioCatalog";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 const copy = {
   es: {
@@ -76,6 +76,17 @@ export async function generateMetadata({
       image: opp.cover_image_url,
     });
   } catch {
+    const seed = getSeedBySlug("opportunity", slug, locale);
+    if (seed) {
+      return buildDetailMetadata({
+        locale,
+        slugPath: `/portafolio/oportunidades/${slug}`,
+        enMirrorPath: `/en/portfolio/opportunities/${slug}`,
+        title: seed.item.title,
+        description: seed.record.description,
+        image: seed.item.coverImageUrl,
+      });
+    }
     return {};
   }
 }
@@ -90,19 +101,25 @@ export default async function OpportunityDetailPage({
   const locale = raw as Locale;
   const t = copy[locale];
   const L = (path: string) => withLocale(locale, path);
+  const catalog = portfolioCatalogCopy[locale];
 
   let opp: InvestmentOpportunity | null = null;
   let loadError = false;
+  let notFoundFromApi = false;
   try {
     opp = await getOpportunity(slug, { locale });
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) {
-      notFound();
+      notFoundFromApi = true;
+    } else {
+      loadError = true;
     }
-    loadError = true;
   }
 
-  if (loadError || !opp) {
+  const seedFallback =
+    notFoundFromApi || (!opp && !loadError) ? getSeedBySlug("opportunity", slug, locale) : null;
+
+  if (loadError && !seedFallback) {
     return (
       <div className="flex flex-1 flex-col bg-[#f8f9ff]">
         <Section tone="surface">
@@ -123,11 +140,134 @@ export default async function OpportunityDetailPage({
     );
   }
 
+  if (seedFallback && !opp) {
+    const item = seedFallback.item;
+    const record = seedFallback.record;
+    const summary = (record.description || "").trim();
+    const regionLabel = item.subregionLabel;
+    const macroregionName = record.macroregion ? record.macroregion : null;
+    const poloName = record.polos?.[0]
+      ? record.polos[0].split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+      : null;
+    const heroImage = item.coverImageUrl || PAGE_HEROES.oportunidades.image;
+    const contactHref = L(`/contacto?ref=${encodeURIComponent(item.code || item.slug)}`);
+    const phaseLabel = record.phase_detail ? `${record.phase} — ${record.phase_detail}` : record.phase;
+    const facts: Array<[string, string]> = [
+      item.code ? [t.code, item.code] : null,
+      item.sectorName ? [t.sector, item.sectorName] : null,
+      item.locationText ? [catalog.location, item.locationText] : null,
+      regionLabel ? [catalog.region, regionLabel] : null,
+      macroregionName ? [catalog.macroregion, macroregionName] : null,
+      poloName ? [catalog.polo, poloName] : null,
+      item.amountText ? [catalog.amount, `${item.amountText}${record.amount_notes?.[0] ? ` · ${record.amount_notes[0]}` : ""}`] : null,
+      phaseLabel ? [catalog.phaseLabel, phaseLabel] : null,
+      item.investmentType ? [catalog.investmentType, item.investmentType] : null,
+    ].filter(Boolean) as Array<[string, string]>;
+
+    return (
+      <div className="flex flex-1 flex-col bg-[#f8f9ff]">
+        <div className="-mt-28">
+          <PageHero
+            eyebrow={t.heroEyebrow}
+            title={t.heroTitle}
+            description={t.heroDescription}
+            imageSrc={heroImage}
+            imageAlt={item.title}
+            heightClass="min-h-[420px] md:min-h-[480px]"
+            imageClassName="absolute inset-0 object-cover object-top"
+          />
+        </div>
+
+        <Section tone="surface">
+          <Link
+            href={L("/portafolio/oportunidades")}
+            className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
+          >
+            ← {t.back}
+          </Link>
+
+          <header className="mt-8 space-y-3 border-b border-[#dce9ff]/40 pb-8">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-widest text-[#0E7A7C]">
+              {item.sectorName ? <span>{item.sectorName}</span> : null}
+              {item.code ? (
+                <span className="font-mono">
+                  {t.code}: {item.code}
+                </span>
+              ) : null}
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#252A58] md:text-4xl">
+              {item.title}
+            </h1>
+            {item.amountText ? (
+              <p className="text-2xl font-extrabold text-[#001a33]">
+                {item.amountText}
+                {record.amount_notes?.[0] ? (
+                  <span className="ml-2 text-sm font-normal text-cni-primary/45">{record.amount_notes[0]}</span>
+                ) : null}
+              </p>
+            ) : null}
+          </header>
+
+          {facts.length > 0 ? (
+            <dl className="mt-10 divide-y divide-cni-primary/10 rounded-xl border border-cni-primary/10 bg-white">
+              {facts.map(([label, value]) => (
+                <div key={label} className="grid gap-1 px-5 py-4 sm:grid-cols-3">
+                  <dt className="font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-cni-primary/50">{label}</dt>
+                  <dd className="font-body text-sm text-cni-primary sm:col-span-2">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+
+          {summary ? (
+            <section className="mt-10 max-w-3xl space-y-4">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[#0E7A7C]">
+                {t.description}
+              </h2>
+              {paragraphs(summary).map((p) => (
+                <p key={p.slice(0, 40)} className="text-base leading-relaxed text-[#252A58]">
+                  {p}
+                </p>
+              ))}
+            </section>
+          ) : null}
+
+          <section className="mt-14 max-w-2xl space-y-5 border-t border-[#dce9ff]/40 pt-10">
+            <p className="text-base leading-relaxed text-[#0E7A7C]">{t.ctaLead}</p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={contactHref}
+                className="inline-flex items-center justify-center rounded-md bg-[#252A58] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#0E7A7C]"
+              >
+                {t.cta}
+              </Link>
+              {item.coverImageUrl ? (
+                <PortfolioImageLightbox
+                  src={item.coverImageUrl}
+                  alt={item.title}
+                  openLabel={catalog.viewFullCard}
+                  closeLabel={catalog.closeLightbox}
+                />
+              ) : null}
+              <Link
+                href={L(`/portafolio/mapa?opportunity=${encodeURIComponent(item.slug)}`)}
+                className="inline-flex items-center justify-center rounded-md border border-[#334E88]/30 px-8 py-3 text-xs font-bold uppercase tracking-widest text-[#334E88] transition hover:bg-[#334E88]/5"
+              >
+                {catalog.viewOnMapCta}
+              </Link>
+            </div>
+          </section>
+        </Section>
+      </div>
+    );
+  }
+
+  if (!opp) notFound();
+
   const summary = (opp.summary || "").trim();
   const valueProp = (opp.value_proposition || "").trim();
   const metrics = (opp.metrics ?? []).slice(0, 4);
   const contactHref = L(`/contacto?ref=${encodeURIComponent(opp.code || opp.slug)}`);
-  const catalog = portfolioCatalogCopy[locale];
   const region = opp.region as RegionRef | null;
   const heroImage = opp.cover_image_url || PAGE_HEROES.oportunidades.image;
   const facts = [

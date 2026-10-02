@@ -4,6 +4,7 @@ import { makeGenerateMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { InvestmentMapDashboard } from "@/src/components/map/InvestmentMapDashboard";
 import { parseMapQueryState } from "@/src/lib/types/investment-map";
+import { getSeedMapProjects } from "@/src/lib/portfolioCatalog";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["portafolio-mapa"]);
 
@@ -12,5 +13,12 @@ export default async function MapaPage({ params, searchParams }: { params: Promi
   if (!isLocale(raw)) notFound();
   const locale = raw as Locale;
   const initialQueryState = parseMapQueryState(await searchParams);
-  return <InvestmentMapDashboard locale={locale} initialQueryState={initialQueryState} />;
+  const seedMapProjects = getSeedMapProjects();
+  return (
+    <InvestmentMapDashboard
+      locale={locale}
+      initialQueryState={initialQueryState}
+      seedMapProjects={seedMapProjects}
+    />
+  );
 }

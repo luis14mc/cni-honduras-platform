@@ -2,7 +2,12 @@ import { notFound } from "next/navigation";
 import { PortfolioCatalogPage } from "@/src/components/cni/PortfolioCatalogPage";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { loadAsyncData } from "@/src/lib/asyncData";
-import { parsePortfolioFilters, projectToCatalogItem } from "@/src/lib/portfolioCatalog";
+import {
+  getSeedCatalog,
+  parsePortfolioFilters,
+  projectToCatalogItem,
+  resolveCatalogSource,
+} from "@/src/lib/portfolioCatalog";
 import { getDocuments } from "@/src/lib/strapi/editorial";
 import { getProjects } from "@/src/services/investment";
 import { makeGenerateMetadata } from "@/src/lib/seo";
@@ -11,7 +16,7 @@ import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentProject } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["portafolio-fichas-proyectos"]);
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export default async function ProjectSheetsPage({
   params,
@@ -28,10 +33,11 @@ export default async function ProjectSheetsPage({
     loadAsyncData(() => getProjects({ locale }), [] as InvestmentProject[]),
     loadAsyncData(() => getDocuments(locale, { documentType: "project_sheet" }), [] as CmsDocument[]),
   ]);
-  const items = {
+  const djangoItems = {
     ...projects,
     data: projects.data.map((project) => projectToCatalogItem(project, locale)),
   };
+  const items = resolveCatalogSource(djangoItems, getSeedCatalog("project", locale));
   return (
     <PortfolioCatalogPage
       locale={locale}

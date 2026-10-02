@@ -5,11 +5,16 @@ import { PAGE_SEO } from "@/src/config/pageSeo";
 import { PortafolioPageView } from "@/src/components/cni/PortafolioPageView";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import { getOpportunities, getProjects } from "@/src/services/investment";
-import { opportunityToCatalogItem, projectToCatalogItem } from "@/src/lib/portfolioCatalog";
+import {
+  getSeedCatalog,
+  opportunityToCatalogItem,
+  projectToCatalogItem,
+  resolveCatalogSource,
+} from "@/src/lib/portfolioCatalog";
 import type { InvestmentOpportunity, InvestmentProject } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO.portafolio);
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export default async function PortafolioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
@@ -19,14 +24,19 @@ export default async function PortafolioPage({ params }: { params: Promise<{ loc
     loadAsyncData(() => getProjects({ locale }), [] as InvestmentProject[]),
     loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]),
   ]);
+  const djangoProjects = {
+    ...projects,
+    data: projects.data.map((item) => projectToCatalogItem(item, locale)),
+  };
+  const djangoOpps = {
+    ...opportunities,
+    data: opportunities.data.map((item) => opportunityToCatalogItem(item, locale)),
+  };
   return (
     <PortafolioPageView
       locale={locale}
-      projects={{ ...projects, data: projects.data.map((item) => projectToCatalogItem(item, locale)) }}
-      opportunities={{
-        ...opportunities,
-        data: opportunities.data.map((item) => opportunityToCatalogItem(item, locale)),
-      }}
+      projects={resolveCatalogSource(djangoProjects, getSeedCatalog("project", locale))}
+      opportunities={resolveCatalogSource(djangoOpps, getSeedCatalog("opportunity", locale))}
     />
   );
 }
