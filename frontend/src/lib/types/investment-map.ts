@@ -323,6 +323,7 @@ export type MapQueryState = {
   department: string | null;
   municipality: string | null;
   project: string | null;
+  opportunity: string | null;
   regionLevel: TerritorialRegionLevel | null;
   /** Region `code` (R-01, M-03, copan…), only meaningful together with `regionLevel`. */
   region: string | null;
@@ -385,6 +386,7 @@ export function parseMapQueryState(input: Record<string, string | string[] | und
     department: region ? null : read("department"),
     municipality: region ? null : read("municipality"),
     project: read("project"),
+    opportunity: read("opportunity"),
     regionLevel,
     region,
   };

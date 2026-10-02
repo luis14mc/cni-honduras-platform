@@ -109,6 +109,18 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Investment opportunities prioritized by CNI in Honduras, with downloadable Opportunity Cards by sector.",
     },
   },
+  "portafolio-fichas-proyectos": {
+    canonical: "/portafolio/fichas-proyectos",
+    enMirror: "/en/portfolio/project-sheets",
+    title: {
+      es: "Fichas de Proyectos · Portafolio de Inversión del CNI",
+      en: "Project Sheets · CNI Investment Portfolio",
+    },
+    description: {
+      es: "Fichas de proyectos de inversión organizadas por sector, con monto, fase, ubicación y acceso al mapa.",
+      en: "Investment project sheets organized by sector, with amount, phase, location and map access.",
+    },
+  },
   "crecer-acompanamiento": {
     canonical: "/crecer/acompanamiento",
     enMirror: "/en/grow/aftercare",

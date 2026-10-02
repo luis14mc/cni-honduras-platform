@@ -35,6 +35,7 @@ export const DETAIL_PATH_PREFIXES: LocalizedString[] = [
   SECTOR_PATH_PREFIX,
   NEWS_PATH_PREFIX,
   { es: "/portafolio/oportunidades", en: "/en/portfolio/opportunities" },
+  { es: "/portafolio/fichas-proyectos", en: "/en/portfolio/project-sheets" },
   { es: "/portafolio/casos", en: "/en/portfolio/success-stories" },
 ];
 

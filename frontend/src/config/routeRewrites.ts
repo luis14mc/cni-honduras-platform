@@ -45,6 +45,8 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
   if (story) return `/portafolio/casos/${story[1]}`;
   const opportunity = enTail.match(/^\/portfolio\/opportunities\/([^/]+)$/);
   if (opportunity) return `/portafolio/oportunidades/${opportunity[1]}`;
+  const projectSheet = enTail.match(/^\/portfolio\/project-sheets\/([^/]+)$/);
+  if (projectSheet) return `/portafolio/fichas-proyectos/${projectSheet[1]}`;
   const news = enTail.match(/^\/news\/([^/]+)$/);
   if (news) return `/prensa/${news[1]}`;
   const resource = enTail.match(/^\/resources\/([^/]+)$/);

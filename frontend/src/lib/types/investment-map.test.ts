@@ -281,9 +281,38 @@ describe("investment map pure helpers", () => {
   });
 
   it("parses syntactically valid map params and serializes without stale map state", () => {
-    expect(parseMapQueryState({ sector: "energia", department: ["cortes"], municipality: "San Pedro", project: "p-1" })).toEqual({ sector: "energia", department: null, municipality: null, project: "p-1", regionLevel: null, region: null });
+    expect(parseMapQueryState({ sector: "energia", department: ["cortes"], municipality: "San Pedro", project: "p-1" })).toEqual({
+      sector: "energia",
+      department: null,
+      municipality: null,
+      project: "p-1",
+      opportunity: null,
+      regionLevel: null,
+      region: null,
+    });
     const current = new URLSearchParams("ref=campaign&q=old&department=old");
-    expect(serializeMapQueryState(current, { sector: null, department: "cortes", municipality: null, project: null, regionLevel: null, region: null })).toBe("ref=campaign&department=cortes");
+    expect(serializeMapQueryState(current, {
+      sector: null,
+      department: "cortes",
+      municipality: null,
+      project: null,
+      opportunity: null,
+      regionLevel: null,
+      region: null,
+    })).toBe("ref=campaign&department=cortes");
+  });
+
+  it("parses and serializes opportunity deep links", () => {
+    expect(parseMapQueryState({ opportunity: "oc-cni-a007" })).toMatchObject({ opportunity: "oc-cni-a007" });
+    expect(serializeMapQueryState(new URLSearchParams("project=old"), {
+      sector: null,
+      department: null,
+      municipality: null,
+      project: null,
+      opportunity: "oc-cni-a007",
+      regionLevel: null,
+      region: null,
+    })).toBe("opportunity=oc-cni-a007");
   });
 
   it("parses and serializes the territorial region selection", () => {
@@ -294,7 +323,7 @@ describe("investment map pure helpers", () => {
     expect(parseMapQueryState({ regionLevel: "sub", region: "R-01<script>" })).toMatchObject({ regionLevel: "sub", region: null });
     expect(parseMapQueryState({ regionLevel: "sub", region: ["R-01"] })).toMatchObject({ region: null });
 
-    const state = { sector: null, department: null, municipality: null, project: null, regionLevel: "sub" as const, region: "R-12" };
+    const state = { sector: null, department: null, municipality: null, project: null, opportunity: null, regionLevel: "sub" as const, region: "R-12" };
     expect(serializeMapQueryState(new URLSearchParams("department=cortes"), state)).toBe("regionLevel=sub&region=R-12");
     expect(serializeMapQueryState(new URLSearchParams("regionLevel=sub&region=R-12"), { ...state, regionLevel: null, region: null })).toBe("");
   });

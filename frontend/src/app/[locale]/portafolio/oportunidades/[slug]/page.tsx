@@ -5,10 +5,15 @@ import { withLocale } from "@/src/i18n/path";
 import { PageHero } from "@/src/components/cni/PageHero";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import { Section } from "@/src/components/cni/Section";
+import { PortfolioImageLightbox } from "@/src/components/cni/PortfolioImageLightbox";
 import { buildDetailMetadata } from "@/src/lib/seo";
 import { getOpportunity } from "@/src/services/investment";
 import { ApiError } from "@/src/lib/api";
-import type { InvestmentOpportunity } from "@/src/types/investment";
+import type { InvestmentOpportunity, RegionRef } from "@/src/types/investment";
+import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
+import { formatPoloLabel, formatSubregionLabel } from "@/src/lib/portfolioCatalog";
+
+export const revalidate = 3600;
 
 const copy = {
   es: {
@@ -68,6 +73,7 @@ export async function generateMetadata({
       enMirrorPath: `/en/portfolio/opportunities/${slug}`,
       title: opp.title,
       description: opp.summary,
+      image: opp.cover_image_url,
     });
   } catch {
     return {};
@@ -120,7 +126,21 @@ export default async function OpportunityDetailPage({
   const summary = (opp.summary || "").trim();
   const valueProp = (opp.value_proposition || "").trim();
   const metrics = (opp.metrics ?? []).slice(0, 4);
-  const contactHref = L(`/contacto?opportunity=${encodeURIComponent(opp.slug)}`);
+  const contactHref = L(`/contacto?ref=${encodeURIComponent(opp.code || opp.slug)}`);
+  const catalog = portfolioCatalogCopy[locale];
+  const region = opp.region as RegionRef | null;
+  const heroImage = opp.cover_image_url || PAGE_HEROES.oportunidades.image;
+  const facts = [
+    opp.code ? [t.code, opp.code] : null,
+    opp.sector?.name ? [t.sector, opp.sector.name] : null,
+    opp.location_text ? [catalog.location, opp.location_text] : null,
+    formatSubregionLabel(region, locale) ? [catalog.region, formatSubregionLabel(region, locale)!] : null,
+    region?.parent?.name ? [catalog.macroregion, region.parent.name] : null,
+    formatPoloLabel(region) ? [catalog.polo, formatPoloLabel(region)!] : null,
+    opp.amount_text ? [catalog.amount, `${opp.amount_text}${opp.amount_notes?.[0] ? ` · ${opp.amount_notes[0]}` : ""}`] : null,
+    opp.phase ? [catalog.phaseLabel, `${opp.phase}${opp.phase_detail ? ` — ${opp.phase_detail}` : ""}`] : null,
+    opp.investment_type ? [catalog.investmentType, opp.investment_type] : null,
+  ].filter(Boolean) as Array<[string, string]>;
 
   return (
     <div className="flex flex-1 flex-col bg-[#f8f9ff]">
@@ -129,9 +149,10 @@ export default async function OpportunityDetailPage({
           eyebrow={t.heroEyebrow}
           title={t.heroTitle}
           description={t.heroDescription}
-          imageSrc={PAGE_HEROES.oportunidades.image}
+          imageSrc={heroImage}
           imageAlt={opp.title}
           heightClass="min-h-[420px] md:min-h-[480px]"
+          imageClassName={opp.cover_image_url ? "absolute inset-0 object-cover object-top" : undefined}
         />
       </div>
 
@@ -155,7 +176,26 @@ export default async function OpportunityDetailPage({
           <h1 className="text-3xl font-extrabold tracking-tight text-[#252A58] md:text-4xl">
             {opp.title}
           </h1>
+          {opp.amount_text ? (
+            <p className="text-2xl font-extrabold text-[#001a33]">
+              {opp.amount_text}
+              {opp.amount_notes?.[0] ? (
+                <span className="ml-2 text-sm font-normal text-cni-primary/45">{opp.amount_notes[0]}</span>
+              ) : null}
+            </p>
+          ) : null}
         </header>
+
+        {facts.length > 0 ? (
+          <dl className="mt-10 divide-y divide-cni-primary/10 rounded-xl border border-cni-primary/10 bg-white">
+            {facts.map(([label, value]) => (
+              <div key={label} className="grid gap-1 px-5 py-4 sm:grid-cols-3">
+                <dt className="font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-cni-primary/50">{label}</dt>
+                <dd className="font-body text-sm text-cni-primary sm:col-span-2">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        ) : null}
 
         {summary ? (
           <section className="mt-10 max-w-3xl space-y-4">
@@ -203,11 +243,19 @@ export default async function OpportunityDetailPage({
             >
               {t.cta}
             </Link>
+            {opp.cover_image_url ? (
+              <PortfolioImageLightbox
+                src={opp.cover_image_url}
+                alt={opp.title}
+                openLabel={catalog.viewFullCard}
+                closeLabel={catalog.closeLightbox}
+              />
+            ) : null}
             <Link
-              href={contactHref}
+              href={L(`/portafolio/mapa?opportunity=${encodeURIComponent(opp.slug)}`)}
               className="inline-flex items-center justify-center rounded-md border border-[#334E88]/30 px-8 py-3 text-xs font-bold uppercase tracking-widest text-[#334E88] transition hover:bg-[#334E88]/5"
             >
-              {t.ctaAlt}
+              {catalog.viewOnMapCta}
             </Link>
           </div>
         </section>

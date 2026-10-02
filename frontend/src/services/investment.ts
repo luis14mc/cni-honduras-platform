@@ -9,11 +9,12 @@ import type {
 
 const BASE = "/investment";
 const REVALIDATE = { next: { revalidate: 300 } } as const;
+const CATALOG_REVALIDATE = { next: { revalidate: 3600 } } as const;
 
 type LocaleOptions = { locale?: Locale };
 
-function localeOpts(locale?: Locale): FetchOptions {
-  return { locale, ...REVALIDATE };
+function localeOpts(locale?: Locale, revalidate: { next: { revalidate: number } } = REVALIDATE): FetchOptions {
+  return { locale, ...revalidate };
 }
 
 export function getSectors(options: LocaleOptions = {}): Promise<Sector[]> {
@@ -25,7 +26,10 @@ export function getSector(slug: string, options: LocaleOptions = {}): Promise<Se
 }
 
 export function getOpportunities(options: LocaleOptions = {}): Promise<InvestmentOpportunity[]> {
-  return apiGetList<InvestmentOpportunity>(`${BASE}/opportunities/`, localeOpts(options.locale));
+  return apiGetList<InvestmentOpportunity>(
+    `${BASE}/opportunities/?page_size=100`,
+    localeOpts(options.locale, CATALOG_REVALIDATE),
+  );
 }
 
 export function getOpportunitiesBySector(
@@ -44,22 +48,26 @@ export function getOpportunity(
 ): Promise<InvestmentOpportunity> {
   return apiGet<InvestmentOpportunity>(
     `${BASE}/opportunities/${slug}/`,
-    localeOpts(options.locale),
+    localeOpts(options.locale, CATALOG_REVALIDATE),
   );
 }
 
-export function getProjects(): Promise<InvestmentProject[]> {
-  return apiGetList<InvestmentProject>(`${BASE}/projects/`);
-}
-
-export function getProjectsBySector(sectorSlug: string): Promise<InvestmentProject[]> {
+export function getProjects(options: LocaleOptions = {}): Promise<InvestmentProject[]> {
   return apiGetList<InvestmentProject>(
-    `${BASE}/projects/?sector=${encodeURIComponent(sectorSlug)}`,
+    `${BASE}/projects/?page_size=100`,
+    localeOpts(options.locale, CATALOG_REVALIDATE),
   );
 }
 
-export function getProject(slug: string): Promise<InvestmentProject> {
-  return apiGet<InvestmentProject>(`${BASE}/projects/${slug}/`);
+export function getProjectsBySector(sectorSlug: string, options: LocaleOptions = {}): Promise<InvestmentProject[]> {
+  return apiGetList<InvestmentProject>(
+    `${BASE}/projects/?sector=${encodeURIComponent(sectorSlug)}&page_size=100`,
+    localeOpts(options.locale, CATALOG_REVALIDATE),
+  );
+}
+
+export function getProject(slug: string, options: LocaleOptions = {}): Promise<InvestmentProject> {
+  return apiGet<InvestmentProject>(`${BASE}/projects/${slug}/`, localeOpts(options.locale, CATALOG_REVALIDATE));
 }
 
 export function getProjectsByDepartment(
