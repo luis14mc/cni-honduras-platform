@@ -107,7 +107,7 @@ export function PortfolioItemModal({ locale, item, pdfUrl, onClose }: Props) {
                   sizes="(min-width: 1024px) 44vw, 100vw"
                   className={cn(
                     "object-cover",
-                    item.kind === "opportunity" ? "object-top" : item.coverImageUrl ? "object-left" : "object-center",
+                    item.kind === "opportunity" ? "object-top" : "object-center",
                   )}
                 />
               </div>

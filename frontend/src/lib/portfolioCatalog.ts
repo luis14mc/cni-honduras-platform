@@ -3,6 +3,7 @@ import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentOpportunity, InvestmentProject, RegionRef } from "@/src/types/investment";
 import type { SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorDisplayName, isSectorSlug } from "@/src/data/investmentSectors";
+import { getPortfolioCniMedia } from "@/src/data/portfolioCniMedia";
 import seedData from "@/src/data/portafolioCni2026.json";
 
 export const PORTFOLIO_CATALOG_SECTORS = [
@@ -61,6 +62,7 @@ export type PortfolioCatalogItem = {
   description: string;
   latitude: number | null;
   longitude: number | null;
+  pdfUrl: string | null;
 };
 
 export type PortfolioFilters = {
@@ -293,6 +295,7 @@ export function projectToCatalogItem(project: InvestmentProject, locale: Locale)
     description: project.description || project.summary || "",
     latitude: project.latitude,
     longitude: project.longitude,
+    pdfUrl: null,
   };
 }
 
@@ -320,6 +323,7 @@ export function opportunityToCatalogItem(
     description: opportunity.description || opportunity.opportunity_description || opportunity.summary || "",
     latitude: opportunity.latitude ?? null,
     longitude: opportunity.longitude ?? null,
+    pdfUrl: null,
   };
 }
 
@@ -388,8 +392,12 @@ function seedSubregionLabel(code: string | null, locale: Locale): string | null 
   return `${prefix} ${match[1]}: ${name}`;
 }
 
-function seedImageUrl(image: string): string {
-  return `/images/portafolio/${image.replace(/^imagenes\//, "")}`;
+function seedImageUrl(slug: string, image: string): string {
+  return getPortfolioCniMedia(slug)?.image || `/images/portafolio/${image.replace(/^imagenes\//, "")}`;
+}
+
+function seedPdfUrl(slug: string): string | null {
+  return getPortfolioCniMedia(slug)?.file ?? null;
 }
 
 function seedSectorMeta(sector: string, locale: Locale): { slug: string; name: string } {
@@ -413,7 +421,7 @@ export function seedToCatalogItem(
     slug: record.slug,
     code: record.code || "",
     title: record.title,
-    coverImageUrl: seedImageUrl(record.image),
+    coverImageUrl: seedImageUrl(record.slug, record.image),
     sectorSlug: sectorMeta.slug,
     sectorName: sectorMeta.name,
     phase: record.phase || "",
@@ -427,6 +435,7 @@ export function seedToCatalogItem(
     description: record.description || "",
     latitude: firstLocation.lat ?? null,
     longitude: firstLocation.lng ?? null,
+    pdfUrl: seedPdfUrl(record.slug),
   };
 }
 
@@ -469,6 +478,7 @@ function hydrateCatalogItem(
     phase: django.phase || seedItem.phase,
     phaseDetail: django.phaseDetail || seedItem.phaseDetail,
     investmentType: django.investmentType || seedItem.investmentType,
+    pdfUrl: django.pdfUrl || seedItem.pdfUrl,
   };
 }
 
@@ -615,7 +625,7 @@ function toSeedMapProject(
     featured: false,
     kind: kindType,
     code: record.code || null,
-    coverImageUrl: seedImageUrl(record.image),
+    coverImageUrl: seedImageUrl(record.slug, record.image),
     amountText: record.amount_text || null,
     municipio_geocode: firstLocation.municipio_geocode ?? null,
     locationText: record.location_text || null,

@@ -101,7 +101,9 @@ export function PortfolioCatalogClient({
   const docType = documentTypeForTab[filtersState.tipo];
   const tabDocuments = documents.filter((doc) => doc.document_type === docType && doc.file_url);
   const selectedDocument = selectedItem ? matchDocumentByCode(documents, selectedItem.code) : null;
-  const selectedPdf = selectedDocument ? documentOpenUrl(selectedDocument) : null;
+  const selectedPdf = selectedDocument
+    ? documentOpenUrl(selectedDocument)
+    : selectedItem?.pdfUrl ?? null;
   const searchPlaceholder =
     filtersState.tipo === "oportunidades" ? t.searchPlaceholderOpportunities : t.searchPlaceholder;
 

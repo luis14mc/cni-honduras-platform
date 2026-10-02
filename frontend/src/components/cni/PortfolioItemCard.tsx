@@ -39,7 +39,7 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel, onOpen }: Pr
   const ctaLabel = isOpportunity ? t.viewOpportunity : t.viewDetails;
   const imageClass = isOpportunity
     ? "object-cover object-top transition duration-[450ms] group-hover:scale-105"
-    : cn("object-cover transition duration-[450ms] group-hover:scale-105", item.coverImageUrl ? "object-left" : "object-center");
+    : "object-cover object-center transition duration-[450ms] group-hover:scale-105";
 
   return (
     <article className="group flex h-full min-h-full flex-col overflow-hidden rounded-[18px] border border-[#e4e8ef] bg-white transition duration-300 hover:-translate-y-1.5 hover:border-[rgba(51,78,136,0.18)] hover:shadow-[0_20px_45px_rgba(37,42,88,0.11)]">
