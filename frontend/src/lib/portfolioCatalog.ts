@@ -57,6 +57,7 @@ export type PortfolioCatalogItem = {
   locationText: string;
   subregionLabel: string | null;
   investmentType: string;
+  description: string;
   latitude: number | null;
   longitude: number | null;
 };
@@ -139,7 +140,9 @@ export function applyUnifiedFilters(
       return (
         item.title.toLowerCase().includes(q) ||
         item.code.toLowerCase().includes(q) ||
-        item.locationText.toLowerCase().includes(q)
+        item.locationText.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.phase.toLowerCase().includes(q)
       );
     })
     .sort((a, b) => {
@@ -285,6 +288,7 @@ export function projectToCatalogItem(project: InvestmentProject, locale: Locale)
     locationText: project.location_text || "",
     subregionLabel: formatSubregionLabel(project.region, locale),
     investmentType: project.investment_type || "",
+    description: project.description || project.summary || "",
     latitude: project.latitude,
     longitude: project.longitude,
   };
@@ -310,6 +314,7 @@ export function opportunityToCatalogItem(
     locationText: opportunity.location_text || "",
     subregionLabel: formatSubregionLabel(opportunity.region, locale),
     investmentType: opportunity.investment_type || "",
+    description: opportunity.description || opportunity.opportunity_description || opportunity.summary || "",
     latitude: opportunity.latitude ?? null,
     longitude: opportunity.longitude ?? null,
   };
@@ -415,6 +420,7 @@ export function seedToCatalogItem(
     locationText: record.location_text || "",
     subregionLabel: seedSubregionLabel(record.subregion, locale),
     investmentType: record.investment_type || "",
+    description: record.description || "",
     latitude: firstLocation.lat ?? null,
     longitude: firstLocation.lng ?? null,
   };
@@ -454,6 +460,7 @@ function hydrateCatalogItem(
     coverImageUrl: django.coverImageUrl || seedItem.coverImageUrl,
     amountText: django.amountText || seedItem.amountText,
     locationText: django.locationText || seedItem.locationText,
+    description: django.description || seedItem.description,
   };
 }
 

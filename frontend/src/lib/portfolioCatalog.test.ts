@@ -41,6 +41,7 @@ function item(overrides: Partial<PortfolioCatalogItem>): PortfolioCatalogItem {
     locationText: "Cortés",
     subregionLabel: "Región 1: Valle de Sula",
     investmentType: "APP",
+    description: "Resumen de demostración.",
     latitude: 15,
     longitude: -88,
     ...overrides,
@@ -138,6 +139,7 @@ describe("portfolio seed fallback", () => {
     expect(found).not.toBeNull();
     expect(found?.item.code).toBe("FP-CNI-I010");
     expect(found?.record.amount_text).toContain("USD");
+    expect(found?.item.description.length).toBeGreaterThan(40);
     const missing = getSeedBySlug("project", "no-existe", "es");
     expect(missing).toBeNull();
   });
