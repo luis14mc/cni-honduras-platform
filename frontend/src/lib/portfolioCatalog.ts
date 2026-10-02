@@ -3,6 +3,7 @@ import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentOpportunity, InvestmentProject, RegionRef } from "@/src/types/investment";
 import type { SectorSlug } from "@/src/data/investmentSectors";
 import { getSectorDisplayName, isSectorSlug } from "@/src/data/investmentSectors";
+import { getPortfolioCniMedia } from "@/src/data/portfolioCniMedia";
 import seedData from "@/src/data/portafolioCni2026.json";
 
 export const PORTFOLIO_CATALOG_SECTORS = [
@@ -51,14 +52,17 @@ export type PortfolioCatalogItem = {
   sectorSlug: string;
   sectorName: string;
   phase: string;
+  phaseDetail: string;
   amountText: string;
   amountNote: string;
   amountUsd: number;
   locationText: string;
   subregionLabel: string | null;
   investmentType: string;
+  description: string;
   latitude: number | null;
   longitude: number | null;
+  pdfUrl: string | null;
 };
 
 export type PortfolioFilters = {
@@ -139,7 +143,9 @@ export function applyUnifiedFilters(
       return (
         item.title.toLowerCase().includes(q) ||
         item.code.toLowerCase().includes(q) ||
-        item.locationText.toLowerCase().includes(q)
+        item.locationText.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.phase.toLowerCase().includes(q)
       );
     })
     .sort((a, b) => {
@@ -279,14 +285,17 @@ export function projectToCatalogItem(project: InvestmentProject, locale: Locale)
     sectorSlug: project.sector?.slug || "",
     sectorName: project.sector?.name || "",
     phase: project.phase || "",
+    phaseDetail: project.phase_detail || "",
     amountText: project.amount_text || "",
     amountNote: project.amount_notes?.[0] || "",
     amountUsd: toAmountUsd(project.investment_amount),
     locationText: project.location_text || "",
     subregionLabel: formatSubregionLabel(project.region, locale),
     investmentType: project.investment_type || "",
+    description: project.description || project.summary || "",
     latitude: project.latitude,
     longitude: project.longitude,
+    pdfUrl: null,
   };
 }
 
@@ -304,14 +313,17 @@ export function opportunityToCatalogItem(
     sectorSlug: opportunity.sector?.slug || "",
     sectorName: opportunity.sector?.name || "",
     phase: opportunity.phase || "",
+    phaseDetail: opportunity.phase_detail || "",
     amountText: opportunity.amount_text || "",
     amountNote: opportunity.amount_notes?.[0] || "",
     amountUsd: toAmountUsd(opportunity.estimated_investment),
     locationText: opportunity.location_text || "",
     subregionLabel: formatSubregionLabel(opportunity.region, locale),
     investmentType: opportunity.investment_type || "",
+    description: opportunity.description || opportunity.opportunity_description || opportunity.summary || "",
     latitude: opportunity.latitude ?? null,
     longitude: opportunity.longitude ?? null,
+    pdfUrl: null,
   };
 }
 
@@ -380,8 +392,12 @@ function seedSubregionLabel(code: string | null, locale: Locale): string | null 
   return `${prefix} ${match[1]}: ${name}`;
 }
 
-function seedImageUrl(image: string): string {
-  return `/images/portafolio/${image.replace(/^imagenes\//, "")}`;
+function seedImageUrl(slug: string, image: string): string {
+  return getPortfolioCniMedia(slug)?.image || `/images/portafolio/${image.replace(/^imagenes\//, "")}`;
+}
+
+function seedPdfUrl(slug: string): string | null {
+  return getPortfolioCniMedia(slug)?.file ?? null;
 }
 
 function seedSectorMeta(sector: string, locale: Locale): { slug: string; name: string } {
@@ -405,18 +421,21 @@ export function seedToCatalogItem(
     slug: record.slug,
     code: record.code || "",
     title: record.title,
-    coverImageUrl: seedImageUrl(record.image),
+    coverImageUrl: seedImageUrl(record.slug, record.image),
     sectorSlug: sectorMeta.slug,
     sectorName: sectorMeta.name,
     phase: record.phase || "",
+    phaseDetail: record.phase_detail || "",
     amountText: record.amount_text || "",
     amountNote: record.amount_notes?.[0] ?? "",
     amountUsd: typeof record.amount_usd === "number" ? record.amount_usd : 0,
     locationText: record.location_text || "",
     subregionLabel: seedSubregionLabel(record.subregion, locale),
     investmentType: record.investment_type || "",
+    description: record.description || "",
     latitude: firstLocation.lat ?? null,
     longitude: firstLocation.lng ?? null,
+    pdfUrl: seedPdfUrl(record.slug),
   };
 }
 
@@ -453,7 +472,13 @@ function hydrateCatalogItem(
     ...django,
     coverImageUrl: django.coverImageUrl || seedItem.coverImageUrl,
     amountText: django.amountText || seedItem.amountText,
+    amountNote: django.amountNote || seedItem.amountNote,
     locationText: django.locationText || seedItem.locationText,
+    description: django.description || seedItem.description,
+    phase: django.phase || seedItem.phase,
+    phaseDetail: django.phaseDetail || seedItem.phaseDetail,
+    investmentType: django.investmentType || seedItem.investmentType,
+    pdfUrl: django.pdfUrl || seedItem.pdfUrl,
   };
 }
 
@@ -600,7 +625,7 @@ function toSeedMapProject(
     featured: false,
     kind: kindType,
     code: record.code || null,
-    coverImageUrl: seedImageUrl(record.image),
+    coverImageUrl: seedImageUrl(record.slug, record.image),
     amountText: record.amount_text || null,
     municipio_geocode: firstLocation.municipio_geocode ?? null,
     locationText: record.location_text || null,

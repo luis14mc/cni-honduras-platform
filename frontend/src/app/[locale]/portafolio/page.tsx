@@ -8,13 +8,11 @@ import { loadAsyncData } from "@/src/lib/asyncData";
 import { getOpportunities, getProjects } from "@/src/services/investment";
 import { getDocuments } from "@/src/lib/strapi/editorial";
 import {
-  formatUsdMillions,
   getSeedCatalog,
   opportunityToCatalogItem,
   mergeCatalogSources,
   parseUnifiedFilters,
   projectToCatalogItem,
-  sumAmountUsd,
 } from "@/src/lib/portfolioCatalog";
 import { designImages } from "@/src/lib/designAssets";
 import type { InvestmentOpportunity, InvestmentProject } from "@/src/types/investment";
@@ -30,14 +28,12 @@ const HERO = {
     title: "PORTAFOLIO DE INVERSIONES",
     description:
       "Explore las fichas de proyectos y las Opportunity Cards del CNI Honduras, filtradas por tipo y sector.",
-    sectors: "Sectores cubiertos",
   },
   en: {
     eyebrow: "Investment Portfolio",
     title: "INVESTMENT PORTFOLIO",
     description:
       "Browse CNI Honduras project sheets and Opportunity Cards, filtered by type and sector.",
-    sectors: "Sectors covered",
   },
 } as const;
 
@@ -78,35 +74,13 @@ export default async function PortafolioPage({
     getSeedCatalog("opportunity", locale),
   );
 
-  const totalAmountUsd = sumAmountUsd([...projects.data, ...opportunities.data]);
-  const stats = [
-    {
-      key: "proyectos",
-      count: projects.data.length,
-      amount: formatUsdMillions(sumAmountUsd(projects.data)),
-      label: locale === "es" ? "proyectos" : "projects",
-    },
-    {
-      key: "oportunidades",
-      count: opportunities.data.length,
-      amount: formatUsdMillions(sumAmountUsd(opportunities.data)),
-      label: locale === "es" ? "oportunidades" : "opportunities",
-    },
-    {
-      key: "sectores",
-      count: 5,
-      amount: null,
-      label: hero.sectors,
-    },
-  ];
-
   const documentTypeForTab: Record<UnifiedPortfolioTab, string> = {
     proyectos: "project_sheet",
     oportunidades: "opportunity_card",
   };
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
+    <div className="-mt-28 flex flex-1 flex-col bg-[#f5f7fb]">
       <PageHero
         eyebrow={hero.eyebrow}
         title={hero.title}
@@ -117,33 +91,6 @@ export default async function PortafolioPage({
         imageClassName="absolute inset-0 object-cover opacity-40"
         overlayClassName="bg-gradient-to-r from-[#000a1e]/90 via-[#000a1e]/70 to-[#000a1e]/35"
       />
-
-      <section className="bg-[#001a33] py-8 text-white" aria-label={hero.sectors}>
-        <div className="mx-auto max-w-screen-2xl px-4 md:px-10">
-          <ul className="grid gap-4 md:grid-cols-3" role="list">
-            {stats.map((stat) => (
-              <li
-                key={stat.key}
-                className="flex flex-col rounded-xl border border-white/10 bg-white/5 p-5"
-              >
-                <span className="font-headline text-[10px] font-bold uppercase tracking-[0.22em] text-[#8DC046]">
-                  {stat.label}
-                </span>
-                <span className="mt-3 font-display text-2xl font-extrabold leading-tight md:text-3xl">
-                  {stat.amount ?? `${stat.count}`}
-                </span>
-                <span className="mt-1 font-body text-sm text-white/70">
-                  {stat.count} {stat.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="sr-only">
-            {stats.map((s) => `${s.count} ${s.label}`).join(" · ")}
-            {totalAmountUsd > 0 ? ` · Total ${formatUsdMillions(totalAmountUsd)}` : ""}
-          </p>
-        </div>
-      </section>
 
       <PortfolioCatalogClient
         locale={locale}

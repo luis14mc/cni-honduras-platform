@@ -3,27 +3,24 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
 import {
   applyUnifiedFilters,
-  countBySector,
+  matchDocumentByCode,
   PORTFOLIO_CATALOG_SECTORS,
   serializeUnifiedFilters,
-  slugifyPhase,
-  uniquePhases,
   type PortfolioCatalogItem,
   type UnifiedPortfolioFilters,
-  type UnifiedPortfolioSort,
   type UnifiedPortfolioTab,
 } from "@/src/lib/portfolioCatalog";
 import { getSectorDisplayName } from "@/src/data/investmentSectors";
 import { PortfolioDocumentCard } from "@/src/components/cni/PortfolioDocumentCard";
 import { PortfolioItemCard } from "@/src/components/cni/PortfolioItemCard";
-import { SectorIcon } from "@/src/components/cni/SectorIcon";
+import { PortfolioItemModal } from "@/src/components/cni/PortfolioItemModal";
 import type { CmsDocument } from "@/src/types/cms";
+import { documentOpenUrl } from "@/src/lib/cmsDocuments";
 import { cn } from "@/src/lib/utils";
 
 type Props = {
@@ -47,8 +44,8 @@ export function PortfolioCatalogClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filtersState, setFiltersState] = useState<UnifiedPortfolioFilters>(initialFilters);
+  const [selectedItem, setSelectedItem] = useState<PortfolioCatalogItem | null>(null);
 
-  // Sincroniza el estado con la URL si cambia externamente (botón atrás/adelante).
   const searchParamsKey = searchParams.toString();
   const syncedFilters = useMemo<UnifiedPortfolioFilters>(
     () => ({
@@ -96,151 +93,80 @@ export function PortfolioCatalogClient({
   );
 
   const allItems = useMemo(() => [...projects, ...opportunities], [projects, opportunities]);
-  const activeTabItems = useMemo(
-    () => (filtersState.tipo === "proyectos" ? projects : opportunities),
-    [filtersState.tipo, projects, opportunities],
-  );
-  const sectorCountsByTab = useMemo(
-    () => ({
-      proyectos: countBySector(projects),
-      oportunidades: countBySector(opportunities),
-    }),
-    [projects],
-  );
-
   const filteredItems = useMemo(
     () => applyUnifiedFilters(allItems, filtersState.tipo, filtersState),
     [allItems, filtersState],
   );
-  const phases = useMemo(() => uniquePhases(activeTabItems), [activeTabItems]);
-
-  const tabProjectsCount = projects.length;
-  const tabOppsCount = opportunities.length;
-  const activeSectorCount =
-    filtersState.tipo === "proyectos"
-      ? sectorCountsByTab.proyectos[filtersState.sector ?? ""] ?? 0
-      : sectorCountsByTab.oportunidades[filtersState.sector ?? ""] ?? 0;
 
   const docType = documentTypeForTab[filtersState.tipo];
   const tabDocuments = documents.filter((doc) => doc.document_type === docType && doc.file_url);
+  const selectedDocument = selectedItem ? matchDocumentByCode(documents, selectedItem.code) : null;
+  const selectedPdf = selectedDocument
+    ? documentOpenUrl(selectedDocument)
+    : selectedItem?.pdfUrl ?? null;
+  const searchPlaceholder =
+    filtersState.tipo === "oportunidades" ? t.searchPlaceholderOpportunities : t.searchPlaceholder;
 
   return (
-    <div className="bg-[#f8f9ff]">
-      <div className="sticky top-24 z-40 border-b border-cni-primary/10 bg-white/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-white/80">
-        <div className="mx-auto max-w-screen-2xl px-4 py-4 md:px-10">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label="Tipo">
-              <TabButton
-                active={filtersState.tipo === "proyectos"}
-                onClick={() => update({ tipo: "proyectos" })}
-                count={tabProjectsCount}
-                locale={locale}
-                kind="proyectos"
-              >
-                {t.projectsTab}
-              </TabButton>
-              <TabButton
-                active={filtersState.tipo === "oportunidades"}
-                onClick={() => update({ tipo: "oportunidades" })}
-                count={tabOppsCount}
-                locale={locale}
-                kind="oportunidades"
-              >
-                {t.opportunitiesTab}
-              </TabButton>
-            </div>
-
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex flex-wrap gap-2" role="group" aria-label={t.allSectors}>
-                <SectorChip
-                  active={!filtersState.sector}
-                  disabled={false}
-                  onClick={() => update({ sector: null })}
-                >
-                  {t.allSectors}
-                </SectorChip>
-                {PORTFOLIO_CATALOG_SECTORS.map((slug) => {
-                  const count =
-                    filtersState.tipo === "proyectos"
-                      ? sectorCountsByTab.proyectos[slug] ?? 0
-                      : sectorCountsByTab.oportunidades[slug] ?? 0;
-                  const label = getSectorDisplayName(locale, slug);
-                  const display = `${label} (${count})`;
-                  return (
-                    <SectorChip
-                      key={slug}
-                      active={filtersState.sector === slug}
-                      disabled={count === 0}
-                      onClick={() => update({ sector: filtersState.sector === slug ? null : slug })}
-                    >
-                      <span className="inline-flex items-center gap-2">
-                        <SectorIcon slug={slug} size={18} />
-                        {display}
-                      </span>
-                    </SectorChip>
-                  );
-                })}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                {phases.length > 0 ? (
-                  <label className="flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-cni-primary/60">
-                    {t.phase}
-                    <select
-                      className="rounded-lg border border-cni-primary/15 bg-white px-3 py-2 font-body text-sm font-normal normal-case tracking-normal text-cni-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#32B372]"
-                      value={filtersState.fase ?? ""}
-                      onChange={(event) => update({ fase: event.target.value || null })}
-                    >
-                      <option value="">{t.allPhases}</option>
-                      {phases.map((phase) => (
-                        <option key={phase} value={slugifyPhase(phase)}>
-                          {phase}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ) : null}
-
-                <label className="flex items-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-cni-primary/60">
-                  {t.sortBy}
-                  <select
-                    className="rounded-lg border border-cni-primary/15 bg-white px-3 py-2 font-body text-sm font-normal normal-case tracking-normal text-cni-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#32B372]"
-                    value={filtersState.orden}
-                    onChange={(event) =>
-                      update({ orden: event.target.value as UnifiedPortfolioSort })
-                    }
-                  >
-                    <option value="amount">{t.sortAmount}</option>
-                    <option value="name">{t.sortName}</option>
-                  </select>
-                </label>
-
-                <label className="relative flex items-center font-headline text-[11px] font-bold uppercase tracking-[0.16em] text-cni-primary/60">
-                  <Search className="pointer-events-none absolute left-3 h-4 w-4 text-cni-primary/45" aria-hidden />
-                  <input
-                    type="search"
-                    value={filtersState.q}
-                    onChange={(event) => update({ q: event.target.value })}
-                    placeholder={t.searchPlaceholder}
-                    aria-label={t.searchLabel}
-                    className="w-full min-w-[14rem] rounded-lg border border-cni-primary/15 bg-white py-2 pl-9 pr-3 font-body text-sm font-normal normal-case tracking-normal text-cni-primary placeholder:text-cni-primary/45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#32B372]"
-                  />
-                </label>
-              </div>
-            </div>
+    <div className="bg-[#f5f7fb]">
+      <div className="mx-auto w-[92%] max-w-[1500px] px-0 pb-24 pt-14">
+        <div className="mb-7 flex flex-col items-stretch justify-between gap-6 lg:flex-row lg:items-center">
+          <div
+            className="flex flex-col rounded-[14px] border border-[#e4e8ef] bg-white p-1.5 sm:flex-row"
+            role="tablist"
+            aria-label={t.typeTabs}
+          >
+            <TabButton
+              active={filtersState.tipo === "proyectos"}
+              onClick={() => {
+                setSelectedItem(null);
+                update({ tipo: "proyectos", sector: null });
+              }}
+            >
+              {t.projectsTab}
+            </TabButton>
+            <TabButton
+              active={filtersState.tipo === "oportunidades"}
+              onClick={() => {
+                setSelectedItem(null);
+                update({ tipo: "oportunidades", sector: null });
+              }}
+            >
+              {t.opportunitiesTab}
+            </TabButton>
           </div>
-        </div>
-      </div>
 
-      <section className="mx-auto max-w-screen-2xl px-4 py-10 md:px-10 md:py-14">
-        <p className="font-body text-sm text-cni-primary/65" role="status">
-          {t.showing(filteredItems.length, filtersState.tipo === "proyectos" ? "projects" : "opportunities", filtersState.sector)}
-          {filtersState.sector && activeSectorCount === 0 ? " · 0" : ""}
-        </p>
+          <label className="w-full lg:w-min lg:min-w-[280px] lg:max-w-[380px]">
+            <span className="sr-only">{t.searchLabel}</span>
+            <input
+              type="search"
+              value={filtersState.q}
+              onChange={(event) => update({ q: event.target.value })}
+              placeholder={searchPlaceholder}
+              aria-label={t.searchLabel}
+              className="w-full rounded-xl border border-[#e4e8ef] bg-white px-4 py-3.5 font-body text-sm text-[#252A58] outline-none transition placeholder:text-[#667085] focus:border-[#334E88] focus:shadow-[0_0_0_3px_rgba(51,78,136,0.12)]"
+            />
+          </label>
+        </div>
+
+        <div className="mb-10 flex flex-wrap gap-2.5" role="group" aria-label={t.allSectors}>
+          <SectorChip active={!filtersState.sector} onClick={() => update({ sector: null })}>
+            {t.allSectors}
+          </SectorChip>
+          {PORTFOLIO_CATALOG_SECTORS.map((slug) => (
+            <SectorChip
+              key={slug}
+              active={filtersState.sector === slug}
+              onClick={() => update({ sector: filtersState.sector === slug ? null : slug })}
+            >
+              {getSectorDisplayName(locale, slug)}
+            </SectorChip>
+          ))}
+        </div>
 
         {filteredItems.length === 0 ? (
-          <div className="mt-8 rounded-xl border border-dashed border-cni-primary/15 bg-white px-6 py-12 text-center">
-            <p className="font-body text-sm text-[#0E7A7C]">{t.noResults}</p>
+          <div className="px-5 py-16 text-center">
+            <p className="font-body text-lg text-[#667085]">{t.noResults}</p>
             <button
               type="button"
               onClick={() =>
@@ -252,47 +178,37 @@ export function PortfolioCatalogClient({
                   orden: "amount",
                 })
               }
-              className="mt-4 inline-flex items-center justify-center rounded-md bg-cni-primary px-5 py-2 text-xs font-bold uppercase tracking-[0.14em] text-white transition hover:bg-[#0E7A7C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
+              className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#334E88] px-5 py-3 font-body text-sm font-extrabold text-white transition hover:bg-[#252A58] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
             >
               {t.clearFilters}
             </button>
           </div>
-        ) : filtersState.sector ? (
-          <CatalogGrid locale={locale} items={filteredItems} />
         ) : (
-          <div className="mt-6 space-y-12">
-            {PORTFOLIO_CATALOG_SECTORS.filter((slug) =>
-              filteredItems.some((item) => item.sectorSlug === slug),
-            ).map((slug) => {
-              const sectorItems = filteredItems.filter((item) => item.sectorSlug === slug);
-              if (sectorItems.length === 0) return null;
-              return (
-                <section key={slug} aria-labelledby={`catalog-sector-${slug}`}>
-                  <h3
-                    id={`catalog-sector-${slug}`}
-                    className="flex items-center gap-3 font-headline text-sm font-bold uppercase tracking-[0.18em] text-cni-primary"
-                  >
-                    <SectorIcon slug={slug} size={28} />
-                    {getSectorDisplayName(locale, slug)}
-                    <span className="font-body text-xs font-normal normal-case tracking-normal text-cni-primary/55">
-                      ({sectorItems.length})
-                    </span>
-                  </h3>
-                  <div className="mt-4">
-                    <CatalogGrid locale={locale} items={sectorItems} />
-                  </div>
-                </section>
-              );
-            })}
+          <div className="grid grid-cols-1 items-stretch gap-7 sm:grid-cols-2 xl:grid-cols-3">
+            {filteredItems.map((item) => (
+              <PortfolioItemCard
+                key={`${item.kind}-${item.slug}`}
+                locale={locale}
+                item={item}
+                onOpen={() => setSelectedItem(item)}
+              />
+            ))}
           </div>
         )}
 
+        <PortfolioItemModal
+          locale={locale}
+          item={selectedItem}
+          pdfUrl={selectedPdf}
+          onClose={() => setSelectedItem(null)}
+        />
+
         {tabDocuments.length > 0 ? (
-          <section className="mt-16 rounded-xl border border-cni-primary/10 bg-white p-6 shadow-sm sm:p-8">
+          <section className="mt-16 rounded-[18px] border border-[#e4e8ef] bg-white p-6 shadow-sm sm:p-8">
             <p className="mb-2 font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#32B372]">
               {t.cardsEyebrow}
             </p>
-            <h2 className="mb-6 font-display text-2xl font-extrabold text-cni-primary md:text-3xl">
+            <h2 className="mb-6 font-display text-2xl font-extrabold text-[#252A58] md:text-3xl">
               {t.cardsTitle}
             </h2>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -309,17 +225,7 @@ export function PortfolioCatalogClient({
         ) : null}
 
         <SecondaryCards locale={locale} />
-      </section>
-    </div>
-  );
-}
-
-function CatalogGrid({ locale, items }: { locale: Locale; items: PortfolioCatalogItem[] }) {
-  return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <PortfolioItemCard key={`${item.kind}-${item.slug}`} locale={locale} item={item} />
-      ))}
+      </div>
     </div>
   );
 }
@@ -327,20 +233,12 @@ function CatalogGrid({ locale, items }: { locale: Locale; items: PortfolioCatalo
 function TabButton({
   active,
   onClick,
-  count,
   children,
-  locale,
-  kind,
 }: {
   active: boolean;
   onClick: () => void;
-  count: number;
   children: React.ReactNode;
-  locale: Locale;
-  kind: UnifiedPortfolioTab;
 }) {
-  const showingKind = kind === "proyectos" ? "projects" : "opportunities";
-  const label = portfolioCatalogCopy[locale].showing(count, showingKind);
   return (
     <button
       type="button"
@@ -348,33 +246,21 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-4 py-2 font-headline text-[11px] font-bold uppercase tracking-[0.14em] transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]",
-        active
-          ? "bg-cni-primary text-white"
-          : "bg-white text-cni-primary ring-1 ring-cni-primary/15 hover:bg-[#eaf7f0]",
+        "min-h-11 rounded-[10px] px-5 py-3.5 text-left font-body text-sm font-bold text-[#252A58] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06] sm:text-center",
+        active ? "bg-[#334E88] text-white" : "bg-transparent hover:bg-[rgba(51,78,136,0.08)]",
       )}
     >
       {children}
-      <span
-        className={cn(
-          "inline-flex min-w-7 items-center justify-center rounded-full px-2 py-0.5 text-[10px]",
-          active ? "bg-white/15 text-white" : "bg-cni-primary/10 text-cni-primary",
-        )}
-      >
-        {label}
-      </span>
     </button>
   );
 }
 
 function SectorChip({
   active,
-  disabled,
   onClick,
   children,
 }: {
   active: boolean;
-  disabled: boolean;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -382,14 +268,12 @@ function SectorChip({
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
       aria-pressed={active}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-4 py-2 font-headline text-[11px] font-bold uppercase tracking-[0.14em] transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]",
+        "rounded-full border px-4 py-2.5 font-body text-[13px] font-bold transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]",
         active
-          ? "bg-cni-primary text-white"
-          : "bg-white text-cni-primary ring-1 ring-cni-primary/15 hover:bg-[#eaf7f0]",
-        disabled && "cursor-not-allowed opacity-40 hover:bg-white",
+          ? "border-[#252A58] bg-[#252A58] text-white"
+          : "border-[#e4e8ef] bg-white text-[#252A58] hover:border-[#d5dbea] hover:bg-[#f4f6fb]",
       )}
     >
       {children}
@@ -404,7 +288,7 @@ function SecondaryCards({ locale }: { locale: Locale }) {
       <SecondaryCard
         locale={locale}
         href="/portafolio/mapa"
-        title={locale === "es" ? "Mapa de Inversión" : "Investment Map"}
+        title={locale === "es" ? "Mapa de inversión" : "Investment map"}
         description={
           locale === "es"
             ? "Visualice la cartera geográficamente con clusters sectoriales."
@@ -414,7 +298,7 @@ function SecondaryCards({ locale }: { locale: Locale }) {
       <SecondaryCard
         locale={locale}
         href="/portafolio/casos"
-        title={locale === "es" ? "Casos de Éxito" : "Success Stories"}
+        title={locale === "es" ? "Casos de éxito" : "Success stories"}
         description={
           locale === "es"
             ? "Corporaciones multinacionales que han expandido en Honduras."
@@ -449,12 +333,12 @@ function SecondaryCard({
   return (
     <Link
       href={withLocale(locale, href)}
-      className="group flex h-full flex-col rounded-xl border border-cni-primary/10 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-[#32B372]/40 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
+      className="group flex h-full flex-col rounded-[18px] border border-[#e4e8ef] bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-[rgba(51,78,136,0.18)] hover:shadow-[0_20px_45px_rgba(37,42,88,0.11)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
     >
-      <h3 className="font-display text-lg font-extrabold text-cni-primary group-hover:text-[#0E7A7C]">
+      <h3 className="font-display text-lg font-extrabold text-[#252A58] group-hover:text-[#334E88]">
         {title}
       </h3>
-      <p className="mt-3 font-body text-sm leading-relaxed text-cni-primary/70">{description}</p>
+      <p className="mt-3 font-body text-sm leading-relaxed text-[#667085]">{description}</p>
     </Link>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { CmsDocument } from "@/src/types/cms";
+import { PORTFOLIO_CNI_MEDIA } from "@/src/data/portfolioCniMedia";
 import {
   applyUnifiedFilters,
   countBySector,
@@ -35,14 +35,17 @@ function item(overrides: Partial<PortfolioCatalogItem>): PortfolioCatalogItem {
     sectorSlug: "energia",
     sectorName: "Energía",
     phase: "Fase 1",
+    phaseDetail: "Estructuración y Planificación",
     amountText: "USD 10 MM",
     amountNote: "CAPEX",
     amountUsd: 10_000_000,
     locationText: "Cortés",
     subregionLabel: "Región 1: Valle de Sula",
     investmentType: "APP",
+    description: "Resumen de demostración.",
     latitude: 15,
     longitude: -88,
+    pdfUrl: null,
     ...overrides,
   };
 }
@@ -107,7 +110,10 @@ describe("portfolio seed fallback", () => {
     const opp = items.find((item) => item.code === "OC-CNI-A007");
     expect(opp).toBeDefined();
     expect(opp?.title).toBe("Aguacate Hass Fresco y Aceite Extra Virgen");
-    expect(opp?.coverImageUrl).toBe("/images/portafolio/oportunidades/aguacate-hass-fresco-y-aceite-extra-virgen.webp");
+    expect(opp?.coverImageUrl).toBe(
+      "https://cni.hn/wp-content/uploads/2026/09/OPPORTUNITY-CARD-OC-CNI-A007-_-Aguacate.jpg",
+    );
+    expect(opp?.pdfUrl).toBe("https://cni.hn/wp-content/uploads/2026/09/OPPORTUNITY-CARD-OC-CNI-A007.pdf");
     expect(opp?.sectorSlug).toBe("agroindustria");
     expect(opp?.sectorName).toBe("Agroindustria");
     expect(opp?.amountText).toBe("USD 5.6 MM");
@@ -128,9 +134,16 @@ describe("portfolio seed fallback", () => {
     expect(energiaEn?.sectorName).toBe("Energy");
   });
 
-  it("returns 17 opportunities and 25 projects from the seed", () => {
-    expect(getSeedCatalog("opportunity", "es").data).toHaveLength(17);
-    expect(getSeedCatalog("project", "es").data).toHaveLength(25);
+  it("covers every seed slug with the published catalog media URLs", () => {
+    const projects = getSeedCatalog("project", "es").data;
+    const opportunities = getSeedCatalog("opportunity", "es").data;
+    expect(opportunities).toHaveLength(17);
+    expect(projects).toHaveLength(25);
+    for (const row of [...projects, ...opportunities]) {
+      expect(PORTFOLIO_CNI_MEDIA[row.slug], row.slug).toBeDefined();
+      expect(row.coverImageUrl.startsWith("https://")).toBe(true);
+    }
+    expect(opportunities.every((row) => Boolean(row.pdfUrl?.endsWith(".pdf")))).toBe(true);
   });
 
   it("looks up a seed record by slug for the detail page", () => {
@@ -138,6 +151,8 @@ describe("portfolio seed fallback", () => {
     expect(found).not.toBeNull();
     expect(found?.item.code).toBe("FP-CNI-I010");
     expect(found?.record.amount_text).toContain("USD");
+    expect(found?.item.description.length).toBeGreaterThan(40);
+    expect(found?.item.phaseDetail).toBe("Ejecución y Monitoreo");
     const missing = getSeedBySlug("project", "no-existe", "es");
     expect(missing).toBeNull();
   });
@@ -154,7 +169,7 @@ describe("portfolio seed fallback", () => {
     expect(district?.municipio_geocode).toBe("030100");
     const opportunity = points.find((p) => p.slug === "complejo-ecoturistico-el-cajon");
     expect(opportunity?.kind).toBe("opportunity");
-    expect(opportunity?.coverImageUrl).toContain("complejo-ecoturistico-el-cajon");
+    expect(opportunity?.coverImageUrl).toContain("T002-scaled.png");
   });
 });
 
