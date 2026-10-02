@@ -26,8 +26,12 @@ import {
   getRegionLegendItems,
   filterMapProjectsByRegion,
   stripRegionSlivers,
+  filterMapProjectsByDepartment,
   filterMapProjectsByMunicipality,
   filterMapProjectsBySector,
+  filterMapProjectsByKind,
+  findMapItemByQuery,
+  sortMapProjectsByAmount,
   getMarkerProjects,
   indexSummaries,
   createLazyLayerLoader,
@@ -35,9 +39,11 @@ import {
   toggleInfrastructureLayer,
   updateInfrastructureCache,
   getMapVisibleCounts,
-  getProjectFocus,
   searchInvestmentMap,
   serializeMapQueryState,
+  toLeafletProjectPosition,
+  type MapKindFilter,
+  type MapMarkerGroup,
 } from "@/src/lib/types/investment-map";
 import {
   getDepartmentGeoJson,
@@ -50,6 +56,7 @@ import {
 } from "@/src/services/investmentMap";
 import { getTerritorialRegionsGeoJson } from "@/src/services/geo";
 import { mergeMapProjects } from "@/src/lib/portfolioCatalog";
+import { assignSeedDepartments, assignSeedMunicipalities, groupMarkersByPosition } from "@/src/lib/mapMarkers";
 import type { DepartmentFeatureCollection } from "@/src/lib/types/investment-map";
 import type { Sector } from "@/src/types/investment";
 import { InvestmentMapPanel } from "@/src/components/map/InvestmentMapPanel";
@@ -94,8 +101,12 @@ export function InvestmentMapDashboard({
     data: null,
   });
   const [municipalitiesKey, setMunicipalitiesKey] = useState<string | null>(null);
-  const [projects, setProjects] = useState<AsyncState<MapInvestmentProject[]>>({ status: "ready", data: [] });
+  const [projects, setProjects] = useState<AsyncState<MapInvestmentProject[]>>({ status: "loading", data: [] });
   const [projectsKey, setProjectsKey] = useState<string | null>(null);
+  const [kindFilter, setKindFilter] = useState<MapKindFilter>("all");
+  const [hoveredProjectId, setHoveredProjectId] = useState<number | null>(null);
+  const [activeClusterKey, setActiveClusterKey] = useState<string | null>(null);
+  const [clusterFocus, setClusterFocus] = useState<[number, number] | null>(null);
   const [hoveredDepartment, setHoveredDepartment] = useState<DepartmentProperties | null>(null);
   const [hoveredMunicipality, setHoveredMunicipality] = useState<MunicipalityProperties | null>(null);
   const [activeInfrastructureLayers, setActiveInfrastructureLayers] = useState<Set<InfrastructureLayer>>(new Set());
@@ -116,8 +127,6 @@ export function InvestmentMapDashboard({
   const regionRequests = useRef<Partial<Record<TerritorialRegionLevel, Promise<unknown>>>>({});
   const [regionStatus, setRegionStatus] = useState<Record<TerritorialRegionLevel, "idle" | "loading" | "ready" | "error">>({ macro: "idle", sub: "idle", polo: "idle" });
   const regionStatusRef = useRef(regionStatus);
-  const [regionProjects, setRegionProjects] = useState<AsyncState<MapInvestmentProject[]>>({ status: "ready", data: [] });
-  const [regionProjectsKey, setRegionProjectsKey] = useState<string | null>(null);
   const regionMode = regionLayer !== "none";
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -137,10 +146,7 @@ export function InvestmentMapDashboard({
         const department = data.features.find((item) => item.properties.slug === slug)?.properties ?? null;
         initialQueryRef.current.department = null;
         if (department) setSelectedDepartment(department);
-        else {
-          initialQueryRef.current.municipality = null;
-          if (!initialQueryRef.current.regionLevel) initialQueryRef.current.project = null;
-        }
+        else initialQueryRef.current.municipality = null;
       })
       .catch(() => !cancelled && setGeo({ status: "error", data: null }));
     getSectors({ locale })
@@ -187,14 +193,7 @@ export function InvestmentMapDashboard({
         if (municipality) {
           hydratedMunicipalityRef.current = municipality.slug;
           setSelectedMunicipality(municipality);
-          const projectSlug = initialQueryRef.current.project;
-          const project = loadedProjectsRef.current.find((item) => item.slug === projectSlug && item.municipality?.slug === municipality.slug) ?? null;
-          if (project) {
-            setSelectedProject(project);
-            setProjectFocusKey((key) => key + 1);
-          }
-          if (loadedProjectsRef.current.length) initialQueryRef.current.project = null;
-        } else initialQueryRef.current.project = null;
+        }
       })
       .catch(() => {
         if (cancelled) return;
@@ -205,46 +204,25 @@ export function InvestmentMapDashboard({
   }, [selectedDepartment]);
 
   useEffect(() => {
-    if (!selectedDepartment) return;
     let cancelled = false;
-    const requestKey = `${selectedDepartment.slug}:${activeSector}`;
-    const filterSeed = (items: MapInvestmentProject[]) => {
-      return items.filter((item) => {
-        if (activeSector !== "all" && item.sector.slug !== activeSector) return false;
-        return true;
-      });
-    };
-    getGeolocatedMapProjects({
-      departmentSlug: selectedDepartment.slug,
-      sectorSlug: activeSector === "all" ? undefined : activeSector,
-      locale,
-    })
+    const requestKey = locale;
+    getGeolocatedMapProjects({ locale })
       .then((data) => {
         if (cancelled) return;
         const merged = mergeMapProjects(data, seedMapProjects ?? []);
-        const finalData = filterSeed(merged);
-        setProjects({ status: "ready", data: finalData });
+        setProjects({ status: "ready", data: merged });
         setProjectsKey(requestKey);
-        loadedProjectsRef.current = finalData;
-        const slug = initialQueryRef.current.project;
-        if (initialQueryRef.current.municipality === null) {
-          const project = finalData.find((item) => item.slug === slug) ?? null;
-          initialQueryRef.current.project = null;
-          if (project && (!hydratedMunicipalityRef.current || project.municipality?.slug === hydratedMunicipalityRef.current)) {
-            setSelectedProject(project);
-            setProjectFocusKey((key) => key + 1);
-          }
-        }
+        loadedProjectsRef.current = merged;
       })
       .catch(() => {
         if (cancelled) return;
-        const fallback = filterSeed(mergeMapProjects([], seedMapProjects ?? []));
+        const fallback = mergeMapProjects([], seedMapProjects ?? []);
         setProjects({ status: "ready", data: fallback });
         setProjectsKey(requestKey);
         loadedProjectsRef.current = fallback;
       });
     return () => { cancelled = true; };
-  }, [activeSector, locale, seedMapProjects, selectedDepartment]);
+  }, [locale, seedMapProjects]);
 
   const handleSelectDepartment = useCallback((department: DepartmentProperties) => {
     setRegionLayer("none");
@@ -252,6 +230,8 @@ export function InvestmentMapDashboard({
     setSelectedDepartment(department);
     setSelectedMunicipality(null);
     setSelectedProject(null);
+    setActiveClusterKey(null);
+    setClusterFocus(null);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
   }, []);
@@ -321,46 +301,38 @@ export function InvestmentMapDashboard({
     if (level) ensureRegionLevel(level);
   }, [ensureRegionLevel]);
 
-  useEffect(() => {
-    if (!regionMode) return;
-    let cancelled = false;
-    const requestKey = locale;
-    const seedFallback = seedMapProjects ?? [];
-    getGeolocatedMapProjects({ locale })
-      .then((data) => {
-        if (cancelled) return;
-        const finalData = mergeMapProjects(data, seedFallback);
-        setRegionProjects({ status: "ready", data: finalData });
-        setRegionProjectsKey(requestKey);
-        const slug = initialQueryRef.current.project;
-        initialQueryRef.current.project = null;
-        const project = slug ? finalData.find((item) => item.slug === slug) ?? null : null;
-        if (project) {
-          setSelectedProject(project);
-          setProjectFocusKey((key) => key + 1);
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setRegionProjects({ status: "ready", data: mergeMapProjects([], seedFallback) });
-        setRegionProjectsKey(requestKey);
-      });
-    return () => { cancelled = true; };
-  }, [locale, regionMode, seedMapProjects]);
-
   const handleSelectRegion = useCallback((code: string | null) => {
     setSelectedRegionCode((current) => (code === null || current === code ? null : code));
     setSelectedProject(null);
+    setActiveClusterKey(null);
+    setClusterFocus(null);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
+  }, []);
+
+  const scrollMapIntoView = useCallback(() => {
+    document.getElementById("investment-map-canvas")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, []);
 
   const handleSelectProject = useCallback((project: MapInvestmentProject) => {
     setSelectedProject(project);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
+    const position = toLeafletProjectPosition(project);
+    if (position) setClusterFocus(position);
     setProjectFocusKey((key) => key + 1);
-  }, []);
+    scrollMapIntoView();
+  }, [scrollMapIntoView]);
+
+  const handleSelectCluster = useCallback((group: MapMarkerGroup) => {
+    setSelectedProject(null);
+    setActiveClusterKey(group.key);
+    setClusterFocus([group.latitude, group.longitude]);
+    setSelectedInfrastructure(null);
+    setSelectedRoad(null);
+    setProjectFocusKey((key) => key + 1);
+    scrollMapIntoView();
+  }, [scrollMapIntoView]);
 
   const handleSelectInfrastructure = useCallback((feature: InfrastructureFeature) => {
     setSelectedInfrastructure(feature);
@@ -372,10 +344,10 @@ export function InvestmentMapDashboard({
     setSelectedDepartment(null);
     setSelectedMunicipality(null);
     setSelectedProject(null);
+    setActiveClusterKey(null);
+    setClusterFocus(null);
     setMunicipalitiesKey(null);
     setMunicipalities({ status: "ready", data: null });
-    setProjectsKey(null);
-    setProjects({ status: "ready", data: [] });
   }, []);
 
   const handleSelectRegionLayer = useCallback((choice: RegionLayerChoice) => {
@@ -398,9 +370,16 @@ export function InvestmentMapDashboard({
     setSelectedProject(null);
   }, []);
 
+  const handleClearCluster = useCallback(() => {
+    setActiveClusterKey(null);
+    setClusterFocus(null);
+  }, []);
+
   const handleSelectMunicipality = useCallback((municipality: MunicipalityProperties) => {
     setSelectedMunicipality(municipality);
     setSelectedProject(null);
+    setActiveClusterKey(null);
+    setClusterFocus(null);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
   }, []);
@@ -408,10 +387,12 @@ export function InvestmentMapDashboard({
   const handleSectorChange = useCallback((sector: string) => {
     setActiveSector(sector);
     setSelectedProject(null);
+    setActiveClusterKey(null);
   }, []);
 
   const handleResetFilters = () => {
     setActiveSector("all");
+    setKindFilter("all");
     handleSelectRegionLayer("none");
     handleClearDepartment();
     setSelectedInfrastructure(null);
@@ -427,32 +408,6 @@ export function InvestmentMapDashboard({
   const summaries = useMemo(() => indexSummaries(visibleSummary), [visibleSummary]);
   const selectedSummary = selectedDepartment ? summaries.get(selectedDepartment.slug) : undefined;
   const summaryLoading = summarySector !== activeSector;
-  const selectedProjectsKey = selectedDepartment ? `${selectedDepartment.slug}:${activeSector}` : null;
-  const projectsLoading = Boolean(selectedDepartment && projectsKey !== selectedProjectsKey);
-  const projectsForDepartment = useMemo(
-    () => (projectsKey === selectedProjectsKey ? projects.data : []),
-    [projects.data, projectsKey, selectedProjectsKey],
-  );
-  const activeRegions = regionLayer === "none" ? null : regionCache[regionLayer] ?? null;
-  const activeRegionStatus = regionLayer === "none" ? "idle" : regionStatus[regionLayer];
-  const selectedRegion = useMemo(
-    () => activeRegions?.features.find((feature) => feature.properties.code === selectedRegionCode) ?? null,
-    [activeRegions, selectedRegionCode],
-  );
-  const regionProjectsLoading = regionMode && regionProjectsKey !== locale;
-  const regionProjectsError = regionMode && regionProjectsKey === locale && regionProjects.status === "error";
-  const visibleProjects = useMemo(() => {
-    const sectorSlug = activeSector === "all" ? null : activeSector;
-    if (regionMode) {
-      const loaded = regionProjectsKey === locale ? regionProjects.data : [];
-      return filterMapProjectsByRegion(filterMapProjectsBySector(loaded, sectorSlug), selectedRegion);
-    }
-    return filterMapProjectsByMunicipality(
-      filterMapProjectsBySector(projectsForDepartment, sectorSlug),
-      selectedMunicipality?.slug ?? null,
-    );
-  }, [activeSector, locale, projectsForDepartment, regionMode, regionProjects.data, regionProjectsKey, selectedMunicipality, selectedRegion]);
-  const markerProjects = useMemo(() => getMarkerProjects(visibleProjects), [visibleProjects]);
   const municipalitiesLoading = Boolean(
     selectedDepartment && municipalitiesKey !== selectedDepartment.slug,
   );
@@ -466,6 +421,57 @@ export function InvestmentMapDashboard({
       municipalities.status === "ready" &&
       (municipalities.data?.features.length ?? 0) === 0,
   );
+  const territorialCatalog = useMemo(() => {
+    const withDepartments = assignSeedDepartments(projects.data, geo.data?.features ?? []);
+    return assignSeedMunicipalities(withDepartments, municipalitiesForMap?.features ?? []);
+  }, [geo.data, municipalitiesForMap, projects.data]);
+  const activeRegions = regionLayer === "none" ? null : regionCache[regionLayer] ?? null;
+  const activeRegionStatus = regionLayer === "none" ? "idle" : regionStatus[regionLayer];
+  const selectedRegion = useMemo(
+    () => activeRegions?.features.find((feature) => feature.properties.code === selectedRegionCode) ?? null,
+    [activeRegions, selectedRegionCode],
+  );
+  const catalogReady = projectsKey === locale;
+  const projectsLoading = !catalogReady;
+  const visibleProjects = useMemo(() => {
+    if (!catalogReady) return [];
+    const sectorSlug = activeSector === "all" ? null : activeSector;
+    let items = territorialCatalog;
+    if (regionMode) {
+      items = filterMapProjectsByRegion(items, selectedRegion);
+    } else {
+      items = filterMapProjectsByDepartment(items, selectedDepartment?.slug ?? null);
+      items = filterMapProjectsByMunicipality(items, selectedMunicipality?.slug ?? null);
+    }
+    items = filterMapProjectsBySector(items, sectorSlug);
+    items = filterMapProjectsByKind(items, kindFilter);
+    return sortMapProjectsByAmount(items);
+  }, [
+    activeSector,
+    catalogReady,
+    kindFilter,
+    regionMode,
+    selectedDepartment,
+    selectedMunicipality,
+    selectedRegion,
+    territorialCatalog,
+  ]);
+  const markerGroups = useMemo(() => groupMarkersByPosition(getMarkerProjects(visibleProjects)), [visibleProjects]);
+  const activeCluster = markerGroups.find((group) => group.key === activeClusterKey) ?? null;
+  const listedProjects = useMemo(() => {
+    if (!activeCluster || selectedProject) return visibleProjects;
+    return sortMapProjectsByAmount(activeCluster.items);
+  }, [activeCluster, selectedProject, visibleProjects]);
+  const markerProjects = useMemo(() => getMarkerProjects(visibleProjects), [visibleProjects]);
+  const listPlace = activeCluster
+    ? activeCluster.items[0]?.municipality?.name ||
+      activeCluster.items[0]?.locationText ||
+      activeCluster.items[0]?.department?.name ||
+      copy.honduras
+    : selectedMunicipality?.name
+      ?? selectedDepartment?.name
+      ?? selectedRegion?.properties.name
+      ?? copy.honduras;
   const searchResults = useMemo(() => searchInvestmentMap(
     search,
     geo.data?.features.map((item) => item.properties) ?? [],
@@ -497,24 +503,45 @@ export function InvestmentMapDashboard({
   );
   const counts = getMapVisibleCounts(markerProjects.length, municipalitiesForMap?.features.length ?? 0, activeInfrastructureLayers.size + (roadsActive ? 1 : 0) + (regionLayer === "none" ? 0 : 1));
   const selectedSectorName = activeSector === "all" ? copy.allSectors : sectors.find((sector) => sector.slug === activeSector)?.name ?? activeSector;
-  const projectFocus = getProjectFocus(selectedProject);
-  const queryReady = sectorsLoaded && geo.status !== "loading" && (
+  const projectFocusPosition = selectedProject
+    ? toLeafletProjectPosition(selectedProject)
+    : clusterFocus;
+  const queryReady = sectorsLoaded && geo.status !== "loading" && catalogReady && (
     regionMode
-      ? (activeRegionStatus === "ready" || activeRegionStatus === "error") && !regionProjectsLoading
-      : !selectedDepartment || (
-        municipalitiesKey === selectedDepartment.slug &&
-        projectsKey === `${selectedDepartment.slug}:${activeSector}`
-      )
+      ? activeRegionStatus === "ready" || activeRegionStatus === "error"
+      : !selectedDepartment || municipalitiesKey === selectedDepartment.slug || municipalities.status === "error"
   );
 
   useEffect(() => {
+    if (!catalogReady || geo.status === "loading") return;
+    const query = initialQueryRef.current;
+    if (!query.project && !query.opportunity) return;
+    const item = findMapItemByQuery(territorialCatalog, {
+      project: query.project,
+      opportunity: query.opportunity,
+    });
+    if (!item) return;
+    query.project = null;
+    query.opportunity = null;
+    setSelectedProject(item);
+    const position = toLeafletProjectPosition(item);
+    if (position) setClusterFocus(position);
+    setProjectFocusKey((key) => key + 1);
+  }, [catalogReady, geo.status, territorialCatalog]);
+
+  useEffect(() => {
     if (!queryReady) return;
+    const selectedKind = selectedProject?.kind ?? "project";
     const query = serializeMapQueryState(new URLSearchParams(window.location.search), {
       sector: activeSector === "all" ? null : activeSector,
       department: selectedDepartment?.slug ?? null,
       municipality: selectedMunicipality?.slug ?? null,
-      project: selectedProject?.slug ?? null,
-      opportunity: selectedProject ? null : initialQueryState.opportunity,
+      project: selectedProject && selectedKind !== "opportunity" ? selectedProject.slug : null,
+      opportunity: selectedProject && selectedKind === "opportunity"
+        ? selectedProject.slug
+        : selectedProject
+          ? null
+          : initialQueryState.opportunity,
       regionLevel: regionLayer === "none" ? null : regionLayer,
       region: selectedRegion?.properties.code ?? null,
     });
@@ -577,12 +604,12 @@ export function InvestmentMapDashboard({
           <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#d5e3ff]/75"><span>{counts.visibleProjects} {copy.visibleProjectsCount}</span><span>·</span><span>{counts.loadedMunicipalities} {copy.loadedMunicipalitiesCount}</span><span>·</span><span>{counts.activeLayers} {copy.activeLayersCount}</span></div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <details className="rounded-xl border border-white/10 bg-[#001a33]/45 p-3"><summary className="cursor-pointer text-xs font-bold uppercase tracking-wider text-[#8DC046]">{copy.infrastructureLayers}</summary>{INFRASTRUCTURE_LAYER_OPTIONS.map(({ layer, Icon }) => <label key={layer} className="mt-3 flex min-h-8 cursor-pointer items-center gap-2 text-sm"><input type="checkbox" checked={activeInfrastructureLayers.has(layer)} onChange={() => handleToggleInfrastructure(layer)} className="h-4 w-4 accent-[#32B372]" /><Icon aria-hidden="true" size={16} /><span>{infrastructureLabels[layer]}</span>{infrastructureStatus[layer] === "loading" ? <span role="status">{copy.layerLoading}</span> : null}{infrastructureStatus[layer] === "error" ? <span role="alert" className="text-red-200">{copy.layerError}</span> : null}</label>)}<label className="mt-3 flex min-h-8 cursor-pointer items-center gap-2 text-sm"><input type="checkbox" checked={roadsActive} onChange={handleToggleRoads} className="h-4 w-4 accent-[#32B372]" /><Route aria-hidden="true" size={16} /><span>{copy.roadNetwork}</span>{roadsStatus === "loading" ? <span role="status">{copy.layerLoading}</span> : null}{roadsStatus === "error" ? <span role="alert" className="text-red-200">{copy.layerError}</span> : null}</label></details>
-            <details className="rounded-xl border border-white/10 bg-[#001a33]/45 p-3"><summary className="cursor-pointer text-xs font-bold uppercase tracking-wider text-[#8DC046]">{copy.legend}</summary><ul className="mt-3 grid grid-cols-2 gap-2 text-xs">{!regionMode ? <><LegendItem shape="square" label={copy.legendDepartment} /><LegendItem shape="outline" label={copy.legendMunicipality} /></> : null}<LegendItem shape="dot" label={copy.legendProject} /><LegendItem shape="selected" label={copy.legendSelectedProject} />{INFRASTRUCTURE_LAYER_OPTIONS.filter(({ layer }) => activeInfrastructureLayers.has(layer)).map(({ layer, Icon }) => <li key={layer} className="flex items-center gap-2"><Icon size={15} aria-hidden="true" />{infrastructureLabels[layer]}</li>)}{roadsActive ? <><LegendItem shape="road-primary" label={copy.legendPrimaryRoad} /><LegendItem shape="road-secondary" label={copy.legendSecondaryRoad} /></> : null}</ul>{regionLegendItems.length ? <div className="mt-3 border-t border-white/10 pt-3"><p className="text-[10px] font-bold uppercase tracking-wider text-[#d5e3ff]/75">{copy.regionLevels[regionLayer]}</p><ul className="mt-2 grid grid-cols-1 gap-1.5 text-xs sm:grid-cols-2">{regionLegendItems.map((item) => <li key={item.key} className="flex items-center gap-2"><span aria-hidden="true" className="h-3.5 w-4 shrink-0 rounded-sm border border-white/70" style={{ backgroundColor: item.color }} />{item.label}</li>)}</ul>{regionLayer === "polo" ? <p className="mt-2 text-[11px] italic text-[#d5e3ff]/70">{copy.approximateBoundary}</p> : null}</div> : null}</details>
+            <details className="rounded-xl border border-white/10 bg-[#001a33]/45 p-3"><summary className="cursor-pointer text-xs font-bold uppercase tracking-wider text-[#8DC046]">{copy.legend}</summary><ul className="mt-3 grid grid-cols-2 gap-2 text-xs">{!regionMode ? <><LegendItem shape="square" label={copy.legendDepartment} /><LegendItem shape="outline" label={copy.legendMunicipality} /></> : null}<LegendItem shape="dot" label={copy.legendProject} /><LegendItem shape="opportunity" label={copy.legendOpportunity} /><LegendItem shape="cluster" label={copy.legendCluster} /><LegendItem shape="selected" label={copy.legendSelectedProject} />{INFRASTRUCTURE_LAYER_OPTIONS.filter(({ layer }) => activeInfrastructureLayers.has(layer)).map(({ layer, Icon }) => <li key={layer} className="flex items-center gap-2"><Icon size={15} aria-hidden="true" />{infrastructureLabels[layer]}</li>)}{roadsActive ? <><LegendItem shape="road-primary" label={copy.legendPrimaryRoad} /><LegendItem shape="road-secondary" label={copy.legendSecondaryRoad} /></> : null}</ul><p className="mt-3 text-[11px] italic text-[#d5e3ff]/70">{copy.approximateMunicipalityNote}</p>{regionLegendItems.length ? <div className="mt-3 border-t border-white/10 pt-3"><p className="text-[10px] font-bold uppercase tracking-wider text-[#d5e3ff]/75">{copy.regionLevels[regionLayer]}</p><ul className="mt-2 grid grid-cols-1 gap-1.5 text-xs sm:grid-cols-2">{regionLegendItems.map((item) => <li key={item.key} className="flex items-center gap-2"><span aria-hidden="true" className="h-3.5 w-4 shrink-0 rounded-sm border border-white/70" style={{ backgroundColor: item.color }} />{item.label}</li>)}</ul>{regionLayer === "polo" ? <p className="mt-2 text-[11px] italic text-[#d5e3ff]/70">{copy.approximateBoundary}</p> : null}</div> : null}</details>
           </div>
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="relative isolate z-0 min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
+          <div id="investment-map-canvas" className="relative isolate z-0 min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
             {geo.status === "loading" ? <MapLoading copy={copy.loadingMap} /> : null}
             {geo.status === "error" ? <MapMessage alert>{copy.mapError}</MapMessage> : null}
             {geo.status === "ready" && geo.data?.features.length === 0 ? <MapMessage>{copy.noGeometry}</MapMessage> : null}
@@ -596,8 +623,11 @@ export function InvestmentMapDashboard({
                 selectedMunicipalitySlug={selectedMunicipality?.slug ?? null}
                 markerProjects={markerProjects}
                 selectedProjectId={selectedProject?.id ?? null}
-                selectedProjectPosition={projectFocus?.position ?? null}
+                selectedProjectPosition={projectFocusPosition}
                 projectFocusKey={projectFocusKey}
+                hoveredProjectId={hoveredProjectId}
+                onSelectCluster={handleSelectCluster}
+                clusterTooltip={copy.clusterTooltip}
                 mapAriaLabel={copy.mapAriaLabel}
                 mapInstructions={copy.mapInstructions}
                 zoomInLabel={copy.zoomIn}
@@ -644,9 +674,9 @@ export function InvestmentMapDashboard({
             project={selectedProject}
             infrastructure={selectedInfrastructure}
             summary={selectedSummary}
-            projects={visibleProjects}
-            projectsLoading={regionMode ? regionProjectsLoading : projectsLoading}
-            projectsError={regionMode ? regionProjectsError : projectsKey === selectedProjectsKey && projects.status === "error"}
+            projects={listedProjects}
+            projectsLoading={projectsLoading}
+            projectsError={projects.status === "error"}
             municipalitiesLoading={municipalitiesLoading}
             municipalitiesError={municipalitiesError}
             municipalitiesEmpty={municipalitiesEmpty}
@@ -660,6 +690,12 @@ export function InvestmentMapDashboard({
             regionMode={regionMode}
             region={selectedRegion}
             onClearRegion={() => handleSelectRegion(null)}
+            kindFilter={kindFilter}
+            onKindFilterChange={setKindFilter}
+            onHoverProject={setHoveredProjectId}
+            listPlace={listPlace}
+            clusterActive={Boolean(activeCluster)}
+            onClearCluster={handleClearCluster}
           />
         </div>
 
@@ -673,4 +709,7 @@ export function InvestmentMapDashboard({
 
 function MapLoading({ copy }: { copy: string }) { return <div className="absolute inset-0 z-10 flex items-center justify-center bg-white"><div className="rounded-xl bg-[#001a33]/90 px-5 py-4 text-sm font-bold text-white shadow-xl" role="status">{copy}</div></div>; }
 function MapMessage({ children, alert = false }: { children: string; alert?: boolean }) { return <div role={alert ? "alert" : undefined} className="absolute inset-0 z-10 flex items-center justify-center bg-white p-6 text-center text-sm font-semibold text-[#252A58]">{children}</div>; }
-function LegendItem({ shape, label }: { shape: "square" | "outline" | "dot" | "selected" | "road-primary" | "road-secondary"; label: string }) { const style = shape === "road-primary" ? "h-1 w-6 rounded-full bg-[#F7BF06] ring-2 ring-[#001a33]" : shape === "road-secondary" ? "h-0.5 w-6 rounded-full bg-white ring-1 ring-[#334E88]/60" : shape === "square" ? "h-4 w-5 rounded-sm border border-[#7BA3D4] bg-[#C5DCF0]" : shape === "outline" ? "h-4 w-5 rounded-sm border-2 border-[#7BA3D4]" : shape === "selected" ? "h-4 w-4 rounded-full border-2 border-white bg-[#F7BF06]" : "h-4 w-4 rounded-full border-2 border-[#334E88] bg-[#32B372]"; return <li className="flex items-center gap-2"><span aria-hidden="true" className={style} />{label}</li>; }
+function LegendItem({ shape, label }: { shape: "square" | "outline" | "dot" | "opportunity" | "cluster" | "selected" | "road-primary" | "road-secondary"; label: string }) {
+  const style = shape === "road-primary" ? "h-1 w-6 rounded-full bg-[#F7BF06] ring-2 ring-[#001a33]" : shape === "road-secondary" ? "h-0.5 w-6 rounded-full bg-white ring-1 ring-[#334E88]/60" : shape === "square" ? "h-4 w-5 rounded-sm border border-[#7BA3D4] bg-[#C5DCF0]" : shape === "outline" ? "h-4 w-5 rounded-sm border-2 border-[#7BA3D4]" : shape === "selected" ? "h-4 w-4 rounded-full border-2 border-white bg-[#F7BF06]" : shape === "opportunity" ? "h-4 w-4 rounded-full border-2 border-white bg-[#F7BF06]" : shape === "cluster" ? "grid h-5 w-5 place-items-center rounded-full border-2 border-white bg-[#334E88] text-[9px] font-bold text-white" : "h-4 w-4 rounded-full border-2 border-white bg-[#32B372]";
+  return <li className="flex items-center gap-2"><span aria-hidden="true" className={style}>{shape === "cluster" ? "12" : null}</span>{label}</li>;
+}

@@ -10,6 +10,7 @@ import type {
   DepartmentProperties,
   MapDepartmentSummary,
   MapInvestmentProject,
+  MapMarkerGroup,
   MunicipalityFeatureCollection,
   MunicipalityProperties,
   InfrastructureFeature,
@@ -28,8 +29,8 @@ import {
   formatRoadLabel,
   localizeInfrastructure,
   toLeafletPointPosition,
-  toLeafletProjectPosition,
 } from "@/src/lib/types/investment-map";
+import { groupMarkersByPosition } from "@/src/lib/mapMarkers";
 
 const HONDURAS_CENTER: [number, number] = [14.63, -86.24];
 const HONDURAS_BOUNDS: L.LatLngBoundsExpression = [
@@ -45,6 +46,9 @@ const SELECTED_FILL = "#32B372";
 const SELECTED_STROKE = "#334E88";
 const MARKER_FILL = "#32B372";
 const MARKER_SELECTED = "#F7BF06";
+const MARKER_OPPORTUNITY = "#F7BF06";
+const MARKER_STROKE = "#ffffff";
+const CLUSTER_FILL = "#334E88";
 // overlayPane (departments, municipalities) is 400 and markerPane is 600.
 const REGIONS_PANE_Z = 450;
 // Above every polygon layer (regions included) and below project markers.
@@ -100,6 +104,27 @@ function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (char) => `&#${char.charCodeAt(0)};`);
 }
 
+function clusterDivIcon(
+  count: number,
+  highlighted: boolean,
+  projectCount: number,
+  opportunityCount: number,
+) {
+  const size = highlighted ? 40 : 34;
+  const total = Math.max(1, projectCount + opportunityCount);
+  const projectDeg = (projectCount / total) * 360;
+  const ring =
+    projectCount > 0 && opportunityCount > 0
+      ? `conic-gradient(${MARKER_FILL} 0 ${projectDeg}deg, ${MARKER_OPPORTUNITY} ${projectDeg}deg 360deg)`
+      : CLUSTER_FILL;
+  return L.divIcon({
+    className: "",
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    html: `<span style="display:grid;place-items:center;width:${size}px;height:${size}px;border-radius:50%;background:${ring};padding:3px;box-shadow:0 2px 8px rgba(0,26,51,.35)"><span style="display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:${CLUSTER_FILL};color:#fff;font:700 13px/1 Inter,system-ui,sans-serif;border:2px solid #fff">${count}</span></span>`,
+  });
+}
+
 function regionTooltipHtml(properties: TerritorialRegionProperties, copy: RegionTooltipCopy): string {
   const lines = [
     `<strong>${escapeHtml(properties.name)}</strong>`,
@@ -142,6 +167,9 @@ type Props = {
   onSelectDepartment: (properties: DepartmentProperties) => void;
   onSelectMunicipality: (properties: MunicipalityProperties) => void;
   onSelectProject: (project: MapInvestmentProject) => void;
+  hoveredProjectId?: number | null;
+  onSelectCluster?: (group: MapMarkerGroup) => void;
+  clusterTooltip?: (count: number, place: string) => string;
   onHoverDepartment: (properties: DepartmentProperties | null) => void;
   onHoverMunicipality: (properties: MunicipalityProperties | null) => void;
   infrastructure: InfrastructureFeature[];
@@ -294,8 +322,8 @@ function ViewportController({
   }, [data, map]);
 
   useEffect(() => {
-    map.setMaxZoom(selectedDepartmentSlug ? 12 : 9);
-  }, [map, selectedDepartmentSlug]);
+    map.setMaxZoom(12);
+  }, [map]);
 
   useEffect(() => {
     if (selectedMunicipalitySlug && municipalities) {
@@ -348,7 +376,7 @@ function ViewportController({
   useEffect(() => {
     if (!selectedProjectPosition || projectFocusKey === 0) return;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    map.flyTo(selectedProjectPosition, Math.min(Math.max(map.getZoom(), 9), 10), {
+    map.flyTo(selectedProjectPosition, 10, {
       animate: !reducedMotion,
       duration: reducedMotion ? 0 : 0.7,
     });
@@ -375,6 +403,9 @@ export function InvestmentMapLeaflet({
   onSelectDepartment,
   onSelectMunicipality,
   onSelectProject,
+  hoveredProjectId = null,
+  onSelectCluster,
+  clusterTooltip,
   onHoverDepartment,
   onHoverMunicipality,
   infrastructure,
@@ -452,7 +483,7 @@ export function InvestmentMapLeaflet({
     });
   }, [selectedMunicipalitySlug]);
 
-  const maxZoom = selectedDepartmentSlug ? 12 : 9;
+  const maxZoom = 12;
 
   return (
     <MapContainer
@@ -622,25 +653,56 @@ export function InvestmentMapLeaflet({
         </Pane>
       ) : null}
       <Pane name="cni-projects" style={{ zIndex: PROJECTS_PANE_Z }}>
-      {markerProjects.map((project) => {
-        const position = toLeafletProjectPosition(project);
-        if (!position) return null;
-        const selected = project.id === selectedProjectId;
+      {groupMarkersByPosition(markerProjects).map((group) => {
+        const highlighted = group.items.some(
+          (item) => item.id === selectedProjectId || item.id === hoveredProjectId,
+        );
+        const place =
+          group.items[0]?.municipality?.name ||
+          group.items[0]?.locationText ||
+          group.items[0]?.department?.name ||
+          "";
+        if (group.items.length === 1) {
+          const project = group.items[0];
+          const kind = project.kind ?? "project";
+          return (
+            <CircleMarker
+              key={group.key}
+              center={[group.latitude, group.longitude]}
+              radius={highlighted ? 11 : 7}
+              pathOptions={{
+                color: highlighted ? MARKER_SELECTED : MARKER_STROKE,
+                weight: highlighted ? 3 : 2,
+                fillColor: kind === "opportunity" ? MARKER_OPPORTUNITY : MARKER_FILL,
+                fillOpacity: 0.95,
+              }}
+              eventHandlers={{
+                click: () => onSelectProject(project),
+              }}
+            >
+              <Tooltip direction="top">{project.title}</Tooltip>
+            </CircleMarker>
+          );
+        }
+        const projectCount = group.items.filter((item) => (item.kind ?? "project") === "project").length;
+        const opportunityCount = group.items.length - projectCount;
+        const icon = clusterDivIcon(group.items.length, highlighted, projectCount, opportunityCount);
         return (
-          <CircleMarker
-            key={project.id}
-            center={position}
-            radius={selected ? 9 : 7}
-            pathOptions={{
-              color: STROKE,
-              weight: selected ? 3 : 2,
-              fillColor: selected || project.featured ? MARKER_SELECTED : MARKER_FILL,
-              fillOpacity: 0.95,
-            }}
+          <Marker
+            key={group.key}
+            position={[group.latitude, group.longitude]}
+            icon={icon}
             eventHandlers={{
-              click: () => onSelectProject(project),
+              click: () => {
+                if (onSelectCluster) onSelectCluster(group);
+                else onSelectProject(group.items[0]);
+              },
             }}
-          ><Tooltip direction="top">{project.title}</Tooltip></CircleMarker>
+          >
+            <Tooltip direction="top">
+              {clusterTooltip ? clusterTooltip(group.items.length, place) : `${group.items.length} · ${place}`}
+            </Tooltip>
+          </Marker>
         );
       })}
       </Pane>

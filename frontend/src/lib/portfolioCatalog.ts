@@ -320,7 +320,7 @@ export function opportunityToCatalogItem(
 // o falla. Los IDs son (-i) para no chocar con los IDs reales de Django.
 // ---------------------------------------------------------------------------
 
-type SeedLocation = { lat: number | null; lng: number | null };
+type SeedLocation = { lat: number | null; lng: number | null; municipio_geocode?: string | null };
 
 export type SeedPortfolioRecord = {
   kind: "proyecto" | "oportunidad";
@@ -598,6 +598,12 @@ function toSeedMapProject(
     latitude: firstLocation.lat,
     longitude: firstLocation.lng,
     featured: false,
+    kind: kindType,
+    code: record.code || null,
+    coverImageUrl: seedImageUrl(record.image),
+    amountText: record.amount_text || null,
+    municipio_geocode: firstLocation.municipio_geocode ?? null,
+    locationText: record.location_text || null,
   };
 }
 
@@ -618,6 +624,14 @@ function hydrateMapProject(django: MapInvestmentProject, seedItem: MapInvestment
     latitude: django.latitude ?? seedItem.latitude,
     longitude: django.longitude ?? seedItem.longitude,
     location: django.location ?? seedItem.location,
+    kind: django.kind ?? seedItem.kind,
+    code: django.code || seedItem.code,
+    coverImageUrl: django.coverImageUrl || seedItem.coverImageUrl,
+    amountText: django.amountText || seedItem.amountText,
+    municipio_geocode: django.municipio_geocode || seedItem.municipio_geocode,
+    locationText: django.locationText || seedItem.locationText,
+    department: django.department ?? seedItem.department,
+    municipality: django.municipality ?? seedItem.municipality,
   };
 }
 
