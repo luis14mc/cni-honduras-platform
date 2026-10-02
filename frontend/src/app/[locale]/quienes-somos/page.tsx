@@ -157,7 +157,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
   const L = (p: string) => resolveHref(locale, p);
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f8f9ff]">
+    <div className="-mt-28 flex flex-1 flex-col overflow-x-clip bg-[#f8f9ff]">
       <header className="relative flex min-h-[760px] items-center overflow-hidden bg-[#252A58] py-24">
         <div className="absolute inset-0 z-0">
           <Image src={designImages.cni.heroCity} alt="Honduras" fill priority sizes="100vw" className="object-cover" />
@@ -169,21 +169,21 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
               <span className="h-1 w-12 bg-[#8DC046]" />
               <span className="text-xs font-bold uppercase tracking-widest text-[#8DC046]">{c.eyebrow}</span>
             </div>
-            <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-7xl">
+            <h1 className="mb-6 break-words text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-7xl">
               {c.titleA} <span className="text-[#35A963]">{c.titleB}</span>
             </h1>
             <p className="mb-10 max-w-xl text-lg leading-relaxed text-[#d6e3ff]">{c.description}</p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col flex-wrap gap-4 sm:flex-row">
               <Link
                 href={L("/invertir")}
-                className="inline-flex items-center gap-2 rounded-md bg-[#8DC046] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#35A963]"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#8DC046] px-8 py-4 font-bold text-[#261900] transition-colors hover:bg-[#35A963] sm:w-auto"
               >
                 {c.ctaExplore}
                 <MaterialIcon name="arrow_forward" />
               </Link>
               <Link
                 href={L("/contacto")}
-                className="rounded-md border border-white/20 bg-white/10 px-8 py-4 font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                className="inline-flex w-full items-center justify-center rounded-md border border-white/20 bg-white/10 px-8 py-4 font-bold text-white backdrop-blur-md transition-colors hover:bg-white/20 sm:w-auto"
               >
                 {c.ctaFree}
               </Link>
@@ -207,14 +207,14 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
 
       <section className="relative overflow-hidden bg-white py-24">
         <div className="container mx-auto grid gap-16 px-8 md:grid-cols-2">
-          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#252A58] bg-[#f8f9ff] p-12 shadow-xl shadow-[#252A58]/5">
+          <div className="flex min-w-0 flex-col gap-6 rounded-3xl border-l-8 border-[#252A58] bg-[#f8f9ff] p-6 shadow-xl shadow-[#252A58]/5 sm:p-8 lg:p-12">
             <MaterialIcon name="track_changes" filled className="text-4xl text-[#252A58]" />
-            <h2 className="text-4xl font-bold text-[#252A58]">{c.mision}</h2>
+            <h2 className="break-words text-3xl font-bold text-[#252A58] sm:text-4xl">{c.mision}</h2>
             <p className="text-lg italic leading-relaxed text-[#0E7A7C]">{c.misionText}</p>
           </div>
-          <div className="flex flex-col gap-6 rounded-3xl border-l-8 border-[#0E7A7C] bg-[#f8f9ff] p-12 shadow-xl shadow-[#252A58]/5">
+          <div className="flex min-w-0 flex-col gap-6 rounded-3xl border-l-8 border-[#0E7A7C] bg-[#f8f9ff] p-6 shadow-xl shadow-[#252A58]/5 sm:p-8 lg:p-12">
             <MaterialIcon name="visibility" filled className="text-4xl text-[#0E7A7C]" />
-            <h2 className="text-4xl font-bold text-[#252A58]">{c.vision}</h2>
+            <h2 className="break-words text-3xl font-bold text-[#252A58] sm:text-4xl">{c.vision}</h2>
             <p className="text-lg leading-relaxed text-[#0E7A7C]">{c.visionText}</p>
           </div>
         </div>
@@ -317,7 +317,7 @@ export default async function QuienesSomosPage({ params }: { params: Promise<{ l
         <div className="container mx-auto px-8">
           <div className="grid gap-12 md:grid-cols-4">
             <div className="flex flex-col gap-4">
-              <h3 className="text-4xl font-black leading-tight text-[#252A58]">{c.valoresTitle}</h3>
+              <h3 className="break-words text-3xl font-black leading-tight text-[#252A58] sm:text-4xl">{c.valoresTitle}</h3>
               <p className="text-[#0E7A7C]">{c.valoresIntro}</p>
             </div>
             {c.valores.map((v) => (
