@@ -25,6 +25,14 @@ python manage.py import_territorial_regions || echo "WARN: import_territorial_re
 echo "Synchronizing road corridors (OSM)..."
 python manage.py import_road_corridors || echo "WARN: import_road_corridors falló; el servidor arranca igual"
 
+# Carga editorial del portafolio CNI (17 oportunidades + 25 proyectos con imágenes).
+# Activar UNA vez con IMPORT_PORTAFOLIO_CNI=true en Render; después quitar la variable
+# para que los cambios hechos por el CNI en el admin no se sobrescriban en cada deploy.
+if [[ "${IMPORT_PORTAFOLIO_CNI:-false}" == "true" ]]; then
+  echo "Importing CNI portfolio (opportunities + project sheets)..."
+  python manage.py import_portafolio_cni || echo "WARN: import_portafolio_cni falló; el servidor arranca igual"
+fi
+
 # Temporary bootstrap only: set CREATE_DJANGO_SUPERUSER=true in Render for the first
 # deploy/login, then remove it or set to false after confirming admin access.
 if [[ "${CREATE_DJANGO_SUPERUSER:-false}" == "true" ]]; then

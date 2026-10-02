@@ -1,0 +1,1484 @@
+{
+ "oportunidades": [
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A007",
+   "title": "Aguacate Hass Fresco y Aceite Extra Virgen",
+   "slug": "aguacate-hass-fresco-y-aceite-extra-virgen",
+   "sector": "agroindustria",
+   "location_text": "Valle de Sula / Lago de Yojoa, Cortés; Comayagua, Comayagua",
+   "region_doc": null,
+   "description": "Desarrollo agroindustrial de exportación con dos líneas complementarias: aguacate Hass fresco premium y aceite extra virgen prensado en frío, aprovechando fruta fuera de especificación para reducir merma y agregar valor.",
+   "amount_text": "USD 5.6 MM",
+   "amount_usd": 5600000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / comprador ancla / offtake o LOI; estructura de inversión por definir.",
+   "image": "imagenes/oportunidades/aguacate-hass-fresco-y-aceite-extra-virgen.webp",
+   "locations": [
+    {
+     "municipio_geocode": "050100",
+     "lng": -88.07102,
+     "lat": 15.50378,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A008",
+   "title": "Piña – Planta de Procesamiento de Pulpa y Jugos",
+   "slug": "pina-planta-de-procesamiento-de-pulpa-y-jugos",
+   "sector": "agroindustria",
+   "location_text": "Lago de Yojoa, Cortés; Tela, Atlántida; Choluteca, Choluteca; Valle, Valle",
+   "region_doc": null,
+   "description": "Producción de piña orgánica con procesamiento de jugo y pulpa aséptica, orientada a capturar mayor valor agregado y atender importadores, retail y canales especializados.",
+   "amount_text": "USD 7.5 MM",
+   "amount_usd": 7500000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / comprador ancla / offtake o LOI; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/pina-planta-de-procesamiento-de-pulpa-y-jugos.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "010700",
+     "lng": -87.59659,
+     "lat": 15.71684,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "170100",
+     "lng": -87.53519,
+     "lat": 13.50774,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A009",
+   "title": "Limón – Planta de Proceso para Jugo Aséptico",
+   "slug": "limon-planta-de-proceso-para-jugo-aseptico",
+   "sector": "agroindustria",
+   "location_text": "Quimistán, Santa Bárbara; Lago de Yojoa, Cortés; Yoro, Yoro",
+   "region_doc": null,
+   "description": "Producción de limón y extracción de jugo con empaque aséptico para exportación, dirigida a importadores europeos, retail, e-commerce, tiendas orgánicas y convenience stores.",
+   "amount_text": "USD 5.0 MM",
+   "amount_usd": 5000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Fases 1–2 + expansión futura",
+   "investment_type": "Socio estratégico / comprador ancla / LOI; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/limon-planta-de-proceso-para-jugo-aseptico.webp",
+   "locations": [
+    {
+     "municipio_geocode": "161800",
+     "lng": -88.37639,
+     "lat": 15.41624,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "180100",
+     "lng": -87.23319,
+     "lat": 15.27464,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A010",
+   "title": "Cardamomo Orgánico con Valor Agregado",
+   "slug": "cardamomo-organico-con-valor-agregado",
+   "sector": "agroindustria",
+   "location_text": "Quimistán, Santa Bárbara; La Entrada, Copán",
+   "region_doc": null,
+   "description": "Cultivo agroforestal orientado a producir cardamomo orgánico premium, polvo molido en frío y aceites esenciales con trazabilidad y certificaciones orgánicas.",
+   "amount_text": "USD 5.0 MM",
+   "amount_usd": 5000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / offtake para aceite y polvo; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/cardamomo-organico-con-valor-agregado.webp",
+   "locations": [
+    {
+     "municipio_geocode": "161800",
+     "lng": -88.37639,
+     "lat": 15.41624,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "041300",
+     "lng": -88.68794,
+     "lat": 15.10904,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A011",
+   "title": "Café Tostado de Especialidad con Trazabilidad",
+   "slug": "cafe-tostado-de-especialidad-con-trazabilidad",
+   "sector": "agroindustria",
+   "location_text": "Comayagua; Quimistán, Santa Bárbara; La Entrada, Copán; La Esperanza, Intibucá",
+   "region_doc": null,
+   "description": "Plantación, tostado y empaque premium trazable de café para exportación, buscando capturar mayor margen mediante café tostado, trazabilidad, calidad de taza y diferenciación por origen hondureño.",
+   "amount_text": "USD 12.7 MM",
+   "amount_usd": 12700000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / comprador ancla / offtake o LOI; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/cafe-tostado-de-especialidad-con-trazabilidad.webp",
+   "locations": [
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "161800",
+     "lng": -88.37639,
+     "lat": 15.41624,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "041300",
+     "lng": -88.68794,
+     "lat": 15.10904,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "100100",
+     "lng": -88.12014,
+     "lat": 14.23185,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-02",
+   "macroregion": "M-01",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A012",
+   "title": "Cacao Orgánico con Valor Agregado",
+   "slug": "cacao-organico-con-valor-agregado",
+   "sector": "agroindustria",
+   "location_text": "Lago de Yojoa, Cortés; Omoa, Cortés; La Entrada, Copán",
+   "region_doc": null,
+   "description": "Plataforma de agroforestería, poscosecha controlada, trazabilidad y procesamiento gradual de cacao orgánico premium para compradores especializados y chocolatería de alto valor.",
+   "amount_text": "USD 5.9 MM",
+   "amount_usd": 5900000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / comprador ancla / offtake o LOI; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/cacao-organico-con-valor-agregado.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "050300",
+     "lng": -88.19969,
+     "lat": 15.65959,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "041300",
+     "lng": -88.68794,
+     "lat": 15.10904,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-A013",
+   "title": "Camote – Harina Orgánica / Planta de Procesamiento",
+   "slug": "camote-harina-organica-planta-de-procesamiento",
+   "sector": "agroindustria",
+   "location_text": "Lago de Yojoa, Cortés; Comayagua, Comayagua",
+   "region_doc": null,
+   "description": "Producción de camote y planta para harina orgánica gluten-free e ingrediente funcional, orientada a convertir materia prima perecedera en un producto estable y exportable.",
+   "amount_text": "USD 5.0 MM*",
+   "amount_usd": 5000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Socio estratégico / comprador industrial / LOI; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/camote-harina-organica-planta-de-procesamiento.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I008",
+   "title": "Centro de Acopio y Transferencia de Residuos Reciclables",
+   "slug": "centro-de-acopio-y-transferencia-de-residuos-reciclables",
+   "sector": "infraestructura",
+   "location_text": "Quimistán, Santa Bárbara; Lago de Yojoa, Cortés; Choloma, Cortés; Choluteca, Choluteca; Goascorán, Valle",
+   "region_doc": null,
+   "description": "Centro para recuperar, clasificar, consolidar y transferir residuos valorizables, priorizando PET, PP y metales, con enfoque en economía circular, empleo verde y eficiencia logística.",
+   "amount_text": "USD 1.06 MM",
+   "amount_usd": 1060000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / alianzas de suministro y offtake; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/centro-de-acopio-y-transferencia-de-residuos-reciclables.webp",
+   "locations": [
+    {
+     "municipio_geocode": "161800",
+     "lng": -88.37639,
+     "lat": 15.41624,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "050200",
+     "lng": -87.96813,
+     "lat": 15.64832,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "170600",
+     "lng": -87.71105,
+     "lat": 13.59063,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I009",
+   "title": "Centro de Convenciones Lago de Yojoa",
+   "slug": "centro-de-convenciones-lago-de-yojoa",
+   "sector": "infraestructura",
+   "location_text": "Santa Cruz de Yojoa, Cortés",
+   "region_doc": null,
+   "description": "Centro internacional de convenciones para 3,000 personas, con anfiteatro y centro multimedia, orientado a posicionar el Lago de Yojoa como destino MICE para eventos nacionales e internacionales.",
+   "amount_text": "USD 35 MM",
+   "amount_usd": 35000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / operador MICE / LOIs institucionales; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/centro-de-convenciones-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I010",
+   "title": "Desarrollo Habitacional en Valle de Naco",
+   "slug": "desarrollo-habitacional-en-valle-de-naco",
+   "sector": "infraestructura",
+   "location_text": "Valle de Naco, Quimistán, Santa Bárbara",
+   "region_doc": null,
+   "description": "Urbanización sostenible de alta densidad para atender el déficit habitacional de una región con crecimiento industrial, integrando vivienda resiliente, infraestructura verde y eficiencia hídrica y energética.",
+   "amount_text": "USD 19.2 MM",
+   "amount_usd": 19200000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Desarrollo inmobiliario / preventa / fuentes de financiamiento por estructurar.",
+   "image": "imagenes/oportunidades/desarrollo-habitacional-en-valle-de-naco.webp",
+   "locations": [
+    {
+     "municipio_geocode": "161800",
+     "lng": -88.37639,
+     "lat": 15.41624,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I010",
+   "title": "Desarrollo Habitacional en el Lago de Yojoa",
+   "slug": "desarrollo-habitacional-en-el-lago-de-yojoa",
+   "sector": "infraestructura",
+   "location_text": "Santa Cruz de Yojoa, Cortés",
+   "region_doc": null,
+   "description": "Desarrollo de condominios verticales de alta densidad en la zona del Lago de Yojoa, con principios ESG, arquitectura sostenible, eficiencia energética e infraestructura verde.",
+   "amount_text": "USD 16.75 MM",
+   "amount_usd": 16750000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Desarrollo inmobiliario / preventa / fuentes de financiamiento por estructurar.",
+   "image": "imagenes/oportunidades/desarrollo-habitacional-en-el-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I012",
+   "title": "Paseo San Juan, Canal Seco – Centro Comercial y de Servicios",
+   "slug": "paseo-san-juan-canal-seco-centro-comercial-y-de-servicios",
+   "sector": "infraestructura",
+   "location_text": "Choluteca, Choluteca",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Centro comercial y de servicios sobre el Canal Seco que integra comercio, gastronomía, estación de servicio, carga para vehículos eléctricos y servicios al transporte.",
+   "amount_text": "USD 27 MM",
+   "amount_usd": 27000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Desarrollo comercial / operador / financiamiento; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/paseo-san-juan-canal-seco-centro-comercial-y-de-servicios.webp",
+   "locations": [
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I013",
+   "title": "Centro de Acopio Agrologístico",
+   "slug": "centro-de-acopio-agrologistico",
+   "sector": "infraestructura",
+   "location_text": "Lago de Yojoa, Cortés; Comayagua, Comayagua; Choluteca, Choluteca",
+   "region_doc": null,
+   "description": "Infraestructura para recibir, clasificar, almacenar y consolidar productos agrícolas de la Zona Sur, reduciendo pérdidas poscosecha y facilitando acceso a mercados nacionales e internacionales.",
+   "amount_text": "USD 1.88 MM",
+   "amount_usd": 1880000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / acuerdos de suministro / operación logística; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/centro-de-acopio-agrologistico.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    },
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-I014",
+   "title": "Centro de Convenciones Zona Sur",
+   "slug": "centro-de-convenciones-zona-sur",
+   "sector": "infraestructura",
+   "location_text": "Choluteca, Choluteca",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Centro internacional de convenciones con anfiteatro y centro multimedia para congresos, seminarios y exposiciones, orientado a captar eventos nacionales e internacionales en la Zona Sur.",
+   "amount_text": "USD 35 MM",
+   "amount_usd": 35000000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / operador MICE / LOIs con organizadores y operadores; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/centro-de-convenciones-zona-sur.webp",
+   "locations": [
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-T002",
+   "title": "Complejo Ecoturístico El Cajón",
+   "slug": "complejo-ecoturistico-el-cajon",
+   "sector": "turismo",
+   "location_text": "Represa Francisco Morazán (El Cajón), Honduras",
+   "region_doc": null,
+   "description": "Complejo ecoturístico y de bienestar bajo criterios ESG, concebido como destino de alto valor agregado con naturaleza, bienestar e infraestructura verde.",
+   "amount_text": "USD 6.3 MM",
+   "amount_usd": 6300000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / operador turístico / fondo de turismo sostenible; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/complejo-ecoturistico-el-cajon.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-T003",
+   "title": "Complejo Ecoturístico Lago de Yojoa",
+   "slug": "complejo-ecoturistico-lago-de-yojoa",
+   "sector": "turismo",
+   "location_text": "Lago de Yojoa, Cortés",
+   "region_doc": null,
+   "description": "Complejo ecoturístico y de bienestar bajo criterios ESG, orientado a naturaleza, relajación y turismo experiencial en uno de los principales destinos ecológicos del país.",
+   "amount_text": "USD 8.8 MM",
+   "amount_usd": 8800000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / operador turístico / fondo de turismo sostenible; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/complejo-ecoturistico-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "oportunidad",
+   "code": "OC-CNI-T004",
+   "title": "Complejo Hotelero Gastronómico Lago de Yojoa",
+   "slug": "complejo-hotelero-gastronomico-lago-de-yojoa",
+   "sector": "turismo",
+   "location_text": "Lago de Yojoa, Cortés",
+   "region_doc": null,
+   "description": "Complejo turístico, hotelero y gastronómico frente al Lago de Yojoa, integrando hotelería boutique sostenible, gastronomía de autor, bienestar y naturaleza.",
+   "amount_text": "USD 13.4 MM",
+   "amount_usd": 13400000,
+   "amount_notes": [],
+   "phase": "Oportunidad / Preinversión",
+   "phase_detail": "Escalabilidad en 3 fases",
+   "investment_type": "Inversión privada / operador hotelero-gastronómico / socio estratégico; sujeto a estructuración.",
+   "image": "imagenes/oportunidades/complejo-hotelero-gastronomico-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  }
+ ],
+ "proyectos": [
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-A004",
+   "title": "Empacadora de Frutas y Vegetales",
+   "slug": "empacadora-de-frutas-y-vegetales",
+   "sector": "agroindustria",
+   "location_text": "Choluteca, Choluteca",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Plataforma agroindustrial para producción, empaque y exportación de okra y otros cultivos de alto valor hacia Estados Unidos, Canadá y Europa.",
+   "amount_text": "USD 1.7 MM",
+   "amount_usd": 1700000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Asociación / participación de capital",
+   "image": "imagenes/proyectos/empacadora-de-frutas-y-vegetales.webp",
+   "excel_match": {
+    "name": "Empacadora de Frutas y Vegetales ",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/yitbXwbG1wAFS8Ef6"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Red de Ecoparques Agroindustriales – Master Plan Estratégico",
+   "slug": "red-de-ecoparques-agroindustriales-master-plan-estrategico",
+   "sector": "agroindustria",
+   "location_text": "Cobertura nacional",
+   "region_doc": null,
+   "description": "Red nacional de clústeres agroindustriales integrados que articula infraestructura, servicios, logística, energía, innovación y cadenas productivas.",
+   "amount_text": "~USD 450 MM",
+   "amount_usd": 450000000,
+   "amount_notes": [
+    "Red",
+    "(~USD 50 MM por E-AIP)"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Equity + deuda + Joint Ventures + coinversión estratégica",
+   "image": "imagenes/proyectos/red-de-ecoparques-agroindustriales-master-plan-estrategico.webp",
+   "locations": []
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-A006",
+   "title": "E-Agribusiness Park Agalteca",
+   "slug": "e-agribusiness-park-agalteca",
+   "sector": "agroindustria",
+   "location_text": "San Pedro Zacapa, Santa Bárbara",
+   "region_doc": null,
+   "description": "Parque agroindustrial con lotes industriales, infraestructura compartida, logística, servicios empresariales y parque solar de 5 MW.",
+   "amount_text": "USD 50 MM",
+   "amount_usd": 50000000,
+   "amount_notes": [],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Deuda + Equity/JV + socios estratégicos",
+   "image": "imagenes/proyectos/e-agribusiness-park-agalteca.webp",
+   "excel_match": {
+    "name": "E-Agribusiness Park Agalteca",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/2C3pxUdYzCQbQhGt6"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "162300",
+     "lng": -88.11131,
+     "lat": 14.74389,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-16",
+   "macroregion": "M-01",
+   "polos": []
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Eco-Parque Agroindustrial San Lorenzo",
+   "slug": "eco-parque-agroindustrial-san-lorenzo",
+   "sector": "agroindustria",
+   "location_text": "El Laure, San Lorenzo, Valle",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Parque eco-agroindustrial privado para procesamiento, logística, cadena de frío, energía renovable, innovación y desarrollo de cadenas productivas del sur.",
+   "amount_text": "USD 50 MM",
+   "amount_usd": 50000000,
+   "amount_notes": [],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Coinversión + financiamiento + cooperación + alianzas público-privadas",
+   "image": "imagenes/proyectos/eco-parque-agroindustrial-san-lorenzo.webp",
+   "locations": [
+    {
+     "municipio_geocode": "170900",
+     "lng": -87.41446,
+     "lat": 13.46061,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Planta Agroindustrial de Jugo de Piña NFC – Lago de Yojoa",
+   "slug": "planta-agroindustrial-de-jugo-de-pina-nfc-lago-de-yojoa",
+   "sector": "agroindustria",
+   "location_text": "Santa Cruz de Yojoa, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Planta para procesar piña fresca y producir jugo NFC a granel orientado principalmente a exportación hacia la Unión Europea.",
+   "amount_text": "USD 60.40 MM",
+   "amount_usd": 60400000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Coinversión + financiamiento + cooperación + alianzas público-privadas",
+   "image": "imagenes/proyectos/planta-agroindustrial-de-jugo-de-pina-nfc-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-I004",
+   "title": "Torre Elegance",
+   "slug": "torre-elegance",
+   "sector": "infraestructura",
+   "location_text": "Distrito Central, Francisco Morazán",
+   "region_doc": "Región 12: Distrito Central",
+   "description": "Complejo residencial premium de 10 niveles con amenidades, áreas verdes y vivienda vertical de alta gama.",
+   "amount_text": "USD 14.9 MM",
+   "amount_usd": 14900000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Equity + preventa + financiamiento bancario; socio estratégico / coinversionista",
+   "image": "imagenes/proyectos/torre-elegance.webp",
+   "excel_match": {
+    "name": "Torre Elegance",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/QochtQsMmTjqUkS59"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "080100",
+     "lng": -87.28148,
+     "lat": 14.13839,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-12",
+   "macroregion": "M-04",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-I009",
+   "title": "Quintara 5",
+   "slug": "quintara-5",
+   "sector": "infraestructura",
+   "location_text": "Villanueva, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Parque logístico de nueva generación sobre la CA-5, con bodegas modulares Build-to-Suit, almacenamiento seco/refrigerado y usos complementarios.",
+   "amount_text": "USD 100 MM",
+   "amount_usd": 100000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Equity + deuda; venta directa o desarrollo para fondos / inversionistas privados",
+   "image": "imagenes/proyectos/quintara-5.webp",
+   "excel_match": {
+    "name": "Parque Logístico Quintara 5",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/8achmAdpyTgatJQJ8"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "051100",
+     "lng": -88.04226,
+     "lat": 15.31698,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-I010",
+   "title": "Distrito Palmerola",
+   "slug": "distrito-palmerola",
+   "sector": "infraestructura",
+   "location_text": "Comayagua, Comayagua",
+   "region_doc": "Región 2: Valle de Comayagua",
+   "description": "Master Plan urbano de uso mixto frente al Aeropuerto Internacional Palmerola, con vivienda, comercio, oficinas, industria, hotelería y servicios.",
+   "amount_text": "USD 1,702.40 MM",
+   "amount_usd": 1702400000,
+   "amount_notes": [
+    "proyectados a 20 años"
+   ],
+   "phase": "Fase 3",
+   "phase_detail": "Ejecución y Monitoreo",
+   "investment_type": "Capital privado + alianzas estratégicas + participación de inversionistas",
+   "image": "imagenes/proyectos/distrito-palmerola.webp",
+   "excel_match": {
+    "name": "Distrito Palmerola",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/p3kmMnjJq6FVFRw18"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-02",
+   "macroregion": "M-01",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-A008",
+   "title": "Centro de Acopio y Transferencia de Materiales Reciclables – Lago de Yojoa",
+   "slug": "centro-de-acopio-y-transferencia-de-materiales-reciclables-lago-de-yojoa",
+   "sector": "infraestructura",
+   "location_text": "Lago de Yojoa, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Centro regional para recepción, clasificación, compactación, almacenamiento temporal y comercialización de materiales reciclables.",
+   "amount_text": "USD 867.7 mil*",
+   "amount_usd": 867700,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Coinversión + financiamiento + cooperación + alianzas público-privadas",
+   "image": "imagenes/proyectos/centro-de-acopio-y-transferencia-de-materiales-reciclables-lago-de-yojoa.webp",
+   "excel_match": {
+    "name": "Planta de Reciclaje - Santa Cruz, Reciclaje Diamante",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/pW2kekWcdmosrRit5"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Nuevos Horizontes Logistics Park",
+   "slug": "nuevos-horizontes-logistics-park",
+   "sector": "infraestructura",
+   "location_text": "Valle de Amarateca, Francisco Morazán",
+   "region_doc": "Región 12: Distrito Central",
+   "description": "Parque logístico Clase A con bodegas modulares, ofibodegas, patios de maniobra, servicios y seguridad 24/7.",
+   "amount_text": "USD 45 MM",
+   "amount_usd": 45000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Venta y/o alquiler de espacios; financiamiento no especificado",
+   "image": "imagenes/proyectos/nuevos-horizontes-logistics-park.webp",
+   "locations": [
+    {
+     "municipio_geocode": "080100",
+     "lng": -87.28148,
+     "lat": 14.13839,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-12",
+   "macroregion": "M-04",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Sky Legacy Tower",
+   "slug": "sky-legacy-tower",
+   "sector": "infraestructura",
+   "location_text": "West Bay, Roatán, Islas de la Bahía",
+   "region_doc": "Región 15: Arrecife Mesoamericano",
+   "description": "Desarrollo residencial turístico de lujo con apartamentos, townhouses y penthouses, integrado al ecosistema hotelero de West Bay.",
+   "amount_text": "USD 92.73 MM",
+   "amount_usd": 92730000,
+   "amount_notes": [
+    "Inversión total",
+    "Aporte buscado: USD 14 MM"
+   ],
+   "phase": "Fase 2",
+   "phase_detail": "Tramitología",
+   "investment_type": "Equity Venture / participación accionaria",
+   "image": "imagenes/proyectos/sky-legacy-tower.webp",
+   "locations": [
+    {
+     "municipio_geocode": "110100",
+     "lng": -86.53752,
+     "lat": 16.32585,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-15",
+   "macroregion": "M-06",
+   "polos": [
+    "costa-esmeralda"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-I003",
+   "title": "Sigua Park",
+   "slug": "sigua-park",
+   "sector": "infraestructura",
+   "location_text": "Siguatepeque, Comayagua",
+   "region_doc": "Región 2: Valle de Comayagua",
+   "description": "Desarrollo inmobiliario mixto de retail, logística y áreas corporativas ubicado estratégicamente sobre la carretera CA-5.",
+   "amount_text": "USD 44 MM",
+   "amount_usd": 44000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 3",
+   "phase_detail": "Ejecución y Monitoreo",
+   "investment_type": "Equity actual + financiamiento requerido",
+   "image": "imagenes/proyectos/sigua-park.webp",
+   "excel_match": {
+    "name": "Parque Logístico SIGUAPARK",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/AyKKHuMuCs3iWCZ2A"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "031800",
+     "lng": -87.85469,
+     "lat": 14.65512,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-02",
+   "macroregion": "M-01",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-I008",
+   "title": "Plaza Nabá",
+   "slug": "plaza-naba",
+   "sector": "infraestructura",
+   "location_text": "La Esperanza, Intibucá",
+   "region_doc": "Región 14: Lempa",
+   "description": "Desarrollo comercial con locales, gastronomía, servicios y estacionamiento, ejecutado progresivamente por etapas.",
+   "amount_text": "USD 2.85 MM",
+   "amount_usd": 2850000,
+   "amount_notes": [
+    "CAPEX total"
+   ],
+   "phase": "Fase 3",
+   "phase_detail": "Ejecución y Monitoreo",
+   "investment_type": "Venta / arrendamiento de locales; inversión por etapas",
+   "image": "imagenes/proyectos/plaza-naba.webp",
+   "excel_match": {
+    "name": "Plaza Nabá",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/eYysn6kUxB5GE4fN8"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "100100",
+     "lng": -88.12014,
+     "lat": 14.23185,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-14",
+   "macroregion": "M-05",
+   "polos": [
+    "copan"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Complejo Turístico Integral Sostenible – Lago de Yojoa",
+   "slug": "complejo-turistico-integral-sostenible-lago-de-yojoa",
+   "sector": "turismo",
+   "location_text": "Santa Cruz de Yojoa, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Destino Eco All Inclusive que integra alojamiento, gastronomía, ecoturismo, aventura, wellness, eventos y conservación.",
+   "amount_text": "USD 31.18 MM",
+   "amount_usd": 31180000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Coinversión + financiamiento + cooperación + alianzas público-privadas",
+   "image": "imagenes/proyectos/complejo-turistico-integral-sostenible-lago-de-yojoa.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051000",
+     "lng": -87.84239,
+     "lat": 14.99614,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Desarrollo Turístico Bahía de Tela – Eco Resort",
+   "slug": "desarrollo-turistico-bahia-de-tela-eco-resort",
+   "sector": "turismo",
+   "location_text": "Tela, Atlántida",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Eco-resort de naturaleza y wellness con 57 villas, 25 branded residences, spa, gastronomía, ecoturismo y componente cultural garífuna.",
+   "amount_text": "USD 100 MM",
+   "amount_usd": 100000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Oportunidad para desarrollo e inversión; modalidad específica no definida",
+   "image": "imagenes/proyectos/desarrollo-turistico-bahia-de-tela-eco-resort.webp",
+   "locations": [
+    {
+     "municipio_geocode": "010700",
+     "lng": -87.59659,
+     "lat": 15.71684,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Desarrollo Turístico Bahía de Tela – Resort Familiar All Inclusive",
+   "slug": "desarrollo-turistico-bahia-de-tela-resort-familiar-all-inclusive",
+   "sector": "turismo",
+   "location_text": "Tela, Atlántida",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Resort frente al mar con 354 habitaciones, restaurantes, spa, centro de convenciones y actividades familiares.",
+   "amount_text": "USD 200 MM",
+   "amount_usd": 200000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Oportunidad para desarrollo / inversión; modalidad específica no definida",
+   "image": "imagenes/proyectos/desarrollo-turistico-bahia-de-tela-resort-familiar-all-inclusive.webp",
+   "locations": [
+    {
+     "municipio_geocode": "010700",
+     "lng": -87.59659,
+     "lat": 15.71684,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-T007",
+   "title": "Hotel Tru by Hilton",
+   "slug": "hotel-tru-by-hilton",
+   "sector": "turismo",
+   "location_text": "Comayagua, Comayagua",
+   "region_doc": "Región 2: Valle de Comayagua",
+   "description": "Hotel de servicio limitado con 103 habitaciones en 8 niveles, dirigido a viajeros de negocios, pasajeros en tránsito y tripulaciones.",
+   "amount_text": "USD 11 MM",
+   "amount_usd": 11000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 4",
+   "phase_detail": "Operación y Expansión",
+   "investment_type": "Coinversión + financiamiento + cooperación",
+   "image": "imagenes/proyectos/hotel-tru-by-hilton.webp",
+   "excel_match": {
+    "name": "Hotel TRU By Hilton",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/xFLUQsCE2J5G6G4X6"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "030100",
+     "lng": -87.66703,
+     "lat": 14.47722,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-02",
+   "macroregion": "M-01",
+   "polos": [
+    "tegucigalpa"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Desarrollo Turístico Bahía de Tela – Master Plan 2025–2045",
+   "slug": "desarrollo-turistico-bahia-de-tela-master-plan-20252045",
+   "sector": "turismo",
+   "location_text": "Tela, Atlántida",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Master Plan turístico-residencial con 15 componentes de hotelería, residencias, retiro, wellness, comercio, naturaleza y cultura.",
+   "amount_text": "USD 1,000 MM",
+   "amount_usd": 1000000000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 4",
+   "phase_detail": "Operación y Expansión",
+   "investment_type": "Múltiples oportunidades por componente: hotelería, inmobiliario, comercial, naturaleza y wellness",
+   "image": "imagenes/proyectos/desarrollo-turistico-bahia-de-tela-master-plan-20252045.webp",
+   "locations": [
+    {
+     "municipio_geocode": "010700",
+     "lng": -87.59659,
+     "lat": 15.71684,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-M003",
+   "title": "Fábrica de Empaques y Embalajes de Exportación",
+   "slug": "fabrica-de-empaques-y-embalajes-de-exportacion",
+   "sector": "manufactura",
+   "location_text": "Choluteca, Choluteca",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Planta manufacturera de pallets, bines, cajones y componentes de madera certificados para exportación, orientada a ampliar capacidad y mercados.",
+   "amount_text": "USD 1.2 MM",
+   "amount_usd": 1200000,
+   "amount_notes": [
+    "CAPEX"
+   ],
+   "phase": "Fase 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Socio estratégico / participación de capital para expansión",
+   "image": "imagenes/proyectos/fabrica-de-empaques-y-embalajes-de-exportacion.webp",
+   "excel_match": {
+    "name": "Fábrica de Embalajes y empaques de madera",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/yitbXwbG1wAFS8Ef6"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "060100",
+     "lng": -87.21013,
+     "lat": 13.25527,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-E009",
+   "title": "Ojo de Agua 2",
+   "slug": "ojo-de-agua-2",
+   "sector": "energia",
+   "location_text": "Iriona, Colón",
+   "region_doc": "Región 12: Biosfera del Río Plátano",
+   "description": "Proyecto hidroeléctrico de 9.84 MW para suministrar energía renovable bajo PPA de largo plazo con ENEE, con interconexión a 138 kV en la SE Bonito Oriental.",
+   "amount_text": "USD 40.0 MM",
+   "amount_usd": 40000000,
+   "amount_notes": [
+    "CAPEX",
+    "Rango: USD 32.0 MM"
+   ],
+   "phase": "Etapa 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Financiamiento / cierre financiero; PPA ENEE + garantía soberana",
+   "image": "imagenes/proyectos/ojo-de-agua-2.webp",
+   "excel_match": {
+    "name": "Hidroeléctrica Ojos de Agua No. 2",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/9FW8y6PRWY6EieoM7"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "020300",
+     "lng": -85.2932,
+     "lat": 15.51691,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-09",
+   "macroregion": "M-02",
+   "polos": []
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "San Marcos Wind Energy - Honduras",
+   "slug": "san-marcos-wind-energy-honduras",
+   "sector": "energia",
+   "location_text": "San Marcos de Colón, Choluteca",
+   "region_doc": "Región 13: Golfo de Fonseca",
+   "description": "Parque eólico de 122.4 MW promovido por Total Energies, con subestación de 230 kV, línea de transmisión de 16 km y PPA de largo plazo con ENEE.",
+   "amount_text": "USD 329 MM",
+   "amount_usd": 329000000,
+   "amount_notes": [
+    "CAPEX",
+    "Equity requerido: USD 98 MM"
+   ],
+   "phase": "Etapa 1",
+   "phase_detail": "Estructuración y Planificación",
+   "investment_type": "Equity / participación de capital",
+   "image": "imagenes/proyectos/san-marcos-wind-energy-honduras.webp",
+   "locations": [
+    {
+     "municipio_geocode": "061500",
+     "lng": -86.84541,
+     "lat": 13.4125,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-13",
+   "macroregion": "M-04",
+   "polos": [
+    "golfo-fonseca"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Génesis - Terminal de GNL",
+   "slug": "genesis-terminal-de-gnl",
+   "sector": "energia",
+   "location_text": "Puerto Cortés, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Terminal de almacenamiento, regasificación y distribución de GNL, concebida como el primer hub de importación y distribución de GNL de Honduras.",
+   "amount_text": "USD 103.6 MM",
+   "amount_usd": 103600000,
+   "amount_notes": [
+    "CAPEX",
+    "Necesidad: USD 88.0 MM"
+   ],
+   "phase": "Etapa 2",
+   "phase_detail": "Tramitología",
+   "investment_type": "Inversión de capital / financiamiento para ejecución",
+   "image": "imagenes/proyectos/genesis-terminal-de-gnl.webp",
+   "locations": [
+    {
+     "municipio_geocode": "050600",
+     "lng": -87.85268,
+     "lat": 15.75714,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-E008",
+   "title": "El Tornillito",
+   "slug": "el-tornillito",
+   "sector": "energia",
+   "location_text": "El Ocote, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Proyecto hidroeléctrico de control de inundaciones y generación eléctrica, con capacidad instalada de 194.2 MW, que aprovecha el flujo regulado del río Ulúa.",
+   "amount_text": "USD 734.3 MM",
+   "amount_usd": 734300000,
+   "amount_notes": [
+    "CAPEX",
+    "Financiamiento actual: USD 160 MM + USD 50 MM"
+   ],
+   "phase": "Etapa 3",
+   "phase_detail": "Ejecución y Monitoreo",
+   "investment_type": "Financiamiento para ejecución; PPA ENEE + garantía soberana",
+   "image": "imagenes/proyectos/el-tornillito.webp",
+   "excel_match": {
+    "name": "El Tornillito",
+    "score": 1.0,
+    "maps_url": "https://maps.app.goo.gl/qdicXGiBSYAQVqNKA"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "050600",
+     "lng": -87.85268,
+     "lat": 15.75714,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  },
+  {
+   "kind": "proyecto",
+   "code": "FP-CNI-E010",
+   "title": "La Vegona II - Sistema Híbrido de Bombeo-Almacenamiento + Solar FV",
+   "slug": "la-vegona-ii-sistema-hibrido-de-bombeo-almacenamiento-solar-fv",
+   "sector": "energia",
+   "location_text": "La Unión, Victoria, Yoro",
+   "region_doc": "Región 2: Valle de Comayagua",
+   "description": "Sistema híbrido que combina 1,200 MW de hidroeléctrica de bombeo con 2,400 MWp solares para entregar 1,350 MW firmes y almacenamiento de larga duración.",
+   "amount_text": "USD 88.040 MM",
+   "amount_usd": 88040000,
+   "amount_notes": [
+    "Etapa actual",
+    "Req. corto plazo: ~USD 80 MM"
+   ],
+   "phase": "Etapa 3",
+   "phase_detail": "Ejecución y Monitoreo",
+   "investment_type": "Socios estratégicos / Equity 15% + Deuda 80% + Mezzanine 5%",
+   "image": "imagenes/proyectos/la-vegona-ii-sistema-hibrido-de-bombeo-almacenamiento-solar-fv.webp",
+   "excel_match": {
+    "name": "LA VEGONA II: SISTEMA HÍBRIDO DE\nBOMBEO-ALMACENAMIENTO + SOLAR FV",
+    "score": 0.98,
+    "maps_url": "https://maps.app.goo.gl/GaCePX5LAvNhnXz38"
+   },
+   "locations": [
+    {
+     "municipio_geocode": "181000",
+     "lng": -87.56689,
+     "lat": 15.09225,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-02",
+   "macroregion": "M-01",
+   "polos": [
+    "tegucigalpa"
+   ],
+   "amount_review": true
+  },
+  {
+   "kind": "proyecto",
+   "code": null,
+   "title": "Brassavola - Central Térmica",
+   "slug": "brassavola-central-termica",
+   "sector": "energia",
+   "location_text": "Búfalo, Villanueva, Cortés",
+   "region_doc": "Región 1: Valle de Sula",
+   "description": "Central térmica de ciclo combinado a gas natural de 240 MW, diseñada como principal consumidor ancla del GNL de Génesis y proveedor de energía firme al SIN.",
+   "amount_text": "USD 251.2 MM",
+   "amount_usd": 251200000,
+   "amount_notes": [
+    "CAPEX",
+    "Necesidad: USD 73.4 MM"
+   ],
+   "phase": "Etapa 2",
+   "phase_detail": "Tramitología",
+   "investment_type": "Project finance / inversión de capital",
+   "image": "imagenes/proyectos/brassavola-central-termica.webp",
+   "locations": [
+    {
+     "municipio_geocode": "051100",
+     "lng": -88.04226,
+     "lat": 15.31698,
+     "approximate": true
+    }
+   ],
+   "subregion": "R-01",
+   "macroregion": "M-01",
+   "polos": [
+    "san-pedro-sula"
+   ]
+  }
+ ]
+}

@@ -2,7 +2,12 @@ import { notFound } from "next/navigation";
 import { PortfolioCatalogPage } from "@/src/components/cni/PortfolioCatalogPage";
 import { isLocale, type Locale } from "@/src/i18n/config";
 import { loadAsyncData } from "@/src/lib/asyncData";
-import { opportunityToCatalogItem, parsePortfolioFilters } from "@/src/lib/portfolioCatalog";
+import {
+  getSeedCatalog,
+  opportunityToCatalogItem,
+  parsePortfolioFilters,
+  resolveCatalogSource,
+} from "@/src/lib/portfolioCatalog";
 import { getDocuments } from "@/src/lib/strapi/editorial";
 import { getOpportunities } from "@/src/services/investment";
 import { makeGenerateMetadata } from "@/src/lib/seo";
@@ -11,7 +16,7 @@ import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentOpportunity } from "@/src/types/investment";
 
 export const generateMetadata = makeGenerateMetadata(PAGE_SEO["portafolio-oportunidades"]);
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export default async function OportunidadesPage({
   params,
@@ -31,10 +36,11 @@ export default async function OportunidadesPage({
       [] as CmsDocument[],
     ),
   ]);
-  const items = {
+  const djangoItems = {
     ...result,
     data: result.data.map((opportunity) => opportunityToCatalogItem(opportunity, locale)),
   };
+  const items = resolveCatalogSource(djangoItems, getSeedCatalog("opportunity", locale));
   return (
     <PortfolioCatalogPage
       locale={locale}
