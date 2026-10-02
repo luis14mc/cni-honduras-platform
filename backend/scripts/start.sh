@@ -25,6 +25,9 @@ python manage.py import_territorial_regions || echo "WARN: import_territorial_re
 echo "Synchronizing road corridors (OSM)..."
 python manage.py import_road_corridors || echo "WARN: import_road_corridors falló; el servidor arranca igual"
 
+echo "Retiring seed_investment demo records from the public catalog..."
+python manage.py retire_demo_investment || echo "WARN: retire_demo_investment falló"
+
 # Carga editorial del portafolio CNI (17 oportunidades + 25 proyectos con imágenes).
 # Activar UNA vez con IMPORT_PORTAFOLIO_CNI=true en Render; después quitar la variable
 # para que los cambios hechos por el CNI en el admin no se sobrescriban en cada deploy.

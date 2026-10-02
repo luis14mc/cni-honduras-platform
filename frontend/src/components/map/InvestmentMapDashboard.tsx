@@ -49,6 +49,7 @@ import {
   getRoadCorridorsGeoJson,
 } from "@/src/services/investmentMap";
 import { getTerritorialRegionsGeoJson } from "@/src/services/geo";
+import { mergeMapProjects } from "@/src/lib/portfolioCatalog";
 import type { DepartmentFeatureCollection } from "@/src/lib/types/investment-map";
 import type { Sector } from "@/src/types/investment";
 import { InvestmentMapPanel } from "@/src/components/map/InvestmentMapPanel";
@@ -208,12 +209,10 @@ export function InvestmentMapDashboard({
     let cancelled = false;
     const requestKey = `${selectedDepartment.slug}:${activeSector}`;
     const filterSeed = (items: MapInvestmentProject[]) => {
-      const filtered = items.filter((item) => {
+      return items.filter((item) => {
         if (activeSector !== "all" && item.sector.slug !== activeSector) return false;
-        // Seed records no traen department.slug, así que mostramos todos cuando el seed está activo.
         return true;
       });
-      return filtered;
     };
     getGeolocatedMapProjects({
       departmentSlug: selectedDepartment.slug,
@@ -222,7 +221,8 @@ export function InvestmentMapDashboard({
     })
       .then((data) => {
         if (cancelled) return;
-        const finalData = data.length > 0 ? data : filterSeed(seedMapProjects ?? []);
+        const merged = mergeMapProjects(data, seedMapProjects ?? []);
+        const finalData = filterSeed(merged);
         setProjects({ status: "ready", data: finalData });
         setProjectsKey(requestKey);
         loadedProjectsRef.current = finalData;
@@ -238,13 +238,13 @@ export function InvestmentMapDashboard({
       })
       .catch(() => {
         if (cancelled) return;
-        const fallback = filterSeed(seedMapProjects ?? []);
+        const fallback = filterSeed(mergeMapProjects([], seedMapProjects ?? []));
         setProjects({ status: "ready", data: fallback });
         setProjectsKey(requestKey);
         loadedProjectsRef.current = fallback;
       });
     return () => { cancelled = true; };
-  }, [activeSector, locale, selectedDepartment]);
+  }, [activeSector, locale, seedMapProjects, selectedDepartment]);
 
   const handleSelectDepartment = useCallback((department: DepartmentProperties) => {
     setRegionLayer("none");
@@ -329,7 +329,7 @@ export function InvestmentMapDashboard({
     getGeolocatedMapProjects({ locale })
       .then((data) => {
         if (cancelled) return;
-        const finalData = data.length > 0 ? data : seedFallback;
+        const finalData = mergeMapProjects(data, seedFallback);
         setRegionProjects({ status: "ready", data: finalData });
         setRegionProjectsKey(requestKey);
         const slug = initialQueryRef.current.project;
@@ -342,7 +342,7 @@ export function InvestmentMapDashboard({
       })
       .catch(() => {
         if (cancelled) return;
-        setRegionProjects({ status: "ready", data: seedFallback });
+        setRegionProjects({ status: "ready", data: mergeMapProjects([], seedFallback) });
         setRegionProjectsKey(requestKey);
       });
     return () => { cancelled = true; };

@@ -13,9 +13,10 @@ import {
   getSeedMapProjects,
   groupPortfolioItemsBySector,
   matchDocumentByCode,
+  mergeMapProjects,
   parsePortfolioFilters,
   parseUnifiedFilters,
-  resolveCatalogSource,
+  mergeCatalogSources,
   serializePortfolioFilters,
   serializeUnifiedFilters,
   slugifyPhase,
@@ -150,15 +151,106 @@ describe("portfolio seed fallback", () => {
     expect(district).toBeDefined();
     expect(district?.sector.slug).toBe("infraestructura");
   });
+});
 
-  it("uses Django data when it has items, and falls back to seed when Django is empty or errored", () => {
-    const djangoOk = { status: "ok" as const, data: [{ slug: "x" } as unknown as PortfolioCatalogItem] };
-    const djangoEmpty = { status: "ok" as const, data: [] as PortfolioCatalogItem[] };
-    const djangoError = { status: "error" as const, data: [] as PortfolioCatalogItem[] };
-    const seed = getSeedCatalog("project", "es");
-    expect(resolveCatalogSource(djangoOk, seed)).toBe(djangoOk);
-    expect(resolveCatalogSource(djangoEmpty, seed)).toBe(seed);
-    expect(resolveCatalogSource(djangoError, seed)).toBe(seed);
+describe("mergeCatalogSources", () => {
+  const seedProjects = getSeedCatalog("project", "es");
+  const seedOpps = getSeedCatalog("opportunity", "es");
+
+  function demoItem(slug: string): PortfolioCatalogItem {
+    return item({
+      slug,
+      code: "",
+      title: slug.replace(/-/g, " "),
+      sectorSlug: "agroindustria",
+    });
+  }
+
+  it("uses the seed when Django is empty (25 / 17)", () => {
+    const projects = mergeCatalogSources({ status: "ok", data: [] }, seedProjects);
+    const opps = mergeCatalogSources({ status: "ok", data: [] }, seedOpps);
+    expect(projects.data).toHaveLength(25);
+    expect(opps.data).toHaveLength(17);
+  });
+
+  it("uses the seed when Django errors", () => {
+    const projects = mergeCatalogSources({ status: "error", data: [] }, seedProjects);
+    expect(projects.data).toHaveLength(25);
+  });
+
+  it("hides Django demo records and still returns 25 / 17", () => {
+    const djangoProjects = {
+      status: "ok" as const,
+      data: [
+        demoItem("planta-procesamiento-palma-africana"),
+        demoItem("parque-solar-fotovoltaico-regional"),
+        demoItem("hotel-convenciones-tegucigalpa"),
+      ],
+    };
+    const djangoOpps = {
+      status: "ok" as const,
+      data: [
+        demoItem("resort-eco-turistico-costa-norte"),
+        demoItem("centro-manufactura-textil-exportacion"),
+        demoItem("modernizacion-corredor-logistico"),
+      ],
+    };
+    const projects = mergeCatalogSources(djangoProjects, seedProjects);
+    const opps = mergeCatalogSources(djangoOpps, seedOpps);
+    expect(projects.data).toHaveLength(25);
+    expect(opps.data).toHaveLength(17);
+    const demoSlugs = [
+      "planta-procesamiento-palma-africana",
+      "parque-solar-fotovoltaico-regional",
+      "hotel-convenciones-tegucigalpa",
+      "resort-eco-turistico-costa-norte",
+      "centro-manufactura-textil-exportacion",
+      "modernizacion-corredor-logistico",
+    ];
+    expect(projects.data.some((row) => demoSlugs.includes(row.slug))).toBe(false);
+    expect(opps.data.some((row) => demoSlugs.includes(row.slug))).toBe(false);
+    expect(projects.data.some((row) => row.title.toLowerCase().includes("palma africana"))).toBe(false);
+  });
+
+  it("lets Django win the title of Torre Elegance and keeps 25 projects", () => {
+    const seedRow = seedProjects.data.find((row) => row.slug === "torre-elegance");
+    expect(seedRow).toBeDefined();
+    const django = {
+      status: "ok" as const,
+      data: [{ ...seedRow!, title: "Torre Elegance (editada en admin)", coverImageUrl: null }],
+    };
+    const merged = mergeCatalogSources(django, seedProjects);
+    expect(merged.data).toHaveLength(25);
+    const elegance = merged.data.find((row) => row.slug === "torre-elegance");
+    expect(elegance?.title).toBe("Torre Elegance (editada en admin)");
+    expect(elegance?.coverImageUrl).toBe(seedRow?.coverImageUrl);
+  });
+
+  it("keeps a non-demo Django project that is not in the seed (26)", () => {
+    const extra = item({
+      id: 999,
+      slug: "corredor-logistico-cni-nuevo",
+      code: "FP-CNI-Z999",
+      title: "Corredor logístico CNI nuevo",
+      sectorSlug: "infraestructura",
+    });
+    const merged = mergeCatalogSources({ status: "ok", data: [extra] }, seedProjects);
+    expect(merged.data).toHaveLength(26);
+    expect(merged.data.find((row) => row.slug === extra.slug)?.title).toBe(extra.title);
+  });
+
+  it("merges map GeoJSON with seed and drops demo slugs", () => {
+    const seedPoints = getSeedMapProjects();
+    const demoPoint = {
+      ...seedPoints[0],
+      id: 1,
+      slug: "planta-procesamiento-palma-africana",
+      title: "Planta de procesamiento de palma africana",
+    };
+    const merged = mergeMapProjects([demoPoint], seedPoints);
+    expect(merged.some((row) => row.slug === "planta-procesamiento-palma-africana")).toBe(false);
+    expect(merged.some((row) => row.slug === "distrito-palmerola")).toBe(true);
+    expect(merged.length).toBe(seedPoints.length);
   });
 });
 

@@ -11,9 +11,9 @@ import {
   formatUsdMillions,
   getSeedCatalog,
   opportunityToCatalogItem,
+  mergeCatalogSources,
   parseUnifiedFilters,
   projectToCatalogItem,
-  resolveCatalogSource,
   sumAmountUsd,
 } from "@/src/lib/portfolioCatalog";
 import { designImages } from "@/src/lib/designAssets";
@@ -63,14 +63,14 @@ export default async function PortafolioPage({
     ),
   ]);
 
-  const projects = resolveCatalogSource(
+  const projects = mergeCatalogSources(
     {
       ...djangoProjects,
       data: djangoProjects.data.map((item) => projectToCatalogItem(item, locale)),
     },
     getSeedCatalog("project", locale),
   );
-  const opportunities = resolveCatalogSource(
+  const opportunities = mergeCatalogSources(
     {
       ...djangoOpportunities,
       data: djangoOpportunities.data.map((item) => opportunityToCatalogItem(item, locale)),

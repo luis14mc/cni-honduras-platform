@@ -1,3 +1,13 @@
+"""Carga o actualiza datos demo de inversión CNI (idempotente).
+
+Solo desarrollo local: no lo ejecute en testing ni producción, porque
+reescribe oportunidades, proyectos y casos de éxito de demostración y
+puede tapar el portafolio editorial del CNI.
+
+Ningún script de deploy (`backend/scripts/start.sh`, Docker, CI) invoca
+este comando.
+"""
+
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
@@ -301,7 +311,10 @@ def _optional_department() -> Department | None:
 
 
 class Command(BaseCommand):
-    help = "Carga o actualiza datos demo de inversión CNI (idempotente)."
+    help = (
+        "SOLO desarrollo local. Carga datos demo de inversión (idempotente). "
+        "No usar en testing/producción."
+    )
 
     def handle(self, *args, **options):
         sectors_created = 0

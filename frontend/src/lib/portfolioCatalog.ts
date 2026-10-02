@@ -13,6 +13,32 @@ export const PORTFOLIO_CATALOG_SECTORS = [
   "manufactura",
 ] as const satisfies readonly SectorSlug[];
 
+/** Slugs of seed_investment demo records. Hidden from the public catalog and map. */
+export const DEMO_SLUGS = [
+  "planta-procesamiento-palma-africana",
+  "resort-eco-turistico-costa-norte",
+  "parque-solar-fotovoltaico-regional",
+  "centro-manufactura-textil-exportacion",
+  "modernizacion-corredor-logistico",
+  "expansion-planta-agroindustrial-sula",
+  "hotel-convenciones-tegucigalpa",
+  "parque-industrial-logistico-oriente",
+  "agroexportadora-del-atlantico",
+  "textiles-del-valle",
+  "energia-solar-copan",
+] as const;
+
+const DEMO_SLUG_SET = new Set<string>(DEMO_SLUGS);
+
+export function isDemoSlug(slug: string): boolean {
+  return DEMO_SLUG_SET.has(slug);
+}
+
+export function catalogIdentityKey(item: { code?: string | null; slug: string }): string {
+  const code = (item.code || "").replace(/\s+/g, "").toUpperCase();
+  return code || item.slug;
+}
+
 export type PortfolioKind = "project" | "opportunity";
 
 export type PortfolioCatalogItem = {
@@ -419,13 +445,111 @@ export function getSeedBySlug(
   };
 }
 
-/** Fuente de catálogo: si Django trae datos, los usa; si está vacío o falló, usa el seed. */
-export function resolveCatalogSource<T extends { status: string; data: unknown[] }>(
-  django: T,
-  seedSource: SeedCatalogSource,
-): T | SeedCatalogSource {
-  if (django.status === "ok" && django.data.length > 0) return django;
-  return seedSource;
+function hydrateCatalogItem(
+  django: PortfolioCatalogItem,
+  seedItem: PortfolioCatalogItem,
+): PortfolioCatalogItem {
+  return {
+    ...django,
+    coverImageUrl: django.coverImageUrl || seedItem.coverImageUrl,
+    amountText: django.amountText || seedItem.amountText,
+    locationText: django.locationText || seedItem.locationText,
+  };
+}
+
+function mergeByIdentity<T extends { slug: string; code?: string | null }>(
+  django: T[],
+  seedItems: T[],
+  hydrate: (django: T, seedItem: T) => T,
+): T[] {
+  const seedByKey = new Map(
+    seedItems.filter((item) => !isDemoSlug(item.slug)).map((item) => [catalogIdentityKey(item), item]),
+  );
+  const used = new Set<string>();
+  const merged: T[] = [];
+  for (const item of django) {
+    if (isDemoSlug(item.slug)) continue;
+    const key = catalogIdentityKey(item);
+    const seedItem = seedByKey.get(key);
+    if (seedItem) {
+      used.add(key);
+      merged.push(hydrate(item, seedItem));
+    } else {
+      merged.push(item);
+    }
+  }
+  for (const seedItem of seedItems) {
+    if (isDemoSlug(seedItem.slug)) continue;
+    const key = catalogIdentityKey(seedItem);
+    if (!used.has(key)) merged.push(seedItem);
+  }
+  return merged;
+}
+
+export type CatalogSource<T> = { status: string; data: T[] };
+
+/**
+ * Une Django (lo que el CNI edita) con el seed local.
+ * Django gana en conflicto; campos vacíos de imagen/monto/ubicación se completan con el seed.
+ * Los demo de seed_investment se ocultan. Si Django falla o viene vacío, se usa solo el seed.
+ */
+export function mergeCatalogSources(
+  django: CatalogSource<PortfolioCatalogItem>,
+  seedSource: CatalogSource<PortfolioCatalogItem>,
+): { status: "ok"; data: PortfolioCatalogItem[] } {
+  const seedItems = seedSource.data.filter((item) => !isDemoSlug(item.slug));
+  if (django.status !== "ok" || django.data.length === 0) {
+    return { status: "ok", data: seedItems };
+  }
+  return { status: "ok", data: mergeByIdentity(django.data, seedItems, hydrateCatalogItem) };
+}
+
+/** @deprecated Use mergeCatalogSources. Kept for a single release in case of leftover imports. */
+export function resolveCatalogSource(
+  django: CatalogSource<PortfolioCatalogItem>,
+  seedSource: CatalogSource<PortfolioCatalogItem>,
+): { status: "ok"; data: PortfolioCatalogItem[] } {
+  return mergeCatalogSources(django, seedSource);
+}
+
+export function findSeedByIdentity(
+  kind: PortfolioKind,
+  identity: { slug: string; code?: string | null },
+  locale: Locale,
+): { item: PortfolioCatalogItem; record: SeedPortfolioRecord } | null {
+  const bySlug = getSeedBySlug(kind, identity.slug, locale);
+  if (bySlug) return bySlug;
+  const codeKey = catalogIdentityKey({ code: identity.code, slug: "" });
+  if (!codeKey) return null;
+  const records = kind === "project" ? seed.proyectos : seed.oportunidades;
+  const match = records.find(
+    (record) => catalogIdentityKey({ code: record.code, slug: record.slug }) === codeKey,
+  );
+  return match ? getSeedBySlug(kind, match.slug, locale) : null;
+}
+
+type HydrateableRecord = {
+  slug: string;
+  code?: string | null;
+  cover_image_url?: string | null;
+  amount_text?: string;
+  location_text?: string;
+};
+
+export function hydratePublicRecord<T extends HydrateableRecord>(
+  record: T,
+  kind: PortfolioKind,
+  locale: Locale,
+): T {
+  if (isDemoSlug(record.slug)) return record;
+  const seedMatch = findSeedByIdentity(kind, record, locale);
+  if (!seedMatch) return record;
+  return {
+    ...record,
+    cover_image_url: record.cover_image_url || seedMatch.item.coverImageUrl,
+    amount_text: record.amount_text || seedMatch.item.amountText,
+    location_text: record.location_text || seedMatch.item.locationText,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -484,5 +608,23 @@ export function getSeedMapProjects(): MapInvestmentProject[] {
   const opportunities = seed.oportunidades
     .map((record, index) => toSeedMapProject(record, "opportunity", index + projects.length))
     .filter((item): item is MapInvestmentProject => item !== null);
-  return [...projects, ...opportunities];
+  return [...projects, ...opportunities].filter((item) => !isDemoSlug(item.slug));
+}
+
+function hydrateMapProject(django: MapInvestmentProject, seedItem: MapInvestmentProject): MapInvestmentProject {
+  return {
+    ...django,
+    investment_amount: django.investment_amount || seedItem.investment_amount,
+    latitude: django.latitude ?? seedItem.latitude,
+    longitude: django.longitude ?? seedItem.longitude,
+    location: django.location ?? seedItem.location,
+  };
+}
+
+export function mergeMapProjects(
+  django: MapInvestmentProject[],
+  seedItems: MapInvestmentProject[] = getSeedMapProjects(),
+): MapInvestmentProject[] {
+  if (django.length === 0) return seedItems.filter((item) => !isDemoSlug(item.slug));
+  return mergeByIdentity(django, seedItems, hydrateMapProject);
 }
