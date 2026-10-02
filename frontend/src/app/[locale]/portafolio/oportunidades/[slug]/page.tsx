@@ -8,7 +8,6 @@ import { Section } from "@/src/components/cni/Section";
 import { PortfolioImageLightbox } from "@/src/components/cni/PortfolioImageLightbox";
 import { buildDetailMetadata } from "@/src/lib/seo";
 import { getOpportunity } from "@/src/services/investment";
-import { ApiError } from "@/src/lib/api";
 import type { InvestmentOpportunity, RegionRef } from "@/src/types/investment";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
 import { formatPoloLabel, formatSubregionLabel, getSeedBySlug } from "@/src/lib/portfolioCatalog";
@@ -104,27 +103,21 @@ export default async function OpportunityDetailPage({
   const catalog = portfolioCatalogCopy[locale];
 
   let opp: InvestmentOpportunity | null = null;
-  let loadError = false;
-  let notFoundFromApi = false;
   try {
     opp = await getOpportunity(slug, { locale });
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      notFoundFromApi = true;
-    } else {
-      loadError = true;
-    }
+  } catch {
+    // Cualquier fallo (404, 500, timeout, sin conexión) cae al seed.
   }
 
-  const seedFallback =
-    notFoundFromApi || (!opp && !loadError) ? getSeedBySlug("opportunity", slug, locale) : null;
+  // Fallback al JSON local si Django no trae la oportunidad.
+  const seedFallback = !opp ? getSeedBySlug("opportunity", slug, locale) : null;
 
-  if (loadError && !seedFallback) {
+  if (!opp && !seedFallback) {
     return (
       <div className="flex flex-1 flex-col bg-[#f8f9ff]">
         <Section tone="surface">
           <Link
-            href={L("/portafolio/oportunidades")}
+            href={L("/portafolio?tipo=oportunidades")}
             className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
           >
             ← {t.back}
@@ -180,7 +173,7 @@ export default async function OpportunityDetailPage({
 
         <Section tone="surface">
           <Link
-            href={L("/portafolio/oportunidades")}
+            href={L("/portafolio?tipo=oportunidades")}
             className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
           >
             ← {t.back}
@@ -298,7 +291,7 @@ export default async function OpportunityDetailPage({
 
       <Section tone="surface">
         <Link
-          href={L("/portafolio/oportunidades")}
+          href={L("/portafolio?tipo=oportunidades")}
           className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]"
         >
           ← {t.back}

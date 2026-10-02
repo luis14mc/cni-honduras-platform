@@ -22,21 +22,11 @@
     "label": { "es": "Crecer en Honduras", "en": "Grow in Honduras" },
     "path": { "es": "/crecer", "en": "/en/grow" },
     "children": [
-      {
-        "id": "crecer-portafolio",
-        "label": { "es": "Portafolio de Inversiones", "en": "Investment Portfolio" },
-        "path": { "es": "/portafolio", "en": "/en/portfolio" }
-      },
-      {
-        "id": "crecer-fichas-proyectos",
-        "label": { "es": "Fichas de Proyectos", "en": "Project Sheets" },
-        "path": { "es": "/portafolio/fichas-proyectos", "en": "/en/portfolio/project-sheets" }
-      },
-      {
-        "id": "crecer-oportunidades",
-        "label": { "es": "Oportunidades de Inversión", "en": "Investment Opportunities" },
-        "path": { "es": "/portafolio/oportunidades", "en": "/en/portfolio/opportunities" }
-      },
+{
+      "id": "crecer-portafolio",
+      "label": { "es": "Portafolio de Inversiones", "en": "Investment Portfolio" },
+      "path": { "es": "/portafolio", "en": "/en/portfolio" }
+    },
       {
         "id": "crecer-casos",
         "label": { "es": "Casos de Éxito", "en": "Success Stories" },

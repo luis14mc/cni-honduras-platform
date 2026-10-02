@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { CmsDocument } from "@/src/types/cms";
 import {
+  applyUnifiedFilters,
+  countBySector,
+  DEFAULT_UNIFIED_FILTERS,
   filterPortfolioItems,
   formatPoloLabel,
   formatSubregionLabel,
@@ -11,8 +14,10 @@ import {
   groupPortfolioItemsBySector,
   matchDocumentByCode,
   parsePortfolioFilters,
+  parseUnifiedFilters,
   resolveCatalogSource,
   serializePortfolioFilters,
+  serializeUnifiedFilters,
   slugifyPhase,
   sumAmountUsd,
   type PortfolioCatalogItem,
@@ -154,5 +159,94 @@ describe("portfolio seed fallback", () => {
     expect(resolveCatalogSource(djangoOk, seed)).toBe(djangoOk);
     expect(resolveCatalogSource(djangoEmpty, seed)).toBe(seed);
     expect(resolveCatalogSource(djangoError, seed)).toBe(seed);
+  });
+});
+
+describe("unified portfolio filters (tipo / sector / fase / q / orden)", () => {
+  const all = [
+    ...getSeedCatalog("project", "es").data,
+    ...getSeedCatalog("opportunity", "es").data,
+  ];
+
+  it("uses the seed for sector counts per tab", () => {
+    const projects = getSeedCatalog("project", "es").data;
+    const opps = getSeedCatalog("opportunity", "es").data;
+    expect(projects.length).toBe(25);
+    expect(opps.length).toBe(17);
+    const projectCounts = countBySector(projects);
+    const oppCounts = countBySector(opps);
+    expect(projectCounts.infraestructura).toBe(8);
+    expect(projectCounts.energia).toBe(6);
+    expect(oppCounts.turismo).toBe(3);
+    expect(oppCounts.energia ?? 0).toBe(0);
+    expect(oppCounts.manufactura ?? 0).toBe(0);
+  });
+
+  it("parses and serializes the catalog filters in the URL", () => {
+    const parsed = parseUnifiedFilters({
+      tipo: "oportunidades",
+      sector: "turismo",
+      fase: "fase-1",
+      q: "Tela",
+      orden: "name",
+    });
+    expect(parsed).toEqual({
+      tipo: "oportunidades",
+      sector: "turismo",
+      fase: "fase-1",
+      q: "Tela",
+      orden: "name",
+    });
+    expect(parseUnifiedFilters({})).toEqual(DEFAULT_UNIFIED_FILTERS);
+    expect(parseUnifiedFilters({ tipo: "no-valido" }).tipo).toBe("proyectos");
+    expect(parseUnifiedFilters({ sector: "no valido" }).sector).toBeNull();
+    expect(serializeUnifiedFilters(parsed)).toBe(
+      "tipo=oportunidades&sector=turismo&fase=fase-1&q=Tela&orden=name",
+    );
+    // Defaults no escriben parámetros en la querystring.
+    expect(serializeUnifiedFilters(DEFAULT_UNIFIED_FILTERS)).toBe("");
+  });
+
+  it("filters by tab and sector with the unified client", () => {
+    const proyectosInfra = applyUnifiedFilters(all, "proyectos", {
+      ...DEFAULT_UNIFIED_FILTERS,
+      sector: "infraestructura",
+    });
+    expect(proyectosInfra.length).toBe(8);
+    expect(proyectosInfra.every((item) => item.sectorSlug === "infraestructura")).toBe(true);
+
+    const oportunidadesTurismo = applyUnifiedFilters(all, "oportunidades", {
+      ...DEFAULT_UNIFIED_FILTERS,
+      sector: "turismo",
+    });
+    expect(oportunidadesTurismo.length).toBe(3);
+  });
+
+  it("text search matches title, code and location", () => {
+    const telaProyectos = applyUnifiedFilters(all, "proyectos", {
+      ...DEFAULT_UNIFIED_FILTERS,
+      q: "Tela",
+    });
+    expect(telaProyectos.length).toBe(3);
+    expect(telaProyectos.every((item) =>
+      item.title.toLowerCase().includes("tela") ||
+      item.locationText.toLowerCase().includes("tela"),
+    )).toBe(true);
+  });
+
+  it("sorts by amount descending by default and by name when requested", () => {
+    const proyectosPorMonto = applyUnifiedFilters(all, "proyectos", DEFAULT_UNIFIED_FILTERS);
+    for (let i = 1; i < proyectosPorMonto.length; i++) {
+      expect(proyectosPorMonto[i - 1].amountUsd).toBeGreaterThanOrEqual(
+        proyectosPorMonto[i].amountUsd,
+      );
+    }
+    const proyectosPorNombre = applyUnifiedFilters(all, "proyectos", {
+      ...DEFAULT_UNIFIED_FILTERS,
+      orden: "name",
+    });
+    const titles = proyectosPorNombre.map((item) => item.title);
+    const sorted = [...titles].sort((a, b) => a.localeCompare(b));
+    expect(titles).toEqual(sorted);
   });
 });

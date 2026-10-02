@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { legacyRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
+import { legacyRedirects, permanentRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
 import { normalizePath } from "@/src/config/siteNavigation";
 import { isStrapiProxyPath, rewriteStrapiProxyUrl } from "@/src/lib/strapi/proxy";
 
@@ -47,6 +47,27 @@ export function middleware(request: NextRequest) {
   }
 
   const normalized = normalizePath(pathname);
+
+  // Redirecciones 308 explícitas (p. ej. /portafolio/fichas-proyectos → /portafolio?tipo=proyectos).
+  // Se aplican antes que las legacy para que el orden de reglas sea estable.
+  for (const rule of permanentRedirects) {
+    if (rule.from.test(normalized)) {
+      const target = rule.to(normalized);
+      if (target && target !== normalized) {
+        const url = request.nextUrl.clone();
+        url.pathname = target.split("?")[0] ?? target;
+        const queryIndex = target.indexOf("?");
+        if (queryIndex >= 0) {
+          const params = new URLSearchParams(target.slice(queryIndex + 1));
+          // Conserva los query params existentes y suma los del destino.
+          for (const [key, value] of params.entries()) {
+            url.searchParams.set(key, value);
+          }
+        }
+        return NextResponse.redirect(url, 308);
+      }
+    }
+  }
 
   for (const rule of legacyRedirects) {
     if (rule.from.test(normalized)) {

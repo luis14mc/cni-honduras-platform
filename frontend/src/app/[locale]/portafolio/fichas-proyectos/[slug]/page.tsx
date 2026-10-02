@@ -8,7 +8,6 @@ import { PageHero } from "@/src/components/cni/PageHero";
 import { Section } from "@/src/components/cni/Section";
 import { buildDetailMetadata } from "@/src/lib/seo";
 import { getProject } from "@/src/services/investment";
-import { ApiError } from "@/src/lib/api";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
 import { formatPoloLabel, formatSubregionLabel, getSeedBySlug } from "@/src/lib/portfolioCatalog";
 import { getSectorBySlug } from "@/src/data/investmentSectors";
@@ -62,27 +61,20 @@ export default async function ProjectSheetDetailPage({
   const L = (path: string) => withLocale(locale, path);
 
   let project: InvestmentProject | null = null;
-  let loadError = false;
-  let notFoundFromApi = false;
   try {
     project = await getProject(slug, { locale });
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      notFoundFromApi = true;
-    } else {
-      loadError = true;
-    }
+  } catch {
+    // Cualquier fallo (404, 500, timeout, sin conexión) cae al seed.
   }
 
-  // Fallback al JSON local si Django responde 404 o no hay datos (Django sin seed cargado).
-  const seedFallback =
-    notFoundFromApi || (!project && !loadError) ? getSeedBySlug("project", slug, locale) : null;
+  // Fallback al JSON local si Django no trae el proyecto (cualquier error o respuesta vacía).
+  const seedFallback = !project ? getSeedBySlug("project", slug, locale) : null;
 
-  if (loadError && !seedFallback) {
+  if (!project && !seedFallback) {
     return (
       <div className="flex flex-1 flex-col bg-[#f8f9ff]">
         <Section tone="surface">
-          <Link href={L("/portafolio/fichas-proyectos")} className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
+          <Link href={L("/portafolio?tipo=proyectos")} className="text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
             ← {t.backSheets}
           </Link>
           <div role="alert" className="mt-10 rounded-xl border border-red-200 bg-red-50 px-6 py-12 text-center text-sm text-red-800">
@@ -133,7 +125,7 @@ export default async function ProjectSheetDetailPage({
           />
         </div>
         <Section tone="surface">
-          <Link href={L("/portafolio/fichas-proyectos")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
+          <Link href={L("/portafolio?tipo=proyectos")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
             <ArrowLeft className="h-4 w-4" aria-hidden />
             {t.backSheets}
           </Link>
@@ -219,7 +211,7 @@ export default async function ProjectSheetDetailPage({
         />
       </div>
       <Section tone="surface">
-        <Link href={L("/portafolio/fichas-proyectos")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
+        <Link href={L("/portafolio?tipo=proyectos")} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#334E88] hover:text-[#35A963]">
           <ArrowLeft className="h-4 w-4" aria-hidden />
           {t.backSheets}
         </Link>

@@ -51,9 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/",
     "/prensa",
     "/recursos",
+    "/portafolio",
     "/portafolio/casos",
-    "/portafolio/oportunidades",
-    "/portafolio/fichas-proyectos",
     "/portafolio/mapa",
     "/invertir/sectores",
   ];

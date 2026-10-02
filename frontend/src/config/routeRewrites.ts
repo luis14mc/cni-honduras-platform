@@ -138,6 +138,18 @@ export function resolveInternalPath(pathname: string): string | null {
   return `/es${normalized}`;
 }
 
+/** Redirecciones 308 explícitas (preservan método y respetan query).
+ *  next.config.ts no puede leer las traducciones ES↔EN que viven en el JSON,
+ *  así que el middleware es el sitio donde se decide a dónde va cada URL. */
+export const permanentRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string }> = [
+  // Portafolio unificado (oct-2026): las listas separadas se redireccionan al
+  // catálogo único con la pestaña correspondiente pre-seleccionada.
+  { from: /^\/portafolio\/fichas-proyectos\/?$/, to: () => "/portafolio?tipo=proyectos" },
+  { from: /^\/portafolio\/oportunidades\/?$/, to: () => "/portafolio?tipo=oportunidades" },
+  { from: /^\/en\/portfolio\/project-sheets\/?$/, to: () => "/en/portfolio?tipo=proyectos" },
+  { from: /^\/en\/portfolio\/opportunities\/?$/, to: () => "/en/portfolio?tipo=oportunidades" },
+];
+
 /** Redirecciones permanentes desde URLs legacy. */
 export const legacyRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string | null }> = [
   { from: /^\/postulacion\/?$/, to: () => "/postula-tu-proyecto" },

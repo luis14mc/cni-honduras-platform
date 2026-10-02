@@ -31,22 +31,31 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
   );
   const sector = getSectorBySlug(locale, item.sectorSlug);
   const placeholder = sector?.image;
-  const objectClass = item.kind === "opportunity" ? "object-cover object-top" : "object-cover";
+  const sectorColor = sector?.color_hex;
+  const isOpportunity = item.kind === "opportunity";
+
+  // Láminas de proyecto (16:10) muestran texto a la derecha; el contenido
+  // visible está en el lado izquierdo → usamos object-left para que la foto
+  // no quede tapada por la columna de texto cuando el aspect cambia.
+  const imageClass = isOpportunity
+    ? "object-cover object-top"
+    : cn("object-cover", item.coverImageUrl ? "object-left" : "object-center");
+  const aspectClass = isOpportunity ? "aspect-[4/3]" : "aspect-[16/10]";
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-xl border border-cni-primary/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#32B372]/40 hover:shadow-md">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-cni-primary/10 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#32B372]/40 hover:shadow-md">
       <Link
         href={detailHref}
-        className="group flex flex-1 flex-col focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
+        className="flex flex-1 flex-col focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
       >
-        <div className="relative aspect-[4/3] overflow-hidden bg-cni-primary/8">
+        <div className={cn("relative overflow-hidden bg-cni-primary/8", aspectClass)}>
           {item.coverImageUrl ? (
             <Image
               src={item.coverImageUrl}
               alt={item.title}
               fill
               sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className={objectClass}
+              className={imageClass}
             />
           ) : placeholder ? (
             <Image
@@ -61,9 +70,22 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
               {item.sectorName}
             </span>
           )}
+          {isOpportunity && item.coverImageUrl ? (
+            <span className="pointer-events-none absolute left-3 top-3 rounded-full bg-cni-primary/85 px-2.5 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-white shadow">
+              {t.opportunityCardBadge}
+            </span>
+          ) : null}
         </div>
         <div className="flex flex-1 flex-col p-5">
           <div className="flex flex-wrap gap-2">
+            {item.sectorName ? (
+              <span
+                className="rounded-full px-2.5 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-white"
+                style={{ backgroundColor: sectorColor ?? "#252A58" }}
+              >
+                {item.sectorName}
+              </span>
+            ) : null}
             {item.code ? (
               <span className="rounded-full bg-[#eaf7f0] px-2.5 py-1 font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#168654]">
                 {item.code}
@@ -106,9 +128,10 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
           ) : null}
         </div>
       </Link>
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-cni-primary/8 px-5 py-3">
+      <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-cni-primary/8 px-5 py-3">
         <Link
           href={mapHref}
+          onClick={(event) => event.stopPropagation()}
           className={cn(
             "inline-flex items-center gap-1.5 font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-cni-primary underline-offset-4 hover:underline",
             "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]",
@@ -122,6 +145,7 @@ export function PortfolioItemCard({ locale, item, pdfUrl, pdfLabel }: Props) {
             href={pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
             className="inline-flex items-center gap-1.5 font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-[#168654] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
           >
             {pdfLabel || t.downloadCard}
