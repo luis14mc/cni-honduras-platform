@@ -217,3 +217,9 @@
 .leaflet-container path.leaflet-interactive:focus {
   outline: none;
 }
+
+/* Mapa: aislar los z-index internos de Leaflet (400–700) para que nunca tapen el menú sticky (z-50) */
+.leaflet-container {
+  isolation: isolate;
+  z-index: 0;
+}

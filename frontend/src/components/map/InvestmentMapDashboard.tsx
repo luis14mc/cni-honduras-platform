@@ -561,7 +561,7 @@ export function InvestmentMapDashboard({ locale, initialQueryState }: { locale: 
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div className="relative min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
+          <div className="relative isolate z-0 min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
             {geo.status === "loading" ? <MapLoading copy={copy.loadingMap} /> : null}
             {geo.status === "error" ? <MapMessage alert>{copy.mapError}</MapMessage> : null}
             {geo.status === "ready" && geo.data?.features.length === 0 ? <MapMessage>{copy.noGeometry}</MapMessage> : null}
