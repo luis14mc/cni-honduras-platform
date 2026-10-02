@@ -57,7 +57,7 @@ export default async function LocaleLayout({
       </a>
       <SiteBannerBar locale={locale} banners={banners} />
       <Navbar />
-      <main id="main-content" className="flex flex-1 flex-col pt-[5.25rem]">
+      <main id="main-content" className="flex flex-1 flex-col pt-[var(--cni-header-height)]">
         {children}
       </main>
       <Footer

@@ -227,7 +227,7 @@
 }
 
 .theme-architectural-ledger section {
-  scroll-margin-top: 5.25rem;
+  scroll-margin-top: var(--cni-header-height);
 }
 
 /* Carrusel de aliados — fondo oscuro suave + logos destacados */

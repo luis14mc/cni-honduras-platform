@@ -47,7 +47,7 @@ export function HomeHeroSection({ locale, title }: Props) {
   return (
     <section
       className={cn(
-        "relative flex items-center overflow-hidden bg-cni-primary -mt-[5.25rem] pt-[5.25rem] h-screen min-h-[100vh]",
+        "relative flex h-screen min-h-[100vh] items-center overflow-hidden bg-cni-primary -mt-[var(--cni-header-height)] pt-[var(--cni-header-height)]",
       )}
     >
       <div className="absolute inset-0 z-0">

@@ -6,6 +6,7 @@
 :root {
   --background: #f8f9ff;
   --foreground: #252a58;
+  --cni-header-height: 3.5rem;
   --cni-primary: #252a58;
   --cni-primary-container: #24436b;
   --cni-secondary: #0e7a7c;
@@ -26,6 +27,12 @@
   --cni-on-surface-variant: #0e7a7c;
   --cni-outline: #b6c2d3;
   --cni-outline-variant: #dce9ff;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --cni-header-height: 5.25rem;
+  }
 }
 
 @theme {

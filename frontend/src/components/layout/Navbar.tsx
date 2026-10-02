@@ -24,6 +24,9 @@ import { mainNavLinkClass } from "@/src/components/layout/layoutBrand";
 const dropdownItemClass =
   "block px-4 py-2.5 text-sm font-medium text-[#64748B] transition-colors hover:bg-slate-50 hover:text-[#32B372]";
 
+const mobileItemClass =
+  "flex min-h-12 w-full items-center py-2 text-sm text-[#64748B] hover:text-[#32B372]";
+
 function NavLinkItem({
   node,
   locale,
@@ -175,7 +178,7 @@ function MobileNavBranch({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="block py-2.5 text-sm text-[#64748B] hover:text-[#32B372]"
+          className={mobileItemClass}
           onClick={onNavigate}
         >
           {label}
@@ -184,11 +187,7 @@ function MobileNavBranch({
       );
     }
     return (
-      <Link
-        href={href}
-        className="block py-2.5 text-sm text-[#64748B] hover:text-[#32B372]"
-        onClick={onNavigate}
-      >
+      <Link href={href} className={mobileItemClass} onClick={onNavigate}>
         {label}
       </Link>
     );
@@ -198,7 +197,7 @@ function MobileNavBranch({
     <div>
       <button
         type="button"
-        className="flex w-full items-center justify-between py-2.5 text-left text-sm font-medium text-[#334E88] hover:text-[#32B372]"
+        className="flex min-h-12 w-full items-center justify-between text-left text-sm font-medium text-[#334E88] hover:text-[#32B372]"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -207,11 +206,7 @@ function MobileNavBranch({
       </button>
       {open && (
         <div className="ml-3 border-l border-[#32B372]/25 pb-2 pl-3">
-          <Link
-            href={getNavHref(node, locale)}
-            className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
-            onClick={onNavigate}
-          >
+          <Link href={getNavHref(node, locale)} className={mobileItemClass} onClick={onNavigate}>
             {getNavLabel(node, locale)}
           </Link>
           {node.children!.map((child) => (
@@ -234,15 +229,24 @@ export default function Navbar() {
   const [flyoutOpenId, setFlyoutOpenId] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement | null>(null);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const mobilePanelRef = useRef<HTMLDivElement | null>(null);
+  const wasMobileOpen = useRef(false);
 
   const closeMenus = useCallback(() => {
     setOpenDropdownId(null);
     setFlyoutOpenId(null);
   }, []);
 
+  const closeMobile = useCallback(() => {
+    setMobileOpen(false);
+  }, []);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeMenus();
+      if (e.key !== "Escape") return;
+      setMobileOpen(false);
+      closeMenus();
     };
     const onPointer = (e: MouseEvent) => {
       if (!navRef.current?.contains(e.target as Node)) closeMenus();
@@ -254,6 +258,29 @@ export default function Navbar() {
       document.removeEventListener("mousedown", onPointer);
     };
   }, [closeMenus]);
+
+  useEffect(() => {
+    if (!mobileOpen) {
+      if (wasMobileOpen.current) {
+        wasMobileOpen.current = false;
+        menuButtonRef.current?.focus();
+      }
+      return;
+    }
+    wasMobileOpen.current = true;
+    const html = document.documentElement;
+    const { body } = document;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    const first = mobilePanelRef.current?.querySelector<HTMLElement>("a, button");
+    first?.focus();
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+    };
+  }, [mobileOpen]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -268,9 +295,9 @@ export default function Navbar() {
 
   return (
     <header ref={navRef} className="fixed inset-x-0 top-0 z-50 flex flex-col shadow-sm" role="banner">
-      <div className="flex h-9 items-center justify-end gap-6 border-b border-white/10 bg-[#252A58] px-4 md:gap-8 md:px-10">
+      <div className="hidden h-9 items-center justify-end gap-6 border-b border-white/10 bg-[#252A58] px-4 md:flex md:gap-8 md:px-10">
         <nav
-          aria-label={locale === "es" ? "Enlaces rápidos" : "Quick links"}
+          aria-label={t.quickLinks}
           className="flex items-center gap-6 md:gap-8"
         >
           {topBarNodes.map((n) => (
@@ -370,48 +397,51 @@ export default function Navbar() {
           </ul>
 
           <button
+            ref={menuButtonRef}
             type="button"
-            className="rounded-lg p-2 text-[#252A58] transition-colors hover:bg-slate-50 lg:hidden"
+            className="inline-flex min-h-12 min-w-12 items-center justify-center rounded-lg text-[#252A58] transition-colors hover:bg-slate-50 lg:hidden"
             aria-expanded={mobileOpen}
+            aria-controls="mobile-nav-panel"
             aria-label={mobileOpen ? t.closeMenu : t.openMenu}
             onClick={() => setMobileOpen((o) => !o)}
           >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileOpen ? <X className="h-6 w-6" aria-hidden /> : <Menu className="h-6 w-6" aria-hidden />}
           </button>
         </div>
 
         {mobileOpen && (
           <div
-            className="max-h-[min(80vh,calc(100dvh-7rem))] overflow-y-auto border-t border-slate-100 bg-white px-4 py-5 lg:hidden"
-            aria-label={locale === "es" ? "Menú móvil" : "Mobile menu"}
+            id="mobile-nav-panel"
+            ref={mobilePanelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.mobileMenu}
+            className="fixed inset-x-0 bottom-0 top-[var(--cni-header-height)] z-40 overflow-y-auto overscroll-contain border-t border-slate-100 bg-white px-4 py-3 lg:hidden"
           >
-            <div className="mb-4 flex justify-end">
-              <LanguageSwitch />
-            </div>
             <Link
               href={homeHref}
               className={cn(
-                "block py-3 text-sm font-semibold text-[#252A58]",
+                "flex min-h-12 items-center text-sm font-semibold text-[#252A58]",
                 pathIsActive(pathname, homeHref) && "text-[#32B372]",
               )}
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMobile}
             >
               {t.home}
             </Link>
             {siteNavigation.map((node) => (
-              <div key={node.id} className="border-t border-slate-100 py-4">
+              <div key={node.id} className="border-t border-slate-100 py-2">
                 {node.children?.length ? (
                   <>
-                    <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[#64748B]">
+                    <p className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-widest text-[#64748B]">
                       {getNavLabel(node, locale)}
                     </p>
                     {!node.hideDropdownOverview ? (
                       <Link
                         href={getNavHref(node, locale)}
-                        className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
-                        onClick={() => setMobileOpen(false)}
+                        className={mobileItemClass}
+                        onClick={closeMobile}
                       >
-                        {locale === "es" ? "Vista general" : "Overview"}
+                        {t.overview}
                       </Link>
                     ) : null}
                     {node.children.map((child) => (
@@ -419,15 +449,15 @@ export default function Navbar() {
                         key={child.id}
                         node={child}
                         locale={locale}
-                        onNavigate={() => setMobileOpen(false)}
+                        onNavigate={closeMobile}
                       />
                     ))}
                   </>
                 ) : (
                   <Link
                     href={getNavHref(node, locale)}
-                    className="block py-2 text-sm font-semibold text-[#334E88] hover:text-[#32B372]"
-                    onClick={() => setMobileOpen(false)}
+                    className="flex min-h-12 items-center text-sm font-semibold text-[#334E88] hover:text-[#32B372]"
+                    onClick={closeMobile}
                   >
                     {getNavLabel(node, locale)}
                   </Link>
@@ -435,20 +465,23 @@ export default function Navbar() {
               </div>
             ))}
 
-            <div className="mt-2 border-t border-slate-100 py-4">
-              <p className="mb-2 text-[0.65rem] font-semibold uppercase tracking-widest text-[#64748B]">
-                {locale === "es" ? "Enlaces rápidos" : "Quick links"}
+            <div className="mt-2 border-t border-slate-100 py-4 md:hidden">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-[#64748B]">
+                {t.quickLinks}
               </p>
               {topBarNodes.map((n) => (
                 <Link
                   key={n.id}
                   href={getNavHref(n, locale)}
-                  className="block py-2 text-sm text-[#64748B] hover:text-[#32B372]"
-                  onClick={() => setMobileOpen(false)}
+                  className={mobileItemClass}
+                  onClick={closeMobile}
                 >
                   {getNavLabel(n, locale)}
                 </Link>
               ))}
+              <div className="mt-4">
+                <LanguageSwitch variant="onLight" />
+              </div>
             </div>
           </div>
         )}

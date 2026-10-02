@@ -14,6 +14,9 @@ export const layoutCopy: Record<
       recursos: string;
       openMenu: string;
       closeMenu: string;
+      mobileMenu: string;
+      overview: string;
+      quickLinks: string;
       learnMore: string;
       top: { press: string; advisory: string; procedures: string };
       dropdowns: {
@@ -68,6 +71,9 @@ export const layoutCopy: Record<
       recursos: "Recursos",
       openMenu: "Abrir menú",
       closeMenu: "Cerrar menú",
+      mobileMenu: "Menú móvil",
+      overview: "Vista general",
+      quickLinks: "Enlaces rápidos",
       learnMore: "Saber más",
       top: { press: "Sala de Prensa", advisory: "Asesoría Gratuita", procedures: "Trámites en Línea" },
       dropdowns: {
@@ -120,6 +126,9 @@ export const layoutCopy: Record<
       recursos: "Resources",
       openMenu: "Open menu",
       closeMenu: "Close menu",
+      mobileMenu: "Mobile menu",
+      overview: "Overview",
+      quickLinks: "Quick links",
       learnMore: "Learn more",
       top: { press: "Press Room", advisory: "Free Advisory", procedures: "Online Procedures" },
       dropdowns: {
