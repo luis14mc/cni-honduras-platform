@@ -15,6 +15,6 @@ describe("portfolio QA regressions", () => {
 
   it("leaves the global metadata template to append the CNI brand once", () => {
     const metadata = buildMetadata(PAGE_SEO.portafolio, "en");
-    expect(metadata.title).toBe("INVESTMENT PORTFOLIO");
+    expect(metadata.title).toBe("Investment Portfolio · Project Sheets & Opportunity Cards");
   });
 });

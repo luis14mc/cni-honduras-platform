@@ -23,7 +23,7 @@ type SectorCardData = SectorCopy & {
 function toSectorCard(api: Sector, locale: Locale): SectorCardData {
   const fallback = isSectorSlug(api.slug) ? getSectorBySlug(locale, api.slug) : undefined;
   return {
-    slug: api.slug,
+    slug: (fallback?.slug ?? api.slug) as SectorCardData["slug"],
     name: api.name,
     short: api.short_description || "",
     fullText: api.description || "",
@@ -32,6 +32,7 @@ function toSectorCard(api: Sector, locale: Locale): SectorCardData {
       api.image ||
       fallback?.image ||
       designImages.sectors.agroindustria,
+    color_hex: fallback?.color_hex ?? "#252A58",
     order: api.order,
   };
 }

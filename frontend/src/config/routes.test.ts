@@ -1,7 +1,7 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { legacyRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
+import { legacyRedirects, permanentRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
 import {
   getMirrorPath,
   resolveHref,
@@ -12,6 +12,14 @@ import {
 /** Aplica la primera regla de redirección que coincide (igual que el middleware). */
 function redirectOf(pathname: string): string | null {
   for (const rule of legacyRedirects) {
+    if (rule.from.test(pathname)) return rule.to(pathname);
+  }
+  return null;
+}
+
+/** Aplica la primera redirección 308 (portafolio unificado) que coincida. */
+function permanentRedirectOf(pathname: string): string | null {
+  for (const rule of permanentRedirects) {
     if (rule.from.test(pathname)) return rule.to(pathname);
   }
   return null;
@@ -50,9 +58,8 @@ function leaves(nodes: SiteNavNode[]): SiteNavNode[] {
 
 describe("enlaces en inglés (resolveHref)", () => {
   it.each([
-    ["/portafolio/oportunidades", "/en/portfolio/opportunities"],
+    ["/portafolio", "/en/portfolio"],
     ["/portafolio/oportunidades/oc-cni-t002", "/en/portfolio/opportunities/oc-cni-t002"],
-    ["/portafolio/fichas-proyectos", "/en/portfolio/project-sheets"],
     ["/portafolio/fichas-proyectos/distrito-palmerola", "/en/portfolio/project-sheets/distrito-palmerola"],
     ["/portafolio/casos/caso-demo", "/en/portfolio/success-stories/caso-demo"],
     ["/portafolio/mapa", "/en/portfolio/map"],
@@ -73,7 +80,7 @@ describe("enlaces en inglés (resolveHref)", () => {
   });
 
   it("conserva query y hash", () => {
-    expect(resolveHref("en", "/portafolio/oportunidades#lista")).toBe("/en/portfolio/opportunities#lista");
+    expect(resolveHref("en", "/portafolio#lista")).toBe("/en/portfolio#lista");
   });
 });
 
@@ -92,9 +99,9 @@ describe("selector de idioma (getMirrorPath)", () => {
 
 describe("URL pública -> página interna (middleware)", () => {
   it.each([
-    ["/portafolio/oportunidades", "/es/portafolio/oportunidades"],
+    ["/portafolio", "/es/portafolio"],
     ["/portafolio/oportunidades/oc-1", "/es/portafolio/oportunidades/oc-1"],
-    ["/en/portfolio/opportunities", "/en/portafolio/oportunidades"],
+    ["/en/portfolio", "/en/portafolio"],
     ["/en/portfolio/opportunities/oc-1", "/en/portafolio/oportunidades/oc-1"],
     ["/portafolio/fichas-proyectos/distrito-palmerola", "/es/portafolio/fichas-proyectos/distrito-palmerola"],
     ["/en/portfolio/project-sheets/distrito-palmerola", "/en/portafolio/fichas-proyectos/distrito-palmerola"],
@@ -103,6 +110,23 @@ describe("URL pública -> página interna (middleware)", () => {
   ])("%s -> %s", (publicPath, internal) => {
     expect(resolveInternalPath(publicPath)).toBe(internal);
     expect(internalPageExists(publicPath), publicPath).toBe(true);
+  });
+});
+
+describe("redirecciones 308 (portafolio unificado)", () => {
+  it.each([
+    ["/portafolio/fichas-proyectos", "/portafolio?tipo=proyectos"],
+    ["/portafolio/oportunidades", "/portafolio?tipo=oportunidades"],
+    ["/en/portfolio/project-sheets", "/en/portfolio?tipo=proyectos"],
+    ["/en/portfolio/opportunities", "/en/portfolio?tipo=oportunidades"],
+  ])("%s -> %s", (from, to) => {
+    expect(permanentRedirectOf(from)).toBe(to);
+  });
+
+  it("no afecta a las rutas de detalle", () => {
+    expect(permanentRedirectOf("/portafolio/fichas-proyectos/distrito-palmerola")).toBeNull();
+    expect(permanentRedirectOf("/portafolio/oportunidades/oc-1")).toBeNull();
+    expect(permanentRedirectOf("/en/portfolio/project-sheets/distrito-palmerola")).toBeNull();
   });
 });
 
@@ -125,12 +149,18 @@ describe("redirecciones desde rutas anteriores", () => {
 });
 
 describe("menú principal", () => {
-  it("incluye el mapa y las oportunidades con slugs localizados", () => {
+  it("incluye el mapa y el portafolio unificado", () => {
     const all = leaves(siteNavigation);
     const map = all.find((n) => n.id === "mapa");
-    const opps = all.find((n) => n.id === "crecer-oportunidades");
+    const portfolio = all.find((n) => n.id === "crecer-portafolio");
     expect(map?.path).toEqual({ es: "/portafolio/mapa", en: "/en/portfolio/map" });
-    expect(opps?.path).toEqual({ es: "/portafolio/oportunidades", en: "/en/portfolio/opportunities" });
+    expect(portfolio?.path).toEqual({ es: "/portafolio", en: "/en/portfolio" });
+  });
+
+  it("no incluye los listados separados del portafolio", () => {
+    const all = leaves(siteNavigation);
+    expect(all.find((n) => n.id === "crecer-fichas-proyectos")).toBeUndefined();
+    expect(all.find((n) => n.id === "crecer-oportunidades")).toBeUndefined();
   });
 
   it("cada ítem resuelve a su espejo en inglés (no a la portada)", () => {

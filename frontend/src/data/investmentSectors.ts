@@ -12,12 +12,23 @@ const IMG = {
 } as const;
 
 export type SectorCopy = {
-  slug: string;
+  slug: SectorSlug;
   name: string;
   short: string;
   fullText: string;
   highlights: readonly string[];
   image: string;
+  color_hex: string;
+};
+
+/** Color institucional por sector (paleta CNI). Se usa en chips y badges. */
+export const SECTOR_COLOR_HEX: Record<SectorSlug, string> = {
+  agroindustria: "#8DC046",
+  manufactura: "#252A58",
+  turismo: "#0E7A7C",
+  energia: "#35A963",
+  infraestructura: "#334E88",
+  logistica: "#168654",
 };
 
 export const SECTOR_SLUGS = ["agroindustria", "manufactura", "turismo", "energia", "infraestructura", "logistica"] as const;
@@ -60,6 +71,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Aprovechando la diversidad ecológica y las rutas comerciales estratégicas para diseñar la próxima generación de inversión agrícola global de alto rendimiento.",
     highlights: ["Café de especialidad", "Cacao fino de aroma", "Tabaco premium", "Aceite de palma sostenible"],
     image: IMG.ag,
+    color_hex: SECTOR_COLOR_HEX.agroindustria,
   },
   {
     slug: "manufactura",
@@ -69,6 +81,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Hub de clase mundial para confección, ensamble ligero y componentes automotrices destinados a Norteamérica, con un ecosistema maduro de zonas libres y logística automatizada.",
     highlights: ["Nearshoring CAFTA-DR", "Zonas Libres (ZOLI)", "Logística multimodal", "Talento técnico"],
     image: IMG.mfg,
+    color_hex: SECTOR_COLOR_HEX.manufactura,
   },
   {
     slug: "turismo",
@@ -78,6 +91,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Activos naturales sin igual, proximidad geográfica estratégica e incentivos institucionales para la hospitalidad de alta gama y eco-lujo certificado.",
     highlights: ["Roatán y Utila", "Ruinas de Copán", "Eco-lodges", "Marinas y cruceros"],
     image: IMG.tour,
+    color_hex: SECTOR_COLOR_HEX.turismo,
   },
   {
     slug: "energia",
@@ -87,6 +101,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Transición acelerada hacia energías 100% renovables, con apertura en producción solar, eólica e hidrógeno verde, y demanda eléctrica creciente al 3.5–4% anual.",
     highlights: ["Solar y eólico", "Hidroeléctricas", "Hidrógeno verde", "Hub regional de red"],
     image: IMG.ene,
+    color_hex: SECTOR_COLOR_HEX.energia,
   },
   {
     slug: "infraestructura",
@@ -96,6 +111,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Puertos, carreteras, energía y zonas logísticas que articulan la inversión productiva con los mercados globales bajo marco LPPI y alianzas público-privadas.",
     highlights: ["Puerto Cortés", "Corredor logístico", "Zonas francas", "Energía y conectividad"],
     image: IMG.infra,
+    color_hex: SECTOR_COLOR_HEX.infraestructura,
   },
   {
     slug: "logistica",
@@ -105,6 +121,7 @@ const esSectores: ReadonlyArray<SectorCopy> = [
       "Honduras opera como nodo logístico estratégico del continente: dos costas, puertos de aguas profundas, corredores secos y servicios de valor agregado que enlazan la producción regional con los mercados de Norteamérica y Europa.",
     highlights: ["Puerto Cortés (Caribe)", "Corredor Pacífico", "Nodos ZOLI", "Servicios 3PL"],
     image: IMG.log,
+    color_hex: SECTOR_COLOR_HEX.logistica,
   },
 ];
 
@@ -117,6 +134,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Leveraging ecological diversity and strategic trade routes to design the next generation of high-yield global agricultural investment.",
     highlights: ["Specialty coffee", "Fine aroma cocoa", "Premium tobacco", "Sustainable palm oil"],
     image: IMG.ag,
+    color_hex: SECTOR_COLOR_HEX.agroindustria,
   },
   {
     slug: "manufactura",
@@ -126,6 +144,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "World-class hub for apparel, light assembly, and automotive components bound for North America, with mature free zones and automated logistics.",
     highlights: ["CAFTA-DR nearshoring", "Free Zones (ZOLI)", "Multimodal logistics", "Technical talent"],
     image: IMG.mfg,
+    color_hex: SECTOR_COLOR_HEX.manufactura,
   },
   {
     slug: "turismo",
@@ -135,6 +154,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Unmatched natural assets, strategic geography, and institutional incentives for high-end hospitality and certified eco-luxury.",
     highlights: ["Roatán & Utila", "Copán ruins", "Eco-lodges", "Marinas & cruises"],
     image: IMG.tour,
+    color_hex: SECTOR_COLOR_HEX.turismo,
   },
   {
     slug: "energia",
@@ -144,6 +164,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Accelerated transition toward 100% renewable generation, with openings in solar, wind, and green hydrogen, and power demand growing ~3.5–4% annually.",
     highlights: ["Solar & wind", "Hydro", "Green hydrogen", "Regional grid hub"],
     image: IMG.ene,
+    color_hex: SECTOR_COLOR_HEX.energia,
   },
   {
     slug: "infraestructura",
@@ -153,6 +174,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Ports, roads, energy, and logistics zones linking productive investment to global markets under LPPI and public-private partnerships.",
     highlights: ["Puerto Cortés", "Logistics corridor", "Free zones", "Energy & connectivity"],
     image: IMG.infra,
+    color_hex: SECTOR_COLOR_HEX.infraestructura,
   },
   {
     slug: "logistica",
@@ -162,6 +184,7 @@ const enSectores: ReadonlyArray<SectorCopy> = [
       "Honduras operates as a strategic continental logistics hub: two coasts, deep-water ports, dry corridors and value-added services linking regional production with the North American and European markets.",
     highlights: ["Puerto Cortés (Caribbean)", "Pacific corridor", "ZOLI nodes", "3PL services"],
     image: IMG.log,
+    color_hex: SECTOR_COLOR_HEX.logistica,
   },
 ];
 
@@ -183,5 +206,6 @@ export function mergeSectorWithApi(fallback: SectorCopy, api: Sector): SectorCop
     fullText: api.description || fallback.fullText,
     highlights: fallback.highlights,
     image: api.image || fallback.image,
+    color_hex: fallback.color_hex,
   };
 }

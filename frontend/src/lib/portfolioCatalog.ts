@@ -40,8 +40,94 @@ export type PortfolioFilters = {
   fase: string | null;
 };
 
+export type UnifiedPortfolioTab = "proyectos" | "oportunidades";
+
+export type UnifiedPortfolioSort = "amount" | "name";
+
+export type UnifiedPortfolioFilters = {
+  tipo: UnifiedPortfolioTab;
+  sector: string | null;
+  fase: string | null;
+  q: string;
+  orden: UnifiedPortfolioSort;
+};
+
+export const DEFAULT_UNIFIED_FILTERS: UnifiedPortfolioFilters = {
+  tipo: "proyectos",
+  sector: null,
+  fase: null,
+  q: "",
+  orden: "amount",
+};
+
 const PHASE_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SECTOR_SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function readString(input: Record<string, string | string[] | undefined>, key: string): string {
+  const value = input[key];
+  return typeof value === "string" ? value : "";
+}
+
+export function parseUnifiedFilters(
+  input: Record<string, string | string[] | undefined>,
+): UnifiedPortfolioFilters {
+  const tipo = readString(input, "tipo");
+  const sector = readString(input, "sector");
+  const fase = readString(input, "fase");
+  const q = readString(input, "q").slice(0, 120);
+  const orden = readString(input, "orden");
+  return {
+    tipo: tipo === "oportunidades" ? "oportunidades" : "proyectos",
+    sector: SECTOR_SLUG.test(sector) ? sector : null,
+    fase: PHASE_SLUG.test(fase) ? fase : null,
+    q: q,
+    orden: orden === "name" ? "name" : "amount",
+  };
+}
+
+export function serializeUnifiedFilters(filters: UnifiedPortfolioFilters): string {
+  const params = new URLSearchParams();
+  if (filters.tipo !== "proyectos") params.set("tipo", filters.tipo);
+  if (filters.sector) params.set("sector", filters.sector);
+  if (filters.fase) params.set("fase", filters.fase);
+  if (filters.q.trim()) params.set("q", filters.q.trim());
+  if (filters.orden !== "amount") params.set("orden", filters.orden);
+  return params.toString();
+}
+
+export function applyUnifiedFilters(
+  items: PortfolioCatalogItem[],
+  kind: UnifiedPortfolioTab,
+  filters: UnifiedPortfolioFilters,
+): PortfolioCatalogItem[] {
+  const kindLabel: PortfolioKind = kind === "proyectos" ? "project" : "opportunity";
+  const q = filters.q.trim().toLowerCase();
+  return items
+    .filter((item) => item.kind === kindLabel)
+    .filter((item) => (filters.sector ? item.sectorSlug === filters.sector : true))
+    .filter((item) =>
+      filters.fase ? slugifyPhase(item.phase) === filters.fase : true,
+    )
+    .filter((item) => {
+      if (!q) return true;
+      return (
+        item.title.toLowerCase().includes(q) ||
+        item.code.toLowerCase().includes(q) ||
+        item.locationText.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      if (filters.orden === "name") return a.title.localeCompare(b.title);
+      return b.amountUsd - a.amountUsd;
+    });
+}
+
+export function countBySector(items: PortfolioCatalogItem[]): Record<string, number> {
+  return items.reduce<Record<string, number>>((acc, item) => {
+    acc[item.sectorSlug] = (acc[item.sectorSlug] ?? 0) + 1;
+    return acc;
+  }, {});
+}
 
 export function slugifyPhase(phase: string): string {
   return phase

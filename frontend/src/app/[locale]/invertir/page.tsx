@@ -29,12 +29,13 @@ export const generateMetadata = makeGenerateMetadata(PAGE_SEO.invertir);
 function toSectorCopy(api: Sector, locale: Locale): SectorCopy {
   const fallback = isSectorSlug(api.slug) ? getSectorBySlug(locale, api.slug) : undefined;
   return {
-    slug: api.slug,
+    slug: (fallback?.slug ?? api.slug) as SectorCopy["slug"],
     name: api.name,
     short: api.short_description || "",
     fullText: api.description || "",
     highlights: fallback?.highlights ?? [],
     image: api.image || fallback?.image || designImages.sectors.agroindustria,
+    color_hex: fallback?.color_hex ?? "#252A58",
   };
 }
 
