@@ -9,7 +9,7 @@ import { Section } from "@/src/components/cni/Section";
 import { buildDetailMetadata } from "@/src/lib/seo";
 import { getProject } from "@/src/services/investment";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
-import { formatPoloLabel, formatSubregionLabel, getSeedBySlug } from "@/src/lib/portfolioCatalog";
+import { formatPoloLabel, formatSubregionLabel, getSeedBySlug, hydratePublicRecord, isDemoSlug } from "@/src/lib/portfolioCatalog";
 import { getSectorBySlug } from "@/src/data/investmentSectors";
 import { designImages } from "@/src/lib/designAssets";
 import type { InvestmentProject, RegionRef } from "@/src/types/investment";
@@ -25,28 +25,32 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? (raw as Locale) : "es";
   try {
     const project = await getProject(slug, { locale });
-    return buildDetailMetadata({
-      locale,
-      slugPath: `/portafolio/fichas-proyectos/${slug}`,
-      enMirrorPath: `/en/portfolio/project-sheets/${slug}`,
-      title: project.title,
-      description: project.summary || project.description,
-      image: project.cover_image_url,
-    });
-  } catch {
-    const seed = getSeedBySlug("project", slug, locale);
-    if (seed) {
+    if (!isDemoSlug(project.slug)) {
+      const hydrated = hydratePublicRecord(project, "project", locale);
       return buildDetailMetadata({
         locale,
         slugPath: `/portafolio/fichas-proyectos/${slug}`,
         enMirrorPath: `/en/portfolio/project-sheets/${slug}`,
-        title: seed.item.title,
-        description: seed.record.description,
-        image: seed.item.coverImageUrl,
+        title: hydrated.title,
+        description: hydrated.summary || hydrated.description,
+        image: hydrated.cover_image_url,
       });
     }
-    return {};
+  } catch {
+    // Fall through to seed.
   }
+  const seed = isDemoSlug(slug) ? null : getSeedBySlug("project", slug, locale);
+  if (seed) {
+    return buildDetailMetadata({
+      locale,
+      slugPath: `/portafolio/fichas-proyectos/${slug}`,
+      enMirrorPath: `/en/portfolio/project-sheets/${slug}`,
+      title: seed.item.title,
+      description: seed.record.description,
+      image: seed.item.coverImageUrl,
+    });
+  }
+  return {};
 }
 
 export default async function ProjectSheetDetailPage({
@@ -63,12 +67,13 @@ export default async function ProjectSheetDetailPage({
   let project: InvestmentProject | null = null;
   try {
     project = await getProject(slug, { locale });
+    if (project && isDemoSlug(project.slug)) project = null;
+    else if (project) project = hydratePublicRecord(project, "project", locale);
   } catch {
     // Cualquier fallo (404, 500, timeout, sin conexión) cae al seed.
   }
 
-  // Fallback al JSON local si Django no trae el proyecto (cualquier error o respuesta vacía).
-  const seedFallback = !project ? getSeedBySlug("project", slug, locale) : null;
+  const seedFallback = !project && !isDemoSlug(slug) ? getSeedBySlug("project", slug, locale) : null;
 
   if (!project && !seedFallback) {
     return (
