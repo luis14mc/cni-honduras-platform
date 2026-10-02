@@ -150,6 +150,11 @@ describe("portfolio seed fallback", () => {
     const district = points.find((p) => p.slug === "distrito-palmerola");
     expect(district).toBeDefined();
     expect(district?.sector.slug).toBe("infraestructura");
+    expect(district?.kind).toBe("project");
+    expect(district?.municipio_geocode).toBe("030100");
+    const opportunity = points.find((p) => p.slug === "complejo-ecoturistico-el-cajon");
+    expect(opportunity?.kind).toBe("opportunity");
+    expect(opportunity?.coverImageUrl).toContain("complejo-ecoturistico-el-cajon");
   });
 });
 

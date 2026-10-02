@@ -109,6 +109,21 @@ export type InvestmentMapCopy = {
   roadLength: string;
   strategicCorridor: string;
   osmAttribution: string;
+  listTitle: string;
+  tabAll: string;
+  tabProjects: string;
+  tabOpportunities: string;
+  honduras: string;
+  legendOpportunity: string;
+  legendCluster: string;
+  approximateMunicipalityNote: string;
+  viewFullSheet: string;
+  backToList: string;
+  noSheetsInView: string;
+  selectedOpportunity: string;
+  showAllSheets: string;
+  listCountLabel: (count: number, place: string) => string;
+  clusterTooltip: (count: number, place: string) => string;
 };
 
 export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
@@ -225,6 +240,21 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     roadLength: "Longitud aproximada",
     strategicCorridor: "Corredor estratégico CNI",
     osmAttribution: "© colaboradores de OpenStreetMap",
+    listTitle: "Proyectos y oportunidades en el mapa",
+    tabAll: "Todos",
+    tabProjects: "Proyectos",
+    tabOpportunities: "Oportunidades",
+    honduras: "Honduras",
+    legendOpportunity: "Oportunidad",
+    legendCluster: "Varias fichas en la misma ubicación",
+    approximateMunicipalityNote: "Ubicación aproximada a nivel de municipio",
+    viewFullSheet: "Ver ficha completa",
+    backToList: "Volver al listado",
+    noSheetsInView: "No hay proyectos ni oportunidades en esta vista.",
+    selectedOpportunity: "Oportunidad seleccionada",
+    showAllSheets: "Ver todas las fichas",
+    listCountLabel: (count, place) => `${count} · ${place}`,
+    clusterTooltip: (count, place) => `${count} fichas en ${place}`,
   },
   en: {
     eyebrow: "Territorial intelligence · CNI Honduras",
@@ -339,5 +369,20 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     roadLength: "Approximate length",
     strategicCorridor: "CNI strategic corridor",
     osmAttribution: "© OpenStreetMap contributors",
+    listTitle: "Projects and opportunities on the map",
+    tabAll: "All",
+    tabProjects: "Projects",
+    tabOpportunities: "Opportunities",
+    honduras: "Honduras",
+    legendOpportunity: "Opportunity",
+    legendCluster: "Several sheets at the same location",
+    approximateMunicipalityNote: "Approximate location (municipality level)",
+    viewFullSheet: "View full sheet",
+    backToList: "Back to list",
+    noSheetsInView: "There are no projects or opportunities in this view.",
+    selectedOpportunity: "Selected opportunity",
+    showAllSheets: "See all sheets",
+    listCountLabel: (count, place) => `${count} · ${place}`,
+    clusterTooltip: (count, place) => `${count} sheets in ${place}`,
   },
 };

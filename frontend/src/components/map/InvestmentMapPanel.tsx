@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import type { Locale } from "@/src/i18n/config";
+import { withLocale } from "@/src/i18n/path";
 import type { InvestmentMapCopy } from "@/src/i18n/copy/investmentMap";
 import type {
   DepartmentProperties,
   MapDepartmentSummary,
   MapInvestmentProject,
+  MapKindFilter,
   MunicipalityProperties,
   InfrastructureFeature,
   PortCategory,
@@ -15,9 +19,11 @@ import type {
 import {
   formatMapInvestment,
   formatMapJobs,
-  getProjectsInvestmentTotal,
   localizeInfrastructure,
 } from "@/src/lib/types/investment-map";
+
+const PROJECT_COLOR = "#32B372";
+const OPPORTUNITY_COLOR = "#F7BF06";
 
 type Props = {
   locale: Locale;
@@ -43,6 +49,12 @@ type Props = {
   onClearRegion?: () => void;
   road?: RoadCorridorFeature | null;
   onClearRoad?: () => void;
+  kindFilter: MapKindFilter;
+  onKindFilterChange: (kind: MapKindFilter) => void;
+  onHoverProject: (id: number | null) => void;
+  listPlace: string;
+  clusterActive: boolean;
+  onClearCluster: () => void;
 };
 
 export function InvestmentMapPanel({
@@ -69,6 +81,12 @@ export function InvestmentMapPanel({
   onClearRegion,
   road = null,
   onClearRoad,
+  kindFilter,
+  onKindFilterChange,
+  onHoverProject,
+  listPlace,
+  clusterActive,
+  onClearCluster,
 }: Props) {
   if (road) {
     const details = road.properties;
@@ -121,15 +139,21 @@ export function InvestmentMapPanel({
   }
 
   if (project) {
+    const isOpportunity = (project.kind ?? "project") === "opportunity";
+    const sheetHref = withLocale(
+      locale,
+      isOpportunity ? `/portafolio/oportunidades/${project.slug}` : `/portafolio/fichas-proyectos/${project.slug}`,
+    );
     return (
-      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedProject}: ${project.title}`}>
+      <aside className="flex max-h-[min(70vh,600px)] flex-col overflow-y-auto rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6 lg:max-h-[600px]" aria-live="polite" aria-label={`${isOpportunity ? copy.selectedOpportunity : copy.selectedProject}: ${project.title}`}>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedProject}</p>
+            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{isOpportunity ? copy.selectedOpportunity : copy.selectedProject}</p>
             <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{project.title}</h2>
+            {project.code ? <p className="mt-1 text-xs font-semibold text-[#d5e3ff]/75">{project.code}</p> : null}
           </div>
           <button type="button" onClick={onClearProject} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
-            {copy.clearProject}
+            {copy.backToList}
           </button>
         </div>
         <dl className="mt-7 space-y-3 text-sm">
@@ -137,115 +161,117 @@ export function InvestmentMapPanel({
           <DetailRow label={copy.selectedDepartment} value={project.department?.name ?? department?.name ?? "—"} />
           <DetailRow label={copy.selectedMunicipality} value={project.municipality?.name ?? municipality?.name ?? "—"} />
           <DetailRow label={copy.stageLabel} value={copy.stage[project.stage] ?? project.stage} />
-          <DetailRow label={copy.investment} value={formatMapInvestment(project.investment_amount, locale)} />
+          <DetailRow label={copy.investment} value={project.amountText || formatMapInvestment(project.investment_amount, locale)} />
           <DetailRow label={copy.jobs} value={formatMapJobs(project.estimated_jobs, locale)} />
         </dl>
-      </aside>
-    );
-  }
-
-  if (regionMode && region) {
-    const { properties } = region;
-    const total = getProjectsInvestmentTotal(projects);
-    const subregions = properties.extra.subregiones ?? [];
-    return (
-      <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedRegion}: ${properties.name}`}>
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedRegion}</p>
-            <h2 className="mt-2 flex items-center gap-2 text-3xl font-extrabold tracking-tight"><span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-sm border border-white/70" style={{ backgroundColor: properties.color }} />{properties.name}</h2>
-          </div>
-          <button type="button" onClick={onClearRegion} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
-            {copy.clearRegion}
-          </button>
-        </div>
-        <dl className="mt-7 grid grid-cols-2 gap-3">
-          <PanelHint label={copy.regionCode} value={properties.code} />
-          <PanelHint label={copy.regionLevelLabel} value={copy.regionLevelNames[properties.level]} />
-          <PanelHint label={copy.regionProjects} value={projectsLoading ? "…" : String(projects.length)} wide={total == null} />
-          {total != null ? <PanelHint label={copy.investment} value={formatMapInvestment(String(total), locale)} /> : null}
-          {properties.level === "polo" && properties.extra.tipo ? <PanelHint label={copy.poloType} value={copy.poloTypes[properties.extra.tipo] ?? properties.extra.tipo} wide /> : null}
-          {properties.level === "polo" && subregions.length ? <PanelHint label={copy.regionLevels.sub} value={subregions.join(", ")} wide /> : null}
-        </dl>
-        {properties.extra.approximate ? <p className="mt-3 text-xs italic text-[#d5e3ff]/70">{copy.approximateBoundary}</p> : null}
-        <div className="mt-8 border-t border-white/10 pt-6">
-          <h3 className="text-lg font-bold">{copy.geolocatedProjects}</h3>
-          <ProjectList locale={locale} copy={copy} projects={projects} loading={projectsLoading} error={projectsError} emptyMessage={copy.noProjectsInRegion} onSelectProject={onSelectProject} />
-        </div>
-      </aside>
-    );
-  }
-
-  if (regionMode || !department) {
-    return (
-      <aside className="flex min-h-[360px] flex-col justify-center rounded-[1.5rem] border border-white/10 bg-[#24436B] p-6 text-white shadow-xl lg:min-h-0" aria-live="polite">
-        <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.panelEyebrow}</p>
-        <h2 className="mt-3 text-2xl font-extrabold tracking-tight">{regionMode ? copy.selectRegion : copy.selectDepartment}</h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 text-sm">
-          <PanelHint label={copy.projects} value={regionMode && !projectsLoading ? String(projects.length) : "—"} />
-          <PanelHint label={copy.opportunities} value="—" />
-        </div>
+        <Link
+          href={sheetHref}
+          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F7BF06] px-4 py-2 text-sm font-bold text-[#001a33] transition hover:bg-[#ffe08a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]"
+        >
+          {copy.viewFullSheet}
+        </Link>
       </aside>
     );
   }
 
   const hasActivity = Boolean(summary && summary.projects_count + summary.opportunities_count > 0);
-  const emptyProjectsMessage = municipality
+  const emptyMessage = municipality
     ? copy.noGeolocatedProjectsMunicipality
-    : copy.noGeolocatedProjectsDepartment;
+    : department
+      ? copy.noSheetsInView
+      : region
+        ? copy.noProjectsInRegion
+        : copy.noSheetsInView;
 
   return (
-    <aside className="rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6" aria-live="polite" aria-label={`${copy.selectedDepartment}: ${department.name}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedDepartment}</p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight">{department.name}</h2>
-          {municipality ? (
-            <div className="mt-4 flex items-start justify-between gap-3 rounded-xl border border-[#8DC046]/30 bg-[#35A963]/10 p-3">
-              <div>
-                <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-[#8DC046]">{copy.selectedMunicipality}</p>
-                <p className="mt-1 text-lg font-bold">{municipality.name}</p>
-              </div>
-              <button type="button" onClick={onClearMunicipality} className="rounded-lg border border-white/20 px-2.5 py-1.5 text-[11px] font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f]">
-                {copy.clearMunicipality}
-              </button>
+    <aside className="flex max-h-[min(70vh,600px)] flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6 lg:h-[600px] lg:max-h-[600px]" aria-live="polite">
+      {regionMode && region ? (
+        <div className="mb-4 shrink-0">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedRegion}</p>
+              <h2 className="mt-2 flex items-center gap-2 text-2xl font-extrabold tracking-tight"><span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-sm border border-white/70" style={{ backgroundColor: region.properties.color }} />{region.properties.name}</h2>
             </div>
+            <button type="button" onClick={onClearRegion} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
+              {copy.clearRegion}
+            </button>
+          </div>
+        </div>
+      ) : department ? (
+        <div className="mb-4 shrink-0">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.selectedDepartment}</p>
+              <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{department.name}</h2>
+              {municipality ? (
+                <div className="mt-3 flex items-start justify-between gap-3 rounded-xl border border-[#8DC046]/30 bg-[#35A963]/10 p-3">
+                  <div>
+                    <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-[#8DC046]">{copy.selectedMunicipality}</p>
+                    <p className="mt-1 text-lg font-bold">{municipality.name}</p>
+                  </div>
+                  <button type="button" onClick={onClearMunicipality} className="rounded-lg border border-white/20 px-2.5 py-1.5 text-[11px] font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f]">
+                    {copy.clearMunicipality}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+            <button type="button" onClick={onClearDepartment} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
+              {copy.clear}
+            </button>
+          </div>
+          {summary && hasActivity ? (
+            <dl className="mt-4 grid grid-cols-2 gap-2">
+              <PanelHint label={copy.projects} value={String(summary.projects_count)} />
+              <PanelHint label={copy.opportunities} value={String(summary.opportunities_count)} />
+            </dl>
           ) : null}
         </div>
-        <button type="button" onClick={onClearDepartment} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
-          {copy.clear}
-        </button>
-      </div>
+      ) : null}
 
-      {!summary || !hasActivity ? (
-        <p className="mt-8 rounded-xl border border-white/10 bg-[#252A58]/60 p-4 text-sm leading-relaxed text-[#d5e3ff]">{summary ? copy.noResults : copy.noSummary}</p>
-      ) : (
-        <>
-          <dl className="mt-7 grid grid-cols-2 gap-3">
-            <PanelHint label={copy.projects} value={String(summary.projects_count)} />
-            <PanelHint label={copy.opportunities} value={String(summary.opportunities_count)} />
-            <PanelHint label={copy.investment} value={formatMapInvestment(summary.total_investment, locale)} wide />
-            <PanelHint label={copy.jobs} value={formatMapJobs(summary.estimated_jobs, locale)} wide />
-          </dl>
-          {summary.sectors.length > 0 ? (
-            <div className="mt-7">
-              <p className="font-headline text-[10px] font-bold uppercase tracking-[0.18em] text-[#b6c2d3]">{copy.activeSectors}</p>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {summary.sectors.map((sector) => <li key={sector.slug} className="rounded-full border border-[#8DC046]/40 bg-[#35A963]/15 px-3 py-1.5 text-xs font-semibold text-[#d8ef9f]">{sector.name}</li>)}
-              </ul>
-            </div>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="shrink-0">
+          <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{copy.panelEyebrow}</p>
+          <h2 className="mt-2 text-xl font-extrabold tracking-tight">{copy.listTitle}</h2>
+          <p className="mt-1 text-sm font-semibold text-[#d5e3ff]/80">{copy.listCountLabel(projects.length, listPlace)}</p>
+          {clusterActive ? (
+            <button type="button" onClick={onClearCluster} className="mt-2 text-xs font-bold text-[#F7BF06] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F7BF06]">
+              {copy.showAllSheets}
+            </button>
           ) : null}
-        </>
-      )}
-
-      <div className="mt-8 border-t border-white/10 pt-6">
-        <h3 className="text-lg font-bold">{copy.geolocatedProjects}</h3>
-        {municipalitiesLoading ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingMunicipalities}</p> : null}
-        {municipalitiesError ? <p role="alert" className="mt-4 rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.municipalitiesError}</p> : null}
+          <div className="mt-3 flex flex-wrap gap-2" role="tablist" aria-label={copy.listTitle}>
+            {([
+              ["all", copy.tabAll],
+              ["project", copy.tabProjects],
+              ["opportunity", copy.tabOpportunities],
+            ] as const).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={kindFilter === value}
+                onClick={() => onKindFilterChange(value)}
+                className={`min-h-9 rounded-full border px-3 text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06] ${kindFilter === value ? "border-[#F7BF06] bg-[#F7BF06] text-[#001a33]" : "border-white/20 bg-[#001a33]/40 text-white hover:border-[#8DC046]"}`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        {municipalitiesLoading ? <p className="mt-3 shrink-0 text-sm text-[#d5e3ff]/70">{copy.loadingMunicipalities}</p> : null}
+        {municipalitiesError ? <p role="alert" className="mt-3 shrink-0 rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.municipalitiesError}</p> : null}
         {!municipalitiesLoading && !municipalitiesError && municipalitiesEmpty ? (
-          <p className="mt-3 text-xs text-[#d5e3ff]/65">{copy.noMunicipalities}</p>
+          <p className="mt-3 shrink-0 text-xs text-[#d5e3ff]/65">{copy.noMunicipalities}</p>
         ) : null}
-        <ProjectList locale={locale} copy={copy} projects={projects} loading={projectsLoading} error={projectsError} emptyMessage={emptyProjectsMessage} onSelectProject={onSelectProject} />
+        <ProjectList
+          locale={locale}
+          copy={copy}
+          projects={projects}
+          loading={projectsLoading}
+          error={projectsError}
+          emptyMessage={emptyMessage}
+          onSelectProject={onSelectProject}
+          onHoverProject={onHoverProject}
+        />
       </div>
     </aside>
   );
@@ -259,6 +285,7 @@ function ProjectList({
   error,
   emptyMessage,
   onSelectProject,
+  onHoverProject,
 }: {
   locale: Locale;
   copy: InvestmentMapCopy;
@@ -267,30 +294,67 @@ function ProjectList({
   error: boolean;
   emptyMessage: string;
   onSelectProject: (project: MapInvestmentProject) => void;
+  onHoverProject: (id: number | null) => void;
 }) {
   return (
-    <>
-      {loading ? <p className="mt-4 text-sm text-[#d5e3ff]/70">{copy.loadingProjects}</p> : null}
-      {error ? <p role="alert" className="mt-4 rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.projectsError}</p> : null}
+    <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1">
+      {loading ? <p className="text-sm text-[#d5e3ff]/70">{copy.loadingProjects}</p> : null}
+      {error ? <p role="alert" className="rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.projectsError}</p> : null}
       {!loading && !error && projects.length === 0 ? (
-        <p className="mt-4 text-sm text-[#d5e3ff]/70">{emptyMessage}</p>
+        <p className="text-sm text-[#d5e3ff]/70">{emptyMessage}</p>
       ) : null}
-      <ul className="mt-4 space-y-3">
-        {projects.map((item) => (
-          <li key={item.id}>
-            <button
-              type="button"
-              onClick={() => onSelectProject(item)}
-              className="min-h-11 w-full rounded-xl border border-white/10 bg-[#252A58]/55 p-4 text-left transition hover:border-[#8DC046]/50 hover:bg-[#252A58]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]"
-            >
-              <p className="font-bold leading-snug">{item.title}</p>
-              <p className="mt-1 text-xs text-[#d5e3ff]/75">{item.sector.name} · {copy.stage[item.stage] ?? item.stage}</p>
-              <p className="mt-3 text-xs text-[#d5e3ff]/80">{formatMapInvestment(item.investment_amount, locale)} · {formatMapJobs(item.estimated_jobs, locale)} {copy.jobs.toLowerCase()}</p>
-            </button>
-          </li>
-        ))}
+      <ul className="space-y-2">
+        {projects.map((item) => {
+          const kind = item.kind ?? "project";
+          const amount = item.amountText || formatMapInvestment(item.investment_amount, locale);
+          return (
+            <li key={item.id}>
+              <button
+                type="button"
+                onClick={() => onSelectProject(item)}
+                onMouseEnter={() => onHoverProject(item.id)}
+                onMouseLeave={() => onHoverProject(null)}
+                onFocus={() => onHoverProject(item.id)}
+                onBlur={() => onHoverProject(null)}
+                className="flex min-h-11 w-full gap-3 rounded-xl border border-white/10 bg-[#252A58]/55 p-3 text-left transition hover:border-[#F7BF06]/60 hover:bg-[#252A58]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]"
+              >
+                <SheetThumb item={item} />
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold leading-snug">{item.title}</span>
+                  {item.code ? <span className="mt-0.5 block text-[11px] font-semibold uppercase tracking-wide text-[#d5e3ff]/70">{item.code}</span> : null}
+                  <span className="mt-1 block text-xs text-[#d5e3ff]/75">
+                    {item.sector.name}
+                    {amount ? ` · ${amount}` : ""}
+                    {item.municipality?.name || item.locationText ? ` · ${item.municipality?.name || item.locationText}` : ""}
+                  </span>
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="mt-1 h-3 w-3 shrink-0 rounded-full border border-white"
+                  style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
+                />
+              </button>
+            </li>
+          );
+        })}
       </ul>
-    </>
+    </div>
+  );
+}
+
+function SheetThumb({ item }: { item: MapInvestmentProject }) {
+  const kind = item.kind ?? "project";
+  return (
+    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#001a33]">
+      {item.coverImageUrl ? (
+        <Image src={item.coverImageUrl} alt="" width={48} height={48} className="h-12 w-12 object-cover" />
+      ) : (
+        <span
+          className="block h-full w-full"
+          style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
+        />
+      )}
+    </span>
   );
 }
 

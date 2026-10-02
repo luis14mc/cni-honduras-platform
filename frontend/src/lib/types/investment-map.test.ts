@@ -6,6 +6,7 @@ import {
   clearMapDepartment,
   clearMapMunicipality,
   clearMapProject,
+  filterMapProjectsByDepartment,
   filterMapProjectsByMunicipality,
   filterMapProjectsBySector,
   formatMapInvestment,
@@ -210,6 +211,17 @@ describe("investment map pure helpers", () => {
     ];
     expect(filterMapProjectsByMunicipality(projects, "san-pedro-sula")).toHaveLength(1);
     expect(filterMapProjectsByMunicipality(projects, null)).toHaveLength(2);
+  });
+
+  it("filters the merged catalog by department slug", () => {
+    const cortes = mapProject("yojoa", "santa-cruz-de-yojoa", 14.99);
+    const tela = {
+      ...mapProject("tela", "tela", 15.71),
+      department: { id: 2, name: "Atlántida", slug: "atlantida", code: "01", center_lat: null, center_lng: null },
+    };
+    expect(filterMapProjectsByDepartment([cortes, tela], "cortes")).toEqual([cortes]);
+    expect(filterMapProjectsByDepartment([cortes, tela], "olancho")).toEqual([]);
+    expect(filterMapProjectsByDepartment([cortes, tela], null)).toHaveLength(2);
   });
 
   it("filters marker projects by sector", () => {

@@ -203,6 +203,8 @@ export type MunicipalityFeatureCollection = {
 // Map projects — GET /api/v1/investment/projects/?has_location=true
 // ---------------------------------------------------------------------------
 
+export type MapItemKind = "project" | "opportunity";
+
 export type MapInvestmentProject = {
   id: number;
   title: string;
@@ -222,6 +224,21 @@ export type MapInvestmentProject = {
   latitude: number | null;
   longitude: number | null;
   featured: boolean;
+  kind?: MapItemKind;
+  code?: string | null;
+  coverImageUrl?: string | null;
+  amountText?: string | null;
+  municipio_geocode?: string | null;
+  locationText?: string | null;
+};
+
+export type MapKindFilter = "all" | MapItemKind;
+
+export type MapMarkerGroup = {
+  key: string;
+  latitude: number;
+  longitude: number;
+  items: MapInvestmentProject[];
 };
 
 export type MapSelectionState = {
@@ -576,6 +593,48 @@ export function filterMapProjectsByMunicipality(
 ): MapInvestmentProject[] {
   if (!municipalitySlug) return projects;
   return projects.filter((project) => project.municipality?.slug === municipalitySlug);
+}
+
+export function filterMapProjectsByDepartment(
+  projects: MapInvestmentProject[],
+  departmentSlug: string | null,
+): MapInvestmentProject[] {
+  if (!departmentSlug) return projects;
+  return projects.filter((project) => project.department?.slug === departmentSlug);
+}
+
+export function filterMapProjectsByKind(
+  projects: MapInvestmentProject[],
+  kind: MapKindFilter | null,
+): MapInvestmentProject[] {
+  if (!kind || kind === "all") return projects;
+  return projects.filter((project) => (project.kind ?? "project") === kind);
+}
+
+export function sortMapProjectsByAmount(projects: MapInvestmentProject[]): MapInvestmentProject[] {
+  return [...projects].sort((a, b) => {
+    const amountA = Number(a.investment_amount) || 0;
+    const amountB = Number(b.investment_amount) || 0;
+    if (amountB !== amountA) return amountB - amountA;
+    return a.slug.localeCompare(b.slug);
+  });
+}
+
+export function findMapItemByQuery(
+  projects: MapInvestmentProject[],
+  query: { project?: string | null; opportunity?: string | null },
+): MapInvestmentProject | null {
+  if (query.opportunity) {
+    return (
+      projects.find((item) => item.slug === query.opportunity && (item.kind ?? "project") === "opportunity") ??
+      projects.find((item) => item.slug === query.opportunity) ??
+      null
+    );
+  }
+  if (query.project) {
+    return projects.find((item) => item.slug === query.project) ?? null;
+  }
+  return null;
 }
 
 export function filterMapProjectsBySector(
