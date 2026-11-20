@@ -7,7 +7,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from apps.forms.throttles import FormsRateThrottle, ProjectSubmissionRateThrottle
-from apps.integrations.models import WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED, WEBHOOK_SOURCE_WEBSITE, WebhookEvent
+from apps.integrations.models import (
+    WEBHOOK_EVENT_ADVISORY_REQUEST_CREATED,
+    WEBHOOK_EVENT_CONTACT_SUBMISSION_CREATED,
+    WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,
+    WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED,
+    WEBHOOK_SOURCE_WEBSITE,
+    WebhookEvent,
+)
 
 from .models import AdvisoryRequest, ContactSubmission, ProjectApplication, ResourceDownloadLead
 from .serializers import (
@@ -57,15 +64,62 @@ def build_project_application_webhook_payload(submission: ProjectApplication) ->
 
 
 def enqueue_project_application_webhook(submission: ProjectApplication) -> None:
+    _enqueue(
+        WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,
+        build_project_application_webhook_payload(submission),
+        submission,
+    )
+
+
+def _base_submission_payload(submission, model_label: str) -> dict:
+    """Campos comunes de ``BaseSubmission`` para el contrato v1 de cni-crm."""
+    return {
+        "submission_model": model_label,
+        "submission_id": submission.pk,
+        "full_name": submission.full_name,
+        "email": submission.email,
+        "phone": submission.phone,
+        "company": submission.company,
+        "country": submission.country,
+        "source": submission.source,
+        "created_at": submission.created_at.isoformat() if submission.created_at else None,
+    }
+
+
+def build_contact_submission_webhook_payload(submission: ContactSubmission) -> dict:
+    return {**_base_submission_payload(submission, "forms.ContactSubmission"), "message": submission.message}
+
+
+def build_advisory_request_webhook_payload(submission: AdvisoryRequest) -> dict:
+    return {
+        **_base_submission_payload(submission, "forms.AdvisoryRequest"),
+        "message": submission.message,
+        "advisory_type": submission.advisory_type,
+        "sector": submission.sector,
+    }
+
+
+def build_resource_download_webhook_payload(submission: ResourceDownloadLead) -> dict:
+    return {
+        **_base_submission_payload(submission, "forms.ResourceDownloadLead"),
+        "resource_name": submission.resource_name,
+        "details": submission.details,
+    }
+
+
+def _enqueue(event_type: str, payload: dict, submission) -> None:
+    # El fallo al encolar nunca rompe el envío público: queda en el log.
     try:
         WebhookEvent.objects.create(
             source=WEBHOOK_SOURCE_WEBSITE,
-            event_type=WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,
-            payload=build_project_application_webhook_payload(submission),
+            event_type=event_type,
+            payload=payload,
         )
     except Exception:
         logger.exception(
-            "Failed to create WebhookEvent for ProjectApplication pk=%s",
+            "Failed to create WebhookEvent %s for %s pk=%s",
+            event_type,
+            type(submission).__name__,
             submission.pk,
         )
 
@@ -73,6 +127,14 @@ def enqueue_project_application_webhook(submission: ProjectApplication) -> None:
 class ContactSubmissionViewSet(PublicCreateViewSet):
     queryset = ContactSubmission.objects.all()
     serializer_class = ContactSubmissionSerializer
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        _enqueue(
+            WEBHOOK_EVENT_CONTACT_SUBMISSION_CREATED,
+            build_contact_submission_webhook_payload(serializer.instance),
+            serializer.instance,
+        )
 
 
 class ProjectApplicationViewSet(PublicCreateViewSet):
@@ -97,7 +159,23 @@ class AdvisoryRequestViewSet(PublicCreateViewSet):
     queryset = AdvisoryRequest.objects.all()
     serializer_class = AdvisoryRequestSerializer
 
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        _enqueue(
+            WEBHOOK_EVENT_ADVISORY_REQUEST_CREATED,
+            build_advisory_request_webhook_payload(serializer.instance),
+            serializer.instance,
+        )
+
 
 class ResourceDownloadLeadViewSet(PublicCreateViewSet):
     queryset = ResourceDownloadLead.objects.all()
     serializer_class = ResourceDownloadLeadSerializer
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        _enqueue(
+            WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED,
+            build_resource_download_webhook_payload(serializer.instance),
+            serializer.instance,
+        )
