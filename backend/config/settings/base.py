@@ -179,7 +179,12 @@ REST_FRAMEWORK = {
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# n8n outbound webhooks (optional — used by ``process_webhook_events`` management command).
+# cni-crm (CRM-035): destino de los formularios públicos vía ``process_webhook_events``.
+# Ejemplo: CNI_CRM_INTAKE_URL=https://crm.cni.hn/api/intake/events/
+CNI_CRM_INTAKE_URL = env.str("CNI_CRM_INTAKE_URL", default="").strip()
+CNI_CRM_INTAKE_TOKEN = env.str("CNI_CRM_INTAKE_TOKEN", default="").strip()
+
+# n8n outbound webhooks (legado, reemplazado por cni-crm; optional — used by ``process_webhook_events`` management command).
 N8N_PROJECT_APPLICATION_WEBHOOK_URL = env.str(
     "N8N_PROJECT_APPLICATION_WEBHOOK_URL",
     default="",
