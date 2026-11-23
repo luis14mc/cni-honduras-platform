@@ -69,7 +69,7 @@ export function DownloadablePortfolios({ locale, sectorPortfolios, opportunityPo
               {sectorPortfolios.status === "error" ? <p className="font-body text-sm text-cni-primary/65" role="status">{c.sectorError}</p>
                 : documents.length === 0 ? <p className="font-body text-sm text-cni-primary/65" role="status">{c.sectorEmpty}</p>
                 : <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{documents.map((document) =>
-                  <PortfolioDocumentCard key={`${document.id}-${document.slug}`} document={document} label={sector.name} downloadLabel={c.download} />)}</div>}
+                  <PortfolioDocumentCard locale={locale} key={`${document.id}-${document.slug}`} document={document} label={sector.name} downloadLabel={c.download} />)}</div>}
             </section>;
           })}
         </div>
@@ -85,7 +85,7 @@ export function DownloadablePortfolios({ locale, sectorPortfolios, opportunityPo
           {opportunityPortfolios.status === "error" ? <p className="rounded-xl border border-cni-primary/10 bg-[#f8f9ff] p-8 font-body text-sm text-cni-primary/65" role="status">{c.opportunityError}</p>
             : consolidatedDocuments.length === 0 ? <p className="rounded-xl border border-cni-primary/10 bg-[#f8f9ff] p-8 font-body text-sm text-cni-primary/65" role="status">{c.opportunityEmpty}</p>
             : <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{consolidatedDocuments.map((document) =>
-              <PortfolioDocumentCard key={`${document.id}-${document.slug}`} document={document} label={c.consolidated} downloadLabel={c.download} />)}</div>}
+              <PortfolioDocumentCard locale={locale} key={`${document.id}-${document.slug}`} document={document} label={c.consolidated} downloadLabel={c.download} />)}</div>}
         </div>
       </div>
     </section>

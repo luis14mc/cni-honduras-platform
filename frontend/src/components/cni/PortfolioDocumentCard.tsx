@@ -1,5 +1,7 @@
 import Image from "next/image";
 import { Download, FileText } from "lucide-react";
+import { ResourceDownloadAction } from "@/src/components/cni/ResourceDownloadAction";
+import type { Locale } from "@/src/i18n/config";
 import type { CmsDocument } from "@/src/types/cms";
 
 export function portfolioCoverUrl(document: CmsDocument): string | null {
@@ -10,10 +12,12 @@ export function PortfolioDocumentCard({
   document,
   label,
   downloadLabel,
+  locale,
 }: {
   document: CmsDocument;
   label: string;
   downloadLabel: string;
+  locale: Locale;
 }) {
   const coverUrl = portfolioCoverUrl(document);
 
@@ -29,17 +33,13 @@ export function PortfolioDocumentCard({
       <div className="flex min-w-0 flex-1 flex-col p-4">
         <p className="font-headline text-xs font-bold uppercase tracking-[0.12em] text-[#168654]">{label}</p>
         <h3 className="mt-2 font-headline text-base font-bold leading-snug text-cni-primary">{document.title}</h3>
-        {document.has_resource && document.file_url ? (
-          <a
-            href={document.file_url}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 inline-flex items-center gap-2 self-start font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-cni-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
-          >
-            <Download className="h-4 w-4" aria-hidden />
-            {downloadLabel}
-          </a>
-        ) : null}
+        <ResourceDownloadAction
+          document={document}
+          locale={locale}
+          label={downloadLabel}
+          icon={<Download className="h-4 w-4" aria-hidden />}
+          className="mt-5 inline-flex items-center gap-2 self-start font-headline text-[11px] font-bold uppercase tracking-[0.14em] text-cni-primary underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]"
+        />
       </div>
     </article>
   );

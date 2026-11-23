@@ -14,3 +14,26 @@ export function submitProjectApplication(
     payload,
   );
 }
+
+
+type DownloadIdentity = {
+  full_name: string;
+  email: string;
+  company: string;
+  country: string;
+  details: string;
+  consent: boolean;
+  website: string;
+};
+
+type ResourceDownloadPayload = {
+  strapi_document_id: string;
+  locale: "es" | "en";
+} & (DownloadIdentity | { remember_token: string });
+
+export function submitResourceDownload(payload: ResourceDownloadPayload) {
+  return apiPost<
+    { download_url: string; expires_in: number; remember_token: string },
+    ResourceDownloadPayload
+  >(`${BASE}/resource-download/`, payload);
+}

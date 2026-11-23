@@ -195,3 +195,28 @@ class ResourceDownloadLeadSerializer(SubmissionSerializerMixin, serializers.Mode
             "updated_at",
         )
         read_only_fields = SubmissionSerializerMixin.read_only_fields
+
+
+class GatedResourceDownloadSerializer(serializers.Serializer):
+    strapi_document_id = serializers.RegexField(r"^[a-z0-9]{1,64}$")
+    locale = serializers.ChoiceField(choices=("es", "en"))
+    full_name = serializers.CharField(max_length=200, required=False)
+    email = serializers.EmailField(max_length=254, required=False)
+    company = serializers.CharField(max_length=200, required=False)
+    country = serializers.CharField(max_length=120, required=False)
+    details = serializers.CharField(max_length=1000, required=False)
+    consent = serializers.BooleanField(required=False)
+    remember_token = serializers.CharField(max_length=256, required=False)
+    website = serializers.CharField(max_length=255, required=False, allow_blank=True, write_only=True)
+
+    def validate(self, attrs):
+        if attrs.get("website"):
+            raise serializers.ValidationError("Invalid submission.")
+        if attrs.get("remember_token"):
+            return attrs
+
+        fields = ("full_name", "email", "company", "country", "details", "consent")
+        errors = {field: "This field is required." for field in fields if not attrs.get(field)}
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs

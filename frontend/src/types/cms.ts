@@ -40,7 +40,18 @@ export type PortfolioDocumentType =
   | "sector_portfolio"
   | "opportunity_portfolio";
 
+export interface ResourceCategory {
+  documentId: string;
+  slug: string;
+  title: string;
+  description: string;
+}
+
 export interface CmsDocument {
+  access?: "free" | "gated";
+  strapi_document_id?: string;
+  strapi_locale?: "es" | "en";
+  resource_category?: ResourceCategory | null;
   id: number;
   language?: "es" | "en";
   resource_key?: string;

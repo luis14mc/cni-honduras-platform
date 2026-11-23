@@ -24,7 +24,7 @@ import type {
 } from "@/src/lib/strapi/types";
 import { normalizeSectorSlug, sectorsMatch } from "@/src/lib/strapi/sector";
 import { STRAPI_COLLECTION_PATHS } from "@/src/lib/strapi/types";
-import type { BannerPlacement, SiteBanner, CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
+import type { BannerPlacement, SiteBanner, CmsDocument, ResourceCategory, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
 import type {
   InvestmentOpportunity,
   OpportunityMetric,
@@ -350,20 +350,46 @@ export function mapNews(raw: unknown): NewsArticle | null {
   };
 }
 
+export function mapResourceCategory(raw: unknown): ResourceCategory | null {
+  if (!isRecord(raw)) return null;
+  const documentId = asString(raw.documentId);
+  const slug = asString(raw.slug);
+  const title = asString(raw.title).trim();
+  return documentId && /^[a-z0-9][a-z0-9_-]*$/.test(slug) && title
+    ? { documentId, slug, title, description: asString(raw.description) }
+    : null;
+}
+
+export async function getResourceCategories(locale: Locale): Promise<ResourceCategory[]> {
+  const rows = await fetchAllEditorialRows<unknown>("/api/resource-categories", locale, {
+    "pagination[pageSize]": PAGE_SIZE,
+    "sort[0]": "order:asc",
+    "sort[1]": "title:asc",
+    status: "published",
+  });
+  return rows.map(mapResourceCategory).filter((item): item is ResourceCategory => item !== null);
+}
+
 export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | null {
   if (!isRecord(raw)) return null;
   const title = asString(raw.title).trim();
   const slug = asString(raw.slug).trim();
   if (!title || !slug) return null;
-  const fileMedia = unwrapMedia(raw.file);
+  const access = raw.access === "gated" ? "gated" : "free";
+  const file = access === "free" ? raw.file : null;
+  const fileMedia = unwrapMedia(file);
   const fileUrl = fileMedia?.url ?? "";
-  const externalUrl = safeEditorialUrl(raw.external_url);
+  const externalUrl = access === "free" ? safeEditorialUrl(raw.external_url) : "";
   const seo = mapEditorialSeo(raw.seo);
   const categoryRaw = asString(raw.category);
   const published = asString(raw.publishedAt);
   return {
     id: typeof raw.id === "number" ? raw.id : 0,
-    language: locale,
+    access,
+    strapi_document_id: asString(raw.documentId) || undefined,
+    strapi_locale: locale,
+    resource_category: mapResourceCategory(raw.resource_category),
+    language: raw.language === "es" || raw.language === "en" ? raw.language : locale,
     resource_key: asString(raw.resource_key),
     title,
     slug,
@@ -383,8 +409,8 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
     sector: asString(raw.sector) || undefined,
     order: typeof raw.order === "number" ? raw.order : 0,
     cover_image: toMediaAsset(raw.cover, title),
-    file_type: fileMime(raw.file),
-    file_size_bytes: fileSizeBytes(raw.file),
+    file_type: fileMime(file),
+    file_size_bytes: fileSizeBytes(file),
     published_at: published,
     document_date: published || null,
     seo_title: seo.title || title,
@@ -486,6 +512,24 @@ async function fetchCollection<T>(
   return payload.data ?? [];
 }
 
+async function fetchAllEditorialRows<T>(
+  path: string,
+  locale: Locale,
+  extra: Record<string, string>,
+): Promise<T[]> {
+  const rows: T[] = [];
+  let lastPage = 1;
+  for (let page = 1; page <= lastPage; page++) {
+    const result = await strapiGet<StrapiListResponse<T>>(path, {
+      locale: toStrapiLocale(locale),
+      extra: { ...extra, "pagination[page]": String(page) },
+    });
+    rows.push(...(result.data ?? []));
+    lastPage = result.meta?.pagination?.pageCount ?? 1;
+  }
+  return rows;
+}
+
 async function fetchBySlug<T>(
   path: string,
   locale: Locale,
@@ -509,6 +553,7 @@ export type EditorialListOptions = {
   category?: string;
   sector?: string;
   documentType?: PortfolioDocumentType;
+  resourceCategoryId?: string;
 };
 
 function withListFilters(extra: Record<string, string>, options?: EditorialListOptions): Record<string, string> {
@@ -555,7 +600,7 @@ export async function getNewsBySlug(locale: Locale, slug: string): Promise<NewsA
 export async function getDocuments(locale: Locale, options?: EditorialListOptions): Promise<CmsDocument[]> {
   const extra = withListFilters(
     {
-      ...populateExtra(["file", "cover"]),
+      ...populateExtra(["file", "cover", "resource_category"]),
       "populate[seo][populate]": "ogImage",
       "sort[0]": "order:asc",
       "sort[1]": "title:asc",
@@ -563,7 +608,17 @@ export async function getDocuments(locale: Locale, options?: EditorialListOption
     options,
   );
   if (options?.sector) extra["filters[sector][$eq]"] = options.sector;
-  const rows = await fetchCollection<StrapiDocument>(STRAPI_COLLECTION_PATHS.documents, locale, extra);
+  if (options?.resourceCategoryId) {
+    if (options.category) {
+      delete extra["filters[category][$eq]"];
+      extra["filters[$or][0][resource_category][documentId][$eq]"] = options.resourceCategoryId;
+      extra["filters[$or][1][$and][0][resource_category][id][$null]"] = "true";
+      extra["filters[$or][1][$and][1][category][$eq]"] = options.category;
+    } else {
+      extra["filters[resource_category][documentId][$eq]"] = options.resourceCategoryId;
+    }
+  }
+  const rows = await fetchAllEditorialRows<StrapiDocument>(STRAPI_COLLECTION_PATHS.documents, locale, extra);
   return rows.map((row) => mapDocument(row, locale)).filter((item): item is CmsDocument => item != null);
 }
 

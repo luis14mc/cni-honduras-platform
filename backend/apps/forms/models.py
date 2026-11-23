@@ -253,6 +253,10 @@ class AdvisoryRequest(BaseSubmission):
 
 
 class ResourceDownloadLead(BaseSubmission):
+    strapi_document_id = models.CharField(max_length=64, blank=True, default="")
+    resource_locale = models.CharField(max_length=2, blank=True, default="")
+    consented_at = models.DateTimeField(null=True, blank=True)
+
     resource_name = models.CharField(
         max_length=255, blank=True, default="", verbose_name="Recurso solicitado"
     )

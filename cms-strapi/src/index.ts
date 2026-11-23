@@ -1,10 +1,12 @@
 import type { Core } from '@strapi/strapi';
+import { registerGatedDocumentValidation } from './register/gated-document-validation';
 import { bootstrapStrapi } from './bootstrap';
 import { registerNewsCoverDocumentMiddleware } from './register/news-cover-document-middleware';
 
 export default {
   register({ strapi }: { strapi: Core.Strapi }) {
     registerNewsCoverDocumentMiddleware(strapi);
+    registerGatedDocumentValidation(strapi);
 
     strapi.server.routes([
       {

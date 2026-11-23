@@ -2,13 +2,14 @@ import Link from "next/link";
 import { MaterialIcon } from "@/src/components/ui/MaterialIcon";
 import { BrandPageHero, brandHeroCta } from "@/src/components/cni/BrandPageHero";
 import { DownloadablePortfolios } from "@/src/components/cni/DownloadablePortfolios";
+import { resourceCategoryHref } from "@/src/data/resourceCategoryMeta";
 import { designImages } from "@/src/lib/designAssets";
 import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
 import { layout, type as t } from "@/src/lib/typography";
 import { cn } from "@/src/lib/utils";
 import type { AsyncData } from "@/src/lib/asyncData";
-import type { CmsDocument } from "@/src/types/cms";
+import type { CmsDocument, ResourceCategory } from "@/src/types/cms";
 
 const copy = {
   es: {
@@ -22,15 +23,9 @@ const copy = {
     heroContact: "Contactar al CNI",
     catsEyebrow: "Navegación",
     catsTitle: "Categorías",
-    catsLead: "Repositorio institucional y accesos al portafolio, oportunidades y marco legal.",
-    categories: [
-      { icon: "account_balance", title: "Institucionales", text: "Memorias y documentos oficiales del CNI.", href: "/recursos/institucional" },
-      { icon: "construction", title: "Técnicos", text: "Guías y manuales para el aterrizaje de capital.", href: "/recursos/tecnicos" },
-      { icon: "article", title: "Biblioteca", text: "Formularios, plantillas y consulta general.", href: "/recursos/biblioteca" },
-      { icon: "analytics", title: "Estudios", text: "Análisis sectoriales y de mercado.", href: "/recursos/estudios" },
-      { icon: "folder_managed", title: "Portafolio", text: "Proyectos y oportunidades públicas.", href: "/portafolio" },
-      { icon: "gavel", title: "Marco legal", text: "LPPI, ZOLI y servicios jurídicos del CNI.", href: "/cni/servicios-legales" },
-    ],
+    categoriesEmpty: "Aún no hay categorías publicadas.",
+    categoriesError: "No pudimos cargar las categorías. Intente de nuevo más tarde.",
+
     ctaEyebrow: "Acompañamiento CNI",
     ctaTitle1: "¿Necesita asesoría",
     ctaTitle2: "técnica?",
@@ -48,15 +43,9 @@ const copy = {
     heroContact: "Contact CNI",
     catsEyebrow: "Navigation",
     catsTitle: "Categories",
-    catsLead: "Institutional repository plus portfolio, opportunities and legal framework.",
-    categories: [
-      { icon: "account_balance", title: "Institutional", text: "CNI reports and official documents.", href: "/recursos/institucional" },
-      { icon: "construction", title: "Technical", text: "Guides and manuals for capital landing.", href: "/recursos/tecnicos" },
-      { icon: "article", title: "Library", text: "Forms, templates and general reference.", href: "/recursos/biblioteca" },
-      { icon: "analytics", title: "Studies", text: "Sector and market analysis.", href: "/recursos/estudios" },
-      { icon: "folder_managed", title: "Portfolio", text: "Public projects and opportunities.", href: "/portafolio" },
-      { icon: "gavel", title: "Legal framework", text: "LPPI, ZOLI and CNI legal services.", href: "/cni/servicios-legales" },
-    ],
+    categoriesEmpty: "There are no published categories yet.",
+    categoriesError: "We could not load the categories. Try again later.",
+
     ctaEyebrow: "CNI support",
     ctaTitle1: "Need technical",
     ctaTitle2: "advice?",
@@ -68,11 +57,12 @@ const copy = {
 
 type Props = {
   locale: Locale;
+  categories: AsyncData<ResourceCategory[]>;
   sectorPortfolios: AsyncData<CmsDocument[]>;
   opportunityPortfolios: AsyncData<CmsDocument[]>;
 };
 
-export function RecursosPageView({ locale, sectorPortfolios, opportunityPortfolios }: Props) {
+export function RecursosPageView({ locale, categories, sectorPortfolios, opportunityPortfolios }: Props) {
   const c = copy[locale];
   const L = (path: string) => withLocale(locale, path);
 
@@ -104,19 +94,23 @@ export function RecursosPageView({ locale, sectorPortfolios, opportunityPortfoli
           <p className={t.eyebrow}>{c.catsEyebrow}</p>
           <h2 className={cn("mt-3", t.h2)}>{c.catsTitle}</h2>
           <div className={cn("mt-4", t.sectionRule)} />
-          <p className={cn("mt-6 max-w-2xl", t.lead)}>{c.catsLead}</p>
+          {categories.status === "error" ? (
+            <p role="alert" className="mt-6 text-red-800">{c.categoriesError}</p>
+          ) : categories.data.length === 0 ? (
+            <p className="mt-6 text-cni-primary">{c.categoriesEmpty}</p>
+          ) : null}
           <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {c.categories.map((cat) => (
+            {categories.data.map((cat) => (
               <Link
-                key={cat.href}
-                href={L(cat.href)}
+                key={cat.documentId}
+                href={resourceCategoryHref(cat.slug, locale)}
                 className="group flex h-full flex-col rounded-xl border border-[#c5c6cd]/30 bg-[#f8f9fa] p-8 transition hover:-translate-y-1"
               >
                 <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#32B372]/10 text-[#32B372]">
-                  <MaterialIcon name={cat.icon} className="text-[22px]" />
+                  <MaterialIcon name="folder_open" className="text-[22px]" />
                 </span>
                 <h3 className={t.h3Card}>{cat.title}</h3>
-                <p className="mt-3 flex-1 font-body text-sm leading-relaxed text-[#44474d]">{cat.text}</p>
+                <p className="mt-3 flex-1 font-body text-sm leading-relaxed text-[#44474d]">{cat.description}</p>
                 <span className="mt-6 font-headline text-[11px] font-bold uppercase tracking-[0.18em] text-[#32B372]">
                   {locale === "es" ? "Abrir" : "Open"}
                 </span>
