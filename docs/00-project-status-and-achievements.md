@@ -10,8 +10,6 @@ La plataforma web del Consejo Nacional de Inversiones (CNI) está en **desarroll
 - Sitio público bilingüe (es/en) con **31+ rutas** y diseño institucional avanzado.
 - Backend Django/DRF/GeoDjango con **API versionada** `/api/v1/`.
 - **Mapa interactivo** conectado a datos reales (departamentos + resumen de inversión).
-- Stack CRM SuiteCRM (SIGI CNI) documentado y automatizado para desarrollo local.
-- Orquestación n8n preparada para integración formularios → CRM.
 
 ---
 
@@ -37,27 +35,9 @@ La plataforma web del Consejo Nacional de Inversiones (CNI) está en **desarroll
 | Investment | Sectores, oportunidades, proyectos, casos de éxito; `map-summary` agregado por departamento |
 | CMS | Page, News, Document + media_library (admin) |
 | Forms | ContactSubmission, ProjectApplication, AdvisoryRequest, ResourceDownloadLead |
-| Integraciones | WebhookEvent, SuiteCRMIntegrationLog, comando `process_webhook_events` |
+| Integraciones | WebhookEvent, comando `process_webhook_events` |
 | Admin mejorado | Acciones masivas en postulaciones y webhooks |
 | Seeds / import | `import_departments`, `import_municipalities`, `seed_regions`, `seed_investment` |
-
-### CRM (`crm/` — SuiteCRM 8+ local)
-
-| Logro | Detalle |
-|-------|---------|
-| Stack Docker independiente | PHP 8.2 + Apache + MariaDB (`docker-compose.suitecrm.yml`) |
-| SIGI CNI por código | Scripts Extension: campos, listas, labels `es_es` + `en_us` |
-| Studio / metadata | Registro en `fields_meta_data`, layouts EditView/DetailView automatizados |
-| Permisos dev | `dev-unlock-suitecrm-custom.sh` / `dev-lock-suitecrm-custom.sh` |
-| Documentación operativa | 10 guías (`crm/docs/01`–`10`) |
-
-### Automatización (`automation/n8n/`)
-
-| Logro | Detalle |
-|-------|---------|
-| Docker local n8n | `docker-compose.n8n.yml`, `.env.example` |
-| Flujo documentado | Django → WebhookEvent → n8n → SuiteCRM |
-| Procesador Django | `process_webhook_events` envía a webhook n8n configurado |
 
 ### Documentación e IA
 
@@ -77,7 +57,7 @@ La plataforma web del Consejo Nacional de Inversiones (CNI) está en **desarroll
 | **investment** | `sectors/`, `opportunities/`, `projects/`, `success-stories/`, **`map-summary/`** |
 | **cms** | `pages/`, `news/`, `documents/` |
 | **forms** | `project-application/` (POST), otros tipos registrados |
-| **integrations** | `webhook-events/`, `suitecrm-logs/` (lectura admin) |
+| **integrations** | `webhook-events/` (lectura admin) |
 
 Base URL dev: `http://localhost:8000/api/v1`
 
@@ -96,14 +76,14 @@ Base URL dev: `http://localhost:8000/api/v1`
 - Colores institucionales CNI (`#334E88`, `#32B372`).
 
 ### Integración formularios (parcial)
-- Postulación de proyecto → modelo + WebhookEvent → comando n8n.
+- Postulación de proyecto → modelo + WebhookEvent → `process_webhook_events` → `cni-crm`.
 
 ---
 
 ## Pendiente prioritario
 
 1. **Formularios frontend restantes** — contacto, asesoría, descarga de recursos → API forms.
-2. **Workflow n8n** — exportar JSON `project-application-to-suitecrm` y validar E2E.
+2. **Entrega al CRM** — validar el contrato de intake de extremo a extremo.
 3. **Casos de éxito** — conectar `portafolio/casos` a API (hoy contenido estático).
 4. **CMS-driven pages** — migrar copy estático a contenido editable.
 5. **Auth / users** — roles CNI (ADR-0003).
@@ -117,12 +97,6 @@ Base URL dev: `http://localhost:8000/api/v1`
 ```bash
 # Plataforma principal
 docker compose up -d
-
-# SuiteCRM (opcional, desde crm/)
-cd crm && docker compose -f docker-compose.suitecrm.yml up -d
-
-# n8n (opcional, desde automation/n8n/)
-cd automation/n8n && docker compose -f docker-compose.n8n.yml up -d
 ```
 
 | Servicio | URL |
@@ -130,8 +104,6 @@ cd automation/n8n && docker compose -f docker-compose.n8n.yml up -d
 | Frontend | http://localhost:3000 |
 | Backend API | http://localhost:8000/api/v1/ |
 | Django Admin | http://localhost:8000/admin/ |
-| SuiteCRM | http://localhost:8085 |
-| n8n | http://localhost:5678 |
 
 ---
 
@@ -141,4 +113,4 @@ cd automation/n8n && docker compose -f docker-compose.n8n.yml up -d
 - Backlog: [`ai-workspace/tasks/backlog.md`](../ai-workspace/tasks/backlog.md)
 - Changelog: [`ai-workspace/changelog/CHANGELOG.md`](../ai-workspace/changelog/CHANGELOG.md)
 - API: [`docs/api/01-api-roadmap.md`](api/01-api-roadmap.md)
-- CRM: [`crm/README.md`](../crm/README.md)
+- CRM: [Contrato con cni-crm](integrations/cni-crm-intake.md)

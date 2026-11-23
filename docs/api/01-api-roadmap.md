@@ -62,7 +62,6 @@ Estado y plan de la API REST (Django + DRF). **Base preferida:** `/api/v1/`.
 | Recurso | Método | Ruta | Notas |
 |---------|--------|------|-------|
 | Webhook events | GET | `/webhook-events/` | Admin/lectura |
-| SuiteCRM logs | GET | `/suitecrm-logs/` | Admin/lectura |
 
 ## Legacy (mantener)
 

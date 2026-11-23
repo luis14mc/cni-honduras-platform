@@ -6,7 +6,11 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 
 from apps.forms.models import ContactSubmission
-from apps.integrations.models import WEBHOOK_EVENT_CONTACT_SUBMISSION_CREATED, WebhookEvent
+from apps.integrations.models import (
+    WEBHOOK_EVENT_CONTACT_SUBMISSION_CREATED,
+    WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,
+    WebhookEvent,
+)
 
 CMD = "apps.integrations.management.commands.process_webhook_events.post_json"
 
@@ -62,6 +66,26 @@ class ProcessWebhookEventsTests(TestCase):
             self.run_command()
         post.assert_not_called()
         self.assertEqual(self.event.attempts, 0)
+
+    @override_settings(
+        CNI_CRM_INTAKE_URL="",
+        N8N_PROJECT_APPLICATION_WEBHOOK_URL="https://legacy.example/webhook",
+    )
+    def test_missing_url_leaves_existing_postulation_pending(self):
+        self.event.event_type = WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED
+        self.event.attempts = 2
+        self.event.save(update_fields=["event_type", "attempts"])
+        stderr = StringIO()
+
+        with patch(CMD) as post:
+            call_command("process_webhook_events", stdout=StringIO(), stderr=stderr)
+
+        post.assert_not_called()
+        self.event.refresh_from_db()
+        self.assertIn("CNI_CRM_INTAKE_URL is not configured", stderr.getvalue())
+        self.assertFalse(self.event.processed)
+        self.assertFalse(self.event.failed_permanently)
+        self.assertEqual(self.event.attempts, 2)
 
 
 class ContactFormEnqueuesEventTests(TestCase):

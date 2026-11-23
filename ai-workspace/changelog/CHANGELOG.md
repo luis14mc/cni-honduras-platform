@@ -4,8 +4,11 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/). Fechas en `YY
 
 ## [Unreleased]
 
+### Changed
+- La cola de formularios entrega los eventos exclusivamente a `cni-crm`.
+
 ### Planned
-- Workflow n8n exportado y E2E formulario → SuiteCRM.
+- Validación E2E de formularios → `cni-crm`.
 - Formularios contacto/asesoría conectados al backend.
 - CI lint + build.
 - ADR-0002, ADR-0003.
@@ -32,23 +35,18 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/). Fechas en `YY
 
 ---
 
-## [2026-06-12] — Geo municipios, n8n, permisos CRM
+## [2026-06-12] — Geo municipios
 
 ### Added
 - Comando `import_municipalities` (298 municipios).
-- Stack n8n local (`automation/n8n/`).
-- Scripts `dev-unlock-suitecrm-custom.sh`, `dev-lock-suitecrm-custom.sh`.
-- Doc `crm/docs/10-suitecrm-dev-permissions.md`.
 
 ---
 
-## [2026-06-11] — SuiteCRM SIGI CNI + integraciones
+## [2026-06-11] — Integraciones de formularios
 
 ### Added
-- Estructura `crm/` (Docker SuiteCRM 8+, Apache DocumentRoot `/public`).
 - Scripts SIGI CNI: customizations, fields_meta_data, layouts (es_es + en_us).
-- Docs operativas CRM (`crm/docs/05`–`09`).
-- Comando `process_webhook_events` (Django → n8n).
+- Comando `process_webhook_events`.
 - WebhookEvent al crear ProjectApplication.
 - Modelos: geo (CNIRegion, Municipality), investment, forms, integrations.
 - API v1 agregador; frontend investment services; sectores conectados a API.

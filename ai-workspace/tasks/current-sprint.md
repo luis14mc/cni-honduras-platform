@@ -1,7 +1,7 @@
 # Current Sprint
 
 > **Sprint:** Mapa + documentación (cierre 2026-06-19)  
-> **Siguiente sprint sugerido:** Formularios E2E + n8n workflow
+> **Siguiente sprint sugerido:** Formularios E2E con cni-crm
 
 ## Meta del sprint (completada)
 Conectar mapa interactivo al backend real y actualizar documentación de avances del proyecto.
@@ -24,13 +24,12 @@ Conectar mapa interactivo al backend real y actualizar documentación de avances
 
 ## Siguiente sprint (candidatos)
 
-### Meta propuesta: Integración formularios → n8n → CRM
-- [ ] Workflow n8n commiteado y probado con postulación real.
+### Meta propuesta: Integración formularios → cni-crm
+- [ ] Entrega al CRM verificada con una postulación de prueba.
 - [ ] Formularios contacto + asesoría wired al backend.
 - [ ] ADR-0002 borrador.
 - [ ] Casos de éxito desde API en frontend.
 
 ## Notas
 - Respetar `09-token-rules.md`.
-- No mezclar stacks: compose raíz ≠ SuiteCRM ≠ n8n.
 - Actualizar este archivo al abrir el próximo sprint.

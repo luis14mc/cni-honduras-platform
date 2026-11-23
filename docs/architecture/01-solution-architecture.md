@@ -3,7 +3,7 @@
 > Última actualización: 2026-06-19
 
 ## Visión general
-Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (Django + PostGIS) + CRM (SuiteCRM) + orquestación (n8n), con stacks Docker separados en desarrollo.
+Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (Django + PostGIS) con entrega de formularios al servicio externo `cni-crm`.
 
 ## Diagrama lógico
 
@@ -25,14 +25,8 @@ Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (
       │              │
       ▼              ▼ (process_webhook_events)
 ┌─────────────┐  ┌─────────────┐
-│ PostGIS 15  │  │ n8n :5678   │
-└─────────────┘  └──────┬──────┘
-                        │
-                        ▼
-                 ┌─────────────┐
-                 │ SuiteCRM    │  :8085
-                 │ MariaDB     │
-                 └─────────────┘
+│ PostGIS 15  │  │ cni-crm     │
+└─────────────┘  └─────────────┘
 ```
 
 ## Componentes
@@ -42,9 +36,6 @@ Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (
 | frontend | Next.js 16 / React 19 | 3000 | UI pública, mapa, formularios |
 | backend | Django 5 / DRF / GeoDjango | 8000 | API v1, CMS, webhooks |
 | db | PostGIS 15-3.4 | 5432 | Datos plataforma + geometrías |
-| suitecrm-app | PHP 8.2 + Apache | 8085 | CRM SIGI CNI |
-| suitecrm-db | MariaDB 10.11 | 3307 | Datos CRM |
-| n8n | n8n | 5678 | Integración formularios → CRM |
 
 ## Dominios backend (apps)
 
@@ -54,7 +45,7 @@ Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (
 | `investment` | ✅ Completo | sectors, opportunities, projects, success-stories, map-summary |
 | `cms` | ⚡ Parcial | pages, news, documents |
 | `forms` | ⚡ Parcial | 4 tipos POST; 1 wired frontend |
-| `integrations` | ⚡ Parcial | webhook-events, logs; processor command |
+| `integrations` | ⚡ Parcial | webhook-events y comando procesador |
 | `media_library` | 🔲 Admin only | — |
 | `users` | 🔲 Stub | — |
 | `core` | 🔲 Stub | — |
@@ -69,14 +60,13 @@ Plataforma web del CNI Honduras: frontend público (Next.js) + backend API/CMS (
 ### Postulación de proyecto
 1. `POST /api/v1/forms/project-application/`.
 2. Persistencia + `WebhookEvent` (`project_application.created`).
-3. `python manage.py process_webhook_events` → n8n → SuiteCRM (pendiente E2E).
+3. `python manage.py process_webhook_events` → `cni-crm`.
 
 ## Integraciones
-- **CRM**: desacoplado vía n8n. Ver `docs/integrations/django-n8n-suitecrm-flow.md`.
-- **SuiteCRM local**: `crm/` — SIGI CNI scripts y docs.
+- **CRM**: [contrato de entrega a cni-crm](../integrations/cni-crm-intake.md).
 
 ## Entornos
-- **Dev**: Docker Compose × 3 stacks opcionales; CORS localhost:3000.
+- **Dev**: Docker Compose para base de datos, backend y frontend; CORS localhost:3000.
 - **Prod**: por definir (TLS, secrets, `crm.cni.hn`).
 
 ## Decisiones

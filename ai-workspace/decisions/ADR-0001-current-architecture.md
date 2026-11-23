@@ -9,8 +9,7 @@
 ### Separación frontend / backend / servicios satélite
 - **Frontend**: Next.js 16 (App Router, React 19, Tailwind 4) — sitio público bilingüe.
 - **Backend**: Django 5 + DRF + GeoDjango — API v1, CMS, formularios, webhooks.
-- **CRM**: SuiteCRM 8+ en `crm/` — servicio independiente (MariaDB propia).
-- **n8n**: Orquestación en `automation/n8n/` — desacopla Django de SuiteCRM.
+- **CRM**: `cni-crm` opera como servicio independiente.
 
 Comunicación frontend ↔ backend: **REST** bajo `/api/v1/`.
 
@@ -34,22 +33,20 @@ API versionada:
 Legacy: `/api/cms/`, `/api/geo/`.
 
 ### Integración CRM (patrón adoptado)
-Django **no escribe directo** en SuiteCRM. Flujo:
-`forms → WebhookEvent → process_webhook_events → n8n → SuiteCRM`
+Django entrega los formularios mediante una cola persistente.
+`forms → WebhookEvent → process_webhook_events → cni-crm`
 
 ### Orquestación dev
 | Stack | Compose | Puertos |
 |-------|---------|---------|
 | Plataforma | `docker-compose.yml` | 3000, 8000, 5432 |
-| SuiteCRM | `crm/docker-compose.suitecrm.yml` | 8085, 3307 |
-| n8n | `automation/n8n/docker-compose.n8n.yml` | 5678 |
 
 ## Consecuencias
 - **Positivo**: separación clara, geo nativo, CRM aislado, integración desacoplada vía eventos.
-- **Costo**: múltiples stacks locales; E2E CRM requiere levantar 3 servicios.
+- **Costo**: la prueba E2E del CRM requiere una instancia accesible de `cni-crm`.
 
 ## Decisiones futuras
-- **ADR-0002**: estrategia CRM formal (n8n, mapeos, producción).
+- **ADR-0002**: operación y validación del CRM.
 - **ADR-0003**: autenticación y roles CNI.
 
 ## Referencias
