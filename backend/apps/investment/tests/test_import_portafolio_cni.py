@@ -8,11 +8,12 @@ from pathlib import Path
 from django.contrib.gis.geos import MultiPolygon, Polygon
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.cms.models import PublishStatus
 from apps.geo.models import CNIRegion, Department, Municipality
-from apps.investment.models import InvestmentOpportunity, InvestmentProject, ProjectStage
+from apps.investment.models import InvestmentOpportunity, InvestmentProject, ProjectStage, SuccessStory
 from apps.media_library.models import MediaAsset
 
 TINY_WEBP = (
@@ -150,3 +151,22 @@ class ImportPortafolioCniTests(TestCase):
         self.assertEqual(projects[0]["code"], "FP-CNI-I009")
         self.assertEqual(projects[0]["phase"], "Fase 3")
         self.assertTrue(projects[0]["cover_image_url"])
+
+    def test_map_catalog_serves_imported_items_and_public_success_stories(self):
+        call_command("import_portafolio_cni", dataset=str(self.seed_path), verbosity=0)
+        SuccessStory.objects.create(
+            title="Ejemplo", title_en="Example", slug="ejemplo",
+            status=PublishStatus.PUBLISHED, published_at=timezone.now(),
+        )
+        SuccessStory.objects.create(title="Borrador", slug="borrador")
+        response = APIClient().get("/api/v1/investment/map-items/?lang=en")
+        self.assertEqual(response.status_code, 200)
+        items = {item["kind"]: item for item in response.json()}
+        self.assertEqual(len(response.json()), 3)
+        self.assertEqual(len({item["id"] for item in items.values()}), 3)
+        self.assertEqual(items["project"]["stage"], "implementing")
+        self.assertEqual(items["project"]["department"]["slug"], "cortes")
+        self.assertEqual(items["opportunity"]["investment_amount"], "5600000.00")
+        self.assertAlmostEqual(items["opportunity"]["latitude"], 15.50)
+        self.assertEqual(items["case"]["title"], "Example")
+        self.assertIsNone(items["case"]["location"])

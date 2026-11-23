@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { investmentMapCopy } from "@/src/i18n/copy/investmentMap";
+import { matchesInvestmentFilters } from "@/src/components/map/mapInvestmentFilters";
 import {
   clearMapDepartment,
   clearMapMunicipality,
@@ -60,7 +61,7 @@ const mapProject = (
   slug: string,
   municipalitySlug: string | null,
   latitude: number | null,
-): MapInvestmentProject => ({
+): MapInvestmentProject & { sector: NonNullable<MapInvestmentProject["sector"]> } => ({
   id: slug.length,
   title: slug,
   slug,
@@ -213,7 +214,7 @@ describe("investment map pure helpers", () => {
     expect(filterMapProjectsByMunicipality(projects, null)).toHaveLength(2);
   });
 
-  it("filters the merged catalog by department slug", () => {
+  it("filters the catalog by department slug", () => {
     const cortes = mapProject("yojoa", "santa-cruz-de-yojoa", 14.99);
     const tela = {
       ...mapProject("tela", "tela", 15.71),
@@ -235,6 +236,29 @@ describe("investment map pure helpers", () => {
     const projects = [mapProject("with-point", "san-pedro-sula", 15.5), mapProject("without-point", "san-pedro-sula", null)];
     expect(hasProjectCoordinates(projects[0])).toBe(true);
     expect(getMarkerProjects(projects)).toEqual([projects[0]]);
+  });
+
+  it("applies inclusive USD bounds and excludes unknown amounts when filtering", () => {
+    const item = mapProject("example", null, null);
+    expect(matchesInvestmentFilters(item, "promotion", "100", "100.00")).toBe(true);
+    expect(matchesInvestmentFilters(item, "implementing", "0", "100")).toBe(false);
+    expect(matchesInvestmentFilters(item, "", "101", "")).toBe(false);
+    expect(matchesInvestmentFilters(item, "", "", "99.99")).toBe(false);
+    expect(matchesInvestmentFilters({ ...item, investment_amount: null }, "", "0", "")).toBe(false);
+    expect(matchesInvestmentFilters({ ...item, investment_amount: null }, "", "", "")).toBe(true);
+  });
+
+  it("round-trips case, stage and investment filters with existing URL parameters", () => {
+    const source = { kind: "case", stage: "in_progress", minInvestment: "0", maxInvestment: "1250000.25" };
+    const query = parseMapQueryState({ ...source, case: "caso-local" });
+    expect(query).toMatchObject({ ...source, case: "caso-local" });
+    const serialized = serializeMapQueryState(new URLSearchParams("lang=es"), query);
+    expect(parseMapQueryState(Object.fromEntries(new URLSearchParams(serialized)))).toEqual(query);
+    expect(new URLSearchParams(serialized).get("lang")).toBe("es");
+    const invalid = parseMapQueryState({ kind: "other", stage: "unknown!", minInvestment: "-1", maxInvestment: "1e10" });
+    for (const key of ["kind", "stage", "minInvestment", "maxInvestment"]) {
+      expect(invalid).not.toHaveProperty(key);
+    }
   });
 
   it("converts GeoDjango coordinates to Leaflet latitude-longitude order", () => {
