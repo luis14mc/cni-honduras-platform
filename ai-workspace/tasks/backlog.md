@@ -8,7 +8,7 @@ Lista priorizada. Mover a `current-sprint.md` al iniciar.
 ## Alta prioridad
 
 ### Integración y formularios
-- [ ] Exportar workflow n8n `project-application-to-suitecrm.json` y validar E2E.
+- [ ] Validar la entrega de formularios a `cni-crm` de extremo a extremo.
 - [ ] Conectar formulario **contacto** a `POST /api/v1/forms/contact/`.
 - [ ] Conectar formulario **asesoría** a API forms.
 - [ ] WebhookEvent para contacto y asesoría (como postulación).
@@ -33,15 +33,13 @@ Lista priorizada. Mover a `current-sprint.md` al iniciar.
 - [ ] Completar i18n faltante (es/en).
 
 ### CRM
-- [ ] Validar SuiteCRM SIGI CNI en entorno staging.
 - [ ] Vincular regiones CNI ↔ departamentos en admin (M2M).
-- [ ] OAuth SuiteCRM producción.
 
 ## Infra / Calidad
 - [ ] CI: eslint + `next build` + `manage.py check`.
 - [ ] Variables producción (`.env` templates, secrets).
 - [ ] Despliegue: frontend, backend, CRM (`crm.cni.hn`).
-- [ ] Backups MariaDB SuiteCRM + PostGIS.
+- [ ] Backups de PostgreSQL/PostGIS.
 
 ## Documentación
 - [x] Snapshot avances (`docs/00-project-status-and-achievements.md`) — 2026-06-19.
@@ -57,8 +55,6 @@ Lista priorizada. Mover a `current-sprint.md` al iniciar.
 - [x] Geo: departamentos, municipios, regiones + importadores.
 - [x] Map-summary + mapa frontend conectado.
 - [x] Postulación → API + WebhookEvent.
-- [x] SuiteCRM stack + SIGI CNI scripts.
-- [x] n8n scaffolding + process_webhook_events.
 - [x] ai-workspace + docs base.
 
 </details>

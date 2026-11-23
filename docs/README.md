@@ -15,8 +15,7 @@
 |-----------|-------------|
 | [architecture/01-solution-architecture.md](architecture/01-solution-architecture.md) | Diagrama, componentes, flujos |
 | [api/01-api-roadmap.md](api/01-api-roadmap.md) | Endpoints implementados y planificados |
-| [integrations/django-n8n-suitecrm-flow.md](integrations/django-n8n-suitecrm-flow.md) | Django → n8n → SuiteCRM |
-| [crm/01-suitecrm-functional-map.md](crm/01-suitecrm-functional-map.md) | Mapeo formularios → CRM |
+| [Contrato con cni-crm](integrations/cni-crm-intake.md) | Entrega de formularios al CRM |
 
 ## AI workspace (desarrollo)
 
@@ -26,13 +25,3 @@
 | [../ai-workspace/tasks/](../ai-workspace/tasks/) | Backlog y sprint actual |
 | [../ai-workspace/decisions/](../ai-workspace/decisions/) | ADRs |
 | [../ai-workspace/changelog/](../ai-workspace/changelog/) | Changelog |
-
-## CRM SuiteCRM (`crm/docs/`)
-
-Ver [../crm/README.md](../crm/README.md) — guías 01–10 (setup, SIGI CNI, layouts, permisos dev).
-
-## Automatización
-
-| Documento | Descripción |
-|-----------|-------------|
-| [../automation/n8n/README.md](../automation/n8n/README.md) | n8n local |

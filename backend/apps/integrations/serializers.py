@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import SuiteCRMIntegrationLog, WebhookEvent
+from .models import WebhookEvent
 
 
 class WebhookEventSerializer(serializers.ModelSerializer):
@@ -15,20 +15,4 @@ class WebhookEventSerializer(serializers.ModelSerializer):
             "error_message",
             "created_at",
             "processed_at",
-        )
-
-
-class SuiteCRMIntegrationLogSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SuiteCRMIntegrationLog
-        fields = (
-            "id",
-            "related_model",
-            "related_object_id",
-            "action",
-            "payload",
-            "response",
-            "success",
-            "error_message",
-            "created_at",
         )

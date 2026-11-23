@@ -25,10 +25,8 @@ Plan de alto nivel CNI Honduras Platform.
 - [x] Modelos forms + integrations (WebhookEvent).
 - [x] Postulación → API + WebhookEvent.
 - [x] Comando `process_webhook_events`.
-- [x] Stack SuiteCRM local + SIGI CNI (scripts, docs).
-- [x] Stack n8n local + documentación flujo.
 - [ ] Formularios contacto/asesoría wired (frontend).
-- [ ] Workflow n8n exportado y E2E validado.
+- [ ] Validar de extremo a extremo la entrega de formularios a `cni-crm`.
 - [ ] ADR-0002 integración CRM producción.
 - [ ] Auth y roles (`users`).
 
@@ -45,7 +43,7 @@ Plan de alto nivel CNI Honduras Platform.
 | Riesgo | Mitigación |
 |--------|------------|
 | Alcance CMS bilingüe | Priorizar páginas de inversión y prensa primero |
-| E2E CRM | Validar n8n + SuiteCRM en staging antes de prod |
+| E2E CRM | Validar la entrega a `cni-crm` antes de producción |
 | Múltiples stacks Docker | Documentación de arranque unificada (`docs/00-...`) |
 | Contenido estático vs API | Backlog: migrar página por página |
 

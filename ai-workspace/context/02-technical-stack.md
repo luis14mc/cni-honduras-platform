@@ -19,18 +19,11 @@
   - Legacy: `/api/cms/`, `/api/geo/`
 - Requirements: `requirements/dev.txt`, `requirements/prod.txt`.
 
-## CRM (`crm/`)
-- **SuiteCRM 8+** (PHP 8.2 + Apache, MariaDB 10.11).
-- Compose: `crm/docker-compose.suitecrm.yml`.
-- Customización SIGI CNI vía `custom/Extension` + scripts shell.
-
-## Automatización (`automation/n8n/`)
-- **n8n** en Docker; webhook `project-application`.
-- Django: `WebhookEvent` + `process_webhook_events`.
+## Integración con el CRM
+- Django persiste `WebhookEvent` y `process_webhook_events` lo entrega a `cni-crm`.
 
 ## Datos
 - **PostgreSQL 15 + PostGIS 3.4** (plataforma).
-- **MariaDB** (SuiteCRM, separada).
 
 ## Infra / Dev
 - Compose raíz: `db`, `backend` (8000), `frontend` (3000).

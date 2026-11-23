@@ -1,8 +1,7 @@
 """Entrega los ``WebhookEvent`` pendientes a cni-crm (CRM-035).
 
 Destino: ``CNI_CRM_INTAKE_URL`` con ``Authorization: Bearer CNI_CRM_INTAKE_TOKEN``.
-Si no está configurado, se usa el webhook legado de n8n
-(``N8N_PROJECT_APPLICATION_WEBHOOK_URL``) solo para postulaciones.
+Sin URL o token, los eventos quedan pendientes.
 
 Reglas de entrega:
 
@@ -28,7 +27,6 @@ from apps.integrations.models import (
     WEBHOOK_EVENT_CONTACT_SUBMISSION_CREATED,
     WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,
     WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED,
-    SuiteCRMIntegrationLog,
     WebhookEvent,
 )
 
@@ -48,7 +46,7 @@ def build_outbound_payload(event: WebhookEvent) -> dict:
         "event_type": event.event_type,
         "occurred_at": occurred,
         "payload": event.payload,
-        # Compatibilidad con el contrato que esperaba n8n.
+        # Alias conservado para el contrato de entrega v1.
         "created_at": occurred,
     }
 
@@ -111,7 +109,7 @@ def mark_submission_synced(event: WebhookEvent, crm_record_id: str) -> None:
 
 
 class Command(BaseCommand):
-    help = "Send pending WebhookEvents to cni-crm (or the legacy n8n webhook)."
+    help = "Send pending WebhookEvents to cni-crm."
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -126,24 +124,18 @@ class Command(BaseCommand):
             help="Show pending events and payloads without sending or updating records.",
         )
 
-    def _destination(self):
-        url = getattr(settings, "CNI_CRM_INTAKE_URL", "").strip()
-        if url:
-            return url, getattr(settings, "CNI_CRM_INTAKE_TOKEN", "").strip(), CRM_EVENT_TYPES, "cni_crm"
-        legacy = getattr(settings, "N8N_PROJECT_APPLICATION_WEBHOOK_URL", "").strip()
-        return legacy, "", (WEBHOOK_EVENT_PROJECT_APPLICATION_CREATED,), "n8n"
-
     def handle(self, *args, **options):
         limit = options["limit"]
         dry_run = options["dry_run"]
-        url, token, event_types, target = self._destination()
+        url = settings.CNI_CRM_INTAKE_URL.strip()
+        token = settings.CNI_CRM_INTAKE_TOKEN.strip()
         now = timezone.now()
 
         pending_events = list(
             WebhookEvent.objects.filter(
                 processed=False,
                 failed_permanently=False,
-                event_type__in=event_types,
+                event_type__in=CRM_EVENT_TYPES,
             )
             .filter(Q(next_attempt_at__isnull=True) | Q(next_attempt_at__lte=now))
             .order_by("created_at", "id")[:limit]
@@ -156,7 +148,7 @@ class Command(BaseCommand):
         if dry_run:
             self.stdout.write(
                 self.style.WARNING(
-                    f"Dry run: {len(pending_events)} pending event(s) would be sent to {target}."
+                    f"Dry run: {len(pending_events)} pending event(s) would be sent to cni-crm."
                 )
             )
             for event in pending_events:
@@ -176,7 +168,7 @@ class Command(BaseCommand):
                 )
             )
             return
-        if target == "cni_crm" and not token:
+        if not token:
             self.stderr.write(
                 self.style.WARNING("CNI_CRM_INTAKE_TOKEN is not configured. Skipping webhook processing.")
             )
@@ -184,18 +176,17 @@ class Command(BaseCommand):
 
         processed_count = 0
         failed_count = 0
-        action = f"send_to_{target}"
 
         for event in pending_events:
             outbound_payload = build_outbound_payload(event)
             try:
                 status_code, body = post_json(url, outbound_payload, token)
             except error.URLError as exc:
-                self._handle_failure(event, outbound_payload, action, str(exc.reason or exc))
+                self._handle_failure(event, str(exc.reason or exc))
                 failed_count += 1
                 continue
             except Exception as exc:  # noqa: BLE001 - se registra y se reintenta
-                self._handle_failure(event, outbound_payload, action, str(exc))
+                self._handle_failure(event, str(exc))
                 failed_count += 1
                 continue
 
@@ -214,14 +205,6 @@ class Command(BaseCommand):
                     update_fields=["processed", "processed_at", "error_message", "attempts", "next_attempt_at"]
                 )
                 mark_submission_synced(event, crm_record_id)
-                SuiteCRMIntegrationLog.objects.create(
-                    action=action,
-                    related_model="WebhookEvent",
-                    related_object_id=str(event.id),
-                    payload=outbound_payload,
-                    response={"status_code": status_code, "body": truncate_body(body)},
-                    success=True,
-                )
                 processed_count += 1
                 self.stdout.write(
                     self.style.SUCCESS(f"WebhookEvent #{event.id} sent successfully (HTTP {status_code}).")
@@ -229,11 +212,8 @@ class Command(BaseCommand):
             else:
                 self._handle_failure(
                     event,
-                    outbound_payload,
-                    action,
                     f"HTTP {status_code}: {truncate_body(body)}",
                     status_code,
-                    truncate_body(body),
                 )
                 failed_count += 1
 
@@ -244,11 +224,8 @@ class Command(BaseCommand):
     def _handle_failure(
         self,
         event: WebhookEvent,
-        outbound_payload: dict,
-        action: str,
         error_message: str,
         status_code: int | None = None,
-        response_body: str = "",
     ) -> None:
         short_error = truncate_body(error_message, max_length=500)
         event.attempts += 1
@@ -258,15 +235,5 @@ class Command(BaseCommand):
         event.error_message = short_error
         event.save(update_fields=["error_message", "attempts", "failed_permanently", "next_attempt_at"])
 
-        response = {"status_code": status_code, "body": response_body} if status_code else {}
-        SuiteCRMIntegrationLog.objects.create(
-            action=action,
-            related_model="WebhookEvent",
-            related_object_id=str(event.id),
-            payload=outbound_payload,
-            response=response,
-            success=False,
-            error_message=short_error,
-        )
         label = "permanently failed" if permanent else f"failed (retry #{event.attempts})"
         self.stderr.write(self.style.ERROR(f"WebhookEvent #{event.id} {label}: {short_error}"))
