@@ -57,11 +57,6 @@ export function ResourcesCategoryView({
           <p className={t.eyebrow}>{ui.directoryEyebrow}</p>
           <h2 className={cn("mt-3", t.h2)}>{category.directoryTitle[locale]}</h2>
           <div className={cn("mt-4", t.sectionRule)} />
-          <p className={cn("mt-6 max-w-2xl", t.lead)}>
-            {locale === "es"
-              ? "Filtre por título. Vacío no es error: si no hay documentos, la categoría está en actualización."
-              : "Filter by title. Empty is not an error: if no documents appear, the category is being updated."}
-          </p>
           <div className="mt-10">
             <RecursosDocsCatalog
               locale={locale}

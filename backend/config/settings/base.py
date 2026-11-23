@@ -183,3 +183,16 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Ejemplo: CNI_CRM_INTAKE_URL=https://crm.cni.hn/api/intake/events/
 CNI_CRM_INTAKE_URL = env.str("CNI_CRM_INTAKE_URL", default="").strip()
 CNI_CRM_INTAKE_TOKEN = env.str("CNI_CRM_INTAKE_TOKEN", default="").strip()
+
+
+
+# Dedicated private storage and the scoped Strapi API token for gated resources.
+GATED_RESOURCE_STRAPI_URL = env.str("GATED_RESOURCE_STRAPI_URL", default="")
+GATED_RESOURCE_STRAPI_TOKEN = env.str("GATED_RESOURCE_STRAPI_TOKEN", default="")
+GATED_RESOURCE_STORAGE = {
+    "bucket": env.str("GATED_RESOURCE_BUCKET", default=""),
+    "endpoint": env.str("GATED_RESOURCE_ENDPOINT", default=""),
+    "region": env.str("GATED_RESOURCE_REGION", default="auto"),
+    "access_key": env.str("GATED_RESOURCE_ACCESS_KEY", default=""),
+    "secret_key": env.str("GATED_RESOURCE_SECRET_KEY", default=""),
+}

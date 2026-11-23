@@ -5,6 +5,7 @@ import type { CmsDocument } from "@/src/types/cms";
 
 /** URL de apertura/descarga: archivo del CMS o URL externa. */
 export function documentOpenUrl(doc: CmsDocument): string | null {
+  if (doc.access === "gated") return null;
   const fileUrl = resolveMediaFileUrl(doc.file_url || doc.file);
   if (fileUrl) return fileUrl;
   if (doc.external_url) return doc.external_url;

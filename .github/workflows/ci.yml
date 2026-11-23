@@ -196,6 +196,9 @@ jobs:
             exit 1
           fi
 
+      - name: Test private resource access
+        run: node scripts/test-gated-resource.mjs
+
       - name: Smoke /_health and public REST
         run: |
           probe_health=$(curl -sS -o /dev/null -w "%{http_code}" "http://127.0.0.1:1337/_health")

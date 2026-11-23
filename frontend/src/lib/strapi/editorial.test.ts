@@ -428,6 +428,22 @@ describe("editorial fetch", () => {
 });
 
 
+describe("gated resource mapping", () => {
+  it("keeps only the document reference and metadata for a gated file", () => {
+    const item = mapDocument({
+      id: 1, documentId: "resource1", title: "Guide", slug: "guide", access: "gated", language: "en",
+      file: { url: "https://private.test/file.pdf" },
+      external_url: "https://private.test/shortcut",
+      resource_category: { documentId: "category1", slug: "guides", title: "Guides" },
+    }, "es");
+    expect(item).toMatchObject({
+      strapi_document_id: "resource1", strapi_locale: "es", language: "en", access: "gated",
+      file: "", file_url: null, external_url: "", resource_category: { slug: "guides" },
+    });
+    expect(JSON.stringify(item)).not.toContain("private.test");
+  });
+});
+
 describe("CNI editorial content", () => {
   afterEach(() => {
     vi.unstubAllGlobals();

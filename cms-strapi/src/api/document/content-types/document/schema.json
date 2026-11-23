@@ -147,6 +147,42 @@
           "localized": true
         }
       }
+    },
+    "access": {
+      "type": "enumeration",
+      "enum": [
+        "free",
+        "gated"
+      ],
+      "required": true,
+      "default": "free",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "gated_object_key": {
+      "type": "string",
+      "private": true,
+      "maxLength": 512,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "language": {
+      "type": "enumeration",
+      "enum": [
+        "es",
+        "en"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

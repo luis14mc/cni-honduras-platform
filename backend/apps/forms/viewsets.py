@@ -1,7 +1,10 @@
 import logging
 from decimal import Decimal
 
+from django.core import signing
+from django.utils import timezone
 from rest_framework import mixins, status, viewsets
+from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -16,10 +19,18 @@ from apps.integrations.models import (
     WebhookEvent,
 )
 
+from .resource_downloads import (
+    DOWNLOAD_TTL_SECONDS,
+    REMEMBER_SALT,
+    REMEMBER_TTL_SECONDS,
+    get_gated_resource,
+    sign_resource_download,
+)
 from .models import AdvisoryRequest, ContactSubmission, ProjectApplication, ResourceDownloadLead
 from .serializers import (
     AdvisoryRequestSerializer,
     ContactSubmissionSerializer,
+    GatedResourceDownloadSerializer,
     ProjectApplicationSerializer,
     ResourceDownloadLeadSerializer,
 )
@@ -99,11 +110,17 @@ def build_advisory_request_webhook_payload(submission: AdvisoryRequest) -> dict:
     }
 
 
-def build_resource_download_webhook_payload(submission: ResourceDownloadLead) -> dict:
+def build_resource_download_webhook_payload(
+    submission: ResourceDownloadLead, *, is_repeat: bool | None = None
+) -> dict:
     return {
         **_base_submission_payload(submission, "forms.ResourceDownloadLead"),
         "resource_name": submission.resource_name,
         "details": submission.details,
+        "strapi_document_id": submission.strapi_document_id,
+        "resource_locale": submission.resource_locale,
+        "consented_at": submission.consented_at.isoformat() if submission.consented_at else None,
+        **({"is_repeat": is_repeat} if is_repeat is not None else {}),
     }
 
 
@@ -171,6 +188,52 @@ class AdvisoryRequestViewSet(PublicCreateViewSet):
 class ResourceDownloadLeadViewSet(PublicCreateViewSet):
     queryset = ResourceDownloadLead.objects.all()
     serializer_class = ResourceDownloadLeadSerializer
+
+    def create(self, request, *args, **kwargs):
+        if "strapi_document_id" not in request.data:
+            return super().create(request, *args, **kwargs)
+
+        form = GatedResourceDownloadSerializer(data=request.data)
+        form.is_valid(raise_exception=True)
+        data = form.validated_data
+        token = data.get("remember_token")
+        fields = ("full_name", "email", "company", "country", "details")
+        if token:
+            try:
+                lead_id = signing.loads(token, salt=REMEMBER_SALT, max_age=REMEMBER_TTL_SECONDS)
+                previous = self.get_queryset().get(pk=lead_id, consented_at__isnull=False)
+            except (signing.BadSignature, ResourceDownloadLead.DoesNotExist) as error:
+                raise ValidationError({"remember_token": "Download session expired."}) from error
+            contact = {field: getattr(previous, field) for field in fields}
+            consented_at = previous.consented_at
+        else:
+            contact = {field: data[field] for field in fields}
+            consented_at = timezone.now()
+
+        title, key = get_gated_resource(data["strapi_document_id"], data["locale"])
+        url = sign_resource_download(key)
+        lead = self.get_queryset().create(
+            **contact,
+            resource_name=title,
+            strapi_document_id=data["strapi_document_id"],
+            resource_locale=data["locale"],
+            source="web-resource-download",
+            consented_at=consented_at,
+        )
+        _enqueue(
+            WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED,
+            build_resource_download_webhook_payload(lead, is_repeat=bool(token)),
+            lead,
+        )
+        return Response(
+            {
+                "download_url": url,
+                "expires_in": DOWNLOAD_TTL_SECONDS,
+                "remember_token": token or signing.dumps(lead.pk, salt=REMEMBER_SALT),
+            },
+            status=status.HTTP_201_CREATED,
+            headers={"Cache-Control": "private, no-store"},
+        )
 
     def perform_create(self, serializer):
         super().perform_create(serializer)

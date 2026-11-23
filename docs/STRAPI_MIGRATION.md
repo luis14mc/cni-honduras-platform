@@ -98,6 +98,19 @@ Antes de activar `CNI_BANNER_SOURCE=strapi` en Next.js, revisar los borradores, 
 
 Para dar acceso de consulta a postulaciones, contactos, solicitudes de asesoría y descargas, ejecutar `python manage.py seed_cms_roles` en Django y asignar **Revisores de formularios CNI** a las cuentas de staff que deban consultarlos. Revisar los demás grupos y permisos directos de esas cuentas, porque Django suma los permisos de cada asignación.
 
+## Descargas de recursos (CNI-301)
+
+Publicar las categorías en **Resource Category** y vincular los documentos en `resource_category`. El catálogo admite Institucional, Técnicos, Guías, Estudios, Portafolios, Marco legal y otras categorías publicadas en Strapi. Mantener los slugs de categorías anteriores cuando se quiera conservar sus rutas. El enum `category` se sigue leyendo para documentos anteriores sin relación. El acceso se configura por variante de idioma, porque ES y EN pueden usar archivos distintos.
+
+- **Acceso libre**: dejar `access=free` y usar el campo de archivo o la URL externa. `language` permite declarar el idioma del archivo cuando difiere del idioma de la ficha.
+- **Acceso con formulario**: subir el archivo a un bucket privado sin acceso público ni CDN, configurar `access=gated` e introducir en `gated_object_key` la clave relativa en ese bucket, por ejemplo `guides/investment.pdf`. Limpiar `file` y `external_url` antes de publicar. La portada se puede mantener en la biblioteca pública. Para reclasificar un archivo que ya era público, retirar también el objeto público anterior.
+
+En Django configurar `GATED_RESOURCE_STRAPI_URL` con el origen de Strapi y `GATED_RESOURCE_STRAPI_TOKEN` con un token **Custom** limitado a `document.gatedFile`. Configurar `GATED_RESOURCE_BUCKET`, `GATED_RESOURCE_ENDPOINT`, `GATED_RESOURCE_REGION`, `GATED_RESOURCE_ACCESS_KEY` y `GATED_RESOURCE_SECRET_KEY` para un principal de lectura del bucket privado. Estas variables pertenecen al backend. En AWS S3 se puede omitir `GATED_RESOURCE_ENDPOINT` y usar la región del bucket. En R2 usar el endpoint S3 de la cuenta y la región `auto`.
+
+Después de aplicar las migraciones Django, verificar un documento libre y uno restringido en cada idioma. La API registra el consentimiento, reutiliza el contacto durante la sesión con un token opaco de 30 minutos y devuelve una URL de descarga válida por 15 minutos. Cada descarga restringida conserva su propia traza en cni-crm. El evento incluye `is_repeat` para identificar las solicitudes que reutilizaron la sesión. El evento `file_download` indica que se inició la descarga. Solo contiene el slug y el tipo de acceso.
+
+Prueba del navegador con datos aislados: desde `frontend/`, ejecutar `pnpm exec playwright test --config playwright.resources.config.ts`. Si se usa Edge instalado localmente, configurar `PLAYWRIGHT_BROWSER_CHANNEL=msedge`.
+
 ## i18n
 
 - Plugin i18n habilitado.

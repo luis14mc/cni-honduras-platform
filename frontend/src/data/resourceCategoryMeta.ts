@@ -1,9 +1,9 @@
 import type { Locale } from "@/src/i18n/config";
-import type { DocumentCategory } from "@/src/types/cms";
+import type { DocumentCategory, ResourceCategory } from "@/src/types/cms";
 import type { PageSeo } from "@/src/lib/seo";
 
 export type ResourceCategoryMeta = {
-  slug: DocumentCategory;
+  slug: string;
   seo: PageSeo;
   title: Record<Locale, string>;
   description: Record<Locale, string>;
@@ -106,6 +106,30 @@ export function getAllResourceCategorySlugs(): string[] {
 
 export function getResourceCategoryMeta(slug: string): ResourceCategoryMeta | undefined {
   return RESOURCE_CATEGORY_META.find((item) => item.slug === slug);
+}
+
+export function resourceCategoryHref(slug: string, locale: Locale): string {
+  const legacy = getResourceCategoryMeta(slug);
+  if (legacy) return locale === "es" ? legacy.seo.canonical : legacy.seo.enMirror;
+  return locale === "es" ? `/recursos/${slug}` : `/en/resources/${slug}`;
+}
+
+export function strapiCategoryMeta(category: ResourceCategory): ResourceCategoryMeta {
+  const title = { es: category.title, en: category.title };
+  const description = { es: category.description, en: category.description };
+  return {
+    slug: category.slug,
+    title,
+    description,
+    heroAlt: title,
+    directoryTitle: { es: "Documentos publicados", en: "Published documents" },
+    seo: {
+      canonical: resourceCategoryHref(category.slug, "es"),
+      enMirror: resourceCategoryHref(category.slug, "en"),
+      title,
+      description,
+    },
+  };
 }
 
 export const resourceCategoryUi = {

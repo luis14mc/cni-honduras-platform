@@ -1,19 +1,12 @@
 import type { MetadataRoute } from "next";
 import { API_BASE_URL, unwrapPage } from "@/src/lib/api";
-import { getAllResourceCategorySlugs } from "@/src/data/resourceCategoryMeta";
-import { getNews, getSuccessStories } from "@/src/lib/strapi/editorial";
+import { getAllResourceCategorySlugs, resourceCategoryHref } from "@/src/data/resourceCategoryMeta";
+import { getNews, getResourceCategories, getSuccessStories } from "@/src/lib/strapi/editorial";
 import { getOpportunities, getProjects } from "@/src/services/investment";
 import { resolveHref } from "@/src/config/siteNavigation";
 import type { Locale } from "@/src/i18n/config";
 
 const LOCALES = ["es", "en"] as const;
-
-const EN_RESOURCE_MIRRORS: Record<string, string> = {
-  institucional: "/en/resources/institutional",
-  tecnicos: "/en/resources/technical",
-  biblioteca: "/en/resources/library",
-  estudios: "/en/resources/studies",
-};
 
 async function fetchSlugs(path: string): Promise<string[]> {
   try {
@@ -73,17 +66,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   entries.push({ url: `${base}/postula-tu-proyecto`, changeFrequency: "monthly", priority: 0.8 });
   entries.push({ url: `${base}/en/submit-your-project`, changeFrequency: "monthly", priority: 0.8 });
 
-  for (const slug of getAllResourceCategorySlugs()) {
-    entries.push({
-      url: `${base}/recursos/${slug}`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    });
-    entries.push({
-      url: `${base}${EN_RESOURCE_MIRRORS[slug] ?? `/en/resources/${slug}`}`,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    });
+  for (const locale of LOCALES) {
+    const categories = await getResourceCategories(locale).catch(() => []);
+    const paths = new Set(
+      [...getAllResourceCategorySlugs(), ...categories.map(({ slug }) => slug)]
+        .map((slug) => resourceCategoryHref(slug, locale)),
+    );
+    for (const path of paths) {
+      entries.push({ url: `${base}${path}`, changeFrequency: "monthly", priority: 0.6 });
+    }
   }
 
   // Noticias y casos: desde Strapi, por locale (fuente real de las páginas).

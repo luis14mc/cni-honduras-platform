@@ -213,7 +213,7 @@ export function PortfolioCatalogClient({
             </h2>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {tabDocuments.map((document) => (
-                <PortfolioDocumentCard
+                <PortfolioDocumentCard locale={locale}
                   key={`${document.id}-${document.slug}`}
                   document={document}
                   label={document.sector || t.cardsEyebrow}
