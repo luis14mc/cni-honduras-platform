@@ -10,7 +10,7 @@ export function verifyEditorialPreview(
   const { collection, documentId, status, expires, signature } = searchParams;
   if (
     !secret || !isLocale(locale) ||
-    (collection !== "pages" && collection !== "banners") ||
+    (collection !== "pages" && collection !== "banners" && collection !== "news") ||
     (status !== "draft" && status !== "published") ||
     typeof documentId !== "string" || !/^[a-z0-9]+$/.test(documentId) ||
     typeof expires !== "string" || !/^\d+$/.test(expires) || Number(expires) <= now ||

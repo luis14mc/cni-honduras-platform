@@ -71,12 +71,12 @@ Los permisos de Editor CNI y Publicador CNI se editan en [el bootstrap de Strapi
 
 `shared.seo` está disponible en News, Document, Success Story, Investment Opportunity y Page. Conserva los campos SEO existentes durante la migración. Las páginas institucionales consumen el componente completo.
 
-Para activar **Open preview** en Banner y Page:
+Para activar **Open preview** en Noticias, Banner y Page:
 
 1. Configurar `STRAPI_PREVIEW_ORIGIN` con el origen de Next.js.
 2. Configurar el mismo `STRAPI_PREVIEW_SECRET` en Strapi y Next.js. Usar un valor distinto por entorno.
-3. Proveer a Next.js un `STRAPI_API_TOKEN` con lectura de Page y Banner. El enlace firmado vence a los cinco minutos. El REST público solo lista contenido publicado para estos tipos.
-4. Crear una página o banner, guardar el borrador y abrir la vista previa. Después de publicarla, comprobar la ruta pública o el espacio de banner en el sitio. Repetir en `es` y `en`. Para comprobar la distinción de permisos, iniciar sesión con cada rol por separado.
+3. Proveer a Next.js un `STRAPI_API_TOKEN` con lectura de Noticias, Page y Banner. El enlace firmado vence a los cinco minutos. El REST público solo lista contenido publicado para estos tipos.
+4. Crear una noticia, página o banner, guardar el borrador y abrir la vista previa. Después de publicarla, comprobar la ruta pública o el espacio de banner en el sitio. Repetir en `es` y `en`. Para comprobar la distinción de permisos, iniciar sesión con cada rol por separado.
 
 ## Preparación de la migración (CNI-202)
 
@@ -86,13 +86,15 @@ Con acceso de lectura al origen Django y un token de API de Strapi para el desti
 python manage.py migrate_editorial_to_strapi
 python manage.py migrate_editorial_to_strapi --apply
 python manage.py migrate_editorial_to_strapi
+# Después de revisar y publicar las variantes correspondientes en Strapi:
+python manage.py migrate_editorial_to_strapi --verify-published
 ```
 
 Configurar `STRAPI_MIGRATION_URL` y `STRAPI_MIGRATION_TOKEN` en el entorno del comando. La primera ejecución solo compara los registros de ambos sistemas por colección e idioma. Con `--apply` se crean únicamente los borradores ausentes. Los documentos existentes se identifican por slug, `resource_key` o la clave de banner de Django; el comando conserva sus ediciones. Los archivos copiados se identifican por contenido y texto alternativo para reutilizarlos al reintentar.
 
 El reporte JSON cuenta variantes por idioma, estados de origen y registros existentes, creados, ausentes o fallidos. Un registro sin traducción se informa por separado. Para la revisión editorial, el script convierte campos HTML a texto y señala los bloques de noticia que requieren conversión manual (listas, botones, separadores e imágenes sin referencia). Las oportunidades copian los campos editoriales públicos disponibles en Strapi; Django sigue sirviendo su información geoespacial y de inversión operativa.
 
-Antes de activar `CNI_BANNER_SOURCE=strapi` en Next.js, revisar los borradores, contrastar contenido y archivos con Django, y publicar en Strapi las variantes que ya estaban publicadas. Verificar los conteos, enlaces y ventanas de los banners ES/EN. Si hay diferencias, mantener el origen anterior. La verificación en el entorno de migración es requisito para retirar `/cms` o los modelos Django. Para revertir el origen de banners, volver a `CNI_BANNER_SOURCE=django`.
+Antes de activar `CNI_BANNER_SOURCE=strapi` en Next.js, revisar los borradores, contrastar contenido y archivos con Django, y publicar en Strapi las variantes que ya estaban publicadas. Verificar los conteos, enlaces y ventanas de los banners ES/EN. `--verify-published` comprueba por colección e idioma que cada entrada publicada y vigente en Django tiene una publicación correspondiente en Strapi. Devuelve un código de salida distinto de cero si falta alguna publicación o falla una consulta. Los borradores, archivados y publicaciones programadas para el futuro quedan fuera de este cotejo. Revisar aparte los archivos y el contenido. Si hay diferencias, mantener el origen anterior. La verificación en el entorno de migración es requisito para retirar `/cms` o los modelos Django. Para revertir el origen de banners, volver a `CNI_BANNER_SOURCE=django`.
 
 Para dar acceso de consulta a postulaciones, contactos, solicitudes de asesoría y descargas, ejecutar `python manage.py seed_cms_roles` en Django y asignar **Revisores de formularios CNI** a las cuentas de staff que deban consultarlos. Revisar los demás grupos y permisos directos de esas cuentas, porque Django suma los permisos de cada asignación.
 
