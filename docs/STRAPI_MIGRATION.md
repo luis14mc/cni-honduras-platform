@@ -92,6 +92,8 @@ El reporte JSON cuenta variantes por idioma, estados de origen y registros exist
 
 Antes de activar `CNI_BANNER_SOURCE=strapi` en Next.js, revisar los borradores, contrastar contenido y archivos con Django, y publicar en Strapi las variantes que ya estaban publicadas. Verificar los conteos, enlaces y ventanas de los banners ES/EN. Si hay diferencias, mantener el origen anterior. La verificación en el entorno de migración es requisito para retirar `/cms` o los modelos Django. Para revertir el origen de banners, volver a `CNI_BANNER_SOURCE=django`.
 
+Para dar acceso de consulta a postulaciones, contactos, solicitudes de asesoría y descargas, ejecutar `python manage.py seed_cms_roles` en Django y asignar **Revisores de formularios CNI** a las cuentas de staff que deban consultarlos. Revisar los demás grupos y permisos directos de esas cuentas, porque Django suma los permisos de cada asignación.
+
 ## i18n
 
 - Plugin i18n habilitado.

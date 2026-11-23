@@ -44,6 +44,17 @@ class Command(BaseCommand):
             super_perms.append(publish_perm)
         superadmin.permissions.set(super_perms)
 
+        reviewers, _ = Group.objects.get_or_create(name="Revisores de formularios CNI")
+        reviewers.permissions.set(Permission.objects.filter(
+            content_type__app_label="forms_app",
+            codename__in=(
+                "view_projectapplication",
+                "view_contactsubmission",
+                "view_advisoryrequest",
+                "view_resourcedownloadlead",
+            ),
+        ))
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"Roles CMS listos ({len(ALL_ROLES)} grupos, "

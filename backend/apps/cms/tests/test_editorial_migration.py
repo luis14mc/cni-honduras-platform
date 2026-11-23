@@ -2,6 +2,7 @@ from io import StringIO
 import json
 from unittest.mock import patch
 
+from django.contrib.auth.models import Group
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -50,3 +51,16 @@ class EditorialMigrationTests(TestCase):
         self.assertEqual(kwargs["data"]["legacy_key"], f"django-banner-{self.banner.pk}")
         self.assertEqual(kwargs["data"]["title"], "Notice")
         self.assertEqual(json.loads(output.getvalue())["counts"]["banners:en"]["created"], 1)
+
+
+
+class FormReviewersRoleTests(TestCase):
+    def test_reviewers_receive_only_form_view_permissions(self):
+        for _ in range(2):
+            call_command("seed_cms_roles", stdout=StringIO(), stderr=StringIO())
+
+        group = Group.objects.get(name="Revisores de formularios CNI")
+        self.assertSetEqual(set(group.permissions.values_list("codename", flat=True)), {
+            "view_projectapplication", "view_contactsubmission",
+            "view_advisoryrequest", "view_resourcedownloadlead",
+        })
