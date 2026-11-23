@@ -75,3 +75,7 @@ venv/
 # User uploads (only .gitkeep is tracked)
 /backend/media/*
 !/backend/media/.gitkeep
+
+# Local scratch files and Windows download metadata
+/temp-*/
+*Zone.Identifier
