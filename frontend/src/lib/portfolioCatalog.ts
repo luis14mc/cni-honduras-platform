@@ -2,7 +2,6 @@ import type { Locale } from "@/src/i18n/config";
 import type { CmsDocument } from "@/src/types/cms";
 import type { InvestmentOpportunity, InvestmentProject, RegionRef } from "@/src/types/investment";
 import type { SectorSlug } from "@/src/data/investmentSectors";
-import { isSectorSlug } from "@/src/data/investmentSectors";
 
 export const PORTFOLIO_CATALOG_SECTORS = [
   "agroindustria",
