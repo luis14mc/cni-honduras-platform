@@ -33,9 +33,8 @@ Same-site proxy (MIG-CMS-002): Strapi sigue como **servicio separado**. Next sol
 - Strapi vive en `cms-strapi/` y usa **PostgreSQL propio** (Neon u otra instancia/schema).
 - **No** usar la base PostGIS de Django.
 - El frontend **consume Strapi** para noticias, documentos, casos de éxito y oportunidades (MIG-CMS-003).
-- Django permanece para mapa, PostGIS, sectores/proyectos, banners y `/cms`.
+- Django permanece para mapa, PostGIS, sectores/proyectos y formularios. Durante la migración también sirve los banners actuales y el CMS anterior.
 - `frontend/src/lib/strapi/editorial.ts` es la capa pública editorial. Server Components usan `STRAPI_URL` (no el proxy `/strapi-api`).
-- No hay migración automática de datos en este PR.
 
 ## Content types
 
@@ -46,6 +45,9 @@ Draft & Publish + i18n (`es` default, `en`) en todos:
 | News | `GET /api/news` | UID interno `news-item`. Dynamic Zone (`content.*`), `cover`, `lead_points`, `excerpt`, `location_date`, SEO. Draft & Publish |
 | Document | `GET /api/documents` | `file` y `cover` localizados (ES/EN pueden diferir). `resource_key` compartido |
 | Success Story | `GET /api/success-stories` | `sector` es **string** (no se duplica el modelo Django `Sector`) |
+| Banner | `GET /api/banners` | Ventana de vigencia, prioridad, imágenes y CTA. |
+| Page | `GET /api/pages` | Dynamic Zone `content.*` y SEO. Rutas públicas `/institucional/<slug>` y `/en/institucional/<slug>`. |
+| Resource Category | `GET /api/resource-categories` | Categoría editorial localizada. La relación `resource_category` en Document convive con el enum anterior durante la transición. |
 | Investment Opportunity | `GET /api/investment-opportunities` | `public_metrics` (máx. 4). `internal_notes` es editorial y se omite en REST público |
 
 Populate explícito de media (ejemplos):
@@ -60,6 +62,39 @@ GET /api/investment-opportunities?locale=es&populate=featured_image,public_metri
 `populate=*` sirve para smoke tests; en producción preferir populate explícito.
 
 Permisos **Public**: solo `find` / `findOne` de contenido publicado. Sin create/update/delete públicos. El admin de Strapi mantiene CRUD.
+
+## Roles y vista previa (CNI-201)
+
+Super Admin asigna los roles en **Settings → Administration Panel → Users**. **Editor CNI** puede crear, consultar y editar borradores. **Publicador CNI** puede crear, consultar, editar, borrar y publicar contenido. Super Admin conserva la administración de usuarios, estructura y credenciales.
+
+Los permisos de Editor CNI y Publicador CNI se editan en [el bootstrap de Strapi](../cms-strapi/src/bootstrap.ts). En cada arranque, Strapi vuelve a aplicar esa configuración, sobrescribe cualquier cambio de permisos hecho en el panel para esos dos roles y registra la sincronización en el log.
+
+`shared.seo` está disponible en News, Document, Success Story, Investment Opportunity y Page. Conserva los campos SEO existentes durante la migración. Las páginas institucionales consumen el componente completo.
+
+Para activar **Open preview** en Banner y Page:
+
+1. Configurar `STRAPI_PREVIEW_ORIGIN` con el origen de Next.js.
+2. Configurar el mismo `STRAPI_PREVIEW_SECRET` en Strapi y Next.js. Usar un valor distinto por entorno.
+3. Proveer a Next.js un `STRAPI_API_TOKEN` con lectura de Page y Banner. El enlace firmado vence a los cinco minutos. El REST público solo lista contenido publicado para estos tipos.
+4. Crear una página o banner, guardar el borrador y abrir la vista previa. Después de publicarla, comprobar la ruta pública o el espacio de banner en el sitio. Repetir en `es` y `en`. Para comprobar la distinción de permisos, iniciar sesión con cada rol por separado.
+
+## Preparación de la migración (CNI-202)
+
+Con acceso de lectura al origen Django y un token de API de Strapi para el destino, ejecutar desde `backend/`:
+
+```bash
+python manage.py migrate_editorial_to_strapi
+python manage.py migrate_editorial_to_strapi --apply
+python manage.py migrate_editorial_to_strapi
+```
+
+Configurar `STRAPI_MIGRATION_URL` y `STRAPI_MIGRATION_TOKEN` en el entorno del comando. La primera ejecución solo compara los registros de ambos sistemas por colección e idioma. Con `--apply` se crean únicamente los borradores ausentes. Los documentos existentes se identifican por slug, `resource_key` o la clave de banner de Django; el comando conserva sus ediciones. Los archivos copiados se identifican por contenido y texto alternativo para reutilizarlos al reintentar.
+
+El reporte JSON cuenta variantes por idioma, estados de origen y registros existentes, creados, ausentes o fallidos. Un registro sin traducción se informa por separado. Para la revisión editorial, el script convierte campos HTML a texto y señala los bloques de noticia que requieren conversión manual (listas, botones, separadores e imágenes sin referencia). Las oportunidades copian los campos editoriales públicos disponibles en Strapi; Django sigue sirviendo su información geoespacial y de inversión operativa.
+
+Antes de activar `CNI_BANNER_SOURCE=strapi` en Next.js, revisar los borradores, contrastar contenido y archivos con Django, y publicar en Strapi las variantes que ya estaban publicadas. Verificar los conteos, enlaces y ventanas de los banners ES/EN. Si hay diferencias, mantener el origen anterior. La verificación en el entorno de migración es requisito para retirar `/cms` o los modelos Django. Para revertir el origen de banners, volver a `CNI_BANNER_SOURCE=django`.
+
+Para dar acceso de consulta a postulaciones, contactos, solicitudes de asesoría y descargas, ejecutar `python manage.py seed_cms_roles` en Django y asignar **Revisores de formularios CNI** a las cuentas de staff que deban consultarlos. Revisar los demás grupos y permisos directos de esas cuentas, porque Django suma los permisos de cada asignación.
 
 ## i18n
 

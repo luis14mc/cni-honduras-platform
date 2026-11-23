@@ -9,6 +9,7 @@ import type { Locale } from "@/src/i18n/config";
 import { layoutCopy } from "@/src/i18n/copy/layout";
 import { getSiteBanners, getInstitutionalLinks } from "@/src/services/cms";
 import type { InstitutionalLink, SiteBanner } from "@/src/types/cms";
+import { getBanners } from "@/src/lib/strapi/editorial";
 import { loadAsyncData } from "@/src/lib/asyncData";
 
 export async function generateMetadata(
@@ -37,9 +38,11 @@ export default async function LocaleLayout({
 
   let banners: SiteBanner[] = [];
   try {
-    banners = await getSiteBanners("site_top", { locale });
-  } catch {
-    banners = [];
+    banners = process.env.CNI_BANNER_SOURCE === "strapi"
+      ? await getBanners(locale, "site_top")
+      : await getSiteBanners("site_top", { locale });
+  } catch (error) {
+    console.error(`Unable to load site banners (${locale})`, error);
   }
 
   const footerLinksResult = await loadAsyncData(

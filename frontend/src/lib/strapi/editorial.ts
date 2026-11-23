@@ -4,6 +4,7 @@ import { parseStrapiBlocks, plainTextFromInlines } from "@/src/lib/strapi/blocks
 import { getStrapiMediaUrl } from "@/src/lib/strapi/media";
 import {
   mapNewsDynamicZoneToNewsBlocks,
+  mapNewsDynamicZoneToStrapiBlocks,
   newsDetailPopulateExtra,
   newsListPopulateExtra,
   parseLeadPoints,
@@ -12,6 +13,7 @@ import {
 import type { StrapiBlock } from "@/src/lib/strapi/blocks";
 import type {
   StrapiDocument,
+  StrapiEntityResponse,
   StrapiInvestmentOpportunity,
   StrapiListResponse,
   StrapiLocale,
@@ -21,7 +23,7 @@ import type {
 } from "@/src/lib/strapi/types";
 import { normalizeSectorSlug, sectorsMatch } from "@/src/lib/strapi/sector";
 import { STRAPI_COLLECTION_PATHS } from "@/src/lib/strapi/types";
-import type { CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
+import type { BannerPlacement, SiteBanner, CmsDocument, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
 import type {
   InvestmentOpportunity,
   OpportunityMetric,
@@ -186,6 +188,132 @@ function omitInternalNotes<T extends UnknownRecord>(raw: T): T {
   return rest as T;
 }
 
+export function mapEditorialSeo(raw: unknown) {
+  const seo = isRecord(raw) ? raw : {};
+  return {
+    title: asString(seo.metaTitle).trim(),
+    description: asString(seo.metaDescription).trim(),
+    image: unwrapMedia(seo.ogImage)?.url ?? null,
+    noindex: seo.noindex === true,
+    canonical: safeEditorialUrl(seo.canonical) || null,
+  };
+}
+
+function safeEditorialUrl(raw: unknown): string {
+  const url = asString(raw).trim();
+  if (url.includes("\\") || Array.from(url).some((char) => char.charCodeAt(0) <= 32)) return "";
+  if (url.startsWith("/") && !url.startsWith("//")) return url;
+  if (!/^https?:\/\//i.test(url)) return "";
+  try {
+    return new URL(url).hostname ? url : "";
+  } catch {
+    return "";
+  }
+}
+
+export function mapBanner(raw: unknown): SiteBanner | null {
+  if (!isRecord(raw)) return null;
+  const title = asString(raw.title).trim();
+  const { id, placement } = raw;
+  if (!title || typeof id !== "number" ||
+      (placement !== "site_top" && placement !== "home_hero" && placement !== "footer")) return null;
+
+  const link = safeEditorialUrl(raw.link_url);
+  return {
+    id,
+    placement,
+    title,
+    body: asString(raw.body),
+    cta_label: asString(raw.cta_label),
+    starts_at: asString(raw.starts_at) || null,
+    ends_at: asString(raw.ends_at) || null,
+    priority: typeof raw.priority === "number" ? raw.priority : 0,
+    link_url: link,
+    link_external: raw.link_external === true && /^https?:/i.test(link),
+    dismissible: raw.dismissible !== false,
+    background_color: asString(raw.background_color),
+    text_color: asString(raw.text_color),
+    image: toMediaAsset(raw.image, title),
+    mobile_image: toMediaAsset(raw.mobile_image, title),
+    published_at: asString(raw.publishedAt),
+  };
+}
+
+export function isBannerActive(banner: SiteBanner, now: number): boolean {
+  return (!banner.starts_at || Date.parse(banner.starts_at) <= now) &&
+    (!banner.ends_at || Date.parse(banner.ends_at) >= now);
+}
+
+export function mapInstitutionalPage(raw: unknown) {
+  if (!isRecord(raw)) return null;
+  const title = asString(raw.title).trim();
+  const slug = asString(raw.slug).trim();
+  if (!title || !slug) return null;
+  return {
+    title,
+    slug,
+    summary: asString(raw.summary),
+    content: mapNewsDynamicZoneToStrapiBlocks(raw.content),
+    seo: mapEditorialSeo(raw.seo),
+  };
+}
+
+const PAGE_POPULATE = {
+  "populate[content][on][content.paragraph][populate]": "*",
+  "populate[content][on][content.heading][populate]": "*",
+  "populate[content][on][content.quote][populate]": "*",
+  "populate[content][on][content.image][populate]": "image",
+  "populate[seo][populate]": "ogImage",
+};
+
+export async function getInstitutionalPage(locale: Locale, slug: string) {
+  const path = STRAPI_COLLECTION_PATHS.pages;
+  const raw = await fetchBySlug<unknown>(path, locale, slug, { ...PAGE_POPULATE, status: "published" });
+  const page = mapInstitutionalPage(raw);
+  if (!page) throw new StrapiApiError("Not found", 404, path);
+  return page;
+}
+
+export async function getEditorialPreview(
+  collection: "pages" | "banners",
+  documentId: string,
+  locale: Locale,
+  status: "draft" | "published",
+) {
+  if (!process.env.STRAPI_API_TOKEN?.trim()) throw new Error("STRAPI_API_TOKEN is required for previews");
+  const { data } = await strapiGet<StrapiEntityResponse<unknown>>(
+    `${STRAPI_COLLECTION_PATHS[collection]}/${encodeURIComponent(documentId)}`,
+    { locale, cache: "no-store", extra: { ...(collection === "pages" ? PAGE_POPULATE : populateExtra(["image", "mobile_image"])), status } },
+  );
+  return data;
+}
+
+export async function getBanners(locale: Locale, placement: BannerPlacement): Promise<SiteBanner[]> {
+  const banners: SiteBanner[] = [];
+  let pageCount = 1;
+  for (let page = 1; page <= pageCount; page++) {
+    const payload = await strapiGet<StrapiListResponse<unknown>>(STRAPI_COLLECTION_PATHS.banners, {
+      locale,
+      extra: {
+        ...populateExtra(["image", "mobile_image"]),
+        status: "published",
+        "filters[placement][$eq]": placement,
+        "sort[0]": "priority:desc",
+        "sort[1]": "publishedAt:desc",
+        "sort[2]": "id:desc",
+        "pagination[page]": String(page),
+      },
+    });
+    for (const row of payload.data) {
+      const banner = mapBanner(row);
+      if (banner?.published_at) banners.push(banner);
+    }
+    pageCount = payload.meta.pagination?.pageCount ?? 1;
+  }
+  const now = Date.now();
+  return banners.filter((banner) => isBannerActive(banner, now));
+}
+
 export function mapNews(raw: unknown): NewsArticle | null {
   if (!isRecord(raw)) return null;
   const title = asString(raw.title).trim();
@@ -197,6 +325,7 @@ export function mapNews(raw: unknown): NewsArticle | null {
   const categoryRaw = asString(raw.category);
   const image = toMediaAsset(newsCoverMedia(raw), title);
   const leadPoints = parseLeadPoints(raw.lead_points);
+  const seo = mapEditorialSeo(raw.seo);
   return {
     id: typeof raw.id === "number" ? raw.id : 0,
     title,
@@ -212,8 +341,8 @@ export function mapNews(raw: unknown): NewsArticle | null {
     external_url: "",
     is_featured: Boolean(raw.featured),
     published_at: published || new Date(0).toISOString(),
-    seo_title: asString(raw.seo_title),
-    seo_description: asString(raw.seo_description),
+    seo_title: seo.title || asString(raw.seo_title),
+    seo_description: seo.description || asString(raw.seo_description),
     ...(leadPoints.length ? { lead_points: leadPoints } : {}),
   };
 }
@@ -225,6 +354,8 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
   if (!title || !slug) return null;
   const fileMedia = unwrapMedia(raw.file);
   const fileUrl = fileMedia?.url ?? "";
+  const externalUrl = safeEditorialUrl(raw.external_url);
+  const seo = mapEditorialSeo(raw.seo);
   const categoryRaw = asString(raw.category);
   const published = asString(raw.publishedAt);
   return {
@@ -235,7 +366,7 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
     slug,
     file: fileUrl,
     file_url: fileUrl || null,
-    external_url: "",
+    external_url: externalUrl,
     description: asString(raw.description),
     category: isDocumentCategory(categoryRaw) ? categoryRaw : "biblioteca",
     is_featured: Boolean(raw.featured),
@@ -253,11 +384,11 @@ export function mapDocument(raw: unknown, locale: Locale = "es"): CmsDocument | 
     file_size_bytes: fileSizeBytes(raw.file),
     published_at: published,
     document_date: published || null,
-    seo_title: title,
-    seo_description: asString(raw.description),
+    seo_title: seo.title || title,
+    seo_description: seo.description || asString(raw.description),
     created_at: published,
     updated_at: published,
-    has_resource: Boolean(fileUrl),
+    has_resource: Boolean(fileUrl || externalUrl),
   };
 }
 
@@ -411,7 +542,7 @@ export async function getNewsBySlug(locale: Locale, slug: string): Promise<NewsA
     STRAPI_COLLECTION_PATHS.news,
     locale,
     slug,
-    newsDetailPopulateExtra(),
+    { ...newsDetailPopulateExtra(), "populate[seo][populate]": "ogImage" },
   );
   const mapped = mapNews(raw);
   if (!mapped) throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.news);
@@ -422,6 +553,7 @@ export async function getDocuments(locale: Locale, options?: EditorialListOption
   const extra = withListFilters(
     {
       ...populateExtra(["file", "cover"]),
+      "populate[seo][populate]": "ogImage",
       "sort[0]": "order:asc",
       "sort[1]": "title:asc",
     },

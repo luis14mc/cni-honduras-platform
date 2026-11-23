@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { StrapiApiError } from "@/src/lib/strapi/client";
 import {
+  getBanners,
+  getInstitutionalPage,
+  isBannerActive,
+  mapBanner,
+  mapInstitutionalPage,
   getNews,
   getNewsBySlug,
   getDocuments,
@@ -397,5 +402,69 @@ describe("editorial fetch", () => {
     const opp = await getOpportunityBySlug("es", "opp");
     expect(JSON.stringify(opp)).not.toContain("secret");
     expect(JSON.stringify(opp)).not.toContain("internal_notes");
+  });
+});
+
+
+describe("CNI editorial content", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  const bannerRaw = {
+    id: 42,
+    title: "Aviso",
+    placement: "site_top",
+    publishedAt: "2026-11-23T00:00:00Z",
+    starts_at: "2026-11-23T12:00:00Z",
+    ends_at: "2026-11-24T12:00:00Z",
+    priority: 5,
+    image: { url: "https://cdn.example/banner.webp" },
+  };
+
+  it("preserves optional dates and image metadata and rejects unsafe CTA URLs", () => {
+    const banner = mapBanner({ ...bannerRaw, link_url: "/\\external.test", link_external: true })!;
+    expect(banner.link_url).toBe("");
+    expect(banner.image?.file_url).toBe("https://cdn.example/banner.webp");
+    expect(isBannerActive(banner, Date.parse(bannerRaw.starts_at))).toBe(true);
+    expect(isBannerActive(banner, Date.parse(bannerRaw.ends_at) + 1)).toBe(false);
+    expect(mapBanner({ ...bannerRaw, placement: "unsupported" })).toBeNull();
+  });
+
+  it("reads published banners in the requested locale and follows pagination", async () => {
+    vi.stubEnv("STRAPI_URL", "https://cms.example");
+    const active = { ...bannerRaw, starts_at: null, ends_at: null };
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(Response.json({ data: [active, { ...bannerRaw, publishedAt: null }], meta: { pagination: { pageCount: 2 } } }))
+      .mockResolvedValueOnce(Response.json({ data: [{ ...active, id: 43, starts_at: "2999-01-01T00:00:00Z" }], meta: { pagination: { pageCount: 2 } } }));
+    vi.stubGlobal("fetch", fetch);
+
+    expect((await getBanners("en", "site_top")).map(({ id }) => id)).toEqual([42]);
+    const query = new URL(fetch.mock.calls[1][0]).searchParams;
+    expect(query.get("status")).toBe("published");
+    expect(query.get("locale")).toBe("en");
+    expect(query.get("pagination[page]")).toBe("2");
+  });
+
+  it("maps a page dynamic zone and its shared SEO overrides", () => {
+    const raw = { ...newsRaw, seo: { metaTitle: "Editorial SEO", noindex: true, canonical: "/institucional/acerca" } };
+    expect(mapInstitutionalPage(raw)).toMatchObject({
+      content: [
+        { type: "paragraph", children: [{ text: "Hola Honduras" }] },
+        { type: "heading", level: 2 },
+      ],
+      seo: { title: "Editorial SEO", noindex: true, canonical: "/institucional/acerca" },
+    });
+    expect(mapNews(raw)?.seo_title).toBe("Editorial SEO");
+  });
+
+  it("distinguishes a missing page from an upstream error", async () => {
+    vi.stubEnv("STRAPI_URL", "https://cms.example");
+    vi.stubGlobal("fetch", vi.fn()
+      .mockResolvedValueOnce(Response.json({ data: [], meta: {} }))
+      .mockResolvedValueOnce(new Response(null, { status: 503 })));
+    await expect(getInstitutionalPage("es", "acerca")).rejects.toMatchObject({ status: 404 });
+    await expect(getInstitutionalPage("es", "acerca")).rejects.toMatchObject({ status: 503 });
   });
 });
