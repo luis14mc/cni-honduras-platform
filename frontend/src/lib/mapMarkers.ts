@@ -110,7 +110,7 @@ function municipalityByGeocode(
   return municipalities.find((feature) => (feature.properties.code || "") === geocode) ?? null;
 }
 
-export function assignSeedDepartments(
+export function assignMapDepartments(
   items: MapInvestmentProject[],
   departments: DepartmentFeature[],
 ): MapInvestmentProject[] {
@@ -138,7 +138,7 @@ export function assignSeedDepartments(
   });
 }
 
-export function assignSeedMunicipalities(
+export function assignMapMunicipalities(
   items: MapInvestmentProject[],
   municipalities: MunicipalityFeature[],
 ): MapInvestmentProject[] {

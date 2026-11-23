@@ -1,9 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import type { Locale } from "@/src/i18n/config";
-import { withLocale } from "@/src/i18n/path";
 import type { InvestmentMapCopy } from "@/src/i18n/copy/investmentMap";
 import type {
   DepartmentProperties,
@@ -16,14 +13,10 @@ import type {
   RoadCorridorFeature,
   TerritorialRegionFeature,
 } from "@/src/lib/types/investment-map";
-import {
-  formatMapInvestment,
-  formatMapJobs,
-  localizeInfrastructure,
-} from "@/src/lib/types/investment-map";
+import { localizeInfrastructure } from "@/src/lib/types/investment-map";
 
-const PROJECT_COLOR = "#32B372";
-const OPPORTUNITY_COLOR = "#F7BF06";
+import { DetailRow, ProjectPopup } from "./ProjectPopup";
+import { MapResultsList } from "./MapResultsList";
 
 type Props = {
   locale: Locale;
@@ -139,39 +132,8 @@ export function InvestmentMapPanel({
   }
 
   if (project) {
-    const isOpportunity = (project.kind ?? "project") === "opportunity";
-    const sheetHref = withLocale(
-      locale,
-      isOpportunity ? `/portafolio/oportunidades/${project.slug}` : `/portafolio/fichas-proyectos/${project.slug}`,
-    );
-    return (
-      <aside className="flex max-h-[min(70vh,600px)] flex-col overflow-y-auto rounded-[1.5rem] border border-white/10 bg-[#24436B] p-5 text-white shadow-xl sm:p-6 lg:max-h-[600px]" aria-live="polite" aria-label={`${isOpportunity ? copy.selectedOpportunity : copy.selectedProject}: ${project.title}`}>
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-[#8DC046]">{isOpportunity ? copy.selectedOpportunity : copy.selectedProject}</p>
-            <h2 className="mt-2 text-2xl font-extrabold tracking-tight">{project.title}</h2>
-            {project.code ? <p className="mt-1 text-xs font-semibold text-[#d5e3ff]/75">{project.code}</p> : null}
-          </div>
-          <button type="button" onClick={onClearProject} className="rounded-lg border border-white/20 px-3 py-2 text-xs font-bold transition hover:border-[#8DC046] hover:text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]">
-            {copy.backToList}
-          </button>
-        </div>
-        <dl className="mt-7 space-y-3 text-sm">
-          <DetailRow label={copy.activeSectors} value={project.sector.name} />
-          <DetailRow label={copy.selectedDepartment} value={project.department?.name ?? department?.name ?? "—"} />
-          <DetailRow label={copy.selectedMunicipality} value={project.municipality?.name ?? municipality?.name ?? "—"} />
-          <DetailRow label={copy.stageLabel} value={copy.stage[project.stage] ?? project.stage} />
-          <DetailRow label={copy.investment} value={project.amountText || formatMapInvestment(project.investment_amount, locale)} />
-          <DetailRow label={copy.jobs} value={formatMapJobs(project.estimated_jobs, locale)} />
-        </dl>
-        <Link
-          href={sheetHref}
-          className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#F7BF06] px-4 py-2 text-sm font-bold text-[#001a33] transition hover:bg-[#ffe08a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]"
-        >
-          {copy.viewFullSheet}
-        </Link>
-      </aside>
-    );
+    return <ProjectPopup locale={locale} copy={copy} project={project} department={department}
+      municipality={municipality} onClearProject={onClearProject} />;
   }
 
   const hasActivity = Boolean(summary && summary.projects_count + summary.opportunities_count > 0);
@@ -243,6 +205,7 @@ export function InvestmentMapPanel({
               ["all", copy.tabAll],
               ["project", copy.tabProjects],
               ["opportunity", copy.tabOpportunities],
+              ["case", copy.tabCases],
             ] as const).map(([value, label]) => (
               <button
                 key={value}
@@ -262,7 +225,7 @@ export function InvestmentMapPanel({
         {!municipalitiesLoading && !municipalitiesError && municipalitiesEmpty ? (
           <p className="mt-3 shrink-0 text-xs text-[#d5e3ff]/65">{copy.noMunicipalities}</p>
         ) : null}
-        <ProjectList
+        <MapResultsList
           locale={locale}
           copy={copy}
           projects={projects}
@@ -277,87 +240,6 @@ export function InvestmentMapPanel({
   );
 }
 
-function ProjectList({
-  locale,
-  copy,
-  projects,
-  loading,
-  error,
-  emptyMessage,
-  onSelectProject,
-  onHoverProject,
-}: {
-  locale: Locale;
-  copy: InvestmentMapCopy;
-  projects: MapInvestmentProject[];
-  loading: boolean;
-  error: boolean;
-  emptyMessage: string;
-  onSelectProject: (project: MapInvestmentProject) => void;
-  onHoverProject: (id: number | null) => void;
-}) {
-  return (
-    <div className="mt-4 min-h-0 flex-1 overflow-y-auto pr-1">
-      {loading ? <p className="text-sm text-[#d5e3ff]/70">{copy.loadingProjects}</p> : null}
-      {error ? <p role="alert" className="rounded-lg border border-red-200/20 bg-red-950/25 p-3 text-sm text-red-100">{copy.projectsError}</p> : null}
-      {!loading && !error && projects.length === 0 ? (
-        <p className="text-sm text-[#d5e3ff]/70">{emptyMessage}</p>
-      ) : null}
-      <ul className="space-y-2">
-        {projects.map((item) => {
-          const kind = item.kind ?? "project";
-          const amount = item.amountText || formatMapInvestment(item.investment_amount, locale);
-          return (
-            <li key={item.id}>
-              <button
-                type="button"
-                onClick={() => onSelectProject(item)}
-                onMouseEnter={() => onHoverProject(item.id)}
-                onMouseLeave={() => onHoverProject(null)}
-                onFocus={() => onHoverProject(item.id)}
-                onBlur={() => onHoverProject(null)}
-                className="flex min-h-11 w-full gap-3 rounded-xl border border-white/10 bg-[#252A58]/55 p-3 text-left transition hover:border-[#F7BF06]/60 hover:bg-[#252A58]/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06]"
-              >
-                <SheetThumb item={item} />
-                <span className="min-w-0 flex-1">
-                  <span className="block font-bold leading-snug">{item.title}</span>
-                  {item.code ? <span className="mt-0.5 block text-[11px] font-semibold uppercase tracking-wide text-[#d5e3ff]/70">{item.code}</span> : null}
-                  <span className="mt-1 block text-xs text-[#d5e3ff]/75">
-                    {item.sector.name}
-                    {amount ? ` · ${amount}` : ""}
-                    {item.municipality?.name || item.locationText ? ` · ${item.municipality?.name || item.locationText}` : ""}
-                  </span>
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="mt-1 h-3 w-3 shrink-0 rounded-full border border-white"
-                  style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
-                />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function SheetThumb({ item }: { item: MapInvestmentProject }) {
-  const kind = item.kind ?? "project";
-  return (
-    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#001a33]">
-      {item.coverImageUrl ? (
-        <Image src={item.coverImageUrl} alt="" width={48} height={48} className="h-12 w-12 object-cover" />
-      ) : (
-        <span
-          className="block h-full w-full"
-          style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
-        />
-      )}
-    </span>
-  );
-}
-
 function getSafeSourceUrl(value: string): string | null {
   try {
     const url = new URL(value);
@@ -369,13 +251,4 @@ function getSafeSourceUrl(value: string): string | null {
 
 function PanelHint({ label, value, wide = false }: { label: string; value: string; wide?: boolean }) {
   return <div className={`rounded-xl border border-white/10 bg-[#252A58]/60 p-3 ${wide ? "col-span-2" : ""}`}><dt className="font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#b6c2d3]">{label}</dt><dd className="mt-1 text-lg font-extrabold">{value}</dd></div>;
-}
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-[#252A58]/55 px-4 py-3">
-      <dt className="font-headline text-[10px] font-bold uppercase tracking-[0.14em] text-[#b6c2d3]">{label}</dt>
-      <dd className="mt-1 font-semibold text-[#f4f7ff]">{value}</dd>
-    </div>
-  );
 }

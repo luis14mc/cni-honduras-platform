@@ -111,6 +111,7 @@ export type InvestmentMapCopy = {
   osmAttribution: string;
   listTitle: string;
   tabAll: string;
+  tabCases: string;
   tabProjects: string;
   tabOpportunities: string;
   honduras: string;
@@ -162,7 +163,7 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     noGeolocatedProjectsDepartment: "No hay proyectos georreferenciados en este departamento.",
     noGeolocatedProjectsMunicipality: "No hay proyectos georreferenciados para este municipio.",
     noSummary: "No hay indicadores disponibles para este departamento.",
-    stage: { promotion: "Promoción", announced: "Anunciado", startup: "Arranque", implementing: "Implementando", stalled: "En pausa", finished: "Finalizado", cancelled: "Cancelado" },
+    stage: { open: "Abierta", in_progress: "En proceso", closed: "Cerrada", promotion: "Promoción", announced: "Anunciado", startup: "Arranque", implementing: "Implementando", stalled: "En pausa", finished: "Finalizado", cancelled: "Cancelado" },
     withActivity: "Con actividad",
     noPublicData: "Sin datos públicos",
     selected: "Seleccionado",
@@ -242,6 +243,7 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     osmAttribution: "© colaboradores de OpenStreetMap",
     listTitle: "Proyectos y oportunidades en el mapa",
     tabAll: "Todos",
+    tabCases: "Casos de éxito",
     tabProjects: "Proyectos",
     tabOpportunities: "Oportunidades",
     honduras: "Honduras",
@@ -291,7 +293,7 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     noGeolocatedProjectsDepartment: "No georeferenced projects in this department.",
     noGeolocatedProjectsMunicipality: "No georeferenced projects for this municipality.",
     noSummary: "No indicators are available for this department.",
-    stage: { promotion: "Promotion", announced: "Announced", startup: "Start-up", implementing: "Implementing", stalled: "On hold", finished: "Finished", cancelled: "Cancelled" },
+    stage: { open: "Open", in_progress: "In progress", closed: "Closed", promotion: "Promotion", announced: "Announced", startup: "Start-up", implementing: "Implementing", stalled: "On hold", finished: "Finished", cancelled: "Cancelled" },
     withActivity: "With activity",
     noPublicData: "No public data",
     selected: "Selected",
@@ -371,6 +373,7 @@ export const investmentMapCopy: Record<Locale, InvestmentMapCopy> = {
     osmAttribution: "© OpenStreetMap contributors",
     listTitle: "Projects and opportunities on the map",
     tabAll: "All",
+    tabCases: "Success stories",
     tabProjects: "Projects",
     tabOpportunities: "Opportunities",
     honduras: "Honduras",

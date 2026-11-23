@@ -1,6 +1,8 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
+from .map_api import InvestmentMapItemsViewSet
+
 from .viewsets import (
     InvestmentOpportunityViewSet,
     InvestmentProjectViewSet,
@@ -17,4 +19,5 @@ router.register(r"success-stories", SuccessStoryViewSet, basename="investment-su
 
 urlpatterns = router.urls + [
     path("map-summary/", MapSummaryAPIView.as_view(), name="investment-map-summary"),
+    path("map-items/", InvestmentMapItemsViewSet.as_view({"get": "list"}), name="investment-map-items"),
 ]

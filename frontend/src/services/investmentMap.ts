@@ -1,6 +1,6 @@
 import { apiGet } from "@/src/lib/api";
 import {
-  getGeolocatedMapProjects,
+  getInvestmentMapItems,
   getMapSummary,
   getSectors,
 } from "@/src/services/investment";
@@ -41,7 +41,7 @@ export function getRoadCorridorsGeoJson(locale: "es" | "en"): Promise<RoadCorrid
   return apiGet<RoadCorridorFeatureCollection>(`/geo/roads/geojson/?${params.toString()}`);
 }
 
-export { getGeolocatedMapProjects, getMapSummary, getSectors };
+export { getInvestmentMapItems, getMapSummary, getSectors };
 export type {
   DepartmentFeatureCollection,
   MapDepartmentSummary,

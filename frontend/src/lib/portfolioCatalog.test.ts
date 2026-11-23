@@ -10,10 +10,8 @@ import {
   formatUsdMillions,
   getSeedBySlug,
   getSeedCatalog,
-  getSeedMapProjects,
   groupPortfolioItemsBySector,
   matchDocumentByCode,
-  mergeMapProjects,
   parsePortfolioFilters,
   parseUnifiedFilters,
   mergeCatalogSources,
@@ -157,20 +155,6 @@ describe("portfolio seed fallback", () => {
     expect(missing).toBeNull();
   });
 
-  it("provides seed points with lat/lng for the map fallback", () => {
-    const points = getSeedMapProjects();
-    expect(points.length).toBeGreaterThanOrEqual(40);
-    const allHaveCoords = points.every((p) => p.latitude !== null && p.longitude !== null);
-    expect(allHaveCoords).toBe(true);
-    const district = points.find((p) => p.slug === "distrito-palmerola");
-    expect(district).toBeDefined();
-    expect(district?.sector.slug).toBe("infraestructura");
-    expect(district?.kind).toBe("project");
-    expect(district?.municipio_geocode).toBe("030100");
-    const opportunity = points.find((p) => p.slug === "complejo-ecoturistico-el-cajon");
-    expect(opportunity?.kind).toBe("opportunity");
-    expect(opportunity?.coverImageUrl).toContain("T002-scaled.png");
-  });
 });
 
 describe("mergeCatalogSources", () => {
@@ -259,19 +243,6 @@ describe("mergeCatalogSources", () => {
     expect(merged.data.find((row) => row.slug === extra.slug)?.title).toBe(extra.title);
   });
 
-  it("merges map GeoJSON with seed and drops demo slugs", () => {
-    const seedPoints = getSeedMapProjects();
-    const demoPoint = {
-      ...seedPoints[0],
-      id: 1,
-      slug: "planta-procesamiento-palma-africana",
-      title: "Planta de procesamiento de palma africana",
-    };
-    const merged = mergeMapProjects([demoPoint], seedPoints);
-    expect(merged.some((row) => row.slug === "planta-procesamiento-palma-africana")).toBe(false);
-    expect(merged.some((row) => row.slug === "distrito-palmerola")).toBe(true);
-    expect(merged.length).toBe(seedPoints.length);
-  });
 });
 
 describe("unified portfolio filters (tipo / sector / fase / q / orden)", () => {

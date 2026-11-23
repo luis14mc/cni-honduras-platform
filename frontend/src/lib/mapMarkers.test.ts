@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assignSeedDepartments, groupMarkersByPosition } from "@/src/lib/mapMarkers";
-import { getSeedMapProjects } from "@/src/lib/portfolioCatalog";
+import { assignMapDepartments, groupMarkersByPosition } from "@/src/lib/mapMarkers";
 import {
   filterMapProjectsByDepartment,
   findMapItemByQuery,
@@ -63,10 +62,17 @@ function point(partial: Partial<MapInvestmentProject> & { slug: string; latitude
   };
 }
 
-describe("assignSeedDepartments", () => {
+const catalog = [
+  point({ slug: "bahia-de-tela", latitude: 15.77, longitude: -87.48 }),
+  point({ slug: "centro-de-convenciones-zona-sur", latitude: 13.3, longitude: -87.19 }),
+  point({ slug: "sky-legacy-tower", latitude: 16.35, longitude: -86.5 }),
+  point({ slug: "distrito-palmerola", latitude: 15.01, longitude: -87.92 }),
+  point({ slug: "complejo-ecoturistico-el-cajon", latitude: 15.04, longitude: -87.76, kind: "opportunity" }),
+];
+
+describe("assignMapDepartments", () => {
   it("assigns Tela to Atlántida, Choluteca to Choluteca, and Roatán to Islas de la Bahía", () => {
-    const seed = getSeedMapProjects();
-    const assigned = assignSeedDepartments(seed, TEST_DEPARTMENTS);
+    const assigned = assignMapDepartments(catalog, TEST_DEPARTMENTS);
     expect(assigned.find((item) => item.slug.includes("bahia-de-tela"))?.department).toMatchObject({
       slug: "atlantida",
       name: "Atlántida",
@@ -87,7 +93,7 @@ describe("assignSeedDepartments", () => {
       latitude: 16.48,
       longitude: -85.7,
     });
-    const [assigned] = assignSeedDepartments([offshore], TEST_DEPARTMENTS);
+    const [assigned] = assignMapDepartments([offshore], TEST_DEPARTMENTS);
     expect(assigned.department?.slug).toBe("islas-de-la-bahia");
   });
 });
@@ -115,27 +121,26 @@ describe("groupMarkersByPosition", () => {
   });
 });
 
-describe("department filter on the merged catalog", () => {
+describe("department filter on the catalog", () => {
   it("keeps only sheets whose assigned department slug matches", () => {
-    const merged = assignSeedDepartments(getSeedMapProjects(), TEST_DEPARTMENTS);
-    const cortes = filterMapProjectsByDepartment(merged, "cortes");
-    const choluteca = filterMapProjectsByDepartment(merged, "choluteca");
+    const items = assignMapDepartments(catalog, TEST_DEPARTMENTS);
+    const cortes = filterMapProjectsByDepartment(items, "cortes");
+    const choluteca = filterMapProjectsByDepartment(items, "choluteca");
     expect(cortes.every((item) => item.department?.slug === "cortes")).toBe(true);
     expect(cortes.some((item) => item.slug.includes("tela"))).toBe(false);
     expect(choluteca.length).toBeGreaterThan(0);
     expect(choluteca.every((item) => item.department?.slug === "choluteca")).toBe(true);
-    expect(filterMapProjectsByDepartment(merged, "olancho")).toEqual([]);
+    expect(filterMapProjectsByDepartment(items, "olancho")).toEqual([]);
   });
 });
 
 describe("map deep links", () => {
-  it("parses ?opportunity= and finds the matching sheet in the merged set", () => {
+  it("parses ?opportunity= and finds the matching sheet in the catalog", () => {
     expect(parseMapQueryState({ opportunity: "complejo-ecoturistico-el-cajon" })).toMatchObject({
       opportunity: "complejo-ecoturistico-el-cajon",
       project: null,
     });
-    const seed = getSeedMapProjects();
-    const found = findMapItemByQuery(seed, { opportunity: "complejo-ecoturistico-el-cajon" });
+    const found = findMapItemByQuery(catalog, { opportunity: "complejo-ecoturistico-el-cajon" });
     expect(found?.slug).toBe("complejo-ecoturistico-el-cajon");
     expect(found?.kind).toBe("opportunity");
   });

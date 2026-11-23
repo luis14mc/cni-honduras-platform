@@ -175,13 +175,13 @@ export type MunicipalityFeatureCollection = {
 // Map projects — GET /api/v1/investment/projects/?has_location=true
 // ---------------------------------------------------------------------------
 
-export type MapItemKind = "project" | "opportunity";
+export type MapItemKind = "project" | "opportunity" | "case";
 
 export type MapInvestmentProject = {
   id: number;
   title: string;
   slug: string;
-  sector: MapSector;
+  sector: MapSector | null;
   department: MapDepartmentCenter | null;
   municipality: {
     id: number;
@@ -316,6 +316,11 @@ export type MapQueryState = {
   regionLevel: TerritorialRegionLevel | null;
   /** Region `code` (R-01, M-03, copan…), only meaningful together with `regionLevel`. */
   region: string | null;
+  kind?: MapItemKind | null;
+  stage?: string | null;
+  minInvestment?: string | null;
+  maxInvestment?: string | null;
+  case?: string | null;
 };
 
 export type MapSearchResult =
@@ -351,7 +356,7 @@ export function searchInvestmentMap(
   const candidates: MapSearchResult[] = [
     ...departments.map((department) => ({ type: "department" as const, id: `department-${department.slug}`, label: department.name, department })),
     ...municipalities.map((municipality) => ({ type: "municipality" as const, id: `municipality-${municipality.slug}`, label: municipality.name, municipality })),
-    ...projects.map((project) => ({ type: "project" as const, id: `project-${project.slug}`, label: project.title, project })),
+    ...projects.map((project) => ({ type: "project" as const, id: `${project.kind ?? "project"}-${project.slug}`, label: project.title, project })),
   ];
   const groupOrder = { department: 0, municipality: 1, project: 2 } as const;
   return candidates
@@ -362,6 +367,8 @@ export function searchInvestmentMap(
     .map(({ result }) => result);
 }
 
+export const MAP_INVESTMENT_AMOUNT = /^\d{1,16}(?:\.\d{1,2})?$/;
+
 export function parseMapQueryState(input: Record<string, string | string[] | undefined>): MapQueryState {
   const read = (key: keyof MapQueryState, pattern = QUERY_SLUG) => {
     const value = input[key];
@@ -370,6 +377,12 @@ export function parseMapQueryState(input: Record<string, string | string[] | und
   const levelValue = read("regionLevel");
   const regionLevel = TERRITORIAL_REGION_LEVELS.find((level) => level === levelValue) ?? null;
   const region = regionLevel ? read("region", QUERY_REGION_CODE) : null;
+  const kindValue = read("kind");
+  const kind = kindValue === "project" || kindValue === "opportunity" || kindValue === "case" ? kindValue : null;
+  const stage = read("stage", /^[a-z][a-z_]{0,31}$/);
+  const minInvestment = read("minInvestment", MAP_INVESTMENT_AMOUNT);
+  const maxInvestment = read("maxInvestment", MAP_INVESTMENT_AMOUNT);
+  const story = read("case");
   return {
     sector: read("sector"),
     department: region ? null : read("department"),
@@ -378,6 +391,11 @@ export function parseMapQueryState(input: Record<string, string | string[] | und
     opportunity: read("opportunity"),
     regionLevel,
     region,
+    ...(kind ? { kind } : {}),
+    ...(stage ? { stage } : {}),
+    ...(minInvestment ? { minInvestment } : {}),
+    ...(maxInvestment ? { maxInvestment } : {}),
+    ...(story ? { case: story } : {}),
   };
 }
 
@@ -614,7 +632,7 @@ export function filterMapProjectsBySector(
   sectorSlug: string | null,
 ): MapInvestmentProject[] {
   if (!sectorSlug) return projects;
-  return projects.filter((project) => project.sector.slug === sectorSlug);
+  return projects.filter((project) => project.sector?.slug === sectorSlug);
 }
 
 export function filterMapProjectsByRegion(

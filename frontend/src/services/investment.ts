@@ -79,26 +79,8 @@ export function getProjectsByDepartment(
   return apiGetList<InvestmentProject>(`${BASE}/projects/?${params.toString()}`);
 }
 
-export function getGeolocatedMapProjects(options: {
-  departmentSlug?: string;
-  municipalitySlug?: string;
-  sectorSlug?: string;
-  locale?: Locale;
-}): Promise<import("@/src/lib/types/investment-map").MapInvestmentProject[]> {
-  const params = new URLSearchParams({ has_location: "true" });
-  if (options.departmentSlug) {
-    params.set("department", options.departmentSlug);
-  }
-  if (options.municipalitySlug) {
-    params.set("municipality", options.municipalitySlug);
-  }
-  if (options.sectorSlug) {
-    params.set("sector", options.sectorSlug);
-  }
-  return apiGet<import("@/src/lib/types/investment-map").MapInvestmentProject[]>(
-    `${BASE}/projects/?${params.toString()}`,
-    { locale: options.locale },
-  );
+export function getInvestmentMapItems(locale: Locale): Promise<import("@/src/lib/types/investment-map").MapInvestmentProject[]> {
+  return apiGet(`${BASE}/map-items/`, { locale });
 }
 
 export function getMapSummary(
