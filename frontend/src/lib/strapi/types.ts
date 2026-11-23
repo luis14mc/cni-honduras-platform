@@ -125,6 +125,8 @@ export interface StrapiInvestmentOpportunity {
 }
 
 export const STRAPI_COLLECTION_PATHS = {
+  banners: "/api/banners",
+  pages: "/api/pages",
   news: "/api/news",
   documents: "/api/documents",
   successStories: "/api/success-stories",

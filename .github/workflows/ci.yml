@@ -200,12 +200,18 @@ jobs:
             echo "GET /_health expected 204, got ${probe_health}"
             exit 1
           fi
-          for collection in news documents success-stories investment-opportunities; do
+          for collection in news documents success-stories investment-opportunities banners pages resource-categories; do
             code=$(curl -sS -o /tmp/strapi-list.json -w "%{http_code}" \
               "http://127.0.0.1:1337/api/${collection}?locale=es")
             if [ "$code" != "200" ]; then
               echo "GET /api/${collection}?locale=es expected 200, got ${code}"
               cat /tmp/strapi-list.json || true
+              exit 1
+            fi
+            draft_code=$(curl -sS -o /dev/null -w "%{http_code}" \
+              "http://127.0.0.1:1337/api/${collection}?locale=en&status=draft")
+            if [ "$draft_code" != "403" ]; then
+              echo "GET /api/${collection}?status=draft expected 403, got ${draft_code}"
               exit 1
             fi
           done
