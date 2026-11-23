@@ -1,4 +1,4 @@
-/** Imágenes extraídas de temp-design/ (Stitch mockups). */
+/** Assets exported from the Stitch design prototypes. */
 export const designImages = {
   home: {
     heroCoast:

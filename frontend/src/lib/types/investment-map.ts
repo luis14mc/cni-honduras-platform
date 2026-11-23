@@ -2,7 +2,7 @@
  * Tipos del mapa interactivo de inversión (API v1 geo + investment).
  */
 
-/** @deprecated Legacy mock map nodes — used by DynamicLeafletMap / mapActions */
+/** @deprecated Legacy mock map nodes */
 export interface InvestmentNode {
   id: number;
   slug: string;
