@@ -77,15 +77,20 @@ export function MapResultsList({
 function SheetThumb({ item }: { item: MapInvestmentProject }) {
   const kind = item.kind ?? "project";
   return (
-    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-[#001a33]">
+    <span
+      className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg"
+      style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
+    >
       {item.coverImageUrl ? (
-        <Image src={item.coverImageUrl} alt="" width={48} height={48} className="h-12 w-12 object-cover" />
-      ) : (
-        <span
-          className="block h-full w-full"
-          style={{ backgroundColor: kind === "opportunity" ? OPPORTUNITY_COLOR : PROJECT_COLOR }}
+        <Image
+          src={item.coverImageUrl}
+          alt=""
+          width={48}
+          height={48}
+          className="h-12 w-12 object-cover"
+          onError={(event) => { event.currentTarget.style.visibility = "hidden"; }}
         />
-      )}
+      ) : null}
     </span>
   );
 }

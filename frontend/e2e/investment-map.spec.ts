@@ -55,6 +55,7 @@ test("shares combined map filters and opens the remaining project by keyboard", 
   const results = page.locator("aside");
   await expect(results.getByRole("button", { name: /Proyecto turístico de Cortés/ })).toBeVisible();
   await expect(results.getByRole("button", { name: /Proyecto turístico de Atlántida|Proyecto energético de Cortés/ })).toHaveCount(0);
+  await page.locator("#investment-map-canvas").scrollIntoViewIfNeeded();
   const marker = page.locator(".leaflet-marker-icon[title='Proyecto turístico de Cortés']");
   await expect(marker).toBeVisible();
   await marker.focus();

@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useRef, useState } from "react";
 import { Anchor, Plane, Route, Search, X } from "lucide-react";
 import type { InfrastructureLayer, TerritorialRegionLevel } from "@/src/lib/types/investment-map";
 import { InvestmentMapPanel } from "@/src/components/map/InvestmentMapPanel";
@@ -21,6 +22,19 @@ const INFRASTRUCTURE_LAYER_OPTIONS: { layer: InfrastructureLayer; Icon: typeof P
 ];
 
 export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMapDashboard>[0]) {
+  const canvas = useRef<HTMLDivElement>(null);
+  const [canvasRequested, setCanvasRequested] = useState(false);
+  useEffect(() => {
+    if (!canvas.current) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      setCanvasRequested(true);
+    }, { rootMargin: "160px" });
+    observer.observe(canvas.current);
+    return () => observer.disconnect();
+  }, []);
+
   const {
     stage, setStage, minInvestment, setMinInvestment, maxInvestment, setMaxInvestment,
     copy,
@@ -164,11 +178,11 @@ export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMap
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px]">
-          <div id="investment-map-canvas" className="relative isolate z-0 min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
-            {geo.status === "loading" ? <MapLoading copy={copy.loadingMap} /> : null}
+          <div ref={canvas} id="investment-map-canvas" className="relative isolate z-0 min-h-[440px] overflow-hidden rounded-[1.5rem] border border-white/10 bg-white shadow-2xl sm:min-h-[600px]">
+            {geo.status === "loading" || !canvasRequested ? <MapLoading copy={copy.loadingMap} /> : null}
             {geo.status === "error" ? <MapMessage alert>{copy.mapError}</MapMessage> : null}
             {geo.status === "ready" && geo.data?.features.length === 0 ? <MapMessage>{copy.noGeometry}</MapMessage> : null}
-            {geo.data && geo.data.features.length > 0 ? (
+            {canvasRequested && geo.data && geo.data.features.length > 0 ? (
               <InvestmentMapLeaflet
                 data={geo.data}
                 summaries={summaries}
