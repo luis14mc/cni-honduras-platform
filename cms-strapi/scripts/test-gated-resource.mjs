@@ -9,9 +9,9 @@ async function call(path, { method = 'GET', token, body, status } = {}) {
     method,
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(body ? { 'Content-Type': 'application/json' } : {}),
+      ...(body && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
   });
   const payload = await response.json();
   if (status) assert.equal(response.status, status, path);
@@ -76,3 +76,29 @@ await call(`${contentManager}/${invalid.documentId}/actions/publish?locale=es`, 
 });
 await call(`/api/documents/${invalid.documentId}?locale=es`, { status: 404 });
 console.log('Scoped access, protection of the private key and rejection of public URLs passed.');
+
+if (process.env.STRAPI_TEST_PRIVATE_UPLOAD === '1') {
+  const upload = (content) => {
+    const form = new FormData();
+    form.set('file', new Blob([content], { type: 'application/pdf' }), 'guide.pdf');
+    return form;
+  };
+  const endpoint = `/content-manager/cni-private-upload/${draft.documentId}?locale=es`;
+  await call(endpoint, { method: 'POST', body: upload('%PDF-1.7'), status: 401 });
+  await call(endpoint, { method: 'POST', token: admin.token, body: upload('not a PDF'), status: 400 });
+  const { key: uploadedKey } = await call(endpoint, {
+    method: 'POST', token: admin.token, body: upload('%PDF-1.7\nFixture'),
+  });
+  assert.match(uploadedKey, new RegExp(`^documents/${draft.documentId}/es/[a-f0-9-]+\\.pdf$`));
+  await call(`${contentManager}/${draft.documentId}?locale=es`, {
+    method: 'PUT', token: admin.token, body: { gated_object_key: uploadedKey },
+  });
+  assert.equal((await call(path, { token: scoped.accessKey })).objectKey, key);
+  await call(`${contentManager}/${draft.documentId}/actions/publish?locale=es`, {
+    method: 'POST', token: admin.token, body: {},
+  });
+  assert.equal((await call(path, { token: scoped.accessKey })).objectKey, uploadedKey);
+  const { data: resource } = await call(`/api/documents/${draft.documentId}?locale=es&populate=file`);
+  assert(!JSON.stringify(resource).includes(uploadedKey));
+  console.log('Admin upload, draft replacement and private publication passed.');
+}

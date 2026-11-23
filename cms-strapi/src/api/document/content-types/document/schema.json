@@ -163,7 +163,8 @@
       }
     },
     "gated_object_key": {
-      "type": "string",
+      "type": "customField",
+      "customField": "global::private-resource-file",
       "private": true,
       "maxLength": 512,
       "pluginOptions": {
