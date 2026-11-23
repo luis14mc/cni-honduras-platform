@@ -1,6 +1,7 @@
+import { buildEditorialMetadata } from "@/src/lib/editorialSeo";
 import { ApiError } from "@/src/lib/api";
 import { designImages } from "@/src/lib/designAssets";
-import { buildDetailMetadata, buildMetadata } from "@/src/lib/seo";
+import { buildMetadata } from "@/src/lib/seo";
 import { PAGE_SEO } from "@/src/config/pageSeo";
 import { StrapiApiError } from "@/src/lib/strapi/client";
 import { getNewsBySlug } from "@/src/lib/strapi/editorial";
@@ -54,13 +55,15 @@ export async function buildNewsArticleMetadata(
     const description =
       article.seo_description?.trim() || article.summary?.trim() || article.title;
 
-    return buildDetailMetadata({
+    return await buildEditorialMetadata({
+      collection: "news",
       locale,
-      slugPath: `/prensa/${slug}`,
-      enMirrorPath: `/en/news/${slug}`,
+      slug,
       title,
       description,
-        image: article.featured_image?.file_url || article.featured_image?.file || null,
+      image: article.seo_image || article.featured_image?.file_url || article.featured_image?.file,
+      canonical: article.seo_canonical,
+      noindex: article.seo_noindex,
     });
   } catch (error) {
     if (

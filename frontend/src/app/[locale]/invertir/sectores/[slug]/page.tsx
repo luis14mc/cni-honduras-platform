@@ -9,6 +9,7 @@ import {
 } from "@/src/data/investmentSectors";
 import { SectorDetailView } from "@/src/components/cni/SectorDetailView";
 import { loadAsyncData } from "@/src/lib/asyncData";
+import { buildDetailMetadata } from "@/src/lib/seo";
 import type { InvestmentOpportunity, SuccessStory } from "@/src/types/investment";
 
 // These pages read live server-side data from Django/Strapi. Vercel was attempting
@@ -18,6 +19,22 @@ export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return SECTOR_SLUGS.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) notFound();
+  const sector = getSectorBySlug(locale, slug);
+  if (!sector) notFound();
+  return buildDetailMetadata({
+    locale,
+    slugPath: `/invertir/sectores/${slug}`,
+    enMirrorPath: `/en/invest/sectors/${slug}`,
+    title: sector.name,
+    description: sector.short,
+    image: sector.image,
+    type: "website",
+  });
 }
 
 export default async function SectorPage({

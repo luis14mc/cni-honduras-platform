@@ -163,6 +163,7 @@ export interface InvestmentProject {
 }
 
 export interface SuccessStory {
+  seo?: { title: string; description: string; image: string | null; canonical: string | null; noindex: boolean };
   id: number;
   title: string;
   slug: string;

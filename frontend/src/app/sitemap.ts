@@ -1,127 +1,69 @@
 import type { MetadataRoute } from "next";
-import { API_BASE_URL, unwrapPage } from "@/src/lib/api";
+import { PAGE_SEO } from "@/src/config/pageSeo";
+import { SECTOR_SLUGS } from "@/src/data/investmentSectors";
 import { getAllResourceCategorySlugs, resourceCategoryHref } from "@/src/data/resourceCategoryMeta";
-import { getNews, getResourceCategories, getSuccessStories } from "@/src/lib/strapi/editorial";
+import { editorialCollections, editorialIndex, editorialPath } from "@/src/lib/editorialSeo";
+import { alternateLanguages, siteUrl } from "@/src/lib/seo";
+import { getResourceCategories } from "@/src/lib/strapi/editorial";
 import { getOpportunities, getProjects } from "@/src/services/investment";
-import { resolveHref } from "@/src/config/siteNavigation";
 import type { Locale } from "@/src/i18n/config";
 
 const LOCALES = ["es", "en"] as const;
 
-async function fetchSlugs(path: string): Promise<string[]> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      next: { revalidate: 3600 },
-    });
-    if (!response.ok) return [];
-    const data = await response.json();
-    const items = unwrapPage<{ slug: string }>(data);
-    return items.map((item) => item.slug);
-  } catch {
-    return [];
-  }
-}
-
-// Noticias y casos de éxito los renderiza el sitio desde Strapi (capa editorial),
-// no desde Django. El sitemap debe leer de la MISMA fuente y por locale, porque
-// los slugs de Strapi están localizados (ES y EN pueden diferir). Si se leyera de
-// Django se publicarían URLs que las páginas (Strapi) devuelven como 404.
-async function fetchStrapiSlugs(
-  loader: (locale: Locale) => Promise<Array<{ slug: string }>>,
-  locale: Locale,
-): Promise<string[]> {
-  try {
-    const items = await loader(locale);
-    return items.map((item) => item.slug).filter(Boolean);
-  } catch {
-    return [];
-  }
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cni.hn";
-  const staticPaths = [
-    "/",
-    "/prensa",
-    "/recursos",
-    "/portafolio",
-    "/portafolio/casos",
-    "/portafolio/mapa",
-    "/invertir/sectores",
-  ];
-  const entries: MetadataRoute.Sitemap = [];
+  const entries = new Map<string, MetadataRoute.Sitemap[number]>();
 
-  for (const locale of LOCALES) {
-    for (const path of staticPaths) {
-      // URL pública canónica del idioma (p. ej. /prensa -> /en/news), no `/en` + ruta en español.
-      const localized = resolveHref(locale, path);
-      entries.push({
-        url: `${base}${localized}`,
-        changeFrequency: "weekly",
-        priority: path === "/" ? 1 : 0.7,
-      });
-    }
-  }
-
-  entries.push({ url: `${base}/postula-tu-proyecto`, changeFrequency: "monthly", priority: 0.8 });
-  entries.push({ url: `${base}/en/submit-your-project`, changeFrequency: "monthly", priority: 0.8 });
-
-  for (const locale of LOCALES) {
-    const categories = await getResourceCategories(locale).catch(() => []);
-    const paths = new Set(
-      [...getAllResourceCategorySlugs(), ...categories.map(({ slug }) => slug)]
-        .map((slug) => resourceCategoryHref(slug, locale)),
+  function add(paths: Partial<Record<Locale, string>>) {
+    const urls = Object.fromEntries(
+      Object.entries(paths).map(([locale, path]) => [locale, siteUrl(path)]),
     );
-    for (const path of paths) {
-      entries.push({ url: `${base}${path}`, changeFrequency: "monthly", priority: 0.6 });
+    for (const url of Object.values(urls)) {
+      entries.set(url, { url, alternates: { languages: alternateLanguages(urls) } });
     }
   }
 
-  // Noticias y casos: desde Strapi, por locale (fuente real de las páginas).
-  for (const locale of LOCALES) {
-    const newsPrefix = locale === "es" ? "/prensa" : "/en/news";
-    const casePrefix = locale === "es" ? "/portafolio/casos" : "/en/portfolio/success-stories";
+  for (const [key, seo] of Object.entries(PAGE_SEO)) {
+    if (["portafolio-oportunidades", "portafolio-fichas-proyectos", "vivir-calidad-de-vida"].includes(key)) continue;
+    add({ es: seo.canonical, en: seo.enMirror });
+  }
+  add({ es: "/postula-tu-proyecto", en: "/en/submit-your-project" });
 
-    const newsSlugs = await fetchStrapiSlugs(getNews, locale);
-    for (const slug of newsSlugs) {
-      entries.push({ url: `${base}${newsPrefix}/${slug}`, changeFrequency: "weekly", priority: 0.6 });
+  const [resourcesEs, resourcesEn, projects, opportunities] = await Promise.all([
+    getResourceCategories("es").catch(() => []),
+    getResourceCategories("en").catch(() => []),
+    getProjects({ locale: "es" }).catch(() => []),
+    getOpportunities({ locale: "es" }).catch(() => []),
+  ]);
+  const staticCategories = new Set(getAllResourceCategorySlugs());
+  const categoryEs = new Set(resourcesEs.map(({ slug }) => slug));
+  const categoryEn = new Set(resourcesEn.map(({ slug }) => slug));
+  for (const slug of new Set([...staticCategories, ...categoryEs, ...categoryEn])) {
+    const paths: Partial<Record<Locale, string>> = {};
+    if (staticCategories.has(slug) || categoryEs.has(slug)) paths.es = resourceCategoryHref(slug, "es");
+    if (staticCategories.has(slug) || categoryEn.has(slug)) paths.en = resourceCategoryHref(slug, "en");
+    add(paths);
+  }
+
+  await Promise.all(editorialCollections.map(async (collection) => {
+    const documents = new Map<string, Partial<Record<Locale, string>>>();
+    for (const locale of LOCALES) {
+      for (const entry of await editorialIndex(collection, locale)) {
+        const paths = documents.get(entry.documentId) ?? {};
+        paths[locale] = editorialPath(collection, locale, entry.slug);
+        documents.set(entry.documentId, paths);
+      }
     }
+    for (const paths of documents.values()) add(paths);
+  }));
 
-    const caseSlugs = await fetchStrapiSlugs(getSuccessStories, locale);
-    for (const slug of caseSlugs) {
-      entries.push({ url: `${base}${casePrefix}/${slug}`, changeFrequency: "monthly", priority: 0.6 });
-    }
+  for (const { slug } of projects) {
+    add({ es: `/portafolio/fichas-proyectos/${slug}`, en: `/en/portfolio/project-sheets/${slug}` });
   }
-
-  // Oportunidades: desde Django (fuente única; un registro bilingüe con el mismo slug).
-  let opportunitySlugs: string[] = [];
-  try {
-    opportunitySlugs = (await getOpportunities({ locale: "es" })).map((o) => o.slug).filter(Boolean);
-  } catch {
-    opportunitySlugs = [];
+  for (const { slug } of opportunities) {
+    add({ es: `/portafolio/oportunidades/${slug}`, en: `/en/portfolio/opportunities/${slug}` });
   }
-  for (const slug of opportunitySlugs) {
-    entries.push({ url: `${base}/portafolio/oportunidades/${slug}`, changeFrequency: "monthly", priority: 0.6 });
-    entries.push({ url: `${base}/en/portfolio/opportunities/${slug}`, changeFrequency: "monthly", priority: 0.6 });
+  for (const slug of SECTOR_SLUGS) {
+    add({ es: `/invertir/sectores/${slug}`, en: `/en/invest/sectors/${slug}` });
   }
-
-  let projectSlugs: string[] = [];
-  try {
-    projectSlugs = (await getProjects({ locale: "es" })).map((item) => item.slug).filter(Boolean);
-  } catch {
-    projectSlugs = [];
-  }
-  for (const slug of projectSlugs) {
-    entries.push({ url: `${base}/portafolio/fichas-proyectos/${slug}`, changeFrequency: "monthly", priority: 0.6 });
-    entries.push({ url: `${base}/en/portfolio/project-sheets/${slug}`, changeFrequency: "monthly", priority: 0.6 });
-  }
-
-  // Sectores: se mantienen desde Django (las páginas de sectores se alimentan de Django).
-  const sectorSlugs = await fetchSlugs("/investment/sectors/");
-  for (const slug of sectorSlugs) {
-    entries.push({ url: `${base}/invertir/sectores/${slug}`, changeFrequency: "monthly", priority: 0.7 });
-    entries.push({ url: `${base}/en/invest/sectors/${slug}`, changeFrequency: "monthly", priority: 0.7 });
-  }
-
-  return entries;
+  return [...entries.values()];
 }
