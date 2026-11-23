@@ -119,6 +119,9 @@ export interface InvestmentOpportunity {
   amount_notes?: string[];
   phase?: string;
   phase_detail?: string;
+  portfolio_pdf_url?: string;
+  macroregion_code?: string;
+  polo_slugs?: string[];
   investment_type?: string;
   location?: GeoJSON.Point | null;
   latitude?: number | null;
@@ -159,6 +162,8 @@ export interface InvestmentProject {
   amount_notes?: string[];
   phase?: string;
   phase_detail?: string;
+  macroregion_code?: string;
+  polo_slugs?: string[];
   investment_type?: string;
 }
 

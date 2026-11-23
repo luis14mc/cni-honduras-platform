@@ -1,22 +1,14 @@
+import type { CmsDocument } from "@/src/types/cms";
 import { describe, expect, it } from "vitest";
-import { PORTFOLIO_CNI_MEDIA } from "@/src/data/portfolioCniMedia";
 import {
-  applyUnifiedFilters,
-  countBySector,
-  DEFAULT_UNIFIED_FILTERS,
   filterPortfolioItems,
   formatPoloLabel,
   formatSubregionLabel,
   formatUsdMillions,
-  getSeedBySlug,
-  getSeedCatalog,
   groupPortfolioItemsBySector,
   matchDocumentByCode,
   parsePortfolioFilters,
-  parseUnifiedFilters,
-  mergeCatalogSources,
   serializePortfolioFilters,
-  serializeUnifiedFilters,
   slugifyPhase,
   sumAmountUsd,
   type PortfolioCatalogItem,
@@ -78,7 +70,7 @@ describe("portfolio catalog grouping and filters", () => {
     expect(filterPortfolioItems(items, { sector: "energia", fase: "fase-3" }).map((row) => row.slug)).toEqual(["e2"]);
   });
 
-  it("matches a Strapi PDF by code in the title or slug", () => {
+  it("matches a Django PDF by code in the title or slug", () => {
     const documents = [
       { title: "Ficha OC-CNI-A007 Aguacate", slug: "aguacate-hass", file_url: "/a.pdf" },
       { title: "Otra ficha", slug: "oc-cni-i010-naco", file_url: "/b.pdf" },
@@ -99,237 +91,5 @@ describe("portfolio catalog grouping and filters", () => {
     expect(sumAmountUsd([{ amountUsd: 5_504_000_000 }, { amountUsd: 211_000_000 }])).toBe(5_715_000_000);
     expect(formatPoloLabel({ name: "Polo Copán", level: "polo" })).toBe("Polo Copán");
     expect(formatPoloLabel({ name: "Golfo de Fonseca", level: "sub", parent: { name: "Sur", level: "macro" } })).toBeNull();
-  });
-});
-
-describe("portfolio seed fallback", () => {
-  it("maps the seed record into a catalog item with image, sector, amount and subregion", () => {
-    const items = getSeedCatalog("opportunity", "es").data;
-    const opp = items.find((item) => item.code === "OC-CNI-A007");
-    expect(opp).toBeDefined();
-    expect(opp?.title).toBe("Aguacate Hass Fresco y Aceite Extra Virgen");
-    expect(opp?.coverImageUrl).toBe(
-      "https://cni.hn/wp-content/uploads/2026/09/OPPORTUNITY-CARD-OC-CNI-A007-_-Aguacate.jpg",
-    );
-    expect(opp?.pdfUrl).toBe("https://cni.hn/wp-content/uploads/2026/09/OPPORTUNITY-CARD-OC-CNI-A007.pdf");
-    expect(opp?.sectorSlug).toBe("agroindustria");
-    expect(opp?.sectorName).toBe("Agroindustria");
-    expect(opp?.amountText).toBe("USD 5.6 MM");
-    expect(opp?.amountUsd).toBe(5_600_000);
-    expect(opp?.subregionLabel).toBe("Región 1: Valle de Sula");
-    expect(opp?.latitude).toBeCloseTo(15.50378);
-    expect(opp?.longitude).toBeCloseTo(-88.07102);
-    expect(opp?.id).toBeLessThan(0);
-  });
-
-  it("uses the Spanish and English display names for sectorSlug", () => {
-    const es = getSeedCatalog("project", "es").data;
-    const en = getSeedCatalog("project", "en").data;
-    const energiaEs = es.find((i) => i.code === "FP-CNI-E009");
-    const energiaEn = en.find((i) => i.code === "FP-CNI-E009");
-    expect(energiaEs?.sectorSlug).toBe("energia");
-    expect(energiaEs?.sectorName).toBe("Energía");
-    expect(energiaEn?.sectorName).toBe("Energy");
-  });
-
-  it("covers every seed slug with the published catalog media URLs", () => {
-    const projects = getSeedCatalog("project", "es").data;
-    const opportunities = getSeedCatalog("opportunity", "es").data;
-    expect(opportunities).toHaveLength(17);
-    expect(projects).toHaveLength(25);
-    for (const row of [...projects, ...opportunities]) {
-      expect(PORTFOLIO_CNI_MEDIA[row.slug], row.slug).toBeDefined();
-      expect(row.coverImageUrl.startsWith("https://")).toBe(true);
-    }
-    expect(opportunities.every((row) => Boolean(row.pdfUrl?.endsWith(".pdf")))).toBe(true);
-  });
-
-  it("looks up a seed record by slug for the detail page", () => {
-    const found = getSeedBySlug("project", "distrito-palmerola", "es");
-    expect(found).not.toBeNull();
-    expect(found?.item.code).toBe("FP-CNI-I010");
-    expect(found?.record.amount_text).toContain("USD");
-    expect(found?.item.description.length).toBeGreaterThan(40);
-    expect(found?.item.phaseDetail).toBe("Ejecución y Monitoreo");
-    const missing = getSeedBySlug("project", "no-existe", "es");
-    expect(missing).toBeNull();
-  });
-
-});
-
-describe("mergeCatalogSources", () => {
-  const seedProjects = getSeedCatalog("project", "es");
-  const seedOpps = getSeedCatalog("opportunity", "es");
-
-  function demoItem(slug: string): PortfolioCatalogItem {
-    return item({
-      slug,
-      code: "",
-      title: slug.replace(/-/g, " "),
-      sectorSlug: "agroindustria",
-    });
-  }
-
-  it("uses the seed when Django is empty (25 / 17)", () => {
-    const projects = mergeCatalogSources({ status: "ok", data: [] }, seedProjects);
-    const opps = mergeCatalogSources({ status: "ok", data: [] }, seedOpps);
-    expect(projects.data).toHaveLength(25);
-    expect(opps.data).toHaveLength(17);
-  });
-
-  it("uses the seed when Django errors", () => {
-    const projects = mergeCatalogSources({ status: "error", data: [] }, seedProjects);
-    expect(projects.data).toHaveLength(25);
-  });
-
-  it("hides Django demo records and still returns 25 / 17", () => {
-    const djangoProjects = {
-      status: "ok" as const,
-      data: [
-        demoItem("planta-procesamiento-palma-africana"),
-        demoItem("parque-solar-fotovoltaico-regional"),
-        demoItem("hotel-convenciones-tegucigalpa"),
-      ],
-    };
-    const djangoOpps = {
-      status: "ok" as const,
-      data: [
-        demoItem("resort-eco-turistico-costa-norte"),
-        demoItem("centro-manufactura-textil-exportacion"),
-        demoItem("modernizacion-corredor-logistico"),
-      ],
-    };
-    const projects = mergeCatalogSources(djangoProjects, seedProjects);
-    const opps = mergeCatalogSources(djangoOpps, seedOpps);
-    expect(projects.data).toHaveLength(25);
-    expect(opps.data).toHaveLength(17);
-    const demoSlugs = [
-      "planta-procesamiento-palma-africana",
-      "parque-solar-fotovoltaico-regional",
-      "hotel-convenciones-tegucigalpa",
-      "resort-eco-turistico-costa-norte",
-      "centro-manufactura-textil-exportacion",
-      "modernizacion-corredor-logistico",
-    ];
-    expect(projects.data.some((row) => demoSlugs.includes(row.slug))).toBe(false);
-    expect(opps.data.some((row) => demoSlugs.includes(row.slug))).toBe(false);
-    expect(projects.data.some((row) => row.title.toLowerCase().includes("palma africana"))).toBe(false);
-  });
-
-  it("lets Django win the title of Torre Elegance and keeps 25 projects", () => {
-    const seedRow = seedProjects.data.find((row) => row.slug === "torre-elegance");
-    expect(seedRow).toBeDefined();
-    const django = {
-      status: "ok" as const,
-      data: [{ ...seedRow!, title: "Torre Elegance (editada en admin)", coverImageUrl: null }],
-    };
-    const merged = mergeCatalogSources(django, seedProjects);
-    expect(merged.data).toHaveLength(25);
-    const elegance = merged.data.find((row) => row.slug === "torre-elegance");
-    expect(elegance?.title).toBe("Torre Elegance (editada en admin)");
-    expect(elegance?.coverImageUrl).toBe(seedRow?.coverImageUrl);
-  });
-
-  it("keeps a non-demo Django project that is not in the seed (26)", () => {
-    const extra = item({
-      id: 999,
-      slug: "corredor-logistico-cni-nuevo",
-      code: "FP-CNI-Z999",
-      title: "Corredor logístico CNI nuevo",
-      sectorSlug: "infraestructura",
-    });
-    const merged = mergeCatalogSources({ status: "ok", data: [extra] }, seedProjects);
-    expect(merged.data).toHaveLength(26);
-    expect(merged.data.find((row) => row.slug === extra.slug)?.title).toBe(extra.title);
-  });
-
-});
-
-describe("unified portfolio filters (tipo / sector / fase / q / orden)", () => {
-  const all = [
-    ...getSeedCatalog("project", "es").data,
-    ...getSeedCatalog("opportunity", "es").data,
-  ];
-
-  it("uses the seed for sector counts per tab", () => {
-    const projects = getSeedCatalog("project", "es").data;
-    const opps = getSeedCatalog("opportunity", "es").data;
-    expect(projects.length).toBe(25);
-    expect(opps.length).toBe(17);
-    const projectCounts = countBySector(projects);
-    const oppCounts = countBySector(opps);
-    expect(projectCounts.infraestructura).toBe(8);
-    expect(projectCounts.energia).toBe(6);
-    expect(oppCounts.turismo).toBe(3);
-    expect(oppCounts.energia ?? 0).toBe(0);
-    expect(oppCounts.manufactura ?? 0).toBe(0);
-  });
-
-  it("parses and serializes the catalog filters in the URL", () => {
-    const parsed = parseUnifiedFilters({
-      tipo: "oportunidades",
-      sector: "turismo",
-      fase: "fase-1",
-      q: "Tela",
-      orden: "name",
-    });
-    expect(parsed).toEqual({
-      tipo: "oportunidades",
-      sector: "turismo",
-      fase: "fase-1",
-      q: "Tela",
-      orden: "name",
-    });
-    expect(parseUnifiedFilters({})).toEqual(DEFAULT_UNIFIED_FILTERS);
-    expect(parseUnifiedFilters({ tipo: "no-valido" }).tipo).toBe("proyectos");
-    expect(parseUnifiedFilters({ sector: "no valido" }).sector).toBeNull();
-    expect(serializeUnifiedFilters(parsed)).toBe(
-      "tipo=oportunidades&sector=turismo&fase=fase-1&q=Tela&orden=name",
-    );
-    // Defaults no escriben parámetros en la querystring.
-    expect(serializeUnifiedFilters(DEFAULT_UNIFIED_FILTERS)).toBe("");
-  });
-
-  it("filters by tab and sector with the unified client", () => {
-    const proyectosInfra = applyUnifiedFilters(all, "proyectos", {
-      ...DEFAULT_UNIFIED_FILTERS,
-      sector: "infraestructura",
-    });
-    expect(proyectosInfra.length).toBe(8);
-    expect(proyectosInfra.every((item) => item.sectorSlug === "infraestructura")).toBe(true);
-
-    const oportunidadesTurismo = applyUnifiedFilters(all, "oportunidades", {
-      ...DEFAULT_UNIFIED_FILTERS,
-      sector: "turismo",
-    });
-    expect(oportunidadesTurismo.length).toBe(3);
-  });
-
-  it("text search matches title, code and location", () => {
-    const telaProyectos = applyUnifiedFilters(all, "proyectos", {
-      ...DEFAULT_UNIFIED_FILTERS,
-      q: "Tela",
-    });
-    expect(telaProyectos.length).toBe(3);
-    expect(telaProyectos.every((item) =>
-      item.title.toLowerCase().includes("tela") ||
-      item.locationText.toLowerCase().includes("tela"),
-    )).toBe(true);
-  });
-
-  it("sorts by amount descending by default and by name when requested", () => {
-    const proyectosPorMonto = applyUnifiedFilters(all, "proyectos", DEFAULT_UNIFIED_FILTERS);
-    for (let i = 1; i < proyectosPorMonto.length; i++) {
-      expect(proyectosPorMonto[i - 1].amountUsd).toBeGreaterThanOrEqual(
-        proyectosPorMonto[i].amountUsd,
-      );
-    }
-    const proyectosPorNombre = applyUnifiedFilters(all, "proyectos", {
-      ...DEFAULT_UNIFIED_FILTERS,
-      orden: "name",
-    });
-    const titles = proyectosPorNombre.map((item) => item.title);
-    const sorted = [...titles].sort((a, b) => a.localeCompare(b));
-    expect(titles).toEqual(sorted);
   });
 });

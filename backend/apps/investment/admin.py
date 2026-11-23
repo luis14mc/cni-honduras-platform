@@ -107,6 +107,9 @@ class InvestmentOpportunityAdmin(EditorialAdminMixin, TranslationAdmin):
                     "phase",
                     "phase_detail",
                     "investment_type",
+                    "macroregion_code",
+                    "polo_slugs",
+                    "portfolio_pdf_url",
                     "extra_locations",
                     "location",
                 )
@@ -148,6 +151,8 @@ class InvestmentProjectAdmin(admin.ModelAdmin):
                     "phase",
                     "phase_detail",
                     "investment_type",
+                    "macroregion_code",
+                    "polo_slugs",
                     "extra_locations",
                 )
             },

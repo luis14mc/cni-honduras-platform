@@ -28,6 +28,7 @@ type Props = {
   projects: PortfolioCatalogItem[];
   opportunities: PortfolioCatalogItem[];
   documents: CmsDocument[];
+  errors: Record<UnifiedPortfolioTab, boolean>;
   initialFilters: UnifiedPortfolioFilters;
   documentTypeForTab: Record<UnifiedPortfolioTab, string>;
 };
@@ -37,6 +38,7 @@ export function PortfolioCatalogClient({
   projects,
   opportunities,
   documents,
+  errors,
   initialFilters,
   documentTypeForTab,
 }: Props) {
@@ -101,9 +103,7 @@ export function PortfolioCatalogClient({
   const docType = documentTypeForTab[filtersState.tipo];
   const tabDocuments = documents.filter((doc) => doc.document_type === docType && doc.file_url);
   const selectedDocument = selectedItem ? matchDocumentByCode(documents, selectedItem.code) : null;
-  const selectedPdf = selectedDocument
-    ? documentOpenUrl(selectedDocument)
-    : selectedItem?.pdfUrl ?? null;
+  const selectedPdf = selectedItem?.pdfUrl ?? (selectedDocument ? documentOpenUrl(selectedDocument) : null);
   const searchPlaceholder =
     filtersState.tipo === "oportunidades" ? t.searchPlaceholderOpportunities : t.searchPlaceholder;
 
@@ -164,7 +164,9 @@ export function PortfolioCatalogClient({
           ))}
         </div>
 
-        {filteredItems.length === 0 ? (
+        {errors[filtersState.tipo] ? (
+          <p role="alert" className="px-5 py-16 text-center text-red-800">{t.error}</p>
+        ) : filteredItems.length === 0 ? (
           <div className="px-5 py-16 text-center">
             <p className="font-body text-lg text-[#667085]">{t.noResults}</p>
             <button
