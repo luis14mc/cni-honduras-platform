@@ -65,7 +65,9 @@ Permisos **Public**: solo `find` / `findOne` de contenido publicado. Sin create/
 
 ## Roles y vista previa (CNI-201)
 
-Strapi configura al arrancar los roles administrados `Editor CNI` y `Publicador CNI`. En **Settings → Administration Panel → Users**, Super Admin asigna el rol de editor a quien crea y edita borradores, y el rol de publicador a quien los revisa y publica. Una persona con ambas tareas puede tener ambos roles. Super Admin conserva la administración de usuarios, estructura y credenciales.
+Super Admin asigna los roles en **Settings → Administration Panel → Users**. **Editor CNI** puede crear, consultar y editar borradores. **Publicador CNI** puede crear, consultar, editar, borrar y publicar contenido. Super Admin conserva la administración de usuarios, estructura y credenciales.
+
+Los permisos de Editor CNI y Publicador CNI se editan en [el bootstrap de Strapi](../cms-strapi/src/bootstrap.ts). En cada arranque, Strapi vuelve a aplicar esa configuración, sobrescribe cualquier cambio de permisos hecho en el panel para esos dos roles y registra la sincronización en el log.
 
 `shared.seo` está disponible en News, Document, Success Story, Investment Opportunity y Page. Conserva los campos SEO existentes durante la migración. Las páginas institucionales consumen el componente completo.
 

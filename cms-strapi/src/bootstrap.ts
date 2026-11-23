@@ -109,7 +109,7 @@ async function ensureEditorialRoles(strapi: Core.Strapi) {
 
   for (const role of [
     { code: 'cni-editor', name: 'Editor CNI', actions: ['create', 'read', 'update'] },
-    { code: 'cni-publisher', name: 'Publicador CNI', actions: ['read', 'publish'] },
+    { code: 'cni-publisher', name: 'Publicador CNI', actions: ['create', 'read', 'update', 'delete', 'publish'] },
   ]) {
     const current = await roleService.findOne({ code: role.code });
     const entry = current ?? await roleService.create({ code: role.code, name: role.name });
@@ -130,6 +130,7 @@ async function ensureEditorialRoles(strapi: Core.Strapi) {
     permissions.push({ action: 'plugin::upload.read' });
     if (role.code === 'cni-editor') permissions.push({ action: 'plugin::upload.assets.create' });
     await roleService.assignPermissions(entry.id, permissions);
+    strapi.log.info(`admin: synced permissions from code for ${role.code}`);
   }
 }
 
