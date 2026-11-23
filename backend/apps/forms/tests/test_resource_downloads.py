@@ -56,7 +56,9 @@ class GatedResourceDownloadTests(APITestCase):
         self.assertEqual(lead.resource_name, "Guía CNI")
         self.assertEqual(lead.strapi_document_id, "resource1")
         self.assertIsNotNone(lead.consented_at)
-        self.assertTrue(WebhookEvent.objects.filter(event_type=WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED).exists())
+        event = WebhookEvent.objects.get(event_type=WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED)
+        self.assertIs(event.payload["is_repeat"], False)
+        self.assertNotIn("remember_token", event.payload)
 
         followup = self.client.post(URL, {
             "strapi_document_id": "resource2",
@@ -68,6 +70,11 @@ class GatedResourceDownloadTests(APITestCase):
         remembered = ResourceDownloadLead.objects.get(strapi_document_id="resource2")
         self.assertEqual(remembered.email, lead.email)
         self.assertEqual(remembered.consented_at, lead.consented_at)
+        repeat = WebhookEvent.objects.get(
+            event_type=WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED, payload__submission_id=remembered.pk
+        )
+        self.assertIs(repeat.payload["is_repeat"], True)
+        self.assertNotIn("remember_token", repeat.payload)
 
     @patch(RESOLVER)
     def test_honeypot_missing_consent_and_invalid_session_never_issue_download(self, resolve):

@@ -110,7 +110,9 @@ def build_advisory_request_webhook_payload(submission: AdvisoryRequest) -> dict:
     }
 
 
-def build_resource_download_webhook_payload(submission: ResourceDownloadLead) -> dict:
+def build_resource_download_webhook_payload(
+    submission: ResourceDownloadLead, *, is_repeat: bool | None = None
+) -> dict:
     return {
         **_base_submission_payload(submission, "forms.ResourceDownloadLead"),
         "resource_name": submission.resource_name,
@@ -118,6 +120,7 @@ def build_resource_download_webhook_payload(submission: ResourceDownloadLead) ->
         "strapi_document_id": submission.strapi_document_id,
         "resource_locale": submission.resource_locale,
         "consented_at": submission.consented_at.isoformat() if submission.consented_at else None,
+        **({"is_repeat": is_repeat} if is_repeat is not None else {}),
     }
 
 
@@ -217,7 +220,11 @@ class ResourceDownloadLeadViewSet(PublicCreateViewSet):
             source="web-resource-download",
             consented_at=consented_at,
         )
-        _enqueue(WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED, build_resource_download_webhook_payload(lead), lead)
+        _enqueue(
+            WEBHOOK_EVENT_RESOURCE_DOWNLOAD_CREATED,
+            build_resource_download_webhook_payload(lead, is_repeat=bool(token)),
+            lead,
+        )
         return Response(
             {
                 "download_url": url,
