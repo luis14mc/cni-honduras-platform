@@ -12,7 +12,6 @@ import type {
   InfrastructureLayer,
   MapQueryState,
   MapSearchResult,
-  TerritorialRegionLevel,
 } from "@/src/lib/types/investment-map";
 import {
   getRegionLegendItems,
@@ -34,8 +33,6 @@ import {
 } from "@/src/lib/mapMarkers";
 
 import { useInvestmentMapData } from "./useInvestmentMapData";
-type RegionLayerChoice = "none" | TerritorialRegionLevel;
-
 export function useInvestmentMapDashboard({
   locale,
   initialQueryState,
