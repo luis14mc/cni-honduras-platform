@@ -3,6 +3,7 @@ import { strapiGet, StrapiApiError } from "@/src/lib/strapi/client";
 import { parseStrapiBlocks, plainTextFromInlines } from "@/src/lib/strapi/blocks";
 import { getStrapiMediaUrl } from "@/src/lib/strapi/media";
 import {
+  EDITORIAL_CONTENT_POPULATE,
   mapNewsDynamicZoneToNewsBlocks,
   mapNewsDynamicZoneToStrapiBlocks,
   newsDetailPopulateExtra,
@@ -259,10 +260,7 @@ export function mapInstitutionalPage(raw: unknown) {
 }
 
 const PAGE_POPULATE = {
-  "populate[content][on][content.paragraph][populate]": "*",
-  "populate[content][on][content.heading][populate]": "*",
-  "populate[content][on][content.quote][populate]": "*",
-  "populate[content][on][content.image][populate]": "image",
+  ...EDITORIAL_CONTENT_POPULATE,
   "populate[seo][populate]": "ogImage",
 };
 
@@ -275,15 +273,20 @@ export async function getInstitutionalPage(locale: Locale, slug: string) {
 }
 
 export async function getEditorialPreview(
-  collection: "pages" | "banners",
+  collection: "pages" | "banners" | "news",
   documentId: string,
   locale: Locale,
   status: "draft" | "published",
 ) {
   if (!process.env.STRAPI_API_TOKEN?.trim()) throw new Error("STRAPI_API_TOKEN is required for previews");
+  const populate = {
+    pages: PAGE_POPULATE,
+    banners: populateExtra(["image", "mobile_image"]),
+    news: newsDetailPopulateExtra(),
+  };
   const { data } = await strapiGet<StrapiEntityResponse<unknown>>(
     `${STRAPI_COLLECTION_PATHS[collection]}/${encodeURIComponent(documentId)}`,
-    { locale, cache: "no-store", extra: { ...(collection === "pages" ? PAGE_POPULATE : populateExtra(["image", "mobile_image"])), status } },
+    { locale, cache: "no-store", extra: { ...populate[collection], status } },
   );
   return data;
 }

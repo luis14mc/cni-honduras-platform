@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { NewsArticleContent } from "@/src/components/news/NewsArticleContent";
 import { SiteBannerBar } from "@/src/components/layout/SiteBannerBar";
 import { InstitutionalPageContent } from "@/src/components/strapi/InstitutionalPageContent";
 import { verifyEditorialPreview } from "@/src/lib/strapi/preview";
 import { StrapiApiError } from "@/src/lib/strapi/client";
-import { getEditorialPreview, mapBanner, mapInstitutionalPage } from "@/src/lib/strapi/editorial";
+import { getEditorialPreview, mapBanner, mapInstitutionalPage, mapNews } from "@/src/lib/strapi/editorial";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -34,6 +35,11 @@ export default async function EditorialPreview({ params, searchParams }: Props) 
     const banner = mapBanner(raw);
     if (!banner) notFound();
     return <SiteBannerBar locale={preview.locale} banners={[{ ...banner, dismissible: false }]} />;
+  }
+  if (collection === "news") {
+    const article = mapNews(raw);
+    if (!article) notFound();
+    return <NewsArticleContent article={article} locale={preview.locale} />;
   }
   const page = mapInstitutionalPage(raw);
   if (!page) notFound();

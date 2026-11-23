@@ -20,6 +20,17 @@ describe("signed Strapi preview", () => {
     expect(verifyEditorialPreview("es", { ...query, documentId: "example2" }, secret, now)).toBeNull();
   });
 
+  it("binds the signed news preview to the news collection", () => {
+    const news = {
+      ...query,
+      collection: "news",
+      signature: createHmac("sha256", secret).update("news:example1:es:draft:1100").digest("hex"),
+    };
+    expect(verifyEditorialPreview("es", news, secret, now)?.collection).toBe("news");
+    expect(verifyEditorialPreview("es", { ...news, collection: "pages" }, secret, now)).toBeNull();
+    expect(verifyEditorialPreview("es", { ...query, collection: "news" }, secret, now)).toBeNull();
+  });
+
   it("rejects expired and malformed signatures", () => {
     expect(verifyEditorialPreview("es", query, secret, 1100)).toBeNull();
     expect(verifyEditorialPreview("es", { ...query, signature: "invalid" }, secret, now)).toBeNull();

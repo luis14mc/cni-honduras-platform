@@ -12,6 +12,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from uuid import uuid4
 
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
 from django.utils.html import strip_tags
 
 from apps.cms.models import Document, News, Page, SiteBanner
@@ -91,9 +92,9 @@ class StrapiClient:
         except HTTPError as exc:
             raise ValueError(f"{method} {path.split('/')[2]} returned HTTP {exc.code}") from exc
 
-    def find(self, collection, field, key, locale):
+    def find(self, collection, field, key, locale, *, status="draft"):
         result = self.request(f"/api/{collection}", {
-            f"filters[{field}][$eq]": key, "locale": locale, "status": "draft", "pagination[pageSize]": 2,
+            f"filters[{field}][$eq]": key, "locale": locale, "status": status, "pagination[pageSize]": 2,
         })
         rows = result["data"]
         if len(rows) > 1:
@@ -186,18 +187,31 @@ class Command(BaseCommand):
     help = "Compare Django editorial records with Strapi. Use --apply to create missing drafts."
 
     def add_arguments(self, parser):
-        parser.add_argument("--apply", action="store_true")
+        mode = parser.add_mutually_exclusive_group()
+        mode.add_argument("--apply", action="store_true", help="Create missing drafts in Strapi.")
+        mode.add_argument(
+            "--verify-published", action="store_true",
+            help="Check that every currently published Django record has a published match in Strapi.",
+        )
 
     def handle(self, *args, **options):
         client = StrapiClient(os.getenv("STRAPI_MIGRATION_URL", ""), os.getenv("STRAPI_MIGRATION_TOKEN", ""))
+        mode = "apply" if options["apply"] else "audit"
+        if options["verify_published"]:
+            mode = "verify-published"
         counts = defaultdict(Counter)
         failures = []
+        missing_publications = []
+        published_at = timezone.now()
         collections = (
             ("news", News), ("documents", Document), ("success-stories", SuccessStory),
             ("investment-opportunities", InvestmentOpportunity), ("banners", SiteBanner), ("pages", Page),
         )
         for collection, model in collections:
-            for row in model.all_objects.order_by("pk").iterator():
+            source = model.all_objects.order_by("pk")
+            if mode == "verify-published":
+                source = source.filter(status="published", published_at__lte=published_at)
+            for row in source.iterator():
                 locales = [row.language] if model is Document else ["es", "en"]
                 if model is SiteBanner:
                     field, key = "legacy_key", f"django-banner-{row.pk}"
@@ -213,10 +227,13 @@ class Command(BaseCommand):
                     report["source"] += 1
                     report[f"source_{row.status}"] += 1
                     try:
-                        found = client.find(collection, field, key, locale)
+                        if mode == "verify-published":
+                            found = client.find(collection, field, key, locale, status="published")
+                        else:
+                            found = client.find(collection, field, key, locale)
                         if found:
                             report["existing"] += 1
-                        elif options["apply"]:
+                        elif mode == "apply":
                             other = client.find(collection, field, key, "en" if locale == "es" else "es")
                             path = f"/api/{collection}"
                             method = "POST"
@@ -232,9 +249,18 @@ class Command(BaseCommand):
                             report["created"] += 1
                         else:
                             report["missing"] += 1
+                            if mode == "verify-published":
+                                missing_publications.append({
+                                    "collection": collection, "id": row.pk, "locale": locale,
+                                })
                     except Exception as exc:
                         failures.append({"collection": collection, "id": row.pk, "locale": locale, "error": str(exc)})
                         report["failed"] += 1
-        self.stdout.write(json.dumps({"mode": "apply" if options["apply"] else "audit", "counts": counts, "errors": failures}, indent=2))
+        summary = {"mode": mode, "counts": counts, "errors": failures}
+        if mode == "verify-published":
+            summary["missing_publications"] = missing_publications
+        self.stdout.write(json.dumps(summary, indent=2))
         if failures:
             raise CommandError("Some records could not be reconciled; review the report before switching sources.")
+        if missing_publications:
+            raise CommandError("Published records are missing in Strapi; keep the current editorial source.")

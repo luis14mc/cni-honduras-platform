@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { StrapiApiError } from "@/src/lib/strapi/client";
 import {
   getBanners,
+  getEditorialPreview,
   getInstitutionalPage,
   isBannerActive,
   mapBanner,
@@ -278,6 +279,27 @@ describe("editorial fetch", () => {
     expect(url).not.toContain("populate=*");
     const init = fetchMock.mock.calls[0]?.[1] as { next?: { revalidate?: number } };
     expect(init.next?.revalidate).toBe(60);
+  });
+
+  it("reads a news preview by document ID with signed-version parameters and no cache", async () => {
+    vi.stubEnv("STRAPI_URL", "https://strapi.test");
+    vi.stubEnv("STRAPI_API_TOKEN", "preview-token");
+    const fetchMock = vi.fn().mockResolvedValue(Response.json({ data: newsRaw, meta: {} }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    expect(await getEditorialPreview("news", "abc", "en", "draft")).toEqual(newsRaw);
+    const [input, init] = fetchMock.mock.calls[0];
+    const url = new URL(input);
+    expect(url.pathname).toBe("/api/news/abc");
+    expect(url.searchParams.get("locale")).toBe("en");
+    expect(url.searchParams.get("status")).toBe("draft");
+    expect(url.searchParams.get("populate[content][on][content.image][populate]")).toBe("image");
+    for (const component of ["paragraph", "heading", "quote"]) {
+      expect(url.searchParams.get(`populate[content][on][content.${component}][populate]`)).toBe("*");
+    }
+    expect(init.cache).toBe("no-store");
+    expect(init.next).toBeUndefined();
+    expect(init.headers.get("Authorization")).toBe("Bearer preview-token");
   });
 
   it("returns empty list without treating it as an error", async () => {

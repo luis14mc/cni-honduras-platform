@@ -31,12 +31,20 @@ export function newsListPopulateExtra(pageSize = "100"): Record<string, string> 
   };
 }
 
+/** Explicit population for the shared editorial Dynamic Zone. */
+export const EDITORIAL_CONTENT_POPULATE = {
+  "populate[content][on][content.paragraph][populate]": "*",
+  "populate[content][on][content.heading][populate]": "*",
+  "populate[content][on][content.quote][populate]": "*",
+  "populate[content][on][content.image][populate]": "image",
+} as const;
+
 /** Detail view: cover, lead points, dynamic zone (+ nested image media). */
 export function newsDetailPopulateExtra(pageSize = "100"): Record<string, string> {
   return {
     ...newsListPopulateExtra(pageSize),
     "populate[lead_points]": "true",
-    "populate[content][on][content.image][populate]": "image",
+    ...EDITORIAL_CONTENT_POPULATE,
   };
 }
 

@@ -12,9 +12,9 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
       config: {
         allowedOrigins: [previewOrigin],
         async handler(uid, { documentId, locale, status }) {
-          if (uid !== 'api::page.page' && uid !== 'api::banner.banner') return null;
+          if (uid !== 'api::page.page' && uid !== 'api::banner.banner' && uid !== 'api::news-item.news-item') return null;
           if (locale !== 'es' && locale !== 'en') return null;
-          const collection = uid === 'api::page.page' ? 'pages' : 'banners';
+          const collection = uid === 'api::page.page' ? 'pages' : uid === 'api::banner.banner' ? 'banners' : 'news';
           const version = status === 'published' ? 'published' : 'draft';
           const instance = (globalThis as typeof globalThis & { strapi: Core.Strapi }).strapi;
           const state = instance.requestContext.get()?.state;
