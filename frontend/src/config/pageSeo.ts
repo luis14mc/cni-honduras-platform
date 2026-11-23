@@ -243,18 +243,6 @@ export const PAGE_SEO: Record<string, PageSeo> = {
       en: "Gallery of multinational corporations that have successfully expanded and reinvested in Honduras: Kimpton, Sinclair, Dinant, Copantl, among others.",
     },
   },
-  "portafolio-postulacion": {
-    canonical: "/portafolio/postulacion",
-    enMirror: "/en/portfolio/submit",
-    title: {
-      es: "Postular Proyecto · Sumar al Portafolio Oficial del CNI",
-      en: "Submit Project · Join the Official CNI Portfolio",
-    },
-    description: {
-      es: "Postule su proyecto al Portafolio Oficial del CNI. Acceso a inversionistas globales, validación institucional y acompañamiento estructurado.",
-      en: "Submit your project to the Official CNI Portfolio. Access to global investors, institutional validation and structured support.",
-    },
-  },
   "portafolio-mapa": {
     canonical: "/portafolio/mapa",
     enMirror: "/en/portfolio/map",

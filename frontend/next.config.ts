@@ -29,7 +29,11 @@ const nextConfig: NextConfig = {
       { source: "/en/mapa", destination: "/en/portfolio/map", statusCode: 301 },
       { source: "/:legacy(postulacion|postulacion-de-proyectos)", destination: "/postula-tu-proyecto", statusCode: 301 },
       { source: "/es/:legacy(postulacion|postulacion-de-proyectos)", destination: "/postula-tu-proyecto", statusCode: 301 },
-      { source: "/en/:legacy(postulacion|postulacion-de-proyectos)", destination: "/en/submit-your-project", statusCode: 301 },
+      { source: "/en/:legacy(postulacion|postulacion-de-proyectos|application)", destination: "/en/submit-your-project", statusCode: 301 },
+      { source: "/portafolio/postulacion", destination: "/postula-tu-proyecto", statusCode: 301 },
+      { source: "/es/portafolio/postulacion", destination: "/postula-tu-proyecto", statusCode: 301 },
+      { source: "/en/portafolio/postulacion", destination: "/en/submit-your-project", statusCode: 301 },
+      { source: "/en/portfolio/submit", destination: "/en/submit-your-project", statusCode: 301 },
     ];
   },
   async rewrites() {

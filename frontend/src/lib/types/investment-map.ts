@@ -2,34 +2,6 @@
  * Tipos del mapa interactivo de inversión (API v1 geo + investment).
  */
 
-/** @deprecated Legacy mock map nodes */
-export interface InvestmentNode {
-  id: number;
-  slug: string;
-  title: string;
-  lat: number;
-  lng: number;
-  capexUsd: string;
-  sectorName: string;
-  sectorColor: string;
-  sectorIcon: string;
-}
-
-/** @deprecated Legacy server action result */
-export interface MapActionSuccess {
-  success: true;
-  data: InvestmentNode[];
-}
-
-/** @deprecated Legacy server action result */
-export interface MapActionError {
-  success: false;
-  error: string;
-}
-
-/** @deprecated Legacy server action result */
-export type MapActionResult = MapActionSuccess | MapActionError;
-
 // ---------------------------------------------------------------------------
 // GeoJSON — departamentos
 // ---------------------------------------------------------------------------

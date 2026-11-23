@@ -106,7 +106,6 @@ describe("URL pública -> página interna (middleware)", () => {
     ["/portafolio/fichas-proyectos/distrito-palmerola", "/es/portafolio/fichas-proyectos/distrito-palmerola"],
     ["/en/portfolio/project-sheets/distrito-palmerola", "/en/portafolio/fichas-proyectos/distrito-palmerola"],
     ["/en/portfolio/map", "/en/portafolio/mapa"],
-    ["/mapa", "/es/portafolio/mapa"],
   ])("%s -> %s", (publicPath, internal) => {
     expect(resolveInternalPath(publicPath)).toBe(internal);
     expect(internalPageExists(publicPath), publicPath).toBe(true);

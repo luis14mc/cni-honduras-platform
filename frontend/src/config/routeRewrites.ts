@@ -26,9 +26,7 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
     "/portfolio/project-sheets": "/portafolio/fichas-proyectos",
     "/portfolio/opportunities": "/portafolio/oportunidades",
     "/portfolio/success-stories": "/portafolio/casos",
-    "/portfolio/submit": "/portafolio/postulacion",
     "/submit-your-project": "/postulacion",
-    "/application": "/postulacion",
     "/portfolio/map": "/portafolio/mapa",
     "/resources": "/recursos",
     "/resources/institutional": "/recursos/institucional",
@@ -133,8 +131,6 @@ export function resolveInternalPath(pathname: string): string | null {
   const resource = normalized.match(/^\/recursos\/([^/]+)$/);
   if (resource) return `/es/recursos/${resource[1]}`;
 
-  if (normalized === "/mapa") return "/es/portafolio/mapa";
-
   return `/es${normalized}`;
 }
 
@@ -150,14 +146,8 @@ export const permanentRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: st
   { from: /^\/en\/portfolio\/opportunities\/?$/, to: () => "/en/portfolio?tipo=oportunidades" },
 ];
 
-/** Redirecciones permanentes desde URLs legacy. */
+/** Redirecciones legacy del middleware. Los 301 de mapa y postulación se declaran en next.config.ts. */
 export const legacyRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string | null }> = [
-  { from: /^\/postulacion\/?$/, to: () => "/postula-tu-proyecto" },
-  { from: /^\/postulacion-de-proyectos\/?$/, to: () => "/postula-tu-proyecto" },
-  { from: /^\/portafolio\/postulacion\/?$/, to: () => "/postula-tu-proyecto" },
-  { from: /^\/en\/application\/?$/, to: () => "/en/submit-your-project" },
-  { from: /^\/en\/postulacion-de-proyectos\/?$/, to: () => "/en/submit-your-project" },
-  { from: /^\/en\/portfolio\/submit\/?$/, to: () => "/en/submit-your-project" },
   // Oportunidades: unificadas en Portafolio con slug localizado (sep-2026).
   // Antes vivían en /crecer/oportunidades (fuera del menú) y las fichas PDF en
   // /portafolio/opportunity-cards (slug en inglés también en español).
