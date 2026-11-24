@@ -1,12 +1,33 @@
-# CMS Staging Smoke Test
+# Smoke test de staging
 
-Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → `api-test.cni.hn`).
+Ejecute primero las pruebas de navegador con fixtures desde `frontend/`. Usan un servidor local y no envían datos a staging ni al CRM.
+
+```sh
+pnpm exec playwright install chromium
+pnpm exec playwright test --config playwright.resources.config.ts
+```
+
+## Staging de Railway
+
+Registre commit, fecha y evidencia antes de autorizar el corte. Use `https://test.cni.hn`, `https://api.test.cni.hn` y `https://cms.test.cni.hn/admin`, según la [guía de Railway](deployment/railway.md).
+
+- [ ] Inicio ES y EN, cambio de idioma de ida y vuelta y noticia publicada en cada traducción. Abra una noticia desde Prensa y confirme el título en la ficha.
+- [ ] En Strapi, cree borradores de noticia, documento libre, documento con formulario, banner `site_top` y página. Compruebe los permisos de editor y publicador. Publique las entradas de prueba y verifíquelas en el portal.
+- [ ] Abra una descarga libre sin formulario. En sesión anónima, compruebe que el recurso protegido pide consentimiento, devuelve una descarga y conserva la autorización en una segunda descarga. Repita ambas tras un redeploy.
+- [ ] Combine filtros del mapa y recargue la URL. Abra una ficha correspondiente y confirme el resultado.
+- [ ] Envíe una postulación con datos de prueba acordados. Anote la referencia y confirme la entrega al CRM de staging al terminar el siguiente ciclo del cron. Confirme también el evento de descarga protegida.
+- [ ] En Contacto, verifique enlaces y validación de campos obligatorios. El formulario de esa página usa un POST sin integración de CRM en el código actual.
+- [ ] Confirme los healthchecks, `X-Robots-Tag: noindex, nofollow`, `Disallow: /` y ausencia del script de Umami. Retire el contenido de prueba después de guardar la evidencia.
+
+## CMS Django legado
+
+Use la comprobación siguiente para el CMS Django mientras `/cms` siga habilitado.
 
 ## Prerequisites
 
 - Staff account with Editor role (or Superuser for admin modules)
 - Browser devtools open (Network + Console)
-- `NEXT_PUBLIC_API_URL=https://api-test.cni.hn/api/v1` on frontend
+- `NEXT_PUBLIC_API_URL=https://api.test.cni.hn/api/v1` on frontend
 - Backend CORS/CSRF includes `https://test.cni.hn`
 
 ## 1. Authentication
@@ -14,7 +35,7 @@ Manual checklist for validating the editorial CMS on staging (`test.cni.hn` → 
 1. Open `/cms/login`
 2. Confirm CSRF preflight (`GET /api/v1/cms-admin/csrf/`) returns 200
 3. Login with valid credentials
-4. Confirm redirect to `/cms` and `sessionid` cookie (HttpOnly) on `api-test.cni.hn`
+4. Confirm redirect to `/cms` and `sessionid` cookie (HttpOnly) on `api.test.cni.hn`
 5. Confirm `GET /api/v1/cms-admin/me/` returns user + permissions
 6. Logout — session cleared, redirected to login
 7. Return to `/cms` — should redirect to login (401/expired)

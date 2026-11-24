@@ -61,6 +61,12 @@ jobs:
           NEXT_PUBLIC_SITE_URL: http://localhost:3000
           NEXT_PUBLIC_STRAPI_URL: /strapi-api
 
+      - name: Install Chromium for Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Public journeys
+        run: pnpm exec playwright test --config playwright.resources.config.ts
+
   backend-ci:
     name: backend-ci
     runs-on: ubuntu-latest
@@ -178,9 +184,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: cms-strapi/package-lock.json
+
+      - name: Match npm version used by the Strapi image
+        run: npm install --global npm@11.4.2
 
       - name: Install dependencies
         run: npm ci
