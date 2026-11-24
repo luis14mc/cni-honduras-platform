@@ -1,11 +1,16 @@
+import runpy
+import secrets
+from unittest.mock import patch
+
 from django.test import SimpleTestCase, override_settings
+
+from config.settings import base
 
 
 class ProductionStaticSettingsTests(SimpleTestCase):
     def test_whitenoise_middleware_after_security(self):
-        from config.settings import production
-
-        middleware = production.MIDDLEWARE
+        with patch.multiple(base, SECRET_KEY=secrets.token_urlsafe(64), MIDDLEWARE=base.MIDDLEWARE.copy()):
+            middleware = runpy.run_module("config.settings.production")["MIDDLEWARE"]
         security_index = middleware.index("django.middleware.security.SecurityMiddleware")
         whitenoise_index = middleware.index("whitenoise.middleware.WhiteNoiseMiddleware")
         self.assertEqual(whitenoise_index, security_index + 1)
