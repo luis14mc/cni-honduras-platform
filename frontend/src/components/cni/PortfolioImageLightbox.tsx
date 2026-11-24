@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { keepDialogFocus, useDialogFocus } from "@/src/lib/dialogFocus";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   src: string;
@@ -12,6 +13,8 @@ type Props = {
 export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const panel = useRef<HTMLDivElement>(null);
+  useDialogFocus(open, panel);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -38,7 +41,9 @@ export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Prop
       </button>
       {open ? (
         <div
+          ref={panel}
           role="dialog"
+          onKeyDown={keepDialogFocus}
           aria-modal="true"
           aria-label={alt}
           className="fixed inset-0 z-[80] flex items-center justify-center bg-[#000a1e]/90 p-4"
@@ -51,17 +56,22 @@ export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Prop
           >
             {closeLabel}
           </button>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={src}
-            alt={alt}
+          <button
+            type="button"
             onClick={(event) => {
               event.stopPropagation();
               setZoom((value) => (value >= 2.5 ? 1 : Number((value + 0.5).toFixed(1))));
             }}
-            className="max-h-[88vh] max-w-[92vw] cursor-zoom-in rounded-lg object-contain shadow-2xl"
-            style={{ transform: `scale(${zoom})`, transformOrigin: "center center" }}
-          />
+            className="cursor-zoom-in rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F7BF06]"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={alt}
+              className="max-h-[88vh] max-w-[92vw] rounded-lg object-contain shadow-2xl"
+              style={{ transform: `scale(${zoom})`, transformOrigin: "center center" }}
+            />
+          </button>
         </div>
       ) : null}
     </>

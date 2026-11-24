@@ -30,6 +30,12 @@ export function MapFiltersBar({
   const amountOnFocus = useRef("");
   const en = locale === "en";
   const invalidRange = Boolean(minInvestment && maxInvestment && Number(minInvestment) > Number(maxInvestment));
+  function handleInvestmentBlur(filter: "min_investment" | "max_investment", value: string) {
+    if (!invalidRange && amountOnFocus.current !== value && (!value || MAP_INVESTMENT_AMOUNT.test(value))) {
+      trackEvent("map_filter", { filter, value: value || "all" });
+    }
+  }
+
   return (
     <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <label className="text-sm font-semibold">
@@ -63,12 +69,7 @@ export function MapFiltersBar({
             aria-invalid={invalidRange} aria-describedby={invalidRange ? "investment-range-error" : undefined}
             onFocus={() => { amountOnFocus.current = value; }}
             onChange={(e) => update(e.target.value)}
-            onBlur={() => {
-              if (!invalidRange && amountOnFocus.current !== value &&
-                (!value || MAP_INVESTMENT_AMOUNT.test(value))) {
-                trackEvent("map_filter", { filter, value: value || "all" });
-              }
-            }} className={selectStyle} />
+            onBlur={() => handleInvestmentBlur(filter, value)} className={selectStyle} />
         </label>
       ))}
       {invalidRange ? (

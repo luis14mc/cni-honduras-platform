@@ -1,5 +1,6 @@
 "use client";
 
+import { keepDialogFocus } from "@/src/lib/dialogFocus";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -415,6 +416,7 @@ export default function Navbar() {
             ref={mobilePanelRef}
             role="dialog"
             aria-modal="true"
+            onKeyDown={keepDialogFocus}
             aria-label={t.mobileMenu}
             className="fixed inset-x-0 bottom-0 top-[var(--cni-header-height)] z-40 overflow-y-auto overscroll-contain border-t border-slate-100 bg-white px-4 py-3 lg:hidden"
           >
