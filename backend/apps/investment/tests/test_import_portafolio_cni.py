@@ -77,6 +77,9 @@ class ImportPortafolioCniTests(TestCase):
                                 {"municipio_geocode": "050100", "lng": -88.07, "lat": 15.50}
                             ],
                             "subregion": "R-01",
+                            "macroregion": "M-01",
+                            "polos": ["san-pedro-sula"],
+                            "pdf_url": "https://example.test/aguacate.pdf",
                         }
                     ],
                     "proyectos": [
@@ -148,6 +151,9 @@ class ImportPortafolioCniTests(TestCase):
         self.assertTrue(opportunities[0]["cover_image_url"])
         self.assertEqual(opportunities[0]["amount_text"], "USD 5.6 MM")
         self.assertEqual(opportunities[0]["region"]["code"], "R-01")
+        self.assertEqual(opportunities[0]["macroregion_code"], "M-01")
+        self.assertEqual(opportunities[0]["polo_slugs"], ["san-pedro-sula"])
+        self.assertEqual(opportunities[0]["portfolio_pdf_url"], "https://example.test/aguacate.pdf")
         self.assertEqual(projects[0]["code"], "FP-CNI-I009")
         self.assertEqual(projects[0]["phase"], "Fase 3")
         self.assertTrue(projects[0]["cover_image_url"])

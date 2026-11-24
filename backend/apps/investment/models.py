@@ -130,7 +130,10 @@ class InvestmentOpportunity(EditorialModel):
     phase = models.CharField(max_length=120, blank=True, default="")
     phase_detail = models.CharField(max_length=200, blank=True, default="")
     investment_type = models.TextField(blank=True, default="")
+    portfolio_pdf_url = models.URLField(max_length=500, blank=True, default="")
     extra_locations = models.JSONField(default=list, blank=True)
+    macroregion_code = models.CharField(max_length=16, blank=True, default="")
+    polo_slugs = models.JSONField(default=list, blank=True)
 
     class Meta:
         ordering = ("order", "-is_featured", "-published_at", "-created_at", "-id")
@@ -308,6 +311,8 @@ class InvestmentProject(TimeStampedModel):
     phase_detail = models.CharField(max_length=200, blank=True, default="")
     investment_type = models.TextField(blank=True, default="")
     extra_locations = models.JSONField(default=list, blank=True)
+    macroregion_code = models.CharField(max_length=16, blank=True, default="")
+    polo_slugs = models.JSONField(default=list, blank=True)
 
     investment_amount = models.DecimalField(
         max_digits=18, decimal_places=2, null=True, blank=True

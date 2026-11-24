@@ -6,11 +6,10 @@ import { PageHero } from "@/src/components/cni/PageHero";
 import { PortfolioCatalogClient } from "@/src/components/cni/PortfolioCatalogClient";
 import { loadAsyncData } from "@/src/lib/asyncData";
 import { getOpportunities, getProjects } from "@/src/services/investment";
-import { getDocuments } from "@/src/lib/strapi/editorial";
+import { getDocuments } from "@/src/services/cms";
 import {
-  getSeedCatalog,
   opportunityToCatalogItem,
-  mergeCatalogSources,
+  isDemoSlug,
   parseUnifiedFilters,
   projectToCatalogItem,
 } from "@/src/lib/portfolioCatalog";
@@ -54,25 +53,15 @@ export default async function PortafolioPage({
     loadAsyncData(() => getProjects({ locale }), [] as InvestmentProject[]),
     loadAsyncData(() => getOpportunities({ locale }), [] as InvestmentOpportunity[]),
     loadAsyncData(
-      () => getDocuments(locale),
+      () => getDocuments({ locale }),
       [] as CmsDocument[],
     ),
   ]);
 
-  const projects = mergeCatalogSources(
-    {
-      ...djangoProjects,
-      data: djangoProjects.data.map((item) => projectToCatalogItem(item, locale)),
-    },
-    getSeedCatalog("project", locale),
-  );
-  const opportunities = mergeCatalogSources(
-    {
-      ...djangoOpportunities,
-      data: djangoOpportunities.data.map((item) => opportunityToCatalogItem(item, locale)),
-    },
-    getSeedCatalog("opportunity", locale),
-  );
+  const projects = djangoProjects.data.filter(({ slug }) => !isDemoSlug(slug))
+    .map((item) => projectToCatalogItem(item, locale));
+  const opportunities = djangoOpportunities.data.filter(({ slug }) => !isDemoSlug(slug))
+    .map((item) => opportunityToCatalogItem(item, locale));
 
   const documentTypeForTab: Record<UnifiedPortfolioTab, string> = {
     proyectos: "project_sheet",
@@ -94,8 +83,9 @@ export default async function PortafolioPage({
 
       <PortfolioCatalogClient
         locale={locale}
-        projects={projects.data}
-        opportunities={opportunities.data}
+        projects={projects}
+        opportunities={opportunities}
+        errors={{ proyectos: djangoProjects.status === "error", oportunidades: djangoOpportunities.status === "error" }}
         documents={documents.status === "ok" ? documents.data : []}
         initialFilters={initialFilters}
         documentTypeForTab={documentTypeForTab}
