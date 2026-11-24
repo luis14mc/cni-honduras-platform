@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { layoutCopy } from "@/src/i18n/copy/layout";
 import { getLocaleFromPathname, getMirrorPath } from "@/src/config/siteNavigation";
+import { trackEvent } from "@/src/lib/analytics";
 import { cn } from "@/src/lib/utils";
 
 type LanguageSwitchProps = {
@@ -42,6 +43,7 @@ export function LanguageSwitch({ variant = "onDark" }: LanguageSwitchProps) {
               : "text-white/70 hover:text-white",
         )}
         hrefLang="es"
+        onClick={() => { if (locale !== "es") trackEvent("locale_switch", { from: locale, to: "es" }); }}
       >
         {labels.es}
       </Link>
@@ -59,6 +61,7 @@ export function LanguageSwitch({ variant = "onDark" }: LanguageSwitchProps) {
               : "text-white/70 hover:text-white",
         )}
         hrefLang="en"
+        onClick={() => { if (locale !== "en") trackEvent("locale_switch", { from: locale, to: "en" }); }}
       >
         {labels.en}
       </Link>

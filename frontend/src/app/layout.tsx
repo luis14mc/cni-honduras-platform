@@ -1,3 +1,5 @@
+import { UmamiAnalytics } from "@/src/components/analytics/UmamiAnalytics";
+import { getAnalyticsScript } from "@/src/lib/analytics";
 import type { Metadata, Viewport } from "next";
 import { JsonLd } from "@/src/components/seo/JsonLd";
 import { headers } from "next/headers";
@@ -33,6 +35,7 @@ const aptos = localFont({
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cni.hn";
 
 export const metadata: Metadata = {
+  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
   metadataBase: new URL(SITE_URL),
   title: {
     default: "CNI Honduras · Consejo Nacional de Inversiones",
@@ -154,6 +157,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const analytics = getAnalyticsScript(process.env.NODE_ENV, process.env.VERCEL_ENV);
   const locale = (await headers()).get("x-cni-locale") === "en" ? "en" : "es";
   return (
     <html lang={locale} className={cn("scroll-smooth", montserrat.variable, aptos.variable)}>

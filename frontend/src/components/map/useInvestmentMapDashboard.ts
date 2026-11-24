@@ -1,3 +1,4 @@
+import { trackEvent } from "@/src/lib/analytics";
 import { useMapFilters } from "./useMapFilters";
 import { MAP_INVESTMENT_AMOUNT } from "@/src/lib/types/investment-map";
 import { useInvestmentMapSelection } from "./useInvestmentMapSelection";
@@ -107,6 +108,7 @@ export function useInvestmentMapDashboard({
   });
 
   const handleSectorChange = useCallback((sector: string) => {
+    trackEvent("map_filter", { filter: "sector", value: sector });
     setActiveSector(sector);
     setSelectedProject(null);
     setActiveClusterKey(null);
