@@ -159,7 +159,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const analytics = isIndexableDeployment()
-    ? getAnalyticsScript(process.env.NODE_ENV, process.env.VERCEL_ENV)
+    ? getAnalyticsScript(process.env.NODE_ENV)
     : undefined;
   const locale = (await headers()).get("x-cni-locale") === "en" ? "en" : "es";
   return (

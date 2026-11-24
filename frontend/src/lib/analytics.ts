@@ -27,8 +27,8 @@ export function isAnalyticsPath(path: string): boolean {
   return !/^\/(?:es\/|en\/)?(?:admin|cms|api|strapi-api|editorial-preview)(?:\/|$)/i.test(path);
 }
 
-export function getAnalyticsScript(environment: string, vercelEnvironment?: string) {
-  if (environment !== "production" || (vercelEnvironment && vercelEnvironment !== "production")) return;
+export function getAnalyticsScript(environment: string) {
+  if (environment !== "production") return;
   const websiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID?.trim();
   const configured = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL?.trim();
   if (!websiteId || !configured) return;

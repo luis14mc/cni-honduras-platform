@@ -18,10 +18,8 @@ _env_file = BASE_DIR / ".env"
 if _env_file.exists():
     environ.Env.read_env(_env_file)
 
-SECRET_KEY = env(
-    "DJANGO_SECRET_KEY",
-    default="unsafe-dev-only-change-me-in-.env",
-)
+DEFAULT_SECRET_KEY = "unsafe-dev-only-change-me-in-.env"
+SECRET_KEY = env("DJANGO_SECRET_KEY", default=DEFAULT_SECRET_KEY)
 DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
 ALLOWED_HOSTS = env.list(

@@ -15,12 +15,11 @@ function mockTracker(pathname = "/portafolio/mapa") {
 }
 
 describe("analytics", () => {
-  it("requires a website ID and an HTTPS script in production outside Vercel previews", () => {
+  it("requires a website ID and an HTTPS script in production", () => {
     vi.stubEnv("NEXT_PUBLIC_UMAMI_WEBSITE_ID", "site-id");
     vi.stubEnv("NEXT_PUBLIC_UMAMI_SCRIPT_URL", "https://stats.example.test/script.js");
     expect(getAnalyticsScript("development")).toBeUndefined();
-    expect(getAnalyticsScript("production", "preview")).toBeUndefined();
-    expect(getAnalyticsScript("production", "production")).toEqual({
+    expect(getAnalyticsScript("production")).toEqual({
       websiteId: "site-id", src: "https://stats.example.test/script.js",
     });
     vi.stubEnv("NEXT_PUBLIC_UMAMI_SCRIPT_URL", "http://stats.example.test/script.js");

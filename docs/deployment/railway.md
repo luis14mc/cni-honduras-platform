@@ -25,6 +25,8 @@ Los valores entre ángulos se obtienen en Railway, Cloudflare, Strapi, CRM o Sea
 
 ### backend
 
+Genere una clave de Django distinta en cada entorno con `python -c "import secrets; print(secrets.token_urlsafe(64))"` y guárdela en `DJANGO_SECRET_KEY` de Railway. Django exige al menos 50 caracteres y rechaza la clave temporal de compilación al arrancar. `DJANGO_ALLOW_BUILD_KEY` se usa únicamente en el paso de compilación de la imagen.
+
 | Variable | staging | production |
 | --- | --- | --- |
 | `RAILWAY_DOCKERFILE_PATH` | `docker/backend/Dockerfile` | Igual |

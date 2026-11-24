@@ -1,6 +1,18 @@
 """Production-oriented settings used by ``wsgi.py`` / ``asgi.py`` inside Docker."""
 
+from django.core.exceptions import ImproperlyConfigured
+
 from .base import *  # noqa: F401,F403
+
+if (
+    not SECRET_KEY
+    or SECRET_KEY == DEFAULT_SECRET_KEY
+    or len(SECRET_KEY) < 50
+    or (SECRET_KEY.startswith("build-only") and not env.bool("DJANGO_ALLOW_BUILD_KEY", default=False))
+):
+    raise ImproperlyConfigured(
+        "DJANGO_SECRET_KEY must be set to a unique value of at least 50 characters in production."
+    )
 
 DEBUG = False
 

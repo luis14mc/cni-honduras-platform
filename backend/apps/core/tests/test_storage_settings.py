@@ -188,6 +188,7 @@ class StorageSettingsIntegrationTests(TestCase):
         from django.core.management import call_command
         from io import StringIO
 
+        # GDAL < 3.9 emits gis.W001 even when the storage configuration is valid.
         call_command("check", stdout=StringIO(), stderr=StringIO())
         self.assertIsInstance(storages["default"], FileSystemStorage)
 
