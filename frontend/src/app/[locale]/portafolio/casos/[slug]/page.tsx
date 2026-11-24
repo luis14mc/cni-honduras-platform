@@ -9,7 +9,7 @@ import { StrapiApiError } from "@/src/lib/strapi/client";
 import { StrapiBlocks } from "@/src/components/strapi/StrapiBlocks";
 import { strapiBlocksHaveContent } from "@/src/lib/strapi/blocks";
 import type { SuccessStory } from "@/src/types/investment";
-import { buildDetailMetadata } from "@/src/lib/seo";
+import { buildEditorialMetadata } from "@/src/lib/editorialSeo";
 import { PAGE_HEROES } from "@/src/lib/pageHeroes";
 import {
   formatSuccessStoryInvestment,
@@ -58,14 +58,18 @@ export async function generateMetadata({
   const locale: Locale = isLocale(raw) ? (raw as Locale) : "es";
   try {
     const story = await getSuccessStoryBySlug(locale, slug);
-    return buildDetailMetadata({
+    return await buildEditorialMetadata({
+      collection: "successStories",
       locale,
-      slugPath: `/portafolio/casos/${slug}`,
-      title: story.title,
-      description: story.summary,
-      image: successStoryCoverImage(story) || undefined,
+      slug,
+      title: story.seo?.title || story.title,
+      description: story.seo?.description || story.summary,
+      image: story.seo?.image || successStoryCoverImage(story),
+      canonical: story.seo?.canonical,
+      noindex: story.seo?.noindex,
     });
-  } catch {
+  } catch (error) {
+    if (error instanceof StrapiApiError && error.status === 404) notFound();
     return {};
   }
 }

@@ -29,6 +29,9 @@ export interface NewsArticle {
   published_at: string;
   seo_title: string;
   seo_description: string;
+  seo_image?: string | null;
+  seo_canonical?: string | null;
+  seo_noindex?: boolean;
   /** Strapi `lead_points` (optional editorial bullets). */
   lead_points?: string[];
 }

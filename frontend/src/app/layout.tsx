@@ -1,7 +1,7 @@
 import { UmamiAnalytics } from "@/src/components/analytics/UmamiAnalytics";
 import { getAnalyticsScript } from "@/src/lib/analytics";
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
+import { JsonLd } from "@/src/components/seo/JsonLd";
 import { headers } from "next/headers";
 import { Montserrat } from "next/font/google";
 import localFont from "next/font/local";
@@ -62,10 +62,6 @@ export const metadata: Metadata = {
   creator: "Consejo Nacional de Inversiones",
   publisher: "Gobierno de la República de Honduras",
   formatDetection: { email: false, address: false, telephone: false },
-  alternates: {
-    canonical: "/",
-    languages: { es: "/", en: "/en" },
-  },
   openGraph: {
     type: "website",
     locale: "es_HN",
@@ -171,18 +167,10 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="alternate" hrefLang="es" href={SITE_URL} />
-        <link rel="alternate" hrefLang="en" href={`${SITE_URL}/en`} />
-        <link rel="alternate" hrefLang="x-default" href={SITE_URL} />
       </head>
       <body className="theme-architectural-ledger flex min-h-screen flex-col bg-[var(--al-background,#f8f9ff)] font-sans text-[#252a58] antialiased">
-        <Script id="ld-government-organization" type="application/ld+json" strategy="beforeInteractive">
-          {JSON.stringify(governmentOrganizationJsonLd)}
-        </Script>
-        <Script id="ld-website" type="application/ld+json" strategy="beforeInteractive">
-          {JSON.stringify(websiteJsonLd)}
-        </Script>
-        {analytics && <UmamiAnalytics {...analytics} />}
+        <JsonLd id="ld-government-organization" value={governmentOrganizationJsonLd} />
+        <JsonLd id="ld-website" value={websiteJsonLd} />
         {children}
       </body>
     </html>

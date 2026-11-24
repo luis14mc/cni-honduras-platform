@@ -1,3 +1,4 @@
+import { buildEditorialMetadata } from "@/src/lib/editorialSeo";
 import type { Metadata } from "next";
 import { cache } from "react";
 import { notFound } from "next/navigation";
@@ -21,21 +22,17 @@ const loadPage = cache(async (locale: string, slug: string) => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const page = await loadPage(locale, slug);
-  const canonical = page.seo.canonical || `${locale === "en" ? "/en" : ""}/institucional/${encodeURIComponent(page.slug)}`;
-  const title = page.seo.title || page.title;
-  const description = page.seo.description || page.summary || undefined;
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    robots: page.seo.noindex ? { index: false } : undefined,
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      images: page.seo.image ? [page.seo.image] : undefined,
-    },
-  };
+  if (!isLocale(locale)) notFound();
+  return buildEditorialMetadata({
+    collection: "pages",
+    locale,
+    slug: page.slug,
+    title: page.seo.title || page.title,
+    description: page.seo.description || page.summary,
+    image: page.seo.image,
+    canonical: page.seo.canonical,
+    noindex: page.seo.noindex,
+  });
 }
 
 export default async function InstitutionalPage({ params }: Props) {

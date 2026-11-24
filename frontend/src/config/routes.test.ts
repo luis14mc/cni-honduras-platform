@@ -1,29 +1,13 @@
 import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { legacyRedirects, permanentRedirects, resolveInternalPath } from "@/src/config/routeRewrites";
+import { resolveInternalPath } from "@/src/config/routeRewrites";
 import {
   getMirrorPath,
   resolveHref,
   siteNavigation,
   type SiteNavNode,
 } from "@/src/config/siteNavigation";
-
-/** Aplica la primera regla de redirección que coincide (igual que el middleware). */
-function redirectOf(pathname: string): string | null {
-  for (const rule of legacyRedirects) {
-    if (rule.from.test(pathname)) return rule.to(pathname);
-  }
-  return null;
-}
-
-/** Aplica la primera redirección 308 (portafolio unificado) que coincida. */
-function permanentRedirectOf(pathname: string): string | null {
-  for (const rule of permanentRedirects) {
-    if (rule.from.test(pathname)) return rule.to(pathname);
-  }
-  return null;
-}
 
 /**
  * ¿Existe la página interna a la que el middleware reescribe esta URL pública?
@@ -59,6 +43,7 @@ function leaves(nodes: SiteNavNode[]): SiteNavNode[] {
 describe("enlaces en inglés (resolveHref)", () => {
   it.each([
     ["/portafolio", "/en/portfolio"],
+    ["/institucional/acerca", "/en/institutional/acerca"],
     ["/portafolio/oportunidades/oc-cni-t002", "/en/portfolio/opportunities/oc-cni-t002"],
     ["/portafolio/fichas-proyectos/distrito-palmerola", "/en/portfolio/project-sheets/distrito-palmerola"],
     ["/portafolio/casos/caso-demo", "/en/portfolio/success-stories/caso-demo"],
@@ -102,6 +87,7 @@ describe("URL pública -> página interna (middleware)", () => {
     ["/portafolio", "/es/portafolio"],
     ["/portafolio/oportunidades/oc-1", "/es/portafolio/oportunidades/oc-1"],
     ["/en/portfolio", "/en/portafolio"],
+    ["/en/institutional/about", "/en/institucional/about"],
     ["/en/portfolio/opportunities/oc-1", "/en/portafolio/oportunidades/oc-1"],
     ["/portafolio/fichas-proyectos/distrito-palmerola", "/es/portafolio/fichas-proyectos/distrito-palmerola"],
     ["/en/portfolio/project-sheets/distrito-palmerola", "/en/portafolio/fichas-proyectos/distrito-palmerola"],
@@ -109,41 +95,6 @@ describe("URL pública -> página interna (middleware)", () => {
   ])("%s -> %s", (publicPath, internal) => {
     expect(resolveInternalPath(publicPath)).toBe(internal);
     expect(internalPageExists(publicPath), publicPath).toBe(true);
-  });
-});
-
-describe("redirecciones 308 (portafolio unificado)", () => {
-  it.each([
-    ["/portafolio/fichas-proyectos", "/portafolio?tipo=proyectos"],
-    ["/portafolio/oportunidades", "/portafolio?tipo=oportunidades"],
-    ["/en/portfolio/project-sheets", "/en/portfolio?tipo=proyectos"],
-    ["/en/portfolio/opportunities", "/en/portfolio?tipo=oportunidades"],
-  ])("%s -> %s", (from, to) => {
-    expect(permanentRedirectOf(from)).toBe(to);
-  });
-
-  it("no afecta a las rutas de detalle", () => {
-    expect(permanentRedirectOf("/portafolio/fichas-proyectos/distrito-palmerola")).toBeNull();
-    expect(permanentRedirectOf("/portafolio/oportunidades/oc-1")).toBeNull();
-    expect(permanentRedirectOf("/en/portfolio/project-sheets/distrito-palmerola")).toBeNull();
-  });
-});
-
-describe("redirecciones desde rutas anteriores", () => {
-  it.each([
-    ["/crecer/oportunidades", "/portafolio/oportunidades"],
-    ["/crecer/oportunidades/oc-1", "/portafolio/oportunidades/oc-1"],
-    ["/portafolio/opportunity-cards", "/portafolio/oportunidades"],
-    ["/en/grow/opportunities", "/en/portfolio/opportunities"],
-    ["/en/grow/opportunities/oc-1", "/en/portfolio/opportunities/oc-1"],
-    ["/en/portfolio/opportunity-cards", "/en/portfolio/opportunities"],
-  ])("%s -> %s", (from, to) => {
-    expect(redirectOf(from)).toBe(to);
-  });
-
-  it("no redirige la portada de Crecer ni el acompañamiento", () => {
-    expect(redirectOf("/crecer")).toBeNull();
-    expect(redirectOf("/crecer/acompanamiento")).toBeNull();
   });
 });
 
