@@ -39,6 +39,8 @@ function internalSlugFromPublic(publicPath: string, locale: Locale): string {
   if (map[enTail]) return map[enTail];
   const sector = enTail.match(/^\/invest\/sectors\/([^/]+)$/);
   if (sector) return `/invertir/sectores/${sector[1]}`;
+  const institutional = enTail.match(/^\/institutional\/([^/]+)$/);
+  if (institutional) return `/institucional/${institutional[1]}`;
   const story = enTail.match(/^\/portfolio\/success-stories\/([^/]+)$/);
   if (story) return `/portafolio/casos/${story[1]}`;
   const opportunity = enTail.match(/^\/portfolio\/opportunities\/([^/]+)$/);
@@ -133,60 +135,3 @@ export function resolveInternalPath(pathname: string): string | null {
 
   return `/es${normalized}`;
 }
-
-/** Redirecciones 308 explícitas (preservan método y respetan query).
- *  next.config.ts no puede leer las traducciones ES↔EN que viven en el JSON,
- *  así que el middleware es el sitio donde se decide a dónde va cada URL. */
-export const permanentRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string }> = [
-  // Portafolio unificado (oct-2026): las listas separadas se redireccionan al
-  // catálogo único con la pestaña correspondiente pre-seleccionada.
-  { from: /^\/portafolio\/fichas-proyectos\/?$/, to: () => "/portafolio?tipo=proyectos" },
-  { from: /^\/portafolio\/oportunidades\/?$/, to: () => "/portafolio?tipo=oportunidades" },
-  { from: /^\/en\/portfolio\/project-sheets\/?$/, to: () => "/en/portfolio?tipo=proyectos" },
-  { from: /^\/en\/portfolio\/opportunities\/?$/, to: () => "/en/portfolio?tipo=oportunidades" },
-];
-
-/** Redirecciones legacy del middleware. Los 301 de mapa y postulación se declaran en next.config.ts. */
-export const legacyRedirects: ReadonlyArray<{ from: RegExp; to: (pathname: string) => string | null }> = [
-  // Oportunidades: unificadas en Portafolio con slug localizado (sep-2026).
-  // Antes vivían en /crecer/oportunidades (fuera del menú) y las fichas PDF en
-  // /portafolio/opportunity-cards (slug en inglés también en español).
-  {
-    from: /^\/crecer\/oportunidades(\/[^/]+)?$/,
-    to: (p) => p.replace(/^\/crecer\/oportunidades/, "/portafolio/oportunidades"),
-  },
-  { from: /^\/portafolio\/opportunity-cards$/, to: () => "/portafolio/oportunidades" },
-  {
-    from: /^\/en\/grow\/opportunities(\/[^/]+)?$/,
-    to: (p) => p.replace(/^\/en\/grow\/opportunities/, "/en/portfolio/opportunities"),
-  },
-  { from: /^\/en\/portfolio\/opportunity-cards$/, to: () => "/en/portfolio/opportunities" },
-  {
-    from: /^\/es(\/.*)?$/,
-    to: (p) => (p === "/es" ? "/" : p.slice(3) || "/"),
-  },
-  {
-    from: /^\/en\/invertir(\/.*)?$/,
-    to: (p) => {
-      const rest = p.replace(/^\/en\/invertir/, "");
-      if (rest.startsWith("/sectores/")) {
-        return `/en/invest/sectors${rest.slice("/sectores".length)}`;
-      }
-      if (rest === "/por-que-honduras") return "/en/invest/why-honduras";
-      return `/en/invest${rest}`;
-    },
-  },
-  // Legacy /servicios/* → /cni/* (renombrado en mayo 2026)
-  { from: /^\/servicios\/?$/, to: () => "/cni" },
-  { from: /^\/servicios\/asistencia-legal\/?$/, to: () => "/cni/servicios-legales" },
-  { from: /^\/servicios\/asistencia-tecnica\/?$/, to: () => "/cni/servicios-tecnicos" },
-  { from: /^\/servicios\/inteligencia-de-datos\/?$/, to: () => "/cni/inteligencia-de-datos" },
-  { from: /^\/servicios\/tramites\/?$/, to: () => "/tramites" },
-  { from: /^\/en\/services\/?$/, to: () => "/en/cni" },
-  { from: /^\/en\/services\/legal-assistance\/?$/, to: () => "/en/cni/legal-services" },
-  { from: /^\/en\/services\/technical-assistance\/?$/, to: () => "/en/cni/technical-services" },
-  { from: /^\/en\/services\/data-intelligence\/?$/, to: () => "/en/cni/data-intelligence" },
-  { from: /^\/en\/services\/procedures\/?$/, to: () => "/en/procedures" },
-  // Quiénes Somos sigue accesible como página secundaria
-  { from: /^\/en\/about-us\/?$/, to: () => "/en/quienes-somos" },
-];

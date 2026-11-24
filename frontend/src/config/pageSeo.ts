@@ -1,3 +1,4 @@
+import { designImages } from "@/src/lib/designAssets";
 import type { PageSeo } from "@/src/lib/seo";
 
 /**
@@ -8,6 +9,7 @@ import type { PageSeo } from "@/src/lib/seo";
 export const PAGE_SEO: Record<string, PageSeo> = {
   home: {
     canonical: "/",
+    ogImage: designImages.home.heroCoast,
     enMirror: "/en",
     title: {
       es: "CNI Honduras · Invierte, Crece y Vive en Honduras",
@@ -28,6 +30,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   invertir: {
     canonical: "/invertir",
+    ogImage: designImages.porQue.hero,
     enMirror: "/en/invest",
     title: {
       es: "Invertir en Honduras · Sectores Estratégicos y Ventajas Competitivas",
@@ -48,6 +51,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "invertir-por-que-honduras": {
     canonical: "/invertir/por-que-honduras",
+    ogImage: designImages.porQue.hero,
     enMirror: "/en/invest/why-honduras",
     title: {
       es: "¿Por qué Honduras? · Ventajas Geoestratégicas para Inversión",
@@ -61,6 +65,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "invertir-sectores": {
     canonical: "/invertir/sectores",
+    ogImage: designImages.sectors.agroindustria,
     enMirror: "/en/invest/sectors",
     title: {
       es: "Sectores de Inversión en Honduras · Catálogo Estratégico",
@@ -73,6 +78,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   crecer: {
     canonical: "/crecer",
+    ogImage: designImages.portfolio.hero,
     enMirror: "/en/grow",
     title: {
       es: "Crecer en Honduras · Portafolio y Casos de Éxito",
@@ -86,6 +92,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "portafolio-oportunidades": {
     canonical: "/portafolio/oportunidades",
+    ogImage: designImages.portfolio.hero,
     enMirror: "/en/portfolio/opportunities",
     title: {
       es: "Oportunidades de Inversión · Opportunity Cards del CNI",
@@ -98,6 +105,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "portafolio-fichas-proyectos": {
     canonical: "/portafolio/fichas-proyectos",
+    ogImage: designImages.portfolio.hero,
     enMirror: "/en/portfolio/project-sheets",
     title: {
       es: "Fichas de Proyectos · Portafolio de Inversión del CNI",
@@ -110,6 +118,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "crecer-acompanamiento": {
     canonical: "/crecer/acompanamiento",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/grow/aftercare",
     title: {
       es: "Aftercare · Acompañamiento Post-Inversión del CNI",
@@ -122,6 +131,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   vivir: {
     canonical: "/vivir",
+    ogImage: designImages.vivir.hero,
     enMirror: "/en/live",
     title: {
       es: "Vivir en Honduras · Calidad de Vida para Ejecutivos Internacionales",
@@ -135,6 +145,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "vivir-calidad-de-vida": {
     canonical: "/vivir/calidad-de-vida",
+    ogImage: designImages.vivir.hero,
     enMirror: "/en/live/quality-of-life",
     title: {
       es: "Calidad de Vida en Honduras · Salud, Educación y Seguridad",
@@ -147,6 +158,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   cni: {
     canonical: "/cni",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/cni",
     title: {
       es: "CNI · Servicios al Inversionista (Legal, Técnico, Datos)",
@@ -159,6 +171,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "cni-servicios-legales": {
     canonical: "/cni/servicios-legales",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/cni/legal-services",
     title: {
       es: "Servicios Legales CNI · LPPI, ZOLI y Estructuración Fiscal",
@@ -172,6 +185,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "cni-servicios-tecnicos": {
     canonical: "/cni/servicios-tecnicos",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/cni/technical-services",
     title: {
       es: "Servicios Técnicos CNI · Permisos, Aduanas y Licencias",
@@ -184,6 +198,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "cni-inteligencia-datos": {
     canonical: "/cni/inteligencia-de-datos",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/cni/data-intelligence",
     title: {
       es: "Inteligencia de Datos · Estudios y Reportes de Mercado CNI",
@@ -196,6 +211,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   recursos: {
     canonical: "/recursos",
+    ogImage: designImages.recursos.hero,
     enMirror: "/en/resources",
     title: {
       es: "Recursos · Guía del Inversionista de Honduras y Centro de Descargas",
@@ -209,6 +225,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   prensa: {
     canonical: "/prensa",
+    ogImage: designImages.prensa.hero,
     enMirror: "/en/news",
     title: {
       es: "Sala de Prensa CNI · Noticias y Comunicados Oficiales",
@@ -221,6 +238,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   portafolio: {
     canonical: "/portafolio",
+    ogImage: designImages.portfolio.hero,
     enMirror: "/en/portfolio",
     title: {
       es: "Portafolio de Inversiones · Fichas y Oportunidades del CNI Honduras",
@@ -233,6 +251,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "portafolio-casos": {
     canonical: "/portafolio/casos",
+    ogImage: designImages.casos.sinclairHero,
     enMirror: "/en/portfolio/success-stories",
     title: {
       es: "Casos de Éxito · Inversiones Reales en Honduras",
@@ -245,6 +264,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "portafolio-mapa": {
     canonical: "/portafolio/mapa",
+    ogImage: designImages.mapa.hero3d,
     enMirror: "/en/portfolio/map",
     title: {
       es: "Mapa de Inversión Honduras · Visualización Geoespacial",
@@ -257,6 +277,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   asesoria: {
     canonical: "/asesoria",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/advisory",
     title: {
       es: "Asesoría Gratuita · Oficiales de Inversión CNI",
@@ -269,6 +290,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   tramites: {
     canonical: "/tramites",
+    ogImage: designImages.recursos.hero,
     enMirror: "/en/procedures",
     title: {
       es: "Trámites en Línea · Ventanilla Única del Inversionista",
@@ -281,6 +303,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "facilidades-migratorias": {
     canonical: "/facilidades-migratorias",
+    ogImage: designImages.vivir.hero,
     enMirror: "/en/migratory-facilities",
     title: {
       es: "Facilidades Migratorias · Despacho de Promoción de Inversiones",
@@ -293,6 +316,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   "quienes-somos": {
     canonical: "/quienes-somos",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/about-us",
     title: {
       es: "Quiénes Somos · Misión, Visión y Equipo del CNI",
@@ -305,6 +329,7 @@ export const PAGE_SEO: Record<string, PageSeo> = {
   },
   contacto: {
     canonical: "/contacto",
+    ogImage: designImages.cni.heroCity,
     enMirror: "/en/contact",
     title: {
       es: "Contacto CNI Honduras · Centro Cívico Gubernamental",

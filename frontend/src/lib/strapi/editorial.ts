@@ -346,6 +346,9 @@ export function mapNews(raw: unknown): NewsArticle | null {
     published_at: published || new Date(0).toISOString(),
     seo_title: seo.title || asString(raw.seo_title),
     seo_description: seo.description || asString(raw.seo_description),
+    seo_image: seo.image,
+    seo_canonical: seo.canonical,
+    seo_noindex: seo.noindex,
     ...(leadPoints.length ? { lead_points: leadPoints } : {}),
   };
 }
@@ -430,10 +433,12 @@ export function mapSuccessStory(raw: unknown): SuccessStory | null {
   const cover = toMediaAsset(raw.featured_image, title);
   const published = asString(raw.publishedAt);
   const personName = asString(raw.person_name);
+  const seo = mapEditorialSeo(raw.seo);
   return {
     id: typeof raw.id === "number" ? raw.id : 0,
     title,
     slug,
+    seo,
     company_name: asString(raw.company_name),
     sector: toSectorLite(raw.sector),
     summary: asString(raw.summary),
@@ -528,6 +533,25 @@ async function fetchAllEditorialRows<T>(
     lastPage = result.meta?.pagination?.pageCount ?? 1;
   }
   return rows;
+}
+
+export type EditorialSeoCollection = "pages" | "news" | "successStories";
+
+export async function getEditorialSeoIndex(collection: EditorialSeoCollection, locale: Locale) {
+  const rows = await fetchAllEditorialRows<unknown>(STRAPI_COLLECTION_PATHS[collection], locale, {
+    status: "published",
+    "fields[0]": "slug",
+    "populate[seo][fields][0]": "noindex",
+    "populate[seo][fields][1]": "canonical",
+  });
+  return rows.flatMap((row) => {
+    if (!isRecord(row)) return [];
+    const slug = asString(row.slug).trim();
+    const documentId = asString(row.documentId);
+    if (!slug || !documentId) return [];
+    const { noindex, canonical } = mapEditorialSeo(row.seo);
+    return [{ slug, documentId, noindex, canonical }];
+  });
 }
 
 async function fetchBySlug<T>(
@@ -649,7 +673,7 @@ export async function getSuccessStoryBySlug(locale: Locale, slug: string): Promi
     STRAPI_COLLECTION_PATHS.successStories,
     locale,
     slug,
-    populateExtra(["logo", "featured_image", "person_photo"]),
+    { ...populateExtra(["logo", "featured_image", "person_photo"]), "populate[seo][populate]": "ogImage" },
   );
   const mapped = mapSuccessStory(raw);
   if (!mapped) throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.successStories);
