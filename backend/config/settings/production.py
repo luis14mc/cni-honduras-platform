@@ -34,5 +34,5 @@ else:
     SECURE_SSL_REDIRECT = False
 
 SECURE_REDIRECT_EXEMPT = [
-    # Health checks placed behind proxies without TLS terminated at Django can exempt paths here later.
+    r"^health/$",  # Railway's readiness probe can use HTTP inside its network.
 ]
