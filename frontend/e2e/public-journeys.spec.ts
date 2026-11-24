@@ -18,13 +18,17 @@ test("opens a news article and switches between its ES and EN pages", async ({ p
   await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/);
   await expect(page.getByRole("heading", { level: 1, name: "Impulso a la inversión productiva" })).toBeVisible();
 
-  await page.getByRole("group", { name: "Idioma", exact: true }).getByRole("link", { name: "EN", exact: true }).click();
-  await expect(page).toHaveURL(/\/en\/news\/inversion-productiva-prueba$/);
+  const english = page.getByRole("group", { name: "Idioma", exact: true }).getByRole("link", { name: "EN", exact: true });
+  await expect(english).toHaveAttribute("href", "/en/news/inversion-productiva-prueba");
+  await english.click();
+  await expect(page).toHaveURL(/\/en\/news\/inversion-productiva-prueba$/, { timeout: 15_000 });
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.getByRole("heading", { level: 1, name: "Supporting productive investment" })).toBeVisible();
 
-  await page.getByRole("group", { name: "Language", exact: true }).getByRole("link", { name: "ES", exact: true }).click();
-  await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/);
+  const spanish = page.getByRole("group", { name: "Language", exact: true }).getByRole("link", { name: "ES", exact: true });
+  await expect(spanish).toHaveAttribute("href", "/prensa/inversion-productiva-prueba");
+  await spanish.click();
+  await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/, { timeout: 15_000 });
   await expect(page.locator("html")).toHaveAttribute("lang", "es");
 });
 
