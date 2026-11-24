@@ -8,11 +8,10 @@ Este documento describe cómo trabajan los agentes automatizados en `luis14mc/cn
 |----------|-------|
 | Repositorio | `luis14mc/cni-honduras-platform` |
 | Rama de integración | `master` |
-| Deploy testing frontend | Vercel (`test.cni.hn`) desde `master` |
-| Deploy testing backend | Render (`api-test.cni.hn`) desde `master` |
-| Rama `staging` | **No existe** por ahora |
+| Entorno Railway `staging` | Rama `testing` · `test.cni.hn` |
+| Entorno Railway `production` | Rama `production` · `cni.hn` |
 
-`master` es producción de testing. **No pushear directamente.**
+Las ramas permanentes reciben cambios mediante pull requests. [Decisión del PO](https://github.com/luis14mc/cni-honduras-platform/issues/91#issuecomment-7143751224).
 
 ---
 
@@ -44,20 +43,29 @@ Reglas: `CLAUDE.md`
 
 - Aprueba PRs
 - Resuelve conflictos de merge
-- Mergea a `master` cuando CI y auditoría están OK
-- Dispara deploys automáticos en Vercel/Render
+- Integra en `master` cuando CI y auditoría están en verde
+- Aprueba las promociones a `testing` y `production` según sus criterios de salida
 
 ---
 
 ## Flujo de ramas
 
 ```text
-master (integración + deploy testing)
-  │
-  ├── feat/S1-T5-enlaces-institucionales
-  ├── fix/S1-T4-sector-locale
-  └── chore/ci-pr-automation
+feature → master → testing → production
+                    staging    producción
 ```
+
+1. Abra los PR de funcionalidad contra `master`. Esta rama ejecuta CI para integración.
+2. Promueva `master` a `testing` mediante PR. Railway despliega staging tras pasar la CI del push a `testing`.
+3. Registre el SHA desplegado y el [smoke de staging](../CMS_STAGING_SMOKE_TEST.md). Abra el PR de `testing` a `production` cuando el smoke esté en verde. Con CI y aprobación humana del CNI, el responsable puede hacer merge y Railway despliega producción tras la CI del push.
+
+Proteja `testing` y `production` contra pushes directos. Exija PR y CI para ambas y al menos una aprobación humana para `production`. Use merge commits para promociones y reincorporaciones entre ramas permanentes, de modo que Git conserve el historial compartido. [Guía de Railway](../deployment/railway.md#ramas-de-despliegue).
+
+### Hotfix de producción
+
+1. Actualice la referencia remota y cree la rama desde producción con `git fetch origin production` y `git switch -c fix/hotfix-descripcion origin/production`.
+2. Abra el PR del hotfix contra `production`. El responsable humano aprueba y hace merge cuando la CI está en verde. Verifique el autodeploy y los flujos afectados.
+3. Reincorpore el cambio mediante PR de `production` hacia `testing` y otro hacia `master`. Si hay conflictos, resuélvalos en ramas de trabajo dirigidas a cada destino y verifique la corrección en ambos antes de retomar las promociones.
 
 ### Convención de nombres
 
@@ -147,10 +155,14 @@ docs(workflow): document agent PR process
 
 Workflow: `.github/workflows/ci.yml`
 
+Se ejecuta para PRs con base `master`, `testing` o `production` y para pushes a cualquiera de esas tres ramas, incluidos los commits de merge.
+
 | Job | Qué valida |
 |-----|------------|
-| `frontend-ci` | `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm run build` |
+| `frontend-ci` | Instalación bloqueada, lint, pruebas unitarias, build y E2E |
 | `backend-ci` | PostGIS 16 (servicio efímero), `check`, `makemigrations --check`, `test` |
+| `backend-image` | Build de la imagen de Django sin publicación |
+| `strapi-ci` | Build del admin y pruebas de permisos y API |
 
 - **No usa Neon** — base PostgreSQL/PostGIS temporal en el runner
 - Settings aislados: `config.settings.ci`
@@ -172,7 +184,7 @@ Workflow: `.github/workflows/ci.yml`
 
 Merge a `master` solo cuando:
 
-- [ ] CI verde (`frontend-ci` + `backend-ci`)
+- [ ] CI verde
 - [ ] Auditoría sin BLOCKER (Claude u humano)
 - [ ] Template de PR completo
 - [ ] CODEOWNERS aprobó (si branch protection está activa)
@@ -184,30 +196,7 @@ Merge a `master` solo cuando:
 
 ## Rollback si el deploy falla
 
-Tras merge a `master`, Vercel y Render despliegan automáticamente.
-
-### Opción A — Revert del merge commit
-
-```bash
-git checkout master
-git pull origin master
-git revert -m 1 <merge-commit-sha>
-git push origin master
-```
-
-### Opción B — Redeploy de commit anterior
-
-- **Vercel:** dashboard → Deployments → redeploy commit anterior estable
-- **Render:** dashboard → Manual Deploy → commit anterior
-
-### Opción C — Hotfix en rama nueva
-
-```bash
-git checkout -b fix/hotfix-deploy master
-# corrección mínima
-git push -u origin HEAD
-# PR urgente → merge cuando CI pase
-```
+Pause el autodeploy del entorno afectado y restaure en Railway la última revisión compatible según el [checklist de marcha atrás](../deployment/checklist-produccion.md#marcha-atrás). Abra un PR de reversión para reconciliar la rama afectada. En producción, siga el [flujo de hotfix](#hotfix-de-producción) para devolver el cambio a `testing` y `master`.
 
 ---
 
