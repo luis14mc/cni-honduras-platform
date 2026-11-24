@@ -21,10 +21,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1110.0",
-    "@strapi/database": "5.52.0",
-    "@strapi/plugin-cloud": "5.52.0",
-    "@strapi/plugin-users-permissions": "5.52.0",
-    "@strapi/strapi": "5.52.0",
+    "@strapi/database": "5.63.0",
+    "@strapi/plugin-cloud": "5.63.0",
+    "@strapi/plugin-users-permissions": "5.63.0",
+    "@strapi/strapi": "5.63.0",
     "pg": "8.20.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -39,9 +39,12 @@
     "@types/react-dom": "^18",
     "typescript": "^5"
   },
+  "overrides": {
+    "zod@4.4.3": "4.6.7"
+  },
   "engines": {
-    "node": "20.x || 22.x",
-    "npm": ">=10.0.0"
+    "node": ">=22.19.0 <23",
+    "npm": ">=11.4.2 <12"
   },
   "strapi": {
     "uuid": "1ddc7772-1e95-45e9-b677-11f996abd973",
