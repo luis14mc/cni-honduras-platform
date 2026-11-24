@@ -1,5 +1,6 @@
 import { UmamiAnalytics } from "@/src/components/analytics/UmamiAnalytics";
 import { getAnalyticsScript } from "@/src/lib/analytics";
+import { isIndexableDeployment } from "@/src/lib/indexing";
 import type { Metadata, Viewport } from "next";
 import { JsonLd } from "@/src/components/seo/JsonLd";
 import { headers } from "next/headers";
@@ -157,7 +158,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const analytics = getAnalyticsScript(process.env.NODE_ENV, process.env.VERCEL_ENV);
+  const analytics = isIndexableDeployment()
+    ? getAnalyticsScript(process.env.NODE_ENV)
+    : undefined;
   const locale = (await headers()).get("x-cni-locale") === "en" ? "en" : "es";
   return (
     <html lang={locale} className={cn("scroll-smooth", montserrat.variable, aptos.variable)}>
@@ -172,6 +175,7 @@ export default async function RootLayout({
         <JsonLd id="ld-government-organization" value={governmentOrganizationJsonLd} />
         <JsonLd id="ld-website" value={websiteJsonLd} />
         {children}
+        {analytics && <UmamiAnalytics {...analytics} />}
       </body>
     </html>
   );

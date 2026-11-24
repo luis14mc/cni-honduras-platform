@@ -1,6 +1,20 @@
 """Production-oriented settings used by ``wsgi.py`` / ``asgi.py`` inside Docker."""
 
+from os import getenv
+
+from django.core.exceptions import ImproperlyConfigured
+
 from .base import *  # noqa: F401,F403
+
+if (
+    not SECRET_KEY
+    or SECRET_KEY == DEFAULT_SECRET_KEY
+    or len(SECRET_KEY) < 50
+    or (SECRET_KEY.startswith("build-only") and getenv("DJANGO_ALLOW_BUILD_KEY") != "1")
+):
+    raise ImproperlyConfigured(
+        "DJANGO_SECRET_KEY must be set to a unique value of at least 50 characters in production."
+    )
 
 DEBUG = False
 
@@ -34,5 +48,5 @@ else:
     SECURE_SSL_REDIRECT = False
 
 SECURE_REDIRECT_EXEMPT = [
-    # Health checks placed behind proxies without TLS terminated at Django can exempt paths here later.
+    r"^health/$",  # Railway's readiness probe can use HTTP inside its network.
 ]

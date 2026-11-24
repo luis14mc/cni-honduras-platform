@@ -1,6 +1,7 @@
 import path from "path";
 import type { NextConfig } from "next";
 import { buildStrapiBeforeFileRewrites } from "./src/lib/strapi/proxy";
+import { isIndexableDeployment } from "./src/lib/indexing";
 
 /** Optional public media/CDN host (no provider hardcoding). Set in deploy env if needed. */
 const mediaHost = process.env.NEXT_PUBLIC_MEDIA_HOSTNAME?.trim();
@@ -18,6 +19,12 @@ function remoteFromPublicUrl(value: string | undefined) {
 }
 
 const nextConfig: NextConfig = {
+  output: process.env.NEXT_STANDALONE === "1" ? "standalone" : undefined,
+  async headers() {
+    return isIndexableDeployment()
+      ? []
+      : [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }];
+  },
   // Evita que Turbopack use la raíz del monorepo cuando hay otro lockfile arriba.
   turbopack: {
     root: path.join(__dirname),

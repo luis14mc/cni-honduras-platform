@@ -1,0 +1,13 @@
+**
+!backend/
+!backend/**
+backend/.env*
+backend/**/.env*
+backend/**/__pycache__/
+backend/**/.venv/
+backend/*.sqlite3
+backend/media/
+backend/staticfiles/
+!docker/
+!docker/backend/
+!docker/backend/Dockerfile

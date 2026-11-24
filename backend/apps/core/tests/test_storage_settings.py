@@ -184,12 +184,13 @@ class StorageSettingsUnitTests(SimpleTestCase):
 
 class StorageSettingsIntegrationTests(TestCase):
     def test_django_check_uses_local_storage_by_default(self):
+        from django.core.files.storage import FileSystemStorage, storages
         from django.core.management import call_command
         from io import StringIO
 
-        out = StringIO()
-        call_command("check", stdout=out)
-        self.assertIn("no issues", out.getvalue().lower())
+        # GDAL < 3.9 emits gis.W001 even when the storage configuration is valid.
+        call_command("check", stdout=StringIO(), stderr=StringIO())
+        self.assertIsInstance(storages["default"], FileSystemStorage)
 
     @override_settings(
         STORAGES={

@@ -119,6 +119,19 @@ jobs:
       - name: Run tests
         run: python manage.py test --verbosity=2
 
+  backend-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/backend/Dockerfile
+          push: false
+          cache-from: type=gha,scope=backend-image
+          cache-to: type=gha,mode=max,scope=backend-image
+
   strapi-ci:
     name: strapi-ci
     runs-on: ubuntu-latest
