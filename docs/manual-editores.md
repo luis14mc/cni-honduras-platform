@@ -2,7 +2,7 @@
 
 Entra en `https://cms.test.cni.hn/admin` para validar cambios o en `https://cms.cni.hn/admin` para editar contenido de producción. En tu perfil puedes elegir **Español** para la interfaz. Dentro del **Gestor de contenido**, el selector de idioma corresponde a la traducción de la ficha. Selecciona **ES** o **EN** antes de editar.
 
-Las capturas se tomaron con datos de ejemplo en una instancia local del CMS. Algunas etiquetas de los campos se muestran en inglés según la colección.
+Las capturas se tomaron con datos de ejemplo en Strapi 5.63. Algunas etiquetas de los campos se muestran en inglés según la colección.
 
 ## Crear una noticia
 
@@ -43,7 +43,7 @@ Las capturas se tomaron con datos de ejemplo en una instancia local del CMS. Alg
 1. En **Page**, abre la entrada existente o crea una nueva. Completa título, slug, resumen y contenido. Coordina los cambios de slug si la página ya tiene enlaces públicos.
 2. Revisa SEO y traducciones. Guarda. Usa la vista previa cuando esté disponible y verifica el contenido publicado en `/institucional/<slug>` o `/en/institutional/<slug>`.
 
-![Editor de una página institucional](assets/manual-editores/pagina.png)
+![Editor de una página institucional con los botones Publicar y Guardar](assets/manual-editores/pagina.png)
 
 ## Publicar cambios
 
