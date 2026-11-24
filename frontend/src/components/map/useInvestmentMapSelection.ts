@@ -1,3 +1,4 @@
+import { trackEvent } from "@/src/lib/analytics";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Locale } from "@/src/i18n/config";
 import type {
@@ -69,6 +70,7 @@ export function useInvestmentMapSelection({
   const [projectFocusKey, setProjectFocusKey] = useState(0);
 
   const handleSelectDepartment = useCallback((department: DepartmentProperties) => {
+    trackEvent("map_filter", { filter: "department", value: department.slug });
     setRegionLayer("none");
     setSelectedRegionCode(null);
     setSelectedDepartment(department);
@@ -146,19 +148,22 @@ export function useInvestmentMapSelection({
   }, [ensureRegionLevel, initialQueryState.regionLevel]);
 
   const handleSelectRegion = useCallback((code: string | null) => {
-    setSelectedRegionCode((current) => (code === null || current === code ? null : code));
+    const next = code === selectedRegionCode ? null : code;
+    trackEvent("map_filter", { filter: "region", value: next ?? "all" });
+    setSelectedRegionCode(next);
     setSelectedProject(null);
     setActiveClusterKey(null);
     setClusterFocus(null);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
-  }, [setSelectedProject]);
+  }, [selectedRegionCode, setSelectedProject]);
 
   const scrollMapIntoView = useCallback(() => {
     document.getElementById("investment-map-canvas")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, []);
 
   const handleSelectProject = useCallback((project: MapInvestmentProject) => {
+    trackEvent("map_project_open", { slug: project.slug, kind: project.kind ?? "project" });
     setSelectedProject(project);
     setSelectedInfrastructure(null);
     setSelectedRoad(null);
@@ -220,6 +225,7 @@ export function useInvestmentMapSelection({
   }, []);
 
   const handleSelectMunicipality = useCallback((municipality: MunicipalityProperties) => {
+    trackEvent("map_filter", { filter: "municipality", value: municipality.slug });
     setSelectedMunicipality(municipality);
     setSelectedProject(null);
     setActiveClusterKey(null);

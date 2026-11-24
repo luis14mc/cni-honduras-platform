@@ -4,6 +4,7 @@ import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { Locale } from "@/src/i18n/config";
 import { ApiError } from "@/src/lib/api";
 import { documentOpenUrl } from "@/src/lib/cmsDocuments";
+import { trackDownload, trackEvent } from "@/src/lib/analytics";
 import { submitResourceDownload } from "@/src/services/forms";
 import type { CmsDocument } from "@/src/types/cms";
 
@@ -53,19 +54,6 @@ function remember(token: string) {
   }
 }
 
-function trackDownload(doc: CmsDocument) {
-  const detail = { slug: doc.slug, access: doc.access ?? "free" };
-  window.dispatchEvent(new CustomEvent("file_download", { detail }));
-  try {
-    const analytics = (window as Window & {
-      umami?: { track: (event: string, data: typeof detail) => void };
-    }).umami;
-    analytics?.track("file_download", detail);
-  } catch {
-    // Tracking is optional.
-  }
-}
-
 type Props = {
   document: CmsDocument;
   locale: Locale;
@@ -81,15 +69,16 @@ export function ResourceDownloadAction({ document: doc, locale, label, className
   const [error, setError] = useState("");
   const titleId = useId();
   const t = copy[locale];
+  const downloadEvent = { slug: doc.slug, access: doc.access ?? "free" } as const;
   const resourceId = doc.strapi_document_id;
   const resourceLocale = doc.strapi_locale ?? locale;
 
   if (doc.access !== "gated") {
     const url = documentOpenUrl(doc);
     return url ? (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={className}
-        onClick={() => trackDownload(doc)} onAuxClick={(event) => {
-          if (event.button === 1) trackDownload(doc);
+      <a data-resource-download href={url} target="_blank" rel="noopener noreferrer" className={className}
+        onClick={() => trackDownload(downloadEvent)} onAuxClick={(event) => {
+          if (event.button === 1) trackDownload(downloadEvent);
         }}>
         {icon}{label}
       </a>
@@ -108,8 +97,13 @@ export function ResourceDownloadAction({ document: doc, locale, label, className
       const result = await submitResourceDownload(payload);
       const downloadUrl = new URL(result.download_url);
       if (!["https:", "http:"].includes(downloadUrl.protocol)) throw new Error("Invalid download URL");
-      if (rememberContact) remember(result.remember_token);
-      trackDownload(doc);
+      if (rememberContact) {
+        remember(result.remember_token);
+        const event = { form: "resource_download", locale } as const;
+        trackEvent("form_submit", event);
+        trackEvent("lead_submit", event);
+      }
+      trackDownload(downloadEvent);
       dialog.current?.close();
       window.location.assign(downloadUrl.href);
     } catch (failure) {

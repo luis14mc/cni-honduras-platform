@@ -1,3 +1,6 @@
+import { useRef } from "react";
+import { trackEvent } from "@/src/lib/analytics";
+import { MAP_INVESTMENT_AMOUNT } from "@/src/lib/types/investment-map";
 import type { Locale } from "@/src/i18n/config";
 import type { DepartmentProperties, TerritorialRegionFeature } from "@/src/lib/types/investment-map";
 
@@ -24,6 +27,7 @@ export function MapFiltersBar({
   locale, stage, stages, minInvestment, maxInvestment, departments, department,
   regions, region, onDepartment, onRegion, onStage, onMinInvestment, onMaxInvestment,
 }: Props) {
+  const amountOnFocus = useRef("");
   const en = locale === "en";
   const invalidRange = Boolean(minInvestment && maxInvestment && Number(minInvestment) > Number(maxInvestment));
   return (
@@ -50,14 +54,21 @@ export function MapFiltersBar({
         </select>
       </label>
       {([
-        [en ? "Minimum investment (USD)" : "Inversión mínima (USD)", minInvestment, onMinInvestment],
-        [en ? "Maximum investment (USD)" : "Inversión máxima (USD)", maxInvestment, onMaxInvestment],
-      ] as const).map(([label, value, update]) => (
+        ["min_investment", en ? "Minimum investment (USD)" : "Inversión mínima (USD)", minInvestment, onMinInvestment],
+        ["max_investment", en ? "Maximum investment (USD)" : "Inversión máxima (USD)", maxInvestment, onMaxInvestment],
+      ] as const).map(([filter, label, value, update]) => (
         <label key={label} className="text-sm font-semibold">
           {label}
           <input type="number" min="0" step="0.01" value={value}
             aria-invalid={invalidRange} aria-describedby={invalidRange ? "investment-range-error" : undefined}
-            onChange={(e) => update(e.target.value)} className={selectStyle} />
+            onFocus={() => { amountOnFocus.current = value; }}
+            onChange={(e) => update(e.target.value)}
+            onBlur={() => {
+              if (!invalidRange && amountOnFocus.current !== value &&
+                (!value || MAP_INVESTMENT_AMOUNT.test(value))) {
+                trackEvent("map_filter", { filter, value: value || "all" });
+              }
+            }} className={selectStyle} />
         </label>
       ))}
       {invalidRange ? (

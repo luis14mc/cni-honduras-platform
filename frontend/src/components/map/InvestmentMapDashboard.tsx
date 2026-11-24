@@ -1,5 +1,6 @@
 "use client";
 
+import { trackEvent } from "@/src/lib/analytics";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Anchor, Plane, Route, Search, X } from "lucide-react";
@@ -149,8 +150,17 @@ export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMap
             departments={geo.data?.features.map(({ properties }) => properties) ?? []}
             department={selectedDepartment}
             regions={regionMode ? activeRegions?.features ?? [] : null} region={selectedRegion}
-            onDepartment={(department) => department ? handleSelectDepartment(department) : handleClearDepartment()}
-            onRegion={handleSelectRegion} onStage={setStage}
+            onDepartment={(department) => {
+              if (department) handleSelectDepartment(department);
+              else {
+                handleClearDepartment();
+                trackEvent("map_filter", { filter: "department", value: "all" });
+              }
+            }}
+            onRegion={handleSelectRegion} onStage={(stage) => {
+              setStage(stage);
+              trackEvent("map_filter", { filter: "stage", value: stage || "all" });
+            }}
             onMinInvestment={setMinInvestment} onMaxInvestment={setMaxInvestment}
           />
           <div className="mt-4" role="group" aria-labelledby="investment-map-view-label">
@@ -159,7 +169,7 @@ export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMap
               {REGION_LAYER_CHOICES.map((choice) => {
                 const active = regionLayer === choice;
                 return (
-                  <button key={choice} type="button" aria-pressed={active} onClick={() => handleSelectRegionLayer(choice)} className={`min-h-9 rounded-full border px-4 text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06] ${active ? "border-[#F7BF06] bg-[#F7BF06] text-[#001a33]" : "border-white/20 bg-[#001a33]/60 text-white hover:border-[#8DC046]"}`}>
+                  <button key={choice} type="button" aria-pressed={active} onClick={() => { if (!active) trackEvent("map_filter", { filter: "region_level", value: choice }); handleSelectRegionLayer(choice); }} className={`min-h-9 rounded-full border px-4 text-xs font-bold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06] ${active ? "border-[#F7BF06] bg-[#F7BF06] text-[#001a33]" : "border-white/20 bg-[#001a33]/60 text-white hover:border-[#8DC046]"}`}>
                     {choice === "none" ? copy.regionModeDepartments : copy.regionLevels[choice]}
                   </button>
                 );
@@ -169,7 +179,7 @@ export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMap
               {activeRegionStatus === "ready" && activeRegions?.features.length === 0 ? <span role="status" className="text-xs text-[#d5e3ff]/75">{copy.regionsEmpty}</span> : null}
             </div>
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs"><span className="rounded-full border border-white/15 px-3 py-2">{copy.currentFilters}: {selectedSectorName}{selectedDepartment ? ` · ${selectedDepartment.name}` : ""}{selectedMunicipality ? ` · ${selectedMunicipality.name}` : ""}{activeInfrastructureLabels.map((label) => ` · ${label}`).join("")}{regionLayer !== "none" ? ` · ${copy.regionLevels[regionLayer]}` : ""}{selectedRegion ? ` · ${selectedRegion.properties.name}` : ""}</span><button type="button" onClick={handleResetFilters} className="min-h-9 rounded-full border border-[#8DC046]/50 px-3 font-bold text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F7BF06]">{copy.clearFilters}</button></div>
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs"><span className="rounded-full border border-white/15 px-3 py-2">{copy.currentFilters}: {selectedSectorName}{selectedDepartment ? ` · ${selectedDepartment.name}` : ""}{selectedMunicipality ? ` · ${selectedMunicipality.name}` : ""}{activeInfrastructureLabels.map((label) => ` · ${label}`).join("")}{regionLayer !== "none" ? ` · ${copy.regionLevels[regionLayer]}` : ""}{selectedRegion ? ` · ${selectedRegion.properties.name}` : ""}</span><button type="button" onClick={() => { handleResetFilters(); trackEvent("map_filter", { filter: "reset" }); }} className="min-h-9 rounded-full border border-[#8DC046]/50 px-3 font-bold text-[#d8ef9f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F7BF06]">{copy.clearFilters}</button></div>
           <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold uppercase tracking-[0.1em] text-[#d5e3ff]/75"><span>{counts.visibleProjects} {copy.visibleProjectsCount}</span><span>·</span><span>{counts.loadedMunicipalities} {copy.loadedMunicipalitiesCount}</span><span>·</span><span>{counts.activeLayers} {copy.activeLayersCount}</span></div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <details className="rounded-xl border border-white/10 bg-[#001a33]/45 p-3"><summary className="cursor-pointer text-xs font-bold uppercase tracking-wider text-[#8DC046]">{copy.infrastructureLayers}</summary>{INFRASTRUCTURE_LAYER_OPTIONS.map(({ layer, Icon }) => <label key={layer} className="mt-3 flex min-h-8 cursor-pointer items-center gap-2 text-sm"><input type="checkbox" checked={activeInfrastructureLayers.has(layer)} onChange={() => handleToggleInfrastructure(layer)} className="h-4 w-4 accent-[#32B372]" /><Icon aria-hidden="true" size={16} /><span>{infrastructureLabels[layer]}</span>{infrastructureStatus[layer] === "loading" ? <span role="status">{copy.layerLoading}</span> : null}{infrastructureStatus[layer] === "error" ? <span role="alert" className="text-red-200">{copy.layerError}</span> : null}</label>)}<label className="mt-3 flex min-h-8 cursor-pointer items-center gap-2 text-sm"><input type="checkbox" checked={roadsActive} onChange={handleToggleRoads} className="h-4 w-4 accent-[#32B372]" /><Route aria-hidden="true" size={16} /><span>{copy.roadNetwork}</span>{roadsStatus === "loading" ? <span role="status">{copy.layerLoading}</span> : null}{roadsStatus === "error" ? <span role="alert" className="text-red-200">{copy.layerError}</span> : null}</label></details>
@@ -260,7 +270,7 @@ export function InvestmentMapDashboard(props: Parameters<typeof useInvestmentMap
             region={selectedRegion}
             onClearRegion={() => handleSelectRegion(null)}
             kindFilter={kindFilter}
-            onKindFilterChange={setKindFilter}
+            onKindFilterChange={(kind) => { if (kind !== kindFilter) trackEvent("map_filter", { filter: "kind", value: kind }); setKindFilter(kind); }}
             onHoverProject={setHoveredProjectId}
             listPlace={listPlace}
             clusterActive={Boolean(activeCluster)}

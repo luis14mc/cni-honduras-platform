@@ -9,6 +9,7 @@ import { postulacionPageCopy } from "@/src/i18n/copy/postulacionPage";
 import type { Locale } from "@/src/i18n/config";
 import { resolveHref } from "@/src/i18n/path";
 import { getDepartmentGeoJson, getMunicipalityGeoJson } from "@/src/services/investmentMap";
+import { trackEvent } from "@/src/lib/analytics";
 import { submitProjectApplication } from "@/src/services/forms";
 
 type Option = { slug: string; name: string };
@@ -47,7 +48,14 @@ export function PostulacionPageView({ locale, sectors, sectorsStatus = "ok" }: {
     const nextErrors = validateProjectSubmission(form, c.validation);
     if (Object.keys(nextErrors).length) { setErrors(nextErrors); setState("validation-error"); focusFirst(nextErrors); return; }
     submittingRef.current = true; setState("submitting");
-    try { const response = await submitProjectApplication(buildProjectApplicationPayload(form)); setReference(response.reference_code); setState("success"); }
+    try {
+      const response = await submitProjectApplication(buildProjectApplicationPayload(form));
+      setReference(response.reference_code);
+      setState("success");
+      const analytics = { form: "project_application", locale } as const;
+      trackEvent("form_submit", analytics);
+      trackEvent("lead_submit", analytics);
+    }
     catch (error) { const fieldErrors = error instanceof ApiError ? apiFieldErrors(error.data) : {}; setErrors(fieldErrors); setState("server-error"); if (Object.keys(fieldErrors).length) focusFirst(fieldErrors); }
     finally { submittingRef.current = false; }
   };
