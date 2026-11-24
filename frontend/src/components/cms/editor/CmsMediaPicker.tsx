@@ -1,5 +1,6 @@
 "use client";
 
+import { keepDialogFocus, useDialogFocus } from "@/src/lib/dialogFocus";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FileIcon,
@@ -61,6 +62,8 @@ export function CmsMediaPicker({
   title = "Biblioteca multimedia",
 }: CmsMediaPickerProps) {
   const toast = useCmsToast();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogFocus(open, dialogRef);
   const fileRef = useRef<HTMLInputElement>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
@@ -154,7 +157,11 @@ export function CmsMediaPicker({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
+        aria-modal="true"
+        onKeyDown={keepDialogFocus}
         aria-labelledby="media-picker-title"
         className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-[#334E88]/15 bg-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}

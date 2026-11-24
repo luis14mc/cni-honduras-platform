@@ -46,7 +46,7 @@ export function InterestLinksSection({ locale, links = [], status = "ok" }: Prop
       <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
           <header className="shrink-0 lg:max-w-[16rem]">
-            <p className="font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#29AB85]">
+            <p className="font-headline text-[11px] font-bold uppercase tracking-[0.22em] text-[#16744F]">
               {copy.sectionEyebrow}
             </p>
             <h2

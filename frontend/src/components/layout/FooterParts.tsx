@@ -231,7 +231,7 @@ export function FooterGuacamayaCta({
           <p className="mt-2 max-w-md text-sm leading-relaxed text-white/60">{copy.cta.desc}</p>
           <Link
             href={contactHref}
-            className="mt-5 inline-flex items-center justify-center rounded-md bg-[#32B372] px-6 py-2.5 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#32B372]/20 transition-all hover:-translate-y-0.5 hover:bg-white hover:text-[#252A58] hover:shadow-white/10"
+            className="mt-5 inline-flex items-center justify-center rounded-md bg-[#16744F] px-6 py-2.5 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#32B372]/20 transition-all hover:-translate-y-0.5 hover:bg-white hover:text-[#252A58] hover:shadow-white/10"
           >
             {copy.cta.btn}
           </Link>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { keepDialogFocus, useDialogFocus } from "@/src/lib/dialogFocus";
+import { useEffect, useId, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
@@ -27,11 +28,9 @@ export function CmsConfirmDialog({
   onConfirm,
   onCancel,
 }: CmsConfirmDialogProps) {
-  const cancelRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (open) cancelRef.current?.focus();
-  }, [open]);
+  const panel = useRef<HTMLDivElement>(null);
+  const id = useId();
+  useDialogFocus(open, panel);
 
   useEffect(() => {
     if (!open) return;
@@ -51,23 +50,26 @@ export function CmsConfirmDialog({
       onClick={onCancel}
     >
       <div
+        ref={panel}
+        tabIndex={-1}
         role="alertdialog"
-        aria-labelledby="cms-confirm-title"
-        aria-describedby={description ? "cms-confirm-desc" : undefined}
+        aria-modal="true"
+        onKeyDown={keepDialogFocus}
+        aria-labelledby={id + "-title"}
+        aria-describedby={description ? id + "-desc" : undefined}
         className="w-full max-w-md rounded-xl border border-[#334E88]/15 bg-white p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="cms-confirm-title" className="text-lg font-bold text-[#252A58]">
+        <h2 id={id + "-title"} className="text-lg font-bold text-[#252A58]">
           {title}
         </h2>
         {description ? (
-          <p id="cms-confirm-desc" className="mt-2 text-sm text-[#252A58]/70">
+          <p id={id + "-desc"} className="mt-2 text-sm text-[#252A58]/70">
             {description}
           </p>
         ) : null}
         <div className="mt-6 flex justify-end gap-2">
           <button
-            ref={cancelRef}
             type="button"
             onClick={onCancel}
             disabled={loading}
