@@ -14,6 +14,7 @@ type PageHeroProps = {
   imageClassName?: string;
   overlayClassName?: string;
   patternClassName?: string;
+  compact?: boolean;
 };
 
 export function PageHero({
@@ -28,6 +29,7 @@ export function PageHero({
   imageClassName = "absolute inset-0 object-cover opacity-[0.94]",
   overlayClassName,
   patternClassName,
+  compact = false,
 }: PageHeroProps) {
   return (
     <section
@@ -63,26 +65,26 @@ export function PageHero({
       <div
         className={cn(
           layout.container,
-          "relative z-10 py-16",
+          compact ? "relative z-10 w-full py-3 max-md:px-4 md:py-10" : "relative z-10 py-16",
           align === "center" && "text-center",
         )}
       >
-        {eyebrow && <span className={cn("mb-6", t.heroEyebrow)}>{eyebrow}</span>}
+        {eyebrow && <span className={cn(compact ? "mb-2" : "mb-6", t.heroEyebrow)}>{eyebrow}</span>}
         <h1
-          className={cn("max-w-4xl text-white", t.heroTitle)}
+          className={cn("max-w-4xl text-white", t.heroTitle, compact && "max-md:text-[1.65rem] max-md:leading-[1.1]")}
           style={{ textShadow: "0 2px 20px rgba(0, 0, 0, 0.25)" }}
         >
           {title}
         </h1>
         {description && (
           <p
-            className={cn("mt-6 max-w-2xl text-white/85", t.heroLead)}
+            className={cn("max-w-2xl text-white/85", t.heroLead, compact ? "mt-2 max-md:text-xs max-md:leading-snug md:mt-3" : "mt-6")}
             style={{ textShadow: "0 1px 10px rgba(0, 0, 0, 0.2)" }}
           >
             {description}
           </p>
         )}
-        {children && <div className="mt-10">{children}</div>}
+        {children && <div className={compact ? "mt-3 md:mt-7" : "mt-10"}>{children}</div>}
       </div>
     </section>
   );
