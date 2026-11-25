@@ -5,7 +5,7 @@ export function HomeActionEntries({
   L, actionCards
 }: Pick<HomePageModel, "L" | "actionCards">) {
   return (
-    <section className="py-12 px-8 -mt-24 relative z-20">
+    <section data-home-actions className="py-12 px-4 sm:px-8 -mt-24 relative z-20">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-0 shadow-2xl rounded-[32px] overflow-hidden relative">
 
           {/* Yin-Yang Curved Divider (desktop only) */}
@@ -26,7 +26,7 @@ export function HomeActionEntries({
             href={L("/invertir")}
             className="group relative overflow-hidden bg-cni-primary text-white p-8 md:p-12 flex flex-col items-center text-center border-b lg:border-b-0 lg:border-r border-cni-gold/20 rounded-t-[32px] lg:rounded-t-none lg:rounded-l-[32px] transition-all duration-500"
           >
-            <span className="material-symbols-outlined text-[110px] text-cni-gold/30 group-hover:text-cni-gold group-hover:scale-110 transition-all duration-500 mb-6 select-none">
+            <span aria-hidden="true" className="material-symbols-outlined text-[110px] text-cni-gold/30 group-hover:text-cni-gold group-hover:scale-110 transition-all duration-500 mb-6 select-none">
               add_circle
             </span>
             <h2 className="font-display text-3xl font-extrabold uppercase mb-4 tracking-tight">
@@ -35,9 +35,9 @@ export function HomeActionEntries({
             <p className="font-body text-sm max-w-sm leading-relaxed mb-8 text-white/70">
               {actionCards.investDesc}
             </p>
-            <span className="inline-flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full bg-white text-cni-primary group-hover:bg-white/90 group-hover:scale-105 transition-all duration-500 shadow-md">
+            <span className="inline-flex items-center gap-2 whitespace-nowrap font-headline font-bold text-xs uppercase tracking-wide px-4 py-3.5 sm:px-8 sm:tracking-widest rounded-full bg-white text-cni-primary group-hover:bg-white/90 group-hover:scale-105 transition-all duration-500 shadow-md">
               {actionCards.moreInfo}
-              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[14px]">arrow_forward</span>
             </span>
           </Link>
 
@@ -45,7 +45,7 @@ export function HomeActionEntries({
             href={L("/crecer")}
             className="group relative overflow-hidden bg-white text-cni-primary p-8 md:p-12 flex flex-col items-center text-center rounded-b-[32px] lg:rounded-b-none lg:rounded-r-[32px] transition-all duration-500"
           >
-            <span className="material-symbols-outlined text-[110px] text-cni-primary/10 group-hover:text-cni-primary group-hover:scale-110 transition-all duration-500 mb-6 select-none">
+            <span aria-hidden="true" className="material-symbols-outlined text-[110px] text-cni-primary/10 group-hover:text-cni-primary group-hover:scale-110 transition-all duration-500 mb-6 select-none">
               trending_up
             </span>
             <h2 className="font-display text-3xl font-extrabold uppercase mb-4 tracking-tight transition-colors duration-500">
@@ -54,9 +54,9 @@ export function HomeActionEntries({
             <p className="font-body text-sm max-w-sm leading-relaxed mb-8 text-on-surface-variant">
               {actionCards.growDesc}
             </p>
-            <span className="inline-flex items-center gap-2 font-headline font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-full bg-cni-primary text-white group-hover:bg-cni-gold group-hover:text-cni-primary group-hover:scale-105 transition-all duration-500 shadow-md">
+            <span className="inline-flex items-center gap-2 whitespace-nowrap font-headline font-bold text-xs uppercase tracking-wide px-4 py-3.5 sm:px-8 sm:tracking-widest rounded-full bg-cni-primary text-white group-hover:bg-cni-gold group-hover:text-cni-primary group-hover:scale-105 transition-all duration-500 shadow-md">
               {actionCards.moreInfo}
-              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[14px]">arrow_forward</span>
             </span>
           </Link>
         </div>

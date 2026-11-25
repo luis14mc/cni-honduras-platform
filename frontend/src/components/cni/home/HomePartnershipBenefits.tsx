@@ -49,7 +49,7 @@ export function HomePartnershipBenefits({
                   </span>
 
                   <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white text-cni-primary shadow-sm ring-1 ring-cni-primary/8 transition-colors duration-300 group-hover:bg-cni-primary group-hover:text-[#29AB85]">
-                    <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
+                    <span aria-hidden="true" className="material-symbols-outlined text-[24px]">{item.icon}</span>
                   </div>
 
                   <div className="relative min-w-0 flex-1">

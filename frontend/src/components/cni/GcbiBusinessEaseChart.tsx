@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Locale } from "@/src/i18n/config";
 import { ledgerChartPalette } from "@/src/lib/themes/architectural-ledger";
+import { CompactEconomicChart } from "./CompactEconomicChart";
 
 type Props = {
   locale: Locale;
@@ -19,7 +20,10 @@ export function GcbiBusinessEaseChart({ locale }: Props) {
 
   return (
     <div className="w-full rounded-xl border border-white/10 bg-white/[0.04] p-4 md:p-6">
-      <div className="relative flex min-h-[280px] flex-col justify-between md:min-h-[320px]">
+      <div className="lg:hidden">
+        <CompactEconomicChart chart={chart} kind="clima" locale={locale} title={locale === "es" ? "Facilidad de negocios" : "Ease of doing business"} />
+      </div>
+      <div className="relative hidden min-h-[320px] flex-col justify-between lg:flex">
         <div className="relative flex flex-1 items-end border-b border-white/10 pb-2">
           <div className="pointer-events-none absolute inset-0 flex flex-col justify-between text-[9px] text-white/30">
             {Y_TICKS.map((tick) => (
@@ -48,7 +52,9 @@ export function GcbiBusinessEaseChart({ locale }: Props) {
                         onMouseLeave={() => setHovered(null)}
                         onFocus={() => setHovered({ year, countryIndex: countryIdx })}
                         onBlur={() => setHovered(null)}
-                        role="presentation"
+                        role="img"
+                        tabIndex={0}
+                        aria-label={`${dataset.label} · ${year} · ${value} pts`}
                       >
                         <div
                           className="relative w-[6px] rounded-t transition-all duration-300 md:w-3.5"
@@ -98,7 +104,7 @@ export function GcbiBusinessEaseChart({ locale }: Props) {
         </div>
       </div>
 
-      <ul className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 border-t border-white/10 pt-4">
+      <ul className="mt-5 grid grid-cols-2 flex-wrap justify-center gap-x-5 gap-y-2 border-t border-white/10 pt-4 lg:flex">
         {chart.datasets.map((dataset) => (
           <li key={dataset.label} className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: dataset.color }} />

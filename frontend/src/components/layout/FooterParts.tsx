@@ -66,7 +66,7 @@ export function FooterBrandColumn({
             target="_blank"
             rel="noopener noreferrer"
             aria-label={label}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-[#32B372] hover:text-[#32B372]"
+            className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-[#32B372] hover:text-[#32B372] md:size-9"
           >
             <Icon className="h-4 w-4" />
           </a>
@@ -231,7 +231,7 @@ export function FooterGuacamayaCta({
           <p className="mt-2 max-w-md text-sm leading-relaxed text-white/60">{copy.cta.desc}</p>
           <Link
             href={contactHref}
-            className="mt-5 inline-flex items-center justify-center rounded-md bg-[#16744F] px-6 py-2.5 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#32B372]/20 transition-all hover:-translate-y-0.5 hover:bg-white hover:text-[#252A58] hover:shadow-white/10"
+            className="mt-5 inline-flex items-center justify-center rounded-md bg-[#16744F] px-6 py-2.5 text-center text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-lg shadow-[#32B372]/20 transition-all hover:-translate-y-0.5 hover:bg-white hover:text-[#252A58] hover:shadow-white/10 max-md:min-h-11"
           >
             {copy.cta.btn}
           </Link>
@@ -287,7 +287,7 @@ export function FooterBottomBar({
           <p className="text-[0.6875rem] uppercase tracking-wider text-white/40">
             © {new Date().getFullYear()} {copy.legal.copyright}
           </p>
-          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-white/35 lg:justify-end">
+          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-white/35 max-md:[&_a]:inline-flex max-md:[&_a]:min-h-11 max-md:[&_a]:min-w-11 max-md:[&_a]:items-center lg:justify-end">
             <Link href={resolveHref("/recursos")} className="transition-colors hover:text-white">
               {copy.legal.privacy}
             </Link>
