@@ -1,6 +1,34 @@
 @import "tailwindcss";
 @import "../styles/architectural-ledger.css";
 
+html:not(.material-symbols-ready) .material-symbols-outlined {
+  visibility: hidden;
+  display: inline-block;
+  inline-size: 1em;
+  block-size: 1em;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  :where(main, header, footer) :where(button, select, input[type="search"], input[type="number"]) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  footer :where(li > a, a[href^="mailto:"], a[href^="tel:"]) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  main .leaflet-bar a {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+  }
+}
+
 /* CNI Honduras — Institutional Design System */
 
 :root {

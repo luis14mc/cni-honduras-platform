@@ -7,7 +7,7 @@ export function HomeWhyHonduras({
   locale, hc, L, whyHondurasIndex, totalWhyHondurasSlides, moveWhyHonduras
 }: Pick<HomePageModel, "locale" | "hc" | "L" | "whyHondurasIndex" | "totalWhyHondurasSlides" | "moveWhyHonduras">) {
   return (
-    <section className="py-32 bg-cni-primary text-white overflow-hidden">
+    <section data-home-carousel className="py-16 lg:py-32 bg-cni-primary text-white overflow-hidden">
         <div className="max-w-screen-2xl mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
@@ -79,23 +79,25 @@ export function HomeWhyHonduras({
               </div>
 
               {/* Navigation Controls */}
-              <div className="flex items-center gap-8 mt-16">
-                <div className="flex gap-3">
+              <div className="mt-8 flex flex-wrap items-center gap-4 lg:mt-16 lg:flex-nowrap lg:gap-8">
+                <div className="flex shrink-0 gap-3">
                   <button
                     onClick={() => moveWhyHonduras(-1)}
+                    aria-label={locale === "es" ? "Anterior" : "Previous"}
                     className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all"
                   >
-                    <span className="material-symbols-outlined">arrow_back</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">arrow_back</span>
                   </button>
                   <button
                     onClick={() => moveWhyHonduras(1)}
+                    aria-label={locale === "es" ? "Siguiente" : "Next"}
                     className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-cni-gold hover:text-cni-primary hover:border-cni-gold transition-all"
                   >
-                    <span className="material-symbols-outlined">arrow_forward</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span>
                   </button>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2" aria-hidden="true">
                   {[...Array(totalWhyHondurasSlides)].map((_, i) => (
                     <div
                       key={i}

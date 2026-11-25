@@ -5,7 +5,7 @@ const frontend = "http://localhost:4328";
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: ["**/resource-downloads.spec.ts", "**/public-journeys.spec.ts", "**/investment-map.spec.ts"],
+  testMatch: ["**/resource-downloads.spec.ts", "**/public-journeys.spec.ts", "**/investment-map.spec.ts", "**/responsive.spec.ts"],
   timeout: 60_000,
   retries: process.env.CI ? 1 : 0,
   use: { baseURL: frontend, channel: process.env.PLAYWRIGHT_BROWSER_CHANNEL, trace: "retain-on-failure" },
