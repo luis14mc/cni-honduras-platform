@@ -2,6 +2,18 @@
 
 Un proyecto con entornos `staging` y `production`. Cada entorno tiene Django, cron, Strapi y Next, con dos bases privadas independientes. Producción también tiene Umami y su propia base. Cada entorno utiliza un par independiente de buckets en Cloudflare R2.
 
+## Ramas de despliegue
+
+| Rama | Entorno Railway | Cómo se promueve |
+| --- | --- | --- |
+| `master` | Integración y CI | PR de feature auditado |
+| `testing` | `staging` · `test.cni.hn` | PR de `master` hacia `testing` |
+| `production` | `production` · `cni.hn` | PR de `testing` hacia `production`, con el smoke de staging en verde y aprobación del CNI |
+
+En cada servicio de código fuente (`backend`, `cron-crm`, `cms` y `frontend`), seleccione `testing` como rama de despliegue en staging y `production` en producción. Habilite autodeploy y **Wait for CI** en ambos entornos. Los servicios basados en plantillas conservan su propia fuente. Durante la adopción del flujo, confirme que cada primer merge de promoción incorpora el workflow actualizado y que Railway espera la CI del commit posterior al merge. [Configuración de autodeploy en Railway](https://docs.railway.com/deployments/github-autodeploys).
+
+Proteja `testing` y `production` en GitHub con PR y CI obligatorios y bloqueo de pushes directos. Exija como mínimo una aprobación humana en `production`. Las promociones entre ramas permanentes conservan la historia con merge commits. [Decisión del PO en el #91](https://github.com/luis14mc/cni-honduras-platform/issues/91#issuecomment-7143751224).
+
 ## Servicios y ajustes de Railway
 
 Los servicios de aplicación usan Dockerfiles. Configure los campos de la tabla en Settings de cada servicio. Railway retiró el soporte para configurar servicios nuevos con `railway.json`. Los Dockerfiles siguen siendo la fuente del build. [Documentación de Railway sobre Config as Code](https://docs.railway.com/config-as-code).
@@ -17,7 +29,7 @@ Los servicios de aplicación usan Dockerfiles. Configure los campos de la tabla 
 | `db-umami` | PostgreSQL de la plantilla Umami, solo producción | Plantilla | — | `pg_isready` desde la red privada |
 | `umami` | Plantilla oficial de Umami, 3.2 o posterior, solo producción | Plantilla | — | `/api/heartbeat`, 120 s |
 
-Configure `cron-crm` con `*/5 * * * *` (UTC), Restart Policy **Never**, sin puerto público ni healthcheck HTTP. Confirme que el proceso termina dentro del intervalo en pruebas. El puerto de destino de cada dominio público es el `PORT` indicado en las variables. Los tres PostgreSQL usan red privada, sin TCP proxy público. Compruebe que el PostGIS elegido exporta `DATABASE_URL` y que la base permite usar la extensión. Conecte las fuentes GitHub a `master`. En staging active el autodeploy con **Wait for CI** después del primer despliegue. En producción promueva manualmente la revisión de `master` validada en staging.
+Configure `cron-crm` con `*/5 * * * *` (UTC), Restart Policy **Never**, sin puerto público ni healthcheck HTTP. Confirme que el proceso termina dentro del intervalo en pruebas. El puerto de destino de cada dominio público es el `PORT` indicado en las variables. Los tres PostgreSQL usan red privada, sin TCP proxy público. Compruebe que el PostGIS elegido exporta `DATABASE_URL` y que la base permite usar la extensión.
 
 ## Variables
 
@@ -147,11 +159,13 @@ Para los dominios Railway, empiece con DNS only y confirme certificado TLS antes
    Confirme `[X] 0011_portfolio_territorial_fields` y que la importación del portafolio terminó antes de compilar Next.
 3. Despliegue Strapi y confirme `/_health`, `/api/health` (conectividad de base) y `/admin`. Cree los tokens de lectura y migración en Strapi y cargue sus variables en los servicios correspondientes. En el backend ejecute `python manage.py migrate_editorial_to_strapi` para auditar, luego con `--apply`. Revise y publique los borradores desde el editor. Ejecute con `--verify-published` hasta obtener código 0 y retire el token temporal.
 4. Active el cron tras migrar Django. Despliegue Next con `CNI_BANNER_SOURCE=django` para validar el portal, y cambie a `strapi` tras verificar la publicación de banners. El retiro del CMS editorial legado corresponde al PR final del #80.
-5. Ejecute el [smoke test del #86](../CMS_STAGING_SMOKE_TEST.md) con el host de API de Railway `api.test.cni.hn`. Compruebe el formulario y su entrega al CRM de staging, navegación ES/EN, mapa, ficha, prensa, carga pública y descarga protegida. Repita la prueba de archivos tras un redeploy y compruebe que el objeto privado requiere la descarga firmada. Valide inicio, noticia y ficha en Rich Results Test. Compruebe que `https://test.cni.hn/` incluye `X-Robots-Tag: noindex, nofollow` y `/robots.txt` devuelve `Disallow: /`.
-6. Repita el orden en producción con las variables y bases propias. Prepare Umami antes del build de Next y verifique los eventos en su panel. Antes del corte de DNS, confirme los datos y archivos del origen, el HTTPS, el 301 de `www` con ruta y consulta, y el sitemap en Search Console. La prueba de staging debe quedar en verde antes de promover.
+5. Promueva `master` a `testing` por PR. Una vez desplegado ese commit, ejecute el [smoke test del #86](../CMS_STAGING_SMOKE_TEST.md). Compruebe la entrega al CRM de staging, navegación ES/EN, mapa, ficha, prensa, carga pública y descarga firmada. Repita la prueba de archivos tras un redeploy. Valide inicio, noticia y ficha en Rich Results Test. Compruebe el encabezado `X-Robots-Tag: noindex, nofollow` y la regla `Disallow: /` en `/robots.txt`. Registre el SHA desplegado.
+6. Con el smoke en verde para ese SHA, abra el PR de `testing` hacia `production` y obtenga la aprobación del CNI. Prepare las variables, bases y Umami de producción antes del merge. Tras la CI del commit de merge y el autodeploy, confirme el SHA y los healthchecks de Railway. Antes del corte DNS, siga el [checklist de producción](checklist-produccion.md).
 
 ## Backups y rollback
 
 Habilite backups programados de los volúmenes PostgreSQL y compruebe la restauración en un entorno aislado. Antes de una migración o corte tome un backup adicional de cada base afectada. Registre las revisiones activas, la versión de las bases y el estado de los buckets R2. Si migra contenido entre proveedores, copie los objetos y verifique URLs públicas y descargas privadas antes de cortar DNS.
 
 Ante un fallo, pause autodeploy y cron, y vuelva a desplegar la última revisión sana desde Railway con su configuración compatible. Si ya corrió una migración incompatible, restaure su backup en una base separada, valide el estado y cambie la referencia de forma coordinada. Restablezca el DNS anterior si el corte ya ocurrió. Revise la cola antes de reactivar el cron, para evitar reenviar formularios ya procesados.
+
+Para una corrección urgente, cree el hotfix desde `production`, abra un PR hacia `production` y espere la CI y la aprobación humana. Tras verificar el despliegue, reincorpore la corrección por PR a `testing` y a `master`. [Flujo de ramas para implementadores](../development/agent-workflow.md#hotfix-de-producción).

@@ -4,7 +4,9 @@ Use este checklist con la [guía de Railway](railway.md). Registre fecha, respon
 
 ## Antes del corte
 
-- [ ] CI verde para el commit que se va a promover. Ejecute el [smoke en staging](../CMS_STAGING_SMOKE_TEST.md) con el mismo commit y obtenga aprobación del CNI.
+- [ ] Integre los cambios por PR a `master` y promueva por PR de `master` a `testing`. Verifique la CI posterior al merge y confirme el SHA que Railway desplegó en staging.
+- [ ] Ejecute el [smoke en staging](../CMS_STAGING_SMOKE_TEST.md) para ese SHA. Abra el PR de `testing` hacia `production` con la evidencia, CI verde y aprobación humana del CNI. Si cambia el SHA de `testing`, vuelva a verificar la versión que se va a promover.
+- [ ] Tras el merge a `production`, confirme la CI del push y el autodeploy de Railway. Registre el SHA desplegado y compruebe los healthchecks antes del corte DNS.
 - [ ] Revise los resultados de `npm audit --omit=dev` en Strapi. Registre cada aviso alto o crítico pendiente, su alcance en producción y la decisión del responsable antes de autorizar el corte.
 - [ ] Verifique los orígenes de producción y staging, las listas CORS y CSRF, el acceso al admin, los tokens de lectura y las claves distintas por entorno. Confirme que el frontend de staging devuelve `X-Robots-Tag: noindex, nofollow` y `Disallow: /` y que producción sirve su sitemap.
 - [ ] Guarde el estado DNS anterior con nombres, tipos, valores, TTL y estado del proxy en Cloudflare. Identifique los despliegues anteriores sanos y conserve el origen anterior para la ventana de reversión.
@@ -27,6 +29,7 @@ Use este checklist con la [guía de Railway](railway.md). Registre fecha, respon
 - [ ] Si el fallo está en el código y el esquema sigue siendo compatible, vuelva al último despliegue sano de cada servicio afectado. Restablezca sus variables y banderas de origen. Si el fallo es del corte, reponga los registros y el estado del proxy guardados y confirme la propagación.
 - [ ] Si el esquema o los datos resultan incompatibles, restaure el backup en una base separada. Concilie escrituras posteriores al corte antes de reconectar la aplicación y conserve los objetos R2 correspondientes. Evite correr dos consumidores de CRM simultáneamente.
 - [ ] Repita healthchecks, TLS y los flujos críticos sobre el destino recuperado. Compare los eventos pendientes y procesados con el CRM antes de reactivar el cron y documente el cierre de la incidencia.
+- [ ] Para reconciliar Git después de un rollback de producción, abra un PR de reversión o un hotfix desde `production` hacia `production`. Exija CI y aprobación humana. Valide el autodeploy y reincorpore la corrección por PR a `testing` y `master`.
 
 ## Resultado de la auditoría de Strapi para #86
 

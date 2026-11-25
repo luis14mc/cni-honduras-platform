@@ -1,4 +1,5 @@
 import { UmamiAnalytics } from "@/src/components/analytics/UmamiAnalytics";
+import { MaterialSymbolsReady } from "@/src/components/layout/MaterialSymbolsReady";
 import { getAnalyticsScript } from "@/src/lib/analytics";
 import { isIndexableDeployment } from "@/src/lib/indexing";
 import type { Metadata, Viewport } from "next";
@@ -167,7 +168,7 @@ export default async function RootLayout({
       <head>
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
         />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
@@ -175,6 +176,7 @@ export default async function RootLayout({
         <JsonLd id="ld-government-organization" value={governmentOrganizationJsonLd} />
         <JsonLd id="ld-website" value={websiteJsonLd} />
         {children}
+        <MaterialSymbolsReady />
         {analytics && <UmamiAnalytics {...analytics} />}
       </body>
     </html>
