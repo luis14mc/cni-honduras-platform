@@ -113,7 +113,7 @@ export function PortfolioCatalogClient({
   return (
     <div className="bg-[#f5f7fb]">
       <div className="mx-auto w-[92%] max-w-[1500px] pb-24 pt-5 sm:pt-8">
-        <div className="mb-4 rounded-xl border border-[#dce3ee] bg-white p-2.5 shadow-sm lg:sticky lg:top-[var(--cni-header-height)] lg:z-30 lg:p-3">
+        <div className="mb-4 rounded-xl border border-[#dce3ee] bg-white p-2.5 shadow-sm lg:sticky lg:top-[calc(var(--cni-navbar-height,var(--cni-header-height))+0.5rem)] lg:z-30 lg:p-3">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div
               className="grid grid-cols-2 gap-1 rounded-lg bg-[#edf2fb] p-1 lg:flex"

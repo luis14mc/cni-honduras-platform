@@ -13,7 +13,7 @@ import {
   parseUnifiedFilters,
   projectToCatalogItem,
 } from "@/src/lib/portfolioCatalog";
-import { formatUsdShort } from "@/src/lib/formatUsdShort";
+import { formatUsdPortfolioTotal } from "@/src/lib/formatUsdShort";
 import type { InvestmentOpportunity, InvestmentProject } from "@/src/types/investment";
 import type { CmsDocument } from "@/src/types/cms";
 import type { UnifiedPortfolioTab } from "@/src/lib/portfolioCatalog";
@@ -70,7 +70,7 @@ export default async function PortafolioPage({
     {
       label: locale === "es" ? "Inversión total estimada" : "Estimated total investment",
       value: completeCatalog
-        ? formatUsdShort(locale, [...projects, ...opportunities].reduce((total, item) => total + item.amountUsd, 0))
+        ? formatUsdPortfolioTotal(locale, [...projects, ...opportunities].reduce((total, item) => total + item.amountUsd, 0))
         : "—",
     },
   ];
@@ -81,7 +81,7 @@ export default async function PortafolioPage({
   };
 
   return (
-    <div className="-mt-28 flex flex-1 flex-col bg-[#f5f7fb]">
+    <div className="-mt-[var(--cni-header-height)] flex flex-1 flex-col bg-[#f5f7fb]">
       <PageHero
         eyebrow={hero.eyebrow}
         title={hero.title}
@@ -89,7 +89,7 @@ export default async function PortafolioPage({
         imageSrc="/images/hero/home/logistica.webp"
         imageAlt=""
         compact
-        heightClass="min-h-[330px] pt-24 md:min-h-[450px] md:pt-28"
+        heightClass="min-h-[330px] pt-[calc(var(--cni-navbar-height,var(--cni-header-height))+1rem)] md:min-h-[450px]"
         imageClassName="absolute inset-0 object-cover object-center"
         overlayClassName="bg-gradient-to-r from-[#101834] via-[#101834]/90 to-[#101834]/55"
       >
