@@ -42,21 +42,19 @@ Draft & Publish + i18n (`es` default, `en`) en todos:
 
 | Tipo | REST | Notas |
 |------|------|--------|
-| News | `GET /api/news` | UID interno `news-item`. Dynamic Zone (`content.*`), `cover`, `lead_points`, `excerpt`, `location_date`, SEO. Draft & Publish |
-| Document | `GET /api/documents` | `file` y `cover` localizados (ES/EN pueden diferir). `resource_key` compartido |
-| Success Story | `GET /api/success-stories` | `sector` es **string** (no se duplica el modelo Django `Sector`) |
-| Banner | `GET /api/banners` | Ventana de vigencia, prioridad, imágenes y CTA. |
-| Page | `GET /api/pages` | Dynamic Zone `content.*` y SEO. Rutas públicas `/institucional/<slug>` y `/en/institucional/<slug>`. |
-| Resource Category | `GET /api/resource-categories` | Categoría editorial localizada. La relación `resource_category` en Document convive con el enum anterior durante la transición. |
-| Investment Opportunity | `GET /api/investment-opportunities` | `public_metrics` (máx. 4). `internal_notes` es editorial y se omite en REST público |
+| Noticias | `GET /api/news` | UID interno `news-item`. Dynamic Zone (`content.*`), `cover`, `lead_points`, `excerpt`, `location_date`, SEO. Draft & Publish |
+| Documento | `GET /api/documents` | `file` y `cover` localizados (ES/EN pueden diferir). `resource_key` compartido |
+| Caso de éxito | `GET /api/success-stories` | El campo `sector` contiene el identificador del sector como texto. |
+| Aviso del sitio | `GET /api/banners` | Ventana de vigencia, prioridad, imágenes y CTA. |
+| Página | `GET /api/pages` | Dynamic Zone `content.*` y SEO. Rutas públicas `/institucional/<slug>` y `/en/institutional/<slug>`. |
+| Categoría de recursos | `GET /api/resource-categories` | Categoría editorial localizada. La relación `resource_category` en Documento convive con el enum anterior durante la transición. |
 
 Populate explícito de media (ejemplos):
 
 ```http
-GET /api/news?locale=es&populate[cover]=true&populate[content][on][content.image][populate]=image&populate[lead_points]=true
+GET /api/news?locale=es&populate[cover]=true&populate[content][on][content.image][populate]=image&populate[content][on][content.gallery][populate][images][populate]=image&populate[lead_points]=true
 GET /api/documents?locale=en&populate=file,cover
 GET /api/success-stories?locale=es&populate=logo,featured_image,person_photo
-GET /api/investment-opportunities?locale=es&populate=featured_image,public_metrics
 ```
 
 `populate=*` sirve para smoke tests; en producción preferir populate explícito.
@@ -69,7 +67,7 @@ Super Admin asigna los roles en **Settings → Administration Panel → Users**.
 
 Los permisos de Editor CNI y Publicador CNI se editan en [el bootstrap de Strapi](../cms-strapi/src/bootstrap.ts). En cada arranque, Strapi vuelve a aplicar esa configuración, sobrescribe cualquier cambio de permisos hecho en el panel para esos dos roles y registra la sincronización en el log.
 
-`shared.seo` está disponible en News, Document, Success Story, Investment Opportunity y Page. Conserva los campos SEO existentes durante la migración. Las páginas institucionales consumen el componente completo.
+`shared.seo` está disponible en Noticias, Documento, Caso de éxito y Página. Conserva los campos SEO existentes durante la migración. Las páginas institucionales consumen el componente completo.
 
 Para activar **Open preview** en Noticias, Banner y Page:
 
@@ -79,6 +77,8 @@ Para activar **Open preview** en Noticias, Banner y Page:
 4. Crear una noticia, página o banner, guardar el borrador y abrir la vista previa. Después de publicarla, comprobar la ruta pública o el espacio de banner en el sitio. Repetir en `es` y `en`. Para comprobar la distinción de permisos, iniciar sesión con cada rol por separado.
 
 ## Preparación de la migración (CNI-202)
+
+Antes de desplegar CNI-606 en una base existente, toma un respaldo de PostgreSQL. En el arranque, Strapi convierte `content.paragraph.text` a Blocks JSON en la misma columna, tanto para borradores como para versiones publicadas. La colección de oportunidades se retira de Strapi. El portafolio y el mapa consultan las oportunidades en Django. Para revertir a una versión de Strapi que espera texto plano, restaura el respaldo con el esquema de esa versión.
 
 Con acceso de lectura al origen Django y un token de API de Strapi para el destino, ejecutar desde `backend/`:
 
@@ -295,7 +295,6 @@ En Vercel/testing, `STRAPI_URL=https://<strapi-service>` (server-only). No hardc
 | News ES | `GET /api/news?locale=es` |
 | Documents ES | `GET /api/documents?locale=es` |
 | Stories ES | `GET /api/success-stories?locale=es` |
-| Opportunities ES | `GET /api/investment-opportunities?locale=es` |
 | Drafts | Un draft no aparece en REST público |
 | Writes públicos | `POST /api/news` sin JWT admin → 403 |
 

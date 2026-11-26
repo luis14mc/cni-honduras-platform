@@ -30,7 +30,13 @@ def paragraphs(text):
 
 
 def dynamic_paragraphs(text):
-    return [{"__component": "content.paragraph", "text": item} for item in paragraphs(text)]
+    return [
+        {
+            "__component": "content.paragraph",
+            "text": [{"type": "paragraph", "children": [{"type": "text", "text": item}]}],
+        }
+        for item in paragraphs(text)
+    ]
 
 
 def legacy_news_blocks(row, locale, upload):

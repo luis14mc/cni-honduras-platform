@@ -12,19 +12,23 @@ export type StrapiInlineNode = {
   children?: StrapiInlineNode[];
 };
 
+export type StrapiBlockImage = {
+  url?: string | null;
+  alternativeText?: string | null;
+  caption?: string | null;
+  width?: number | null;
+  height?: number | null;
+};
+
 export type StrapiBlock = {
   type: string;
   level?: number;
   format?: string;
   url?: string;
   children?: StrapiInlineNode[];
-  image?: {
-    url?: string | null;
-    alternativeText?: string | null;
-    caption?: string | null;
-    width?: number | null;
-    height?: number | null;
-  } | null;
+  image?: StrapiBlockImage | null;
+  images?: StrapiBlockImage[];
+  caption?: string;
 };
 
 export function isStrapiBlockArray(value: unknown): value is StrapiBlock[] {
@@ -37,6 +41,7 @@ export function parseStrapiBlocks(value: unknown): StrapiBlock[] {
 
 export function strapiBlocksHaveContent(blocks: StrapiBlock[]): boolean {
   return blocks.some((block) => {
+    if (block.type === "gallery") return Boolean(block.images?.some((image) => image.url));
     if (block.type === "image") {
       return Boolean(block.image?.url);
     }

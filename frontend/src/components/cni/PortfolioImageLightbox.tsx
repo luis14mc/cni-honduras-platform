@@ -1,6 +1,7 @@
 "use client";
 
 import { keepDialogFocus, useDialogFocus } from "@/src/lib/dialogFocus";
+import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -8,9 +9,10 @@ type Props = {
   alt: string;
   openLabel: string;
   closeLabel: string;
+  thumbnail?: ReactNode;
 };
 
-export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Props) {
+export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel, thumbnail }: Props) {
   const [open, setOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
   const panel = useRef<HTMLDivElement>(null);
@@ -35,9 +37,10 @@ export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Prop
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center justify-center rounded-md bg-[#252A58] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#0E7A7C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F7BF06]"
+        aria-label={thumbnail ? openLabel : undefined}
+        className={thumbnail ? "block w-full cursor-zoom-in overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4" : "inline-flex items-center justify-center rounded-md bg-[#252A58] px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-[#0E7A7C] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F7BF06]"}
       >
-        {openLabel}
+        {thumbnail ?? openLabel}
       </button>
       {open ? (
         <div
@@ -45,7 +48,7 @@ export function PortfolioImageLightbox({ src, alt, openLabel, closeLabel }: Prop
           role="dialog"
           onKeyDown={keepDialogFocus}
           aria-modal="true"
-          aria-label={alt}
+          aria-label={alt || openLabel}
           className="fixed inset-0 z-[80] flex items-center justify-center bg-[#000a1e]/90 p-4"
           onClick={close}
         >

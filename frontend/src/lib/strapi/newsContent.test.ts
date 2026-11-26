@@ -7,6 +7,7 @@ import {
   parseLeadPoints,
   resolveNewsRichContent,
 } from "@/src/lib/strapi/newsContent";
+import { strapiBlocksHaveContent } from "@/src/lib/strapi/blocks";
 
 describe("newsContent", () => {
   it("detects Strapi dynamic zone payloads", () => {
@@ -47,6 +48,41 @@ describe("newsContent", () => {
     expect(resolveNewsRichContent(legacy)[0]?.type).toBe("paragraph");
   });
 
+  it("preserves formatted paragraphs and lists from a paragraph component", () => {
+    const text = [
+      { type: "paragraph", children: [
+        { type: "text", text: "Inversión", bold: true, italic: true },
+        { type: "link", url: "https://example.com", children: [{ type: "text", text: "Enlace" }] },
+      ] },
+      { type: "list", format: "unordered", children: [
+        { type: "list-item", children: [{ type: "text", text: "Primer punto" }] },
+      ] },
+    ];
+    expect(resolveNewsRichContent([{ __component: "content.paragraph", text }])).toEqual(text);
+  });
+
+  it("resolves a gallery with per-image alternative text and its shared caption", () => {
+    const blocks = resolveNewsRichContent([{
+      __component: "content.gallery",
+      caption: "Fotos del encuentro",
+      images: [
+        { image: { url: "https://cdn.example/one.webp", alternativeText: "Media alt" }, alt_text: "Primera" },
+        { image: { url: "https://cdn.example/two.webp", alternativeText: "Segunda" } },
+        { image: { url: "https://cdn.example/three.webp" }, alt_text: "Tercera" },
+      ],
+    }]);
+    expect(strapiBlocksHaveContent(blocks)).toBe(true);
+    expect(blocks[0]).toMatchObject({
+      type: "gallery",
+      caption: "Fotos del encuentro",
+      images: [
+        { url: "https://cdn.example/one.webp", alternativeText: "Primera" },
+        { url: "https://cdn.example/two.webp", alternativeText: "Segunda" },
+        { url: "https://cdn.example/three.webp", alternativeText: "Tercera" },
+      ],
+    });
+  });
+
   it("parses lead points", () => {
     expect(parseLeadPoints([{ text: " Punto 1 " }, { text: "" }, { text: "Punto 2" }])).toEqual([
       "Punto 1",
@@ -60,6 +96,7 @@ describe("newsContent", () => {
       "populate[cover]": "true",
       "populate[lead_points]": "true",
       "populate[content][on][content.image][populate]": "image",
+      "populate[content][on][content.gallery][populate][images][populate]": "image",
     });
   });
 });

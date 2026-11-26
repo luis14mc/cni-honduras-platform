@@ -43,5 +43,5 @@ export default async function EditorialPreview({ params, searchParams }: Props) 
   }
   const page = mapInstitutionalPage(raw);
   if (!page) notFound();
-  return <InstitutionalPageContent page={page} />;
+  return <InstitutionalPageContent page={page} locale={preview.locale} />;
 }

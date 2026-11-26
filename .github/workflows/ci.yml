@@ -198,7 +198,9 @@ jobs:
         run: npm run build
 
       - name: Test editorial role permissions
-        run: node --test scripts/test-editorial-roles.mjs
+        run: |
+          npm run validate:news-schema
+          node --test scripts/test-editorial-roles.mjs
 
       - name: Start Strapi
         run: |
@@ -221,6 +223,12 @@ jobs:
       - name: Test private resource access
         run: node scripts/test-gated-resource.mjs
 
+      - name: Test editorial media and gallery publication
+        env:
+          STRAPI_TEST_ADMIN_EMAIL: resource-test@example.test
+          STRAPI_TEST_ADMIN_PASSWORD: LocalTestOnly123!
+        run: npm run test:news-cover-media:integration
+
       - name: Smoke /_health and public REST
         run: |
           probe_health=$(curl -sS -o /dev/null -w "%{http_code}" "http://127.0.0.1:1337/_health")
@@ -228,7 +236,7 @@ jobs:
             echo "GET /_health expected 204, got ${probe_health}"
             exit 1
           fi
-          for collection in news documents success-stories investment-opportunities banners pages resource-categories; do
+          for collection in news documents success-stories banners pages resource-categories; do
             code=$(curl -sS -o /tmp/strapi-list.json -w "%{http_code}" \
               "http://127.0.0.1:1337/api/${collection}?locale=es")
             if [ "$code" != "200" ]; then

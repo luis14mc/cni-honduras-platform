@@ -137,7 +137,7 @@ export function NewsArticleContent({ article, locale }: { article: NewsArticle; 
             <img src={mediaUrl(article) ?? ""} alt={article.title} className="mb-10 w-full rounded-xl object-cover" />
           )}
           {useStrapiBlocks ? (
-            <StrapiBlocks blocks={strapiBlocks} />
+            <StrapiBlocks blocks={strapiBlocks} locale={locale} />
           ) : useBlocks ? (
             <NewsBlocksRenderer blocks={blocks} />
           ) : (

@@ -15,7 +15,7 @@ test("opens a news article and switches between its ES and EN pages", async ({ p
   await page.goto("/prensa");
   await expect(page.locator("html")).toHaveAttribute("lang", "es");
   await page.getByRole("link", { name: /Impulso a la inversión productiva/ }).first().click();
-  await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/);
+  await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/, { timeout: 15_000 });
   await expect(page.getByRole("heading", { level: 1, name: "Impulso a la inversión productiva" })).toBeVisible();
 
   const english = page.getByRole("group", { name: "Idioma", exact: true }).getByRole("link", { name: "EN", exact: true });
@@ -30,6 +30,7 @@ test("opens a news article and switches between its ES and EN pages", async ({ p
   await spanish.click();
   await expect(page).toHaveURL(/\/prensa\/inversion-productiva-prueba$/, { timeout: 15_000 });
   await expect(page.locator("html")).toHaveAttribute("lang", "es");
+  await expect(page.getByRole("heading", { level: 1, name: "Impulso a la inversión productiva" })).toBeVisible();
 });
 
 test("validates a project submission and displays its reference after acceptance", async ({ page }) => {

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "banner",
     "pluralName": "banners",
-    "displayName": "Banner"
+    "displayName": "Aviso del sitio",
+    "description": "Mensajes temporales que se muestran en el portal."
   },
   "options": {
     "draftAndPublish": true
@@ -157,6 +158,20 @@
       "pluginOptions": {
         "i18n": {
           "localized": false
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "placement": {
+        "edit": {
+          "description": "Elige dónde aparecerá el aviso en el portal."
+        }
+      },
+      "ends_at": {
+        "edit": {
+          "description": "El aviso deja de mostrarse a partir de esta fecha."
         }
       }
     }

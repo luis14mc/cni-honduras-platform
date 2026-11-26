@@ -37,6 +37,7 @@ export const EDITORIAL_CONTENT_POPULATE = {
   "populate[content][on][content.heading][populate]": "*",
   "populate[content][on][content.quote][populate]": "*",
   "populate[content][on][content.image][populate]": "image",
+  "populate[content][on][content.gallery][populate][images][populate]": "image",
 } as const;
 
 /** Detail view: cover, lead points, dynamic zone (+ nested image media). */
@@ -109,9 +110,11 @@ export function mapNewsDynamicZoneToStrapiBlocks(raw: unknown): StrapiBlock[] {
     if (!isDynamicZoneItem(item)) continue;
     switch (item.__component) {
       case "content.paragraph": {
-        const text = asString(item.text);
-        if (text.trim()) {
-          blocks.push({ type: "paragraph", children: textInlines(text) });
+        if (isStrapiBlockArray(item.text)) {
+          blocks.push(...item.text);
+        } else {
+          const text = asString(item.text);
+          if (text.trim()) blocks.push({ type: "paragraph", children: textInlines(text) });
         }
         break;
       }
@@ -146,6 +149,14 @@ export function mapNewsDynamicZoneToStrapiBlocks(raw: unknown): StrapiBlock[] {
             },
           });
         }
+        break;
+      }
+      case "content.gallery": {
+        const images = Array.isArray(item.images) ? item.images.filter(isRecord).flatMap((entry) => {
+          const image = resolveComponentImage(entry.image);
+          return image ? [{ ...image, alternativeText: asString(entry.alt_text) || image.alternativeText }] : [];
+        }) : [];
+        if (images.length) blocks.push({ type: "gallery", images, caption: asString(item.caption) });
         break;
       }
       default:

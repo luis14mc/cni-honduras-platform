@@ -10,11 +10,9 @@ import {
   getNews,
   getNewsBySlug,
   getDocuments,
-  getOpportunityBySlug,
   getSuccessStories,
   mapDocument,
   mapNews,
-  mapOpportunity,
   mapSuccessStory,
   toStrapiLocale,
 } from "@/src/lib/strapi/editorial";
@@ -207,41 +205,6 @@ describe("mapSuccessStory", () => {
   });
 });
 
-describe("mapOpportunity", () => {
-  it("maps public fields and never exposes internal_notes", () => {
-    const opp = mapOpportunity({
-      id: 4,
-      title: "Parque solar",
-      slug: "parque-solar",
-      summary: "Teaser público",
-      sector: "energia",
-      code: "OPP-01",
-      featured_image: { url: "https://cdn.example/opp.jpg" },
-      public_metrics: [
-        { id: 1, label: "MW", value: "50" },
-        { id: 2, label: "Empleos", value: "120" },
-        { id: 3, label: "USD", value: "10M" },
-        { id: 4, label: "Plazo", value: "24m" },
-        { id: 5, label: "Extra", value: "hidden" },
-      ],
-      contact_cta: "Solicite el teaser al CNI",
-      internal_notes: "NO PUBLICAR — margen interno",
-    });
-    expect(opp).toMatchObject({
-      title: "Parque solar",
-      slug: "parque-solar",
-      code: "OPP-01",
-      summary: "Teaser público",
-      value_proposition: "Solicite el teaser al CNI",
-    });
-    expect(opp?.metrics).toHaveLength(4);
-    expect(opp?.metrics?.map((m) => m.label)).not.toContain("Extra");
-    expect(JSON.stringify(opp)).not.toContain("internal_notes");
-    expect(JSON.stringify(opp)).not.toContain("NO PUBLICAR");
-    expect((opp as unknown as Record<string, unknown>).internal_notes).toBeUndefined();
-  });
-});
-
 describe("getStrapiMediaUrl", () => {
   it("resolves absolute, relative and null media", () => {
     expect(getStrapiMediaUrl("https://pub.r2.dev/a.pdf")).toBe("https://pub.r2.dev/a.pdf");
@@ -400,31 +363,6 @@ describe("editorial fetch", () => {
     expect(url).not.toContain("filters%5Bsector%5D");
   });
 
-  it("does not send internal_notes in mapped opportunity lookups", async () => {
-    vi.stubEnv("STRAPI_URL", "https://strapi.test");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          data: [
-            {
-              id: 1,
-              title: "Opp",
-              slug: "opp",
-              summary: "Public",
-              internal_notes: "secret",
-              public_metrics: [],
-            },
-          ],
-          meta: {},
-        }),
-      }),
-    );
-    const opp = await getOpportunityBySlug("es", "opp");
-    expect(JSON.stringify(opp)).not.toContain("secret");
-    expect(JSON.stringify(opp)).not.toContain("internal_notes");
-  });
 });
 
 

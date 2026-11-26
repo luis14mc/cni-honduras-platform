@@ -1,7 +1,7 @@
 import type { Core } from '@strapi/strapi';
 import { registerPrivateResourceUpload } from './register/private-resource-upload';
 import { registerGatedDocumentValidation } from './register/gated-document-validation';
-import { bootstrapStrapi } from './bootstrap';
+import { bootstrapStrapi, syncEditorialFieldHints } from './bootstrap';
 import { registerNewsCoverDocumentMiddleware } from './register/news-cover-document-middleware';
 
 export default {
@@ -41,5 +41,6 @@ export default {
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     await bootstrapStrapi({ strapi });
+    await syncEditorialFieldHints(strapi);
   },
 };

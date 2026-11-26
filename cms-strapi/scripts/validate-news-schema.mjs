@@ -54,6 +54,7 @@ const expectedDz = [
   "content.heading",
   "content.image",
   "content.quote",
+  "content.gallery",
 ];
 for (const comp of expectedDz) {
   assert(dzComponents.includes(comp), `Dynamic zone missing component: ${comp}`);
@@ -82,6 +83,16 @@ assert(imageComp.attributes?.image?.required === true, "content.image.image must
 const headingComp = readJson("src/components/content/heading.json");
 assert(headingComp.attributes?.level?.enum?.includes("h2"), "heading level must include h2");
 assert(headingComp.attributes?.level?.enum?.includes("h3"), "heading level must include h3");
+
+const page = readJson("src/api/page/content-types/page/schema.json");
+assert(page.attributes.content.components.includes("content.gallery"), "Page must support galleries");
+const paragraph = readJson("src/components/content/paragraph.json");
+assert(paragraph.attributes.text.type === "blocks", "Paragraph must store rich text blocks");
+const gallery = readJson("src/components/content/gallery.json");
+const photos = gallery.attributes.images;
+assert(photos.repeatable && photos.min === 2 && photos.max === 3, "Gallery must require 2 to 3 photos");
+const photo = readJson("src/components/content/gallery-image.json");
+assert(photo.attributes.image.required && photo.attributes.alt_text.required, "Photos require image and alt text");
 
 console.log("News editorial schema validation passed.");
 console.log(`  Fields: ${requiredFields.join(", ")}`);

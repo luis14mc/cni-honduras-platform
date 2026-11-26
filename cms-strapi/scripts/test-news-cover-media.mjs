@@ -6,9 +6,11 @@
  *   node scripts/test-news-cover-media.mjs            # unit tests only
  *   node scripts/test-news-cover-media.mjs --integration  # + live Strapi (port 1337)
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { deepStrictEqual } from 'node:assert/strict';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const distModule = join(root, 'dist/src/utils/media-validation.js');
@@ -25,7 +27,7 @@ async function loadValidationModule() {
       `Missing ${distModule}. Run "npm run build" before test:news-cover-media.`
     );
   }
-  return import(distModule);
+  return import(pathToFileURL(distModule).href);
 }
 
 function runUnitTests({ isImageMime, extractMediaId, NEWS_COVER_ERROR }) {
@@ -87,10 +89,12 @@ async function multipartUpload(baseUrl, jwt, filePath, fileName, mimeType) {
 }
 
 async function ensureAdmin(baseUrl) {
+  const email = process.env.STRAPI_TEST_ADMIN_EMAIL ?? 'cover-test@test.local';
+  const password = process.env.STRAPI_TEST_ADMIN_PASSWORD ?? 'CoverTest123!';
   const login = await jsonRequest(`${baseUrl}/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: { email: 'cover-test@test.local', password: 'CoverTest123!' },
+    body: { email, password },
   });
 
   if (login.status === 200 && login.data?.data?.token) {
@@ -103,8 +107,8 @@ async function ensureAdmin(baseUrl) {
     body: {
       firstname: 'Cover',
       lastname: 'Test',
-      email: 'cover-test@test.local',
-      password: 'CoverTest123!',
+      email,
+      password,
     },
   });
 
@@ -158,6 +162,7 @@ function writeTempPdf(path) {
 }
 
 async function runIntegrationTests(baseUrl, { isImageMime }) {
+  assert(['localhost', '127.0.0.1'].includes(new URL(baseUrl).hostname), 'Use a local test instance.');
   const health = await jsonRequest(`${baseUrl}/api/health`);
   assert(health.status === 200, `Strapi health expected 200, got ${health.status}`);
 
@@ -165,12 +170,18 @@ async function runIntegrationTests(baseUrl, { isImageMime }) {
 
   const pngPath = join(root, '../frontend/public/brand/pdi-logo.png');
   const webpPath = join(root, '../frontend/public/brand/logo-cni.webp');
-  const pdfPath = '/tmp/cover-test.pdf';
-  writeTempPdf(pdfPath);
-
   const png = await multipartUpload(baseUrl, jwt, pngPath, 'cover-test.png', 'image/png');
   const webp = await multipartUpload(baseUrl, jwt, webpPath, 'cover-test.webp', 'image/webp');
-  const pdf = await multipartUpload(baseUrl, jwt, pdfPath, 'cover-test.pdf', 'application/pdf');
+  const tmp = mkdtempSync(join(tmpdir(), 'strapi-cover-'));
+  let pdf;
+  try {
+    const pdfPath = join(tmp, 'cover-test.pdf');
+    writeTempPdf(pdfPath);
+    pdf = await multipartUpload(baseUrl, jwt, pdfPath, 'cover-test.pdf', 'application/pdf');
+  } finally {
+    rmSync(join(tmp, 'cover-test.pdf'), { force: true });
+    rmdirSync(tmp);
+  }
 
   assert(isImageMime(png.mime), 'uploaded png must be image/*');
   assert(isImageMime(webp.mime), 'uploaded webp must be image/*');
@@ -235,6 +246,59 @@ async function runIntegrationTests(baseUrl, { isImageMime }) {
     const t6 = await updateNewsDraft(baseUrl, jwt, updateDocId, { cover: null });
     assert(t6.status === 200, `Test 6 expected 200, got ${t6.status}: ${JSON.stringify(t6.data)}`);
     assert(t6.data?.data?.cover == null, 'Test 6 cover should be null');
+
+    const contentTypes = await jsonRequest(`${baseUrl}/content-manager/content-types`, {
+      headers: { Authorization: `Bearer ${jwt}` },
+    });
+    assert(contentTypes.status === 200, 'Could not fetch administrator collection types');
+    assert(contentTypes.data.data.some(({ uid }) => uid === 'plugin::users-permissions.user'), 'Super admin should see User');
+    assert(!contentTypes.data.data.some(({ uid }) => uid === 'api::investment-opportunity.investment-opportunity'),
+      'Strapi should no longer have an investment opportunity collection');
+
+    for (const count of [1, 4, 2, 3]) {
+      const richText = [{
+        type: 'paragraph',
+        children: [{ type: 'text', text: 'Texto de prueba', bold: true }],
+      }];
+      const slug = `${slugBase}-gallery-${count}`;
+      const draft = await createNewsDraft(baseUrl, jwt, {
+        title: 'Gallery test',
+        slug,
+        content: [
+          { __component: 'content.paragraph', text: richText },
+          {
+            __component: 'content.gallery',
+            images: Array.from({ length: count }, (_, i) => ({ image: png.id, alt_text: `Foto ${i + 1}` })),
+          },
+        ],
+      });
+      assert(draft.status === 201, `Could not save ${count}-photo draft: ${JSON.stringify(draft.data)}`);
+      const documentId = draft.data.data.documentId;
+      created.push(documentId);
+      const result = await jsonRequest(
+        `${baseUrl}/content-manager/collection-types/api::news-item.news-item/${documentId}/actions/publish?locale=es`,
+        { method: 'POST', headers: { Authorization: `Bearer ${jwt}` } },
+      );
+      const valid = count >= 2 && count <= 3;
+      assert(result.status === (valid ? 200 : 400), `Unexpected publication result for ${count} photos: ${JSON.stringify(result.data)}`);
+      if (!valid) {
+        assert(result.data.error?.details?.errors?.some(({ path }) => path.join('.') === 'content.1.images'),
+          `Expected a photo count validation error for ${count} photos`);
+        continue;
+      }
+
+      const query = new URLSearchParams({
+        locale: 'es',
+        'filters[slug][$eq]': slug,
+        'populate[content][on][content.paragraph][populate]': '*',
+        'populate[content][on][content.gallery][populate][images][populate]': 'image',
+      });
+      const published = await jsonRequest(`${baseUrl}/api/news?${query}`);
+      const [paragraph, gallery] = published.data.data[0].content;
+      deepStrictEqual(paragraph.text, richText, 'Published rich text should retain bold text');
+      assert(gallery.images.length === count && gallery.images.every(({ image }) => image?.id === png.id),
+        'Public REST must populate gallery photos');
+    }
   } finally {
     for (const documentId of created) {
       try {

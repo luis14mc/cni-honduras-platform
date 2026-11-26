@@ -15,7 +15,6 @@ import type { StrapiBlock } from "@/src/lib/strapi/blocks";
 import type {
   StrapiDocument,
   StrapiEntityResponse,
-  StrapiInvestmentOpportunity,
   StrapiListResponse,
   StrapiLocale,
   StrapiMedia,
@@ -26,8 +25,6 @@ import { normalizeSectorSlug, sectorsMatch } from "@/src/lib/strapi/sector";
 import { STRAPI_COLLECTION_PATHS } from "@/src/lib/strapi/types";
 import type { BannerPlacement, SiteBanner, CmsDocument, ResourceCategory, DocumentCategory, MediaAssetLite, NewsArticle, NewsCategory, PortfolioDocumentType } from "@/src/types/cms";
 import type {
-  InvestmentOpportunity,
-  OpportunityMetric,
   SectorLite,
   SuccessStory,
 } from "@/src/types/investment";
@@ -180,13 +177,6 @@ function populateExtra(fields: string[]): Record<string, string> {
     extra[`populate[${field}]`] = "true";
   }
   return extra;
-}
-
-function omitInternalNotes<T extends UnknownRecord>(raw: T): T {
-  if (!("internal_notes" in raw)) return raw;
-  const { internal_notes: _hidden, ...rest } = raw;
-  void _hidden;
-  return rest as T;
 }
 
 export function mapEditorialSeo(raw: unknown) {
@@ -463,48 +453,6 @@ export function mapSuccessStory(raw: unknown): SuccessStory | null {
   };
 }
 
-function mapPublicMetrics(raw: unknown): OpportunityMetric[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .filter(isRecord)
-    .slice(0, 4)
-    .map((item, index) => ({
-      id: typeof item.id === "number" ? item.id : index + 1,
-      label: asString(item.label),
-      value: asString(item.value),
-      note: "",
-      icon: "",
-      order: index,
-      is_public: true,
-    }));
-}
-
-export function mapOpportunity(raw: unknown): InvestmentOpportunity | null {
-  if (!isRecord(raw)) return null;
-  const publicRaw = omitInternalNotes(raw);
-  const title = asString(publicRaw.title).trim();
-  const slug = asString(publicRaw.slug).trim();
-  if (!title || !slug) return null;
-  const contactCta = asString(publicRaw.contact_cta);
-  const mapped: InvestmentOpportunity = {
-    id: typeof publicRaw.id === "number" ? publicRaw.id : 0,
-    code: asString(publicRaw.code),
-    title,
-    slug,
-    summary: asString(publicRaw.summary),
-    value_proposition: contactCta,
-    sector: toSectorLite(publicRaw.sector),
-    estimated_investment: null,
-    estimated_jobs: null,
-    status: "open",
-    is_public: true,
-    is_featured: false,
-    metrics: mapPublicMetrics(publicRaw.public_metrics),
-    published_at: asString(publicRaw.publishedAt) || null,
-  };
-  return mapped;
-}
-
 async function fetchCollection<T>(
   path: string,
   locale: Locale,
@@ -677,41 +625,5 @@ export async function getSuccessStoryBySlug(locale: Locale, slug: string): Promi
   );
   const mapped = mapSuccessStory(raw);
   if (!mapped) throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.successStories);
-  return mapped;
-}
-
-export async function getOpportunities(
-  locale: Locale,
-  options?: EditorialListOptions,
-): Promise<InvestmentOpportunity[]> {
-  const extra = withListFilters(
-    {
-      ...populateExtra(["featured_image", "public_metrics"]),
-      "sort[0]": "publishedAt:desc",
-    },
-    options,
-  );
-  const rows = await fetchCollection<StrapiInvestmentOpportunity>(
-    STRAPI_COLLECTION_PATHS.investmentOpportunities,
-    locale,
-    extra,
-  );
-  return matchesRequestedSector(
-    rows.map(mapOpportunity).filter((item): item is InvestmentOpportunity => item != null),
-    options?.sector,
-  );
-}
-
-export async function getOpportunityBySlug(locale: Locale, slug: string): Promise<InvestmentOpportunity> {
-  const raw = await fetchBySlug<StrapiInvestmentOpportunity>(
-    STRAPI_COLLECTION_PATHS.investmentOpportunities,
-    locale,
-    slug,
-    populateExtra(["featured_image", "public_metrics"]),
-  );
-  const mapped = mapOpportunity(raw);
-  if (!mapped) {
-    throw new StrapiApiError("Not found", 404, STRAPI_COLLECTION_PATHS.investmentOpportunities);
-  }
   return mapped;
 }

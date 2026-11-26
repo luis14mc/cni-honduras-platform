@@ -163,5 +163,4 @@ export const STRAPI_MEDIA_POPULATE = {
   news: "cover",
   documents: "file,cover",
   successStories: "logo,featured_image,person_photo",
-  investmentOpportunities: "featured_image,public_metrics",
 } as const;

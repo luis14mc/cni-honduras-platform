@@ -4,8 +4,8 @@
   "info": {
     "singularName": "document",
     "pluralName": "documents",
-    "displayName": "Document",
-    "description": "Downloadable resources. ES/EN may use different files and covers."
+    "displayName": "Documento",
+    "description": "Recursos descargables con acceso libre o mediante formulario."
   },
   "options": {
     "draftAndPublish": true
@@ -182,6 +182,20 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "access": {
+        "edit": {
+          "description": "Libre permite descargar directamente. Con formulario solicita datos antes de descargar."
+        }
+      },
+      "cover": {
+        "edit": {
+          "description": "Selecciona una imagen para identificar este recurso."
         }
       }
     }
