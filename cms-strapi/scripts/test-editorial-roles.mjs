@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { bootstrapStrapi } from '../dist/src/bootstrap.js';
 
 const collections = [
-  'news-item', 'document', 'success-story', 'investment-opportunity', 'banner', 'page', 'resource-category',
+  'news-item', 'document', 'success-story', 'banner', 'page', 'resource-category',
 ].map((name) => `api::${name}.${name}`);
 const actions = ['create', 'read', 'update', 'delete', 'publish'];
 
@@ -20,7 +20,7 @@ test('editorial role bootstrap assigns exact permissions in ES and EN on every s
       actionProvider: {
         values: () => actions.map((action) => ({
           actionId: `plugin::content-manager.explorer.${action}`,
-          subjects: [...collections, 'api::unrelated.unrelated'],
+          subjects: [...collections, 'api::unrelated.unrelated', 'plugin::users-permissions.user'],
         })),
       },
     },

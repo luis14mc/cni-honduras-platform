@@ -8,10 +8,20 @@ from django.core.management import CommandError, call_command
 from django.test import TestCase
 from django.utils import timezone
 
+from apps.cms.management.commands.migrate_editorial_to_strapi import dynamic_paragraphs
 from apps.cms.models import SiteBanner
 
 
 class EditorialMigrationTests(TestCase):
+    def test_import_converts_plain_text_to_strapi_blocks(self):
+        self.assertEqual(dynamic_paragraphs('Inversión & producción.\n\nSecond paragraph.'), [
+            {
+                "__component": "content.paragraph",
+                "text": [{"type": "paragraph", "children": [{"type": "text", "text": text}]}],
+            }
+            for text in ("Inversión & producción.", "Second paragraph.")
+        ])
+
     def setUp(self):
         self.banner = SiteBanner.objects.create(
             placement="site_top",

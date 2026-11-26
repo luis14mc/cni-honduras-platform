@@ -4,7 +4,8 @@
   "info": {
     "singularName": "page",
     "pluralName": "pages",
-    "displayName": "Page"
+    "displayName": "Página",
+    "description": "Contenido de páginas institucionales."
   },
   "options": {
     "draftAndPublish": true
@@ -49,7 +50,8 @@
         "content.paragraph",
         "content.heading",
         "content.image",
-        "content.quote"
+        "content.quote",
+        "content.gallery"
       ],
       "pluginOptions": {
         "i18n": {
@@ -64,6 +66,15 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "summary": {
+        "edit": {
+          "description": "Describe brevemente el propósito de la página."
         }
       }
     }

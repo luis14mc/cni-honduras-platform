@@ -39,12 +39,6 @@ export interface StrapiEntityResponse<T> {
   meta: Record<string, unknown>;
 }
 
-export interface StrapiPublicMetric {
-  id?: number;
-  label: string;
-  value: string;
-}
-
 export interface StrapiNews {
   id: number;
   documentId: string;
@@ -108,27 +102,10 @@ export interface StrapiSuccessStory {
   publishedAt?: string | null;
 }
 
-/** Public teaser fields only. Do not add internal_notes or other editorial-only fields. */
-export interface StrapiInvestmentOpportunity {
-  id: number;
-  documentId: string;
-  title: string;
-  slug: string;
-  summary?: string | null;
-  sector?: string | null;
-  code?: string | null;
-  featured_image?: StrapiMedia | null;
-  public_metrics?: StrapiPublicMetric[] | null;
-  contact_cta?: string | null;
-  locale?: StrapiLocale;
-  publishedAt?: string | null;
-}
-
 export const STRAPI_COLLECTION_PATHS = {
   banners: "/api/banners",
   pages: "/api/pages",
   news: "/api/news",
   documents: "/api/documents",
   successStories: "/api/success-stories",
-  investmentOpportunities: "/api/investment-opportunities",
 } as const;

@@ -1,3 +1,5 @@
+import { PortfolioImageLightbox } from "@/src/components/cni/PortfolioImageLightbox";
+import type { Locale } from "@/src/i18n/config";
 import type { ReactNode } from "react";
 import { getStrapiMediaUrl } from "@/src/lib/strapi/media";
 import {
@@ -9,6 +11,7 @@ import {
 type Props = {
   blocks: StrapiBlock[] | null | undefined;
   className?: string;
+  locale?: Locale;
 };
 
 function renderInlines(nodes: StrapiInlineNode[] | undefined, keyPrefix: string): ReactNode {
@@ -17,8 +20,12 @@ function renderInlines(nodes: StrapiInlineNode[] | undefined, keyPrefix: string)
     const key = `${keyPrefix}-${index}`;
     if (node.type === "link" && node.url) {
       const href = node.url.trim();
-      if (!href) return renderInlines(node.children, key);
-      const external = /^https?:\/\//i.test(href);
+      const base = "https://editorial.invalid";
+      const parsed = href && URL.canParse(href, base) ? new URL(href, base) : null;
+      if (!parsed || !["http:", "https:", "mailto:", "tel:"].includes(parsed.protocol)) {
+        return <span key={key}>{renderInlines(node.children, key)}</span>;
+      }
+      const external = ["http:", "https:"].includes(parsed.protocol) && parsed.origin !== base;
       return (
         <a
           key={key}
@@ -43,14 +50,14 @@ function renderInlines(nodes: StrapiInlineNode[] | undefined, keyPrefix: string)
   });
 }
 
-function BlockView({ block, index }: { block: StrapiBlock; index: number }) {
+function BlockView({ block, index, locale }: { block: StrapiBlock; index: number; locale: Locale }) {
   const key = `block-${index}-${block.type}`;
   const inlines = renderInlines(block.children, key);
 
   switch (block.type) {
     case "paragraph":
       return (
-        <p key={key} className="text-lg leading-relaxed text-[#0E7A7C]">
+        <p key={key} className="whitespace-pre-wrap text-lg leading-relaxed text-[#0E7A7C]">
           {inlines}
         </p>
       );
@@ -83,6 +90,39 @@ function BlockView({ block, index }: { block: StrapiBlock; index: number }) {
           {inlines}
         </blockquote>
       );
+    case "gallery": {
+      const images = (block.images ?? []).flatMap((image) => {
+        const src = getStrapiMediaUrl(image.url);
+        return src ? [{ src, alt: image.alternativeText ?? "" }] : [];
+      });
+      if (!images.length) return null;
+      const open = locale === "es" ? "Ampliar imagen" : "Enlarge image";
+      const close = locale === "es" ? "Cerrar imagen" : "Close image";
+      const columns = images.length === 3 ? "md:grid-cols-3" : images.length === 2 ? "md:grid-cols-2" : "";
+      return (
+        <figure className="space-y-2">
+          <div className={`grid gap-4 ${columns}`}>
+            {images.map(({ src, alt }, imageIndex) => (
+              <PortfolioImageLightbox
+                key={`${src}-${imageIndex}`}
+                src={src}
+                alt={alt}
+                openLabel={alt ? `${open}: ${alt}` : open}
+                closeLabel={close}
+                thumbnail={
+                  // Strapi upload providers can serve images from different domains.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={src} alt={alt} loading="lazy" className="aspect-[4/3] w-full object-cover" />
+                }
+              />
+            ))}
+          </div>
+          {block.caption ? (
+            <figcaption className="text-center text-sm text-slate-500">{block.caption}</figcaption>
+          ) : null}
+        </figure>
+      );
+    }
     case "image": {
       const src = getStrapiMediaUrl(block.image?.url ?? null);
       if (!src) return null;
@@ -111,12 +151,12 @@ function BlockView({ block, index }: { block: StrapiBlock; index: number }) {
   }
 }
 
-export function StrapiBlocks({ blocks, className }: Props) {
+export function StrapiBlocks({ blocks, className, locale = "es" }: Props) {
   if (!blocks?.length || !strapiBlocksHaveContent(blocks)) return null;
   return (
     <div className={className ?? "space-y-6 font-body text-base leading-relaxed text-[#252A58]/90"}>
       {blocks.map((block, index) => (
-        <BlockView key={`strapi-block-${index}`} block={block} index={index} />
+        <BlockView key={`strapi-block-${index}`} block={block} index={index} locale={locale} />
       ))}
     </div>
   );

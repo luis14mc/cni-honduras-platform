@@ -37,5 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function InstitutionalPage({ params }: Props) {
   const { locale, slug } = await params;
-  return <InstitutionalPageContent page={await loadPage(locale, slug)} />;
+  if (!isLocale(locale)) notFound();
+  return <InstitutionalPageContent page={await loadPage(locale, slug)} locale={locale} />;
 }

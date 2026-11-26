@@ -4,7 +4,8 @@
   "info": {
     "singularName": "resource-category",
     "pluralName": "resource-categories",
-    "displayName": "Resource Category"
+    "displayName": "Categoría de recursos",
+    "description": "Agrupa documentos por tema en la página de recursos."
   },
   "options": {
     "draftAndPublish": true
@@ -50,6 +51,15 @@
       "pluginOptions": {
         "i18n": {
           "localized": false
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "order": {
+        "edit": {
+          "description": "Un número menor aparece primero."
         }
       }
     }

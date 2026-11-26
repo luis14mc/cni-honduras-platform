@@ -9,7 +9,6 @@ const PUBLIC_READ_CONTROLLERS = [
   { type: 'api::news-item', controller: 'news-item' },
   { type: 'api::document', controller: 'document' },
   { type: 'api::success-story', controller: 'success-story' },
-  { type: 'api::investment-opportunity', controller: 'investment-opportunity' },
   { type: 'api::banner', controller: 'banner' },
   { type: 'api::page', controller: 'page' },
   { type: 'api::resource-category', controller: 'resource-category' },
@@ -144,5 +143,27 @@ export async function bootstrapStrapi({ strapi }: { strapi: Core.Strapi }) {
     strapi.log.error(
       `users-permissions: public read grant failed (${bootstrapErrorMessage(error)}); continuing startup`
     );
+  }
+}
+
+export async function syncEditorialFieldHints(strapi: Core.Strapi) {
+  // Strapi keeps existing edit-view metadata in its store after schema updates.
+  // Fill empty hints while preserving descriptions an administrator has entered.
+  const contentTypes = strapi.plugin('content-manager').service('content-types');
+  for (const { type, controller } of PUBLIC_READ_CONTROLLERS) {
+    const model = contentTypes.findContentType(`${type}.${controller}`);
+    const hints = model?.config?.metadatas as Record<string, { edit: { description: string } }> | undefined;
+    if (!hints) continue;
+
+    const { uid, ...configuration } = await contentTypes.findConfiguration(model);
+    let changed = false;
+    for (const [field, hint] of Object.entries(hints)) {
+      const edit = configuration.metadatas[field]?.edit;
+      if (edit && !edit.description) {
+        edit.description = hint.edit.description;
+        changed = true;
+      }
+    }
+    if (changed) await contentTypes.updateConfiguration({ uid }, configuration);
   }
 }

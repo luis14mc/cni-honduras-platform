@@ -4,8 +4,8 @@
   "info": {
     "singularName": "news-item",
     "pluralName": "news",
-    "displayName": "News",
-    "description": "Editorial news, press and announcements. REST: GET /api/news?locale=es&populate[cover]=true&populate[content][populate]=*"
+    "displayName": "Noticias",
+    "description": "Noticias, comunicados y anuncios del CNI."
   },
   "options": {
     "draftAndPublish": true
@@ -86,7 +86,8 @@
         "content.paragraph",
         "content.heading",
         "content.image",
-        "content.quote"
+        "content.quote",
+        "content.gallery"
       ],
       "pluginOptions": {
         "i18n": {
@@ -146,6 +147,20 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "cover": {
+        "edit": {
+          "description": "Selecciona la imagen principal de la noticia."
+        }
+      },
+      "excerpt": {
+        "edit": {
+          "description": "Escribe un resumen breve para el listado de noticias."
         }
       }
     }

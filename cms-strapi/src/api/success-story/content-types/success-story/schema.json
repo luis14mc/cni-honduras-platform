@@ -4,8 +4,8 @@
   "info": {
     "singularName": "success-story",
     "pluralName": "success-stories",
-    "displayName": "Success Story",
-    "description": "Investment success stories. Sector is a string to avoid duplicating Django Sector."
+    "displayName": "Caso de éxito",
+    "description": "Historias y testimonios de inversión."
   },
   "options": {
     "draftAndPublish": true
@@ -140,6 +140,15 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    }
+  },
+  "config": {
+    "metadatas": {
+      "summary": {
+        "edit": {
+          "description": "Resume la historia para el listado de casos."
         }
       }
     }

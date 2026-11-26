@@ -3,12 +3,12 @@
   "info": {
     "displayName": "Paragraph",
     "icon": "paragraph",
-    "description": "Body paragraph block."
+    "description": "Texto con negrita, cursiva, enlaces y listas."
   },
   "options": {},
   "attributes": {
     "text": {
-      "type": "text",
+      "type": "blocks",
       "required": true
     }
   }

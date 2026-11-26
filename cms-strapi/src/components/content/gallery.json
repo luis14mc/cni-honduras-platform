@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_content_galleries",
+  "info": {
+    "displayName": "Galería",
+    "icon": "picture",
+    "description": "Grupo de dos a tres fotos con un pie opcional."
+  },
+  "attributes": {
+    "images": {
+      "type": "component",
+      "repeatable": true,
+      "component": "content.gallery-image",
+      "min": 2,
+      "max": 3
+    },
+    "caption": {
+      "type": "string"
+    }
+  }
+}

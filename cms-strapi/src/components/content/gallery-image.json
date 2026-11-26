@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_content_gallery_images",
+  "info": {
+    "displayName": "Foto de la galería",
+    "icon": "picture"
+  },
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "alt_text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
