@@ -3,24 +3,22 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import type { Locale } from "@/src/i18n/config";
 import { withLocale } from "@/src/i18n/path";
 import { portfolioCatalogCopy } from "@/src/i18n/copy/portfolioCatalog";
 import {
   applyUnifiedFilters,
-  matchDocumentByCode,
   PORTFOLIO_CATALOG_SECTORS,
   serializeUnifiedFilters,
   type PortfolioCatalogItem,
   type UnifiedPortfolioFilters,
   type UnifiedPortfolioTab,
 } from "@/src/lib/portfolioCatalog";
-import { getSectorDisplayName } from "@/src/data/investmentSectors";
+import { getSectorBySlug, getSectorDisplayName } from "@/src/data/investmentSectors";
 import { PortfolioDocumentCard } from "@/src/components/cni/PortfolioDocumentCard";
 import { PortfolioItemCard } from "@/src/components/cni/PortfolioItemCard";
-import { PortfolioItemModal } from "@/src/components/cni/PortfolioItemModal";
 import type { CmsDocument } from "@/src/types/cms";
-import { documentOpenUrl } from "@/src/lib/cmsDocuments";
 import { cn } from "@/src/lib/utils";
 
 type Props = {
@@ -46,7 +44,6 @@ export function PortfolioCatalogClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [filtersState, setFiltersState] = useState<UnifiedPortfolioFilters>(initialFilters);
-  const [selectedItem, setSelectedItem] = useState<PortfolioCatalogItem | null>(null);
 
   const searchParamsKey = searchParams.toString();
   const syncedFilters = useMemo<UnifiedPortfolioFilters>(
@@ -102,64 +99,75 @@ export function PortfolioCatalogClient({
 
   const docType = documentTypeForTab[filtersState.tipo];
   const tabDocuments = documents.filter((doc) => doc.document_type === docType && doc.file_url);
-  const selectedDocument = selectedItem ? matchDocumentByCode(documents, selectedItem.code) : null;
-  const selectedPdf = selectedItem?.pdfUrl ?? (selectedDocument ? documentOpenUrl(selectedDocument) : null);
   const searchPlaceholder =
     filtersState.tipo === "oportunidades" ? t.searchPlaceholderOpportunities : t.searchPlaceholder;
+  const sectorCounts = new Map<string, number>();
+  const allSectorResults = applyUnifiedFilters(allItems, filtersState.tipo, { ...filtersState, sector: null });
+  for (const item of allSectorResults) {
+    sectorCounts.set(item.sectorSlug, (sectorCounts.get(item.sectorSlug) ?? 0) + 1);
+  }
+  const resultLabel = filtersState.tipo === "proyectos"
+    ? (locale === "es" ? (filteredItems.length === 1 ? "proyecto" : "proyectos") : (filteredItems.length === 1 ? "project" : "projects"))
+    : (filteredItems.length === 1 ? "Opportunity Card" : "Opportunity Cards");
 
   return (
     <div className="bg-[#f5f7fb]">
-      <div className="mx-auto w-[92%] max-w-[1500px] px-0 pb-24 pt-14">
-        <div className="mb-7 flex flex-col items-stretch justify-between gap-6 lg:flex-row lg:items-center">
-          <div
-            className="flex flex-col rounded-[14px] border border-[#e4e8ef] bg-white p-1.5 sm:flex-row"
-            role="tablist"
-            aria-label={t.typeTabs}
-          >
-            <TabButton
-              active={filtersState.tipo === "proyectos"}
-              onClick={() => {
-                setSelectedItem(null);
-                update({ tipo: "proyectos", sector: null });
-              }}
+      <div className="mx-auto w-[92%] max-w-[1500px] pb-24 pt-5 sm:pt-8">
+        <div className="mb-4 rounded-xl border border-[#dce3ee] bg-white p-2.5 shadow-sm lg:sticky lg:top-[calc(var(--cni-navbar-height,var(--cni-header-height))+0.5rem)] lg:z-30 lg:p-3">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div
+              className="grid grid-cols-2 gap-1 rounded-lg bg-[#edf2fb] p-1 lg:flex"
+              role="tablist"
+              aria-label={t.typeTabs}
             >
-              {t.projectsTab}
-            </TabButton>
-            <TabButton
-              active={filtersState.tipo === "oportunidades"}
-              onClick={() => {
-                setSelectedItem(null);
-                update({ tipo: "oportunidades", sector: null });
-              }}
-            >
-              {t.opportunitiesTab}
-            </TabButton>
-          </div>
+              <TabButton
+                active={filtersState.tipo === "proyectos"}
+                onClick={() => update({ tipo: "proyectos", sector: null })}
+              >
+                {t.projectsTab}
+              </TabButton>
+              <TabButton
+                active={filtersState.tipo === "oportunidades"}
+                onClick={() => update({ tipo: "oportunidades", sector: null })}
+              >
+                {t.opportunitiesTab}
+              </TabButton>
+            </div>
 
-          <label className="w-full lg:w-min lg:min-w-[280px] lg:max-w-[380px]">
-            <span className="sr-only">{t.searchLabel}</span>
-            <input
-              type="search"
-              value={filtersState.q}
-              onChange={(event) => update({ q: event.target.value })}
-              placeholder={searchPlaceholder}
-              aria-label={t.searchLabel}
-              className="w-full rounded-xl border border-[#e4e8ef] bg-white px-4 py-3.5 font-body text-sm text-[#252A58] outline-none transition placeholder:text-[#667085] focus:border-[#334E88] focus:shadow-[0_0_0_3px_rgba(51,78,136,0.12)]"
-            />
-          </label>
+            <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap lg:min-w-0 lg:flex-1 lg:justify-end">
+              <label className="relative min-w-0 flex-1 lg:max-w-[380px]">
+                <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#4c5567]" />
+                <span className="sr-only">{t.searchLabel}</span>
+                <input
+                  type="search"
+                  value={filtersState.q}
+                  onChange={(event) => update({ q: event.target.value })}
+                  placeholder={searchPlaceholder}
+                  aria-label={t.searchLabel}
+                  className="min-h-11 w-full rounded-lg border border-[#cbd5e4] bg-white py-2 pl-9 pr-3 text-sm text-[#252a58] placeholder:text-[#4c5567] focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#334e88]"
+                />
+              </label>
+              {!errors[filtersState.tipo] && (
+                <p aria-live="polite" className="shrink-0 text-xs font-bold text-[#334e88]">
+                  {filteredItems.length} {resultLabel}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="mb-10 flex flex-wrap gap-2.5" role="group" aria-label={t.allSectors}>
+        <div className="mb-5 flex gap-2 overflow-x-auto px-1 py-1 sm:flex-wrap sm:overflow-visible" role="group" aria-label={t.allSectors}>
           <SectorChip active={!filtersState.sector} onClick={() => update({ sector: null })}>
-            {t.allSectors}
+            {t.allSectors} · {allSectorResults.length}
           </SectorChip>
           {PORTFOLIO_CATALOG_SECTORS.map((slug) => (
             <SectorChip
               key={slug}
               active={filtersState.sector === slug}
+              color={getSectorBySlug(locale, slug)?.color_hex}
               onClick={() => update({ sector: filtersState.sector === slug ? null : slug })}
             >
-              {getSectorDisplayName(locale, slug)}
+              {getSectorDisplayName(locale, slug)} · {sectorCounts.get(slug) ?? 0}
             </SectorChip>
           ))}
         </div>
@@ -186,24 +194,16 @@ export function PortfolioCatalogClient({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 items-stretch gap-7 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {filteredItems.map((item) => (
               <PortfolioItemCard
                 key={`${item.kind}-${item.slug}`}
                 locale={locale}
                 item={item}
-                onOpen={() => setSelectedItem(item)}
               />
             ))}
           </div>
         )}
-
-        <PortfolioItemModal
-          locale={locale}
-          item={selectedItem}
-          pdfUrl={selectedPdf}
-          onClose={() => setSelectedItem(null)}
-        />
 
         {tabDocuments.length > 0 ? (
           <section className="mt-16 rounded-[18px] border border-[#e4e8ef] bg-white p-6 shadow-sm sm:p-8">
@@ -248,8 +248,8 @@ function TabButton({
       aria-selected={active}
       onClick={onClick}
       className={cn(
-        "min-h-11 rounded-[10px] px-5 py-3.5 text-left font-body text-sm font-bold text-[#252A58] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F7BF06] sm:text-center",
-        active ? "bg-[#334E88] text-white" : "bg-transparent hover:bg-[rgba(51,78,136,0.08)]",
+        "min-h-11 rounded-md px-2 py-2 text-center text-sm font-bold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#13704d] sm:px-4",
+        active ? "bg-[#252a58] text-white" : "text-[#252a58] hover:bg-white",
       )}
     >
       {children}
@@ -259,10 +259,12 @@ function TabButton({
 
 function SectorChip({
   active,
+  color,
   onClick,
   children,
 }: {
   active: boolean;
+  color?: string;
   onClick: () => void;
   children: React.ReactNode;
 }) {
@@ -272,12 +274,13 @@ function SectorChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "rounded-full border px-4 py-2.5 font-body text-[13px] font-bold transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#32B372]",
+        "inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-2 text-xs font-bold transition focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#13704d]",
         active
           ? "border-[#252A58] bg-[#252A58] text-white"
           : "border-[#e4e8ef] bg-white text-[#252A58] hover:border-[#d5dbea] hover:bg-[#f4f6fb]",
       )}
     >
+      {color && <span aria-hidden="true" className="size-2 shrink-0 rounded-full" style={{ backgroundColor: color }} />}
       {children}
     </button>
   );

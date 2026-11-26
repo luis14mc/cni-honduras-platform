@@ -234,6 +234,20 @@ export default function Navbar() {
   const mobilePanelRef = useRef<HTMLDivElement | null>(null);
   const wasMobileOpen = useRef(false);
 
+  useEffect(() => {
+    const header = navRef.current;
+    if (!header) return;
+    const root = document.documentElement;
+    const syncHeight = () => root.style.setProperty("--cni-navbar-height", `${header.getBoundingClientRect().height}px`);
+    const observer = new ResizeObserver(syncHeight);
+    syncHeight();
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--cni-navbar-height");
+    };
+  }, []);
+
   const closeMenus = useCallback(() => {
     setOpenDropdownId(null);
     setFlyoutOpenId(null);
